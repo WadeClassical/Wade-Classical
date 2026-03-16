@@ -850,6 +850,14 @@
                 <span class="user-grade">ADULT LEVEL</span>
             </button>
         </div>
+
+        <!-- Voice selector -->
+        <div style="text-align:center; margin-top:28px;">
+            <div style="font-size:0.45em; color:#444; letter-spacing:0.15em; margin-bottom:8px;">🔊 VOICE</div>
+            <select id="voiceSelect" style="font-family:'Press Start 2P',monospace;font-size:0.42em;background:#0a0a1a;color:var(--cyan);border:2px solid var(--wall-blue);padding:7px 10px;border-radius:3px;cursor:pointer;max-width:300px;width:100%;" onchange="saveVoice()">
+                <option value="">— SELECT VOICE —</option>
+            </select>
+        </div>
     </div>
 
     <!-- SCREEN: GAME -->
@@ -898,12 +906,6 @@
             <!-- Letter blanks -->
             <div class="letter-row" id="letterRow"></div>
 
-            <!-- Voice selector -->
-            <div style="text-align:center; margin-bottom:10px;">
-                <select id="voiceSelect" style="font-family:'Press Start 2P',monospace;font-size:0.42em;background:#0a0a1a;color:var(--cyan);border:2px solid var(--wall-blue);padding:7px 10px;border-radius:3px;cursor:pointer;max-width:340px;width:100%;" onchange="saveVoice()">
-                    <option value="">— SELECT VOICE —</option>
-                </select>
-            </div>
             <!-- Buttons -->
             <div class="btn-row">
                 <button class="game-btn btn-hear" onclick="speakWord()">🔊 HEAR WORD</button>
