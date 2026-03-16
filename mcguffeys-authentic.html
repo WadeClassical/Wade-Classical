@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>McGuffey's First Reader - Authentic Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Palatino', serif;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .book-container {
+            background: #f9f3e8;
+            border-radius: 10px;
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 
+                0 2px 10px rgba(0,0,0,0.1),
+                0 10px 40px rgba(0,0,0,0.2),
+                inset 0 0 0 1px rgba(139, 69, 19, 0.3);
+            border: 3px solid #8b4513;
+            position: relative;
+        }
+
+        .book-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(139, 69, 19, 0.03) 2px,
+                rgba(139, 69, 19, 0.03) 3px
+            );
+            pointer-events: none;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #8b4513;
+        }
+
+        h1 {
+            font-family: 'Georgia', serif;
+            color: #4a2c2a;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0px rgba(139, 69, 19, 0.1);
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            color: #8b4513;
+            font-style: italic;
+        }
+
+        .level-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .level-tab {
+            padding: 10px 20px;
+            background: #d4a574;
+            border: 2px solid #8b4513;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #4a2c2a;
+            transition: all 0.3s;
+        }
+
+        .level-tab:hover {
+            background: #e8b4bc;
+        }
+
+        .level-tab.active {
+            background: #e8b4bc;
+            box-shadow: 0 4px 0 #8b4513;
+        }
+
+        .page {
+            background: white;
+            padding: 40px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid #d4a574;
+            min-height: 450px;
+            position: relative;
+        }
+
+        .lesson-title {
+            font-size: 1.6em;
+            color: #4a2c2a;
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: bold;
+            border-bottom: 2px solid #d4a574;
+            padding-bottom: 15px;
+        }
+
+        .lesson-content {
+            font-size: 1.25em;
+            line-height: 1.8;
+            color: #2c1810;
+            margin: 30px 0;
+            text-align: justify;
+        }
+
+        .word {
+            display: inline;
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        .word:hover {
+            background: #fff9e6;
+        }
+
+        .word.highlight {
+            background: #ffd93d;
+            font-weight: bold;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #e8b4bc 0%, #d89ba0 100%);
+            color: #4a2c2a;
+            border: 2px solid #8b4513;
+            padding: 12px 25px;
+            font-size: 1em;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Georgia', serif;
+            box-shadow: 0 4px 0 #8b4513;
+            transition: all 0.1s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #8b4513;
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #8b4513;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #a8d8ea 0%, #88c9d4 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #b8e6b8 0%, #90d490 100%);
+        }
+
+        .word-practice {
+            margin: 30px 0;
+            padding: 25px;
+            background: #fff9e6;
+            border-radius: 8px;
+            border: 2px solid #d4a574;
+        }
+
+        .word-practice h3 {
+            color: #4a2c2a;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .word-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .word-card {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            border: 2px solid #d4a574;
+            font-size: 1.3em;
+            color: #4a2c2a;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .word-card:hover {
+            background: #ffd93d;
+            transform: scale(1.05);
+        }
+
+        .progress-bar {
+            background: #d4a574;
+            height: 25px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+            border: 2px solid #8b4513;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #90d490 0%, #5a9c3a 100%);
+            height: 100%;
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding-left: 15px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+            white-space: nowrap;
+        }
+
+        .lesson-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #d4a574;
+        }
+
+        .lesson-btn {
+            padding: 15px 10px;
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        .lesson-btn.completed {
+            background: linear-gradient(135deg, #b8e6b8 0%, #90d490 100%);
+        }
+
+        .lesson-btn.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .illustration {
+            text-align: center;
+            margin: 25px 0;
+            padding: 20px;
+            background: #fff;
+            border: 3px solid #8b4513;
+            border-radius: 8px;
+        }
+
+        .illustration img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .level-beginner {
+            background: #b8e6b8;
+            color: #2d5016;
+        }
+
+        .level-intermediate {
+            background: #ffd93d;
+            color: #4a2c2a;
+        }
+
+        .level-advanced {
+            background: #e8b4bc;
+            color: #4a2c2a;
+        }
+
+        @media (max-width: 600px) {
+            .book-container { padding: 20px; }
+            h1 { font-size: 1.8em; }
+            .lesson-content { font-size: 1.1em; }
+            .btn { font-size: 0.9em; padding: 10px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="book-container">
+        <div class="header">
+            <h1>📖 McGuffey's First Reader 📖</h1>
+            <p class="subtitle">Revised Edition - Authentic Classical Text</p>
+        </div>
+
+        <!-- MENU SCREEN -->
+        <div id="menuScreen">
+            <div class="progress-bar">
+                <div class="progress-fill" id="overallProgress" style="width: 0%">0% Complete</div>
+            </div>
+            
+            <div class="level-tabs">
+                <div class="level-tab active" onclick="filterByLevel('all')">All Lessons</div>
+                <div class="level-tab" onclick="filterByLevel('beginner')">Beginner</div>
+                <div class="level-tab" onclick="filterByLevel('intermediate')">Intermediate</div>
+                <div class="level-tab" onclick="filterByLevel('advanced')">Advanced</div>
+            </div>
+
+            <h2 style="text-align: center; color: #4a2c2a; margin: 30px 0;">Choose a Lesson:</h2>
+            
+            <div class="lesson-menu" id="lessonMenu">
+                <!-- Filled by JavaScript -->
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <p style="color: #8b4513; font-style: italic;">Complete all lessons to unlock McGuffey's Second Reader!</p>
+            </div>
+        </div>
+
+        <!-- LESSON SCREEN -->
+        <div id="lessonScreen" class="hidden">
+            <div class="page">
+                <div class="lesson-title" id="lessonTitle">Lesson 1</div>
+                
+                <div class="illustration" id="illustrationDiv">
+                    <div id="illustration" style="font-size: 4em;">🐱</div>
+                </div>
+                
+                <div class="lesson-content" id="lessonText">
+                    <!-- Filled by JavaScript -->
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="readAloud()">🔊 Read Aloud</button>
+                    <button class="btn" onclick="showWordPractice()">📝 Practice Words</button>
+                    <button class="btn btn-success" onclick="completeLesson()">✓ Complete Lesson</button>
+                </div>
+            </div>
+
+            <!-- WORD PRACTICE -->
+            <div id="wordPractice" class="hidden">
+                <div class="word-practice">
+                    <h3>Practice New Words:</h3>
+                    <div class="word-list" id="wordList">
+                        <!-- Filled by JavaScript -->
+                    </div>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button class="btn" onclick="hideWordPractice()">Back to Lesson</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls" style="margin-top: 30px;">
+                <button class="btn" onclick="backToMenu()">📚 Back to Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const lessons = [
+            // BEGINNER LEVEL
+            { level: "beginner", title: "Lesson 1: The Cat and Dog", text: "I see a cat. The cat is on a mat. Do you see the cat? I see a dog. The dog is by the cat. Do you see the dog? The cat and the dog are good.", words: ["cat", "dog", "mat", "see", "good"], illustration: "🐱🐕" },
+            { level: "beginner", title: "Lesson 2: Ann and Her Cat", text: "Ann has a cat. The cat is fat. It can catch a rat. Ann likes her cat. The cat likes Ann. Ann will pat the cat, and the cat will run to her.", words: ["Ann", "fat", "catch", "rat", "pat"], illustration: "👧🐱" },
+            { level: "beginner", title: "Lesson 3: The Hen", text: "The hen has a nest. The nest is in the box. The hen is on the nest. Do you see the hen? The hen will sit and sit. She has an egg in her nest.", words: ["hen", "nest", "box", "sit", "egg"], illustration: "🐔" },
+            { level: "beginner", title: "Lesson 4: The Fox", text: "Do you see the fox? The fox can run. He can jump and play. The fox is red. He has a long, big tail. The fox is in the woods.", words: ["fox", "run", "jump", "tail", "woods"], illustration: "🦊" },
+            { level: "beginner", title: "Lesson 5: The Pig", text: "This is a pig. The pig is big and fat. It has a pen. The pig is in the pen. Can the pig run? Yes, it can run. It can eat and sleep.", words: ["pig", "big", "pen", "eat", "sleep"], illustration: "🐷" },
+            
+            // INTERMEDIATE LEVEL
+            { level: "intermediate", title: "Lesson 6: At Play", text: "The boys are at play. They have a ball. See them run and jump! How happy they are! The little girl is with them. She can run, but she cannot catch the ball. The boys will help her catch it.", words: ["boys", "play", "ball", "happy", "help"], illustration: "⚽" },
+            { level: "intermediate", title: "Lesson 7: The Sun", text: "The sun is up. See how bright it shines! The sun gives us light. It makes the day warm. When the sun goes down, it will be night. The moon and stars come out at night. Do you like to see the bright sun?", words: ["sun", "bright", "shines", "warm", "night"], illustration: "☀️" },
+            { level: "intermediate", title: "Lesson 8: The Birds", text: "See the birds in the tree! How pretty they are! One bird is on a branch. It can sing a sweet song. The little birds are in a nest. The old bird will feed them. She loves her little ones.", words: ["birds", "tree", "sing", "nest", "feed"], illustration: "🐦🌳" },
+            { level: "intermediate", title: "Lesson 9: The Good Girl", text: "Mary is a good girl. She helps her mother. She can set the table. She can wash the cups. Mary is kind to all. She is kind to her cat and dog. Every one loves good Mary.", words: ["Mary", "helps", "table", "kind", "loves"], illustration: "👧" },
+            { level: "intermediate", title: "Lesson 10: The Rain", text: "Look at the rain! How fast it falls! The rain makes the grass green. It makes the flowers grow. The birds are glad when it rains. They can drink the water. After the rain, the sun will shine again.", words: ["rain", "falls", "grass", "flowers", "drink"], illustration: "🌧️" },
+            
+            // ADVANCED LEVEL  
+            { level: "advanced", title: "Lesson 11: The Little Girl and Her Grandmother", text: "A little girl went to visit her grandmother. She carried a basket with good things to eat. On the way, she saw many pretty flowers. She picked some for her dear grandmother. When she came to the house, her grandmother was very glad to see her. She kissed the little girl and thanked her for the flowers and the good things in the basket.", words: ["grandmother", "basket", "flowers", "kissed", "thanked"], illustration: "👵👧" },
+            { level: "advanced", title: "Lesson 12: The Kind Boy", text: "John saw a poor old man. The old man looked cold and hungry. John had only one penny, but he gave it to the poor man. The old man was very thankful. He said, 'You are a kind boy. God will bless you.' John went home happy. His mother was proud of her good son.", words: ["poor", "penny", "thankful", "bless", "proud"], illustration: "👦" },
+            { level: "advanced", title: "Lesson 13: The Bee", text: "The bee is a busy little insect. It works all day long. It flies from flower to flower and gathers honey. The bee makes its home in a hive. Many bees live together in one hive. They work together and help each other. We should learn from the bee to be busy and helpful.", words: ["busy", "insect", "honey", "hive", "helpful"], illustration: "🐝" },
+            { level: "advanced", title: "Lesson 14: Spring", text: "Winter is gone, and spring has come. The cold winds have ceased to blow. The warm sun shines upon the earth. The grass is growing green. The trees are putting forth their leaves. The birds have returned from the warm countries. They are building their nests and singing sweetly. How beautiful everything looks in spring!", words: ["spring", "ceased", "earth", "forth", "returned"], illustration: "🌸" },
+            { level: "advanced", title: "Lesson 15: The Farm", text: "My grandfather has a farm. On his farm there are horses, cows, sheep, and pigs. There is a large barn where the animals stay at night. In the fields, wheat and corn are growing. There is also a garden with many vegetables. My grandmother has chickens that give fresh eggs. I love to visit the farm and help with the work.", words: ["farm", "horses", "barn", "wheat", "vegetables"], illustration: "🏡" }
+        ];
+
+        let userData = JSON.parse(localStorage.getItem('mcguffeysProgress')) || {
+            completed: [],
+            currentLesson: 0
+        };
+
+        let currentLesson = null;
+        let currentLessonIndex = 0;
+        let currentFilter = 'all';
+
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = () => {
+                speechSynthesis.getVoices();
+            };
+        }
+
+        function init() {
+            renderLessonMenu();
+            updateOverallProgress();
+        }
+
+        function filterByLevel(level) {
+            currentFilter = level;
+            document.querySelectorAll('.level-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            renderLessonMenu();
+        }
+
+        function renderLessonMenu() {
+            const menu = document.getElementById('lessonMenu');
+            menu.innerHTML = '';
+            
+            const filteredLessons = currentFilter === 'all' 
+                ? lessons 
+                : lessons.filter(l => l.level === currentFilter);
+            
+            filteredLessons.forEach((lesson) => {
+                const index = lessons.indexOf(lesson);
+                const btn = document.createElement('button');
+                btn.className = 'btn lesson-btn';
+                
+                const levelBadge = `<span class="level-badge level-${lesson.level}">${lesson.level[0].toUpperCase()}</span>`;
+                btn.innerHTML = `${index + 1}${levelBadge}`;
+                
+                if (userData.completed.includes(index)) {
+                    btn.classList.add('completed');
+                    btn.innerHTML += ' ✓';
+                }
+                
+                // All lessons unlocked - no restrictions
+                
+                btn.onclick = () => startLesson(index);
+                menu.appendChild(btn);
+            });
+        }
+
+        function updateOverallProgress() {
+            const percent = Math.round((userData.completed.length / lessons.length) * 100);
+            const bar = document.getElementById('overallProgress');
+            bar.style.width = percent + '%';
+            bar.textContent = percent + '% Complete';
+        }
+
+        function startLesson(index) {
+            currentLesson = lessons[index];
+            currentLessonIndex = index;
+            
+            document.getElementById('menuScreen').classList.add('hidden');
+            document.getElementById('lessonScreen').classList.remove('hidden');
+            
+            document.getElementById('lessonTitle').textContent = currentLesson.title;
+            document.getElementById('illustration').textContent = currentLesson.illustration;
+            
+            const textDiv = document.getElementById('lessonText');
+            const words = currentLesson.text.split(' ');
+            textDiv.innerHTML = words.map(word => 
+                `<span class="word">${word}</span>`
+            ).join(' ');
+            
+            document.getElementById('wordPractice').classList.add('hidden');
+        }
+
+        function readAloud() {
+            const text = currentLesson.text;
+            const words = document.querySelectorAll('.word');
+            
+            words.forEach(w => w.classList.remove('highlight'));
+            speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.7;
+            utterance.pitch = 1.2;
+            
+            const voices = speechSynthesis.getVoices();
+            const femaleVoice = voices.find(voice => 
+                voice.name.toLowerCase().includes('female') ||
+                voice.name.toLowerCase().includes('samantha') ||
+                voice.name.toLowerCase().includes('zira') ||
+                voice.name.toLowerCase().includes('susan')
+            );
+            
+            if (femaleVoice) {
+                utterance.voice = femaleVoice;
+            }
+            
+            let currentWordIndex = 0;
+            
+            if (words[0]) {
+                words[0].classList.add('highlight');
+            }
+            
+            utterance.onboundary = (event) => {
+                if (event.name === 'word') {
+                    words.forEach(w => w.classList.remove('highlight'));
+                    if (currentWordIndex < words.length) {
+                        words[currentWordIndex].classList.add('highlight');
+                        currentWordIndex++;
+                    }
+                }
+            };
+            
+            utterance.onend = () => {
+                words.forEach(w => w.classList.remove('highlight'));
+            };
+            
+            speechSynthesis.speak(utterance);
+        }
+
+        function showWordPractice() {
+            document.getElementById('wordPractice').classList.remove('hidden');
+            
+            const wordList = document.getElementById('wordList');
+            wordList.innerHTML = '';
+            
+            currentLesson.words.forEach(word => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.textContent = word;
+                card.onclick = () => {
+                    const utterance = new SpeechSynthesisUtterance(word);
+                    utterance.pitch = 1.2;
+                    speechSynthesis.speak(utterance);
+                };
+                wordList.appendChild(card);
+            });
+        }
+
+        function hideWordPractice() {
+            document.getElementById('wordPractice').classList.add('hidden');
+        }
+
+        function completeLesson() {
+            if (!userData.completed.includes(currentLessonIndex)) {
+                userData.completed.push(currentLessonIndex);
+                userData.currentLesson = Math.max(userData.currentLesson, currentLessonIndex + 1);
+                localStorage.setItem('mcguffeysProgress', JSON.stringify(userData));
+            }
+            
+            if (userData.completed.length === lessons.length) {
+                alert('🎉 Congratulations! You completed McGuffey\'s First Reader!\n\nYou are now ready for the Second Reader!');
+            }
+            
+            backToMenu();
+        }
+
+        function backToMenu() {
+            document.getElementById('menuScreen').classList.remove('hidden');
+            document.getElementById('lessonScreen').classList.add('hidden');
+            renderLessonMenu();
+            updateOverallProgress();
+        }
+
+        init();
+    </script>
+</body>
+</html>
