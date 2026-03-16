@@ -1471,7 +1471,7 @@ function advancePacman() {
 function handleLetter(letter) {
     if (!wordInProgress) return;
     if (currentLetterIndex >= currentWord.length) return;
-    if (letterStates[currentLetterIndex] === 'correct' || letterStates[currentLetterIndex] === 'hint') return;
+    if (letterStates[currentLetterIndex] === 'correct') return;
 
     const box = document.getElementById(`box-${currentLetterIndex}`);
     const correct = currentWord[currentLetterIndex];
