@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wade Classical — Attendance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cream:        #faf6ef;
+            --cream-dark:   #f0e9dc;
+            --cream-deeper: #e2d5c3;
+            --ink:          #2c2416;
+            --ink-mid:      #5a4e3a;
+            --ink-light:    #9a8c78;
+            --sage:         #7a9a7e;
+            --sage-light:   #a8c4aa;
+            --sage-pale:    #e8f0e8;
+            --rose:         #c4878a;
+            --rose-light:   #dba8aa;
+            --rose-pale:    #f5e8e8;
+            --gold:         #b8974a;
+            --gold-light:   #d4b870;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Cormorant Garamond',serif; background:var(--cream); color:var(--ink); min-height:100vh; }
+
+        .botanical-corner { position:fixed; pointer-events:none; z-index:0; opacity:0.15; }
+        .botanical-corner.tl { top:0; left:0; }
+        .botanical-corner.tr { top:0; right:0; transform:scaleX(-1); }
+        .botanical-corner.bl { bottom:0; left:0; transform:scaleY(-1); }
+        .botanical-corner.br { bottom:0; right:0; transform:scale(-1); }
+
+        header { text-align:center; padding:44px 20px 28px; position:relative; z-index:1; }
+        .header-ornament { font-size:1.2em; color:var(--sage); letter-spacing:0.5em; margin-bottom:12px; opacity:0.7; }
+        .header-title { font-family:'Cinzel',serif; font-size:clamp(1.4em,3.5vw,2.2em); color:var(--ink); letter-spacing:0.12em; font-weight:400; margin-bottom:6px; }
+        .header-sub { font-family:'Jost',sans-serif; font-size:0.68em; letter-spacing:0.28em; text-transform:uppercase; color:var(--ink-light); font-weight:300; margin-bottom:28px; }
+
+        .progress-banner { max-width:520px; margin:0 auto 36px; background:white; border:1px solid var(--cream-deeper); border-radius:6px; padding:20px 28px; box-shadow:0 2px 16px rgba(44,36,22,0.07); position:relative; z-index:1; }
+        .progress-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px; }
+        .progress-label { font-family:'Jost',sans-serif; font-size:0.62em; letter-spacing:0.2em; text-transform:uppercase; color:var(--ink-light); font-weight:400; }
+        .progress-count { font-family:'Cormorant Garamond',serif; font-size:1.5em; color:var(--ink); font-weight:600; }
+        .progress-count span { font-size:0.65em; color:var(--ink-light); font-weight:300; }
+        .progress-bar-track { height:6px; background:var(--cream-dark); border-radius:10px; overflow:hidden; margin-bottom:10px; }
+        .progress-bar-fill { height:100%; background:linear-gradient(90deg,var(--sage-light),var(--sage)); border-radius:10px; transition:width 0.5s ease; }
+        .progress-notes { display:flex; justify-content:space-between; font-family:'Jost',sans-serif; font-size:0.58em; color:var(--ink-light); font-weight:300; letter-spacing:0.08em; }
+        .progress-note-mid { color:var(--sage); font-weight:400; }
+
+        .year-controls { display:flex; justify-content:center; align-items:center; gap:20px; margin-bottom:32px; position:relative; z-index:1; }
+        .year-btn { font-family:'Cormorant Garamond',serif; font-size:1.3em; color:var(--ink-mid); background:none; border:none; cursor:pointer; padding:4px 12px; opacity:0.5; transition:opacity 0.2s; }
+        .year-btn:hover { opacity:1; }
+        .year-label { font-family:'Cinzel',serif; font-size:1.1em; color:var(--ink); letter-spacing:0.15em; }
+
+        .legend { display:flex; justify-content:center; gap:24px; margin-bottom:28px; position:relative; z-index:1; flex-wrap:wrap; }
+        .legend-item { display:flex; align-items:center; gap:7px; font-family:'Jost',sans-serif; font-size:0.62em; color:var(--ink-light); letter-spacing:0.08em; font-weight:300; }
+        .legend-dot { width:14px; height:14px; border-radius:50%; }
+        .legend-dot.school { background:var(--sage); }
+        .legend-dot.today { background:white; outline:1.5px solid var(--gold); outline-offset:1px; }
+
+        .calendar-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; max-width:1100px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
+
+        .month-card { background:white; border:1px solid var(--cream-deeper); border-radius:6px; padding:18px; box-shadow:0 2px 12px rgba(44,36,22,0.05); transition:box-shadow 0.2s; animation:fadeUp 0.5s ease both; }
+        .month-card:hover { box-shadow:0 4px 20px rgba(44,36,22,0.1); }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+        .month-card:nth-child(1){animation-delay:0.03s} .month-card:nth-child(2){animation-delay:0.06s} .month-card:nth-child(3){animation-delay:0.09s}
+        .month-card:nth-child(4){animation-delay:0.12s} .month-card:nth-child(5){animation-delay:0.15s} .month-card:nth-child(6){animation-delay:0.18s}
+        .month-card:nth-child(7){animation-delay:0.21s} .month-card:nth-child(8){animation-delay:0.24s} .month-card:nth-child(9){animation-delay:0.27s}
+        .month-card:nth-child(10){animation-delay:0.30s} .month-card:nth-child(11){animation-delay:0.33s} .month-card:nth-child(12){animation-delay:0.36s}
+
+        .month-header { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid var(--cream-dark); }
+        .month-name { font-family:'Cinzel',serif; font-size:0.85em; letter-spacing:0.12em; color:var(--ink); font-weight:400; }
+        .month-count { font-family:'Jost',sans-serif; font-size:0.58em; color:var(--sage); letter-spacing:0.1em; font-weight:400; }
+
+        .dow-row { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:4px; }
+        .dow { text-align:center; font-family:'Jost',sans-serif; font-size:0.5em; letter-spacing:0.08em; color:var(--ink-light); font-weight:400; padding:2px 0; text-transform:uppercase; }
+
+        .days-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+        .day-cell { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-family:'Jost',sans-serif; font-size:0.65em; font-weight:400; border-radius:50%; cursor:pointer; transition:all 0.15s; color:var(--ink); user-select:none; }
+        .day-cell:hover:not(.empty):not(.future) { background:var(--sage-pale); color:var(--sage); }
+        .day-cell.empty { cursor:default; }
+        .day-cell.future { color:var(--cream-deeper); cursor:default; }
+        .day-cell.school { background:var(--sage); color:white; font-weight:500; }
+        .day-cell.school:hover { background:var(--rose); color:white; }
+        .day-cell.today { outline:1.5px solid var(--gold); outline-offset:1px; }
+        .day-cell.today:not(.school) { color:var(--gold); font-weight:500; }
+        .day-cell.holiday:not(.school) { color:var(--ink-light); font-weight:300; }
+        .day-cell.holiday:not(.school):hover { background:var(--rose-pale); color:var(--rose); }
+        .day-cell.holiday.school { background:var(--sage); }
+        .day-cell.holiday::after { content:''; position:absolute; bottom:2px; left:50%; transform:translateX(-50%); width:3px; height:3px; border-radius:50%; background:var(--rose-light); }
+        .day-cell.holiday.school::after { background:rgba(255,255,255,0.6); }
+
+        .print-bar { position:fixed; bottom:24px; right:24px; z-index:10; display:flex; gap:10px; }
+        .fab { font-family:'Jost',sans-serif; font-size:0.68em; letter-spacing:0.12em; text-transform:uppercase; font-weight:500; padding:12px 22px; border-radius:30px; border:none; cursor:pointer; transition:all 0.2s; box-shadow:0 4px 16px rgba(44,36,22,0.15); }
+        .fab-print { background:var(--sage); color:white; }
+        .fab-print:hover { background:var(--ink); transform:translateY(-2px); box-shadow:0 6px 20px rgba(44,36,22,0.2); }
+        .fab-clear { background:white; color:var(--ink-mid); border:1px solid var(--cream-deeper); }
+        .fab-clear:hover { border-color:var(--rose); color:var(--rose); transform:translateY(-2px); }
+
+        @media print {
+            * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+            .botanical-corner,.print-bar,.year-controls,.legend { display:none !important; }
+            body { background:white !important; }
+            header { padding:16px 20px 12px !important; }
+            .progress-banner { box-shadow:none !important; margin-bottom:16px !important; }
+            .calendar-grid { gap:10px !important; padding:0 12px 16px !important; }
+            .month-card { box-shadow:none !important; page-break-inside:avoid; }
+        }
+        @media (max-width:900px) { .calendar-grid { grid-template-columns:repeat(2,1fr); } }
+        @media (max-width:560px) { .calendar-grid { grid-template-columns:1fr; padding:0 16px 60px; } }
+    </style>
+</head>
+<body>
+
+<!-- BOTANICAL CORNERS -->
+<svg class="botanical-corner tl" width="200" height="200" viewBox="0 0 200 200" fill="none">
+    <path d="M8 185 Q28 128 75 92 Q115 58 155 15" stroke="#7a9a7e" stroke-width="1.5" fill="none"/>
+    <path d="M75 92 Q55 72 36 82 Q22 90 27 107" stroke="#7a9a7e" stroke-width="1" fill="none"/>
+    <ellipse cx="38" cy="100" rx="14" ry="8" fill="#a8c4aa" opacity="0.6" transform="rotate(-30 38 100)"/>
+    <path d="M108 63 Q88 48 73 58 Q60 66 66 81" stroke="#7a9a7e" stroke-width="1" fill="none"/>
+    <ellipse cx="70" cy="75" rx="12" ry="7" fill="#a8c4aa" opacity="0.55" transform="rotate(-45 70 75)"/>
+    <path d="M138 33 Q122 20 112 30 Q103 40 110 52" stroke="#7a9a7e" stroke-width="1" fill="none"/>
+    <ellipse cx="113" cy="46" rx="10" ry="6" fill="#c4878a" opacity="0.4" transform="rotate(-20 113 46)"/>
+    <circle cx="46" cy="158" r="5" fill="#dba8aa" opacity="0.5"/>
+    <circle cx="39" cy="152" r="3.5" fill="#dba8aa" opacity="0.45"/>
+    <circle cx="53" cy="152" r="3.5" fill="#dba8aa" opacity="0.45"/>
+    <circle cx="46" cy="165" r="3.5" fill="#dba8aa" opacity="0.45"/>
+    <circle cx="46" cy="158" r="3" fill="#faf6ef" opacity="0.8"/>
+    <circle cx="22" cy="148" r="2" fill="#b8974a" opacity="0.35"/>
+    <circle cx="32" cy="133" r="1.5" fill="#b8974a" opacity="0.3"/>
+</svg>
+<svg class="botanical-corner tr" width="200" height="200" viewBox="0 0 200 200" fill="none">
+    <path d="M8 185 Q28 128 75 92 Q115 58 155 15" stroke="#7a9a7e" stroke-width="1.5" fill="none"/>
+    <path d="M75 92 Q55 72 36 82 Q22 90 27 107" stroke="#7a9a7e" stroke-width="1" fill="none"/>
+    <ellipse cx="38" cy="100" rx="14" ry="8" fill="#a8c4aa" opacity="0.6" transform="rotate(-30 38 100)"/>
+    <path d="M108 63 Q88 48 73 58 Q60 66 66 81" stroke="#7a9a7e" stroke-width="1" fill="none"/>
+    <ellipse cx="70" cy="75" rx="12" ry="7" fill="#a8c4aa" opacity="0.55" transform="rotate(-45 70 75)"/>
+    <ellipse cx="113" cy="46" rx="10" ry="6" fill="#dba8aa" opacity="0.4" transform="rotate(-20 113 46)"/>
+    <circle cx="46" cy="158" r="5" fill="#dba8aa" opacity="0.5"/>
+    <circle cx="39" cy="152" r="3.5" fill="#dba8aa" opacity="0.45"/>
+    <circle cx="53" cy="152" r="3.5" fill="#dba8aa" opacity="0.45"/>
+    <circle cx="46" cy="165" r="3.5" fill="#dba8aa" opacity="0.45"/>
+    <circle cx="46" cy="158" r="3" fill="#faf6ef" opacity="0.8"/>
+</svg>
+
+<header>
+    <div class="header-ornament">✦ ❧ ✦</div>
+    <h1 class="header-title">Attendance Calendar</h1>
+    <p class="header-sub">Wade Classical Homeschool · North Georgia</p>
+
+    <div class="progress-banner">
+        <div class="progress-top">
+            <span class="progress-label">School Days Completed</span>
+            <span class="progress-count" id="dayCount">0 <span>/ 180 days</span></span>
+        </div>
+        <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+        <div class="progress-notes">
+            <span id="progressNote">0 days remaining</span>
+            <span class="progress-note-mid" id="progressMid"></span>
+            <span id="progressPct">0%</span>
+        </div>
+    </div>
+
+    <div class="year-controls">
+        <button class="year-btn" onclick="changeYear(-1)">←</button>
+        <span class="year-label" id="yearLabel">2026</span>
+        <button class="year-btn" onclick="changeYear(1)">→</button>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-dot school"></div> School Day</div>
+        <div class="legend-item"><div class="legend-dot today"></div> Today</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--rose-pale); border:1.5px solid var(--rose-light);"></div> Federal Holiday</div>
+    </div>
+</header>
+
+<div class="calendar-grid" id="calendarGrid"></div>
+
+<div class="print-bar">
+    <button class="fab fab-clear" onclick="confirmClear()">✕ Clear Year</button>
+    <button class="fab fab-print" onclick="window.print()">🖨 Print</button>
+</div>
+
+<script>
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS_SHORT = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+let currentYear = new Date().getFullYear();
+const today = new Date();
+today.setHours(0,0,0,0);
+
+function storageKey(year) { return 'wc_attendance_' + year; }
+function loadData(year) { const s = localStorage.getItem(storageKey(year)); return s ? JSON.parse(s) : {}; }
+function saveData(year, data) { localStorage.setItem(storageKey(year), JSON.stringify(data)); }
+
+function render() {
+    const data = loadData(currentYear);
+    federalHolidays = getFederalHolidays(currentYear);
+    document.getElementById('yearLabel').textContent = currentYear;
+    renderProgress(data);
+    renderCalendar(data);
+}
+
+function renderProgress(data) {
+    const total = Object.values(data).filter(Boolean).length;
+    const pct = Math.min(100, Math.round((total / 180) * 100));
+    const remaining = Math.max(0, 180 - total);
+    document.getElementById('dayCount').innerHTML = total + ' <span>/ 180 days</span>';
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressPct').textContent = pct + '%';
+    document.getElementById('progressNote').textContent = remaining > 0 ? remaining + ' days remaining' : '🎉 Goal reached!';
+    const mid = document.getElementById('progressMid');
+    if (total >= 180) { mid.textContent = '✦ Complete ✦'; mid.style.color = 'var(--gold)'; }
+    else if (total >= 90) { mid.textContent = 'Halfway there!'; mid.style.color = 'var(--sage)'; }
+    else { mid.textContent = ''; }
+}
+
+function renderCalendar(data) {
+    const grid = document.getElementById('calendarGrid');
+    grid.innerHTML = '';
+    for (let m = 0; m < 12; m++) grid.appendChild(buildMonthCard(m, currentYear, data));
+}
+
+function buildMonthCard(monthIndex, year, data) {
+    const card = document.createElement('div');
+    card.className = 'month-card';
+    const firstDay = new Date(year, monthIndex, 1).getDay();
+    const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+
+    let monthCount = 0;
+    for (let d = 1; d <= daysInMonth; d++) {
+        const key = year + '-' + String(monthIndex+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+        if (data[key]) monthCount++;
+    }
+
+    card.innerHTML =
+        '<div class="month-header">' +
+            '<span class="month-name">' + MONTHS[monthIndex] + '</span>' +
+            '<span class="month-count">' + (monthCount > 0 ? monthCount + ' day' + (monthCount !== 1 ? 's' : '') : '') + '</span>' +
+        '</div>' +
+        '<div class="dow-row">' + DAYS_SHORT.map(d => '<div class="dow">' + d + '</div>').join('') + '</div>' +
+        '<div class="days-grid" id="mg-' + monthIndex + '"></div>';
+
+    const daysGrid = card.querySelector('#mg-' + monthIndex);
+
+    for (let i = 0; i < firstDay; i++) {
+        const e = document.createElement('div');
+        e.className = 'day-cell empty';
+        daysGrid.appendChild(e);
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+        const dateObj = new Date(year, monthIndex, d);
+        dateObj.setHours(0,0,0,0);
+        const key = year + '-' + String(monthIndex+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+        const isSchool  = !!data[key];
+        const isToday   = dateObj.getTime() === today.getTime();
+        const isFuture  = dateObj > today;
+        const isHoliday = !!federalHolidays[key];
+        const holidayName = federalHolidays[key] || '';
+
+        const cell = document.createElement('div');
+        cell.className = 'day-cell' + (isSchool ? ' school' : '') + (isToday ? ' today' : '') + (isFuture ? ' future' : '') + (isHoliday ? ' holiday' : '');
+        cell.textContent = d;
+        cell.title = MONTHS[monthIndex] + ' ' + d + ', ' + year + (holidayName ? ' — ' + holidayName : '');
+
+        if (!isFuture) cell.addEventListener('click', (function(k){ return function(){ toggleDay(k); }; })(key));
+        daysGrid.appendChild(cell);
+    }
+    return card;
+}
+
+function toggleDay(key) {
+    const data = loadData(currentYear);
+    if (data[key]) delete data[key]; else data[key] = true;
+    saveData(currentYear, data);
+    render();
+}
+
+function changeYear(delta) { currentYear += delta; render(); }
+
+function confirmClear() {
+    if (confirm('Clear all attendance data for ' + currentYear + '? This cannot be undone.')) {
+        localStorage.removeItem(storageKey(currentYear));
+        render();
+    }
+}
+
+// ══════════════════════════════════════════════
+// FEDERAL HOLIDAYS (computed per year)
+// ══════════════════════════════════════════════
+function getNthWeekday(year, month, weekday, n) {
+    // Get nth occurrence of weekday in month (1-indexed)
+    // weekday: 0=Sun,1=Mon,...,6=Sat
+    let count = 0;
+    for (let d = 1; d <= 31; d++) {
+        const date = new Date(year, month, d);
+        if (date.getMonth() !== month) break;
+        if (date.getDay() === weekday) {
+            count++;
+            if (count === n) return d;
+        }
+    }
+    return null;
+}
+
+function getLastWeekday(year, month, weekday) {
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    for (let d = daysInMonth; d >= 1; d--) {
+        if (new Date(year, month, d).getDay() === weekday) return d;
+    }
+    return null;
+}
+
+function getFederalHolidays(year) {
+    const holidays = {};
+    const add = (month, day, name) => {
+        const key = year + '-' + String(month+1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
+        holidays[key] = name;
+    };
+
+    // Fixed holidays (observed Mon if Sun, Fri if Sat)
+    const fixed = [
+        [0,  1,  "New Year's Day"],
+        [6,  4,  "Independence Day"],
+        [10, 11, "Veterans Day"],
+        [11, 25, "Christmas Day"],
+    ];
+    fixed.forEach(([m, d, name]) => {
+        const dow = new Date(year, m, d).getDay();
+        if (dow === 0) add(m, d + 1, name + ' (observed)');
+        else if (dow === 6) add(m, d - 1, name + ' (observed)');
+        else add(m, d, name);
+    });
+
+    // Floating holidays
+    add(0,  getNthWeekday(year, 0, 1, 3),  "MLK Jr. Day");           // 3rd Mon Jan
+    add(1,  getNthWeekday(year, 1, 1, 3),  "Presidents' Day");       // 3rd Mon Feb
+    add(4,  getLastWeekday(year, 4, 1),    "Memorial Day");           // Last Mon May
+    add(5,  getNthWeekday(year, 5, 1, 3) || 19, "Juneteenth");        // Jun 19 fixed
+    add(8,  getNthWeekday(year, 8, 1, 1),  "Labor Day");              // 1st Mon Sep
+    add(9,  getNthWeekday(year, 9, 1, 2),  "Columbus Day");           // 2nd Mon Oct
+    add(10, getNthWeekday(year, 10, 4, 4), "Thanksgiving");           // 4th Thu Nov
+
+    // Juneteenth fixed
+    const jd = new Date(year, 5, 19).getDay();
+    const jkey = year + '-06-19';
+    if (jd === 0) holidays[year + '-06-20'] = 'Juneteenth (observed)';
+    else if (jd === 6) holidays[year + '-06-18'] = 'Juneteenth (observed)';
+    else holidays[jkey] = 'Juneteenth';
+
+    return holidays;
+}
+
+let federalHolidays = {};
+
+render();
+</script>
+</body>
+</html>
