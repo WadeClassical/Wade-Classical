@@ -839,6 +839,11 @@
                 <span class="user-name">HADLEY</span>
                 <span class="user-grade">GRADE 1–2</span>
             </button>
+            <button class="user-btn" onclick="selectUser('guest')">
+                <span class="user-icon">👤</span>
+                <span class="user-name">GUEST</span>
+                <span class="user-grade">MIXED LEVEL</span>
+            </button>
             <button class="user-btn" onclick="selectUser('mom')">
                 <span class="user-icon">🦋</span>
                 <span class="user-name">MOM</span>
@@ -1380,7 +1385,8 @@ const WORD_LISTS = {
         'perspicacious','recalcitrant','surreptitious','tenacious','ubiquitous'
     ]
 };
-
+// Guest gets a mix of both lists
+WORD_LISTS.guest = [...new Set([...WORD_LISTS.hadley.slice(0,50), ...WORD_LISTS.ryder.slice(0,50)])];
 
 // ══════════════════════════════════════════════
 // STATE
