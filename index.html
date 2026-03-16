@@ -4,7 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wade Classical Homeschool</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Cinzel:wght@400;600;700&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --stone: #f2ede6;
+            --stone-dark: #e0d9ce;
+            --stone-deeper: #c8bfb0;
+            --parchment: #faf7f2;
+            --charcoal: #2a2a2a;
+            --charcoal-mid: #3d3d3d;
+            --charcoal-light: #5a5a5a;
+            --forest: #2d5a3d;
+            --forest-light: #3a7050;
+            --forest-pale: #e8f0eb;
+            --gold: #8a7340;
+            --gold-light: #b09a5a;
+            --white: #ffffff;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,236 +29,585 @@
         }
 
         body {
-            font-family: 'Arial Black', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Cormorant Garamond', serif;
+            background-color: var(--stone);
+            color: var(--charcoal);
             min-height: 100vh;
-            padding: 20px;
+            overflow-x: hidden;
         }
 
-        .container {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            border: 5px solid #2d3748;
+        /* ── NOISE TEXTURE OVERLAY ── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.5;
         }
 
-        .header {
+        /* ── HEADER ── */
+        header {
+            background-color: var(--charcoal);
+            position: relative;
+            overflow: hidden;
+            padding: 0;
+        }
+
+        .header-columns {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            padding: 0 40px;
+            opacity: 0.06;
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .column-decoration {
+            width: 60px;
+            border-left: 1px solid var(--stone);
+            border-right: 1px solid var(--stone);
+            flex-shrink: 0;
+        }
+
+        .header-inner {
+            position: relative;
+            z-index: 1;
             text-align: center;
-            margin-bottom: 50px;
-            padding-bottom: 30px;
-            border-bottom: 5px solid #2d3748;
+            padding: 60px 40px 50px;
         }
 
-        h1 {
-            color: #2d3748;
-            font-size: 3em;
-            text-shadow: 4px 4px 0px #cbd5e0;
-            margin-bottom: 15px;
+        .header-rule-top {
+            width: 180px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+            margin: 0 auto 24px;
         }
 
-        .tagline {
-            font-size: 1.5em;
-            color: #4a5568;
-            font-weight: bold;
+        .header-label {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.7em;
+            letter-spacing: 0.35em;
+            color: var(--gold-light);
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            font-weight: 300;
         }
 
-        .section {
-            margin: 40px 0;
-            padding: 30px;
-            background: #f7fafc;
-            border-radius: 15px;
-            border: 3px solid #2d3748;
+        .header-title {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2.2em, 5vw, 3.8em);
+            color: var(--stone);
+            letter-spacing: 0.06em;
+            font-weight: 600;
+            line-height: 1.1;
+            margin-bottom: 18px;
         }
 
-        .section h2 {
-            color: #2d3748;
-            font-size: 2em;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .tool-btn {
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-            color: white;
-            border: none;
-            padding: 25px 30px;
-            font-size: 1.2em;
-            border-radius: 15px;
-            cursor: pointer;
-            font-weight: bold;
-            border: 4px solid #2d3748;
-            box-shadow: 0 8px 0 #2d3748;
-            transition: all 0.1s;
-            text-decoration: none;
+        .header-divider {
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            min-height: 80px;
+            gap: 16px;
+            margin: 0 auto 18px;
+            width: fit-content;
+        }
+
+        .header-divider-line {
+            width: 60px;
+            height: 1px;
+            background: var(--stone-deeper);
+            opacity: 0.5;
+        }
+
+        .header-divider-ornament {
+            color: var(--gold-light);
+            font-size: 1.1em;
+            opacity: 0.8;
+        }
+
+        .header-tagline {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.25em;
+            color: var(--stone-deeper);
+            font-weight: 300;
+            letter-spacing: 0.02em;
+        }
+
+        .header-rule-bottom {
+            width: 180px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+            margin: 24px auto 0;
+        }
+
+        /* ── NAV BAR ── */
+        .nav-bar {
+            background: var(--forest);
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            border-bottom: 2px solid var(--forest-light);
+        }
+
+        .nav-item {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.72em;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.75);
+            padding: 14px 28px;
+            font-weight: 400;
+            border-right: 1px solid rgba(255,255,255,0.1);
+            transition: color 0.2s, background 0.2s;
+        }
+
+        .nav-item:first-child { border-left: 1px solid rgba(255,255,255,0.1); }
+
+        /* ── MAIN CONTENT ── */
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 50px 30px 80px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── SECTION ── */
+        .section {
+            margin-bottom: 52px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .section-header-line {
+            flex: 1;
+            height: 1px;
+            background: var(--stone-deeper);
+        }
+
+        .section-title-block {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .section-numeral {
+            font-family: 'Cinzel', serif;
+            font-size: 0.75em;
+            color: var(--forest);
+            letter-spacing: 0.1em;
+            font-weight: 600;
+            opacity: 0.7;
+        }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.15em;
+            color: var(--charcoal);
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+
+        .section-icon {
+            font-size: 1em;
+        }
+
+        /* ── TOOLS GRID ── */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 14px;
+        }
+
+        /* ── TOOL BUTTON ── */
+        .tool-btn {
+            background: var(--white);
+            color: var(--charcoal);
+            border: 1px solid var(--stone-deeper);
+            padding: 20px 24px;
+            font-size: 1em;
+            border-radius: 3px;
+            cursor: pointer;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 72px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+
+        .tool-btn::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--forest);
+            opacity: 0;
+            transition: opacity 0.2s;
         }
 
         .tool-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 11px 0 #2d3748;
+            border-color: var(--forest);
+            box-shadow: 0 4px 16px rgba(45,90,61,0.12);
+            transform: translateY(-1px);
+        }
+
+        .tool-btn:hover::before {
+            opacity: 1;
         }
 
         .tool-btn:active {
-            transform: translateY(6px);
-            box-shadow: 0 2px 0 #2d3748;
+            transform: translateY(0px);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
         }
 
-        .tool-btn.blue {
-            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+        .tool-btn-icon {
+            font-size: 1.5em;
+            flex-shrink: 0;
+            width: 32px;
+            text-align: center;
         }
 
-        .tool-btn.purple {
-            background: linear-gradient(135deg, #9f7aea 0%, #805ad5 100%);
+        .tool-btn-text {
+            flex: 1;
         }
 
-        .tool-btn.pink {
-            background: linear-gradient(135deg, #ed64a6 0%, #d53f8c 100%);
+        .tool-btn-name {
+            display: block;
+            font-size: 1.05em;
+            line-height: 1.3;
+            color: var(--charcoal);
         }
 
-        .tool-btn.orange {
-            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        .tool-btn-sub {
+            display: block;
+            font-family: 'Jost', sans-serif;
+            font-size: 0.68em;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--charcoal-light);
+            margin-top: 3px;
+            font-weight: 300;
         }
 
-        .tool-btn.teal {
-            background: linear-gradient(135deg, #38b2ac 0%, #319795 100%);
+        /* Color accents for left border */
+        .tool-btn.green::before  { background: var(--forest); }
+        .tool-btn.gold::before   { background: var(--gold); }
+        .tool-btn.stone::before  { background: var(--stone-deeper); }
+
+        /* ── COMING SOON ── */
+        .tool-btn.coming-soon {
+            background: var(--parchment);
+            cursor: default;
+            opacity: 0.7;
         }
 
-        .tool-btn.red {
-            background: linear-gradient(135deg, #fc8181 0%, #f56565 100%);
-        }
-
-        .coming-soon {
-            opacity: 0.6;
-            cursor: not-allowed;
-            position: relative;
-        }
-
-        .coming-soon::after {
-            content: "COMING SOON";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #2d3748;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 5px;
-            font-size: 0.7em;
-        }
-
-        .coming-soon:hover {
+        .tool-btn.coming-soon:hover {
             transform: none;
-            box-shadow: 0 8px 0 #2d3748;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            border-color: var(--stone-deeper);
         }
 
-        .emoji {
-            font-size: 1.3em;
-            margin-right: 10px;
+        .tool-btn.coming-soon::before {
+            opacity: 0 !important;
         }
 
-        @media (max-width: 768px) {
-            h1 { font-size: 2em; }
-            .tagline { font-size: 1.2em; }
-            .section h2 { font-size: 1.5em; }
-            .tool-btn { font-size: 1em; padding: 20px; }
+        .coming-soon-badge {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.58em;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--gold);
+            border: 1px solid var(--gold-light);
+            padding: 2px 7px;
+            border-radius: 2px;
+            flex-shrink: 0;
+            font-weight: 400;
+        }
+
+        /* ── MOM'S SECTION ── */
+        .section.moms .section-title { color: var(--gold); }
+        .section.moms .section-numeral { color: var(--gold); }
+
+        /* ── FOOTER ── */
+        footer {
+            background: var(--charcoal);
+            color: var(--stone-deeper);
+            text-align: center;
+            padding: 36px 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-rule {
+            width: 80px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+            margin: 0 auto 20px;
+        }
+
+        .footer-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1em;
+            letter-spacing: 0.15em;
+            color: var(--stone);
+            margin-bottom: 8px;
+        }
+
+        .footer-sub {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.75em;
+            letter-spacing: 0.12em;
+            font-weight: 300;
+            opacity: 0.6;
+        }
+
+        /* ── ANIMATIONS ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-inner { animation: fadeUp 0.7s ease both; }
+        .section { animation: fadeUp 0.6s ease both; }
+        .section:nth-child(1) { animation-delay: 0.1s; }
+        .section:nth-child(2) { animation-delay: 0.2s; }
+        .section:nth-child(3) { animation-delay: 0.3s; }
+        .section:nth-child(4) { animation-delay: 0.4s; }
+        .section:nth-child(5) { animation-delay: 0.5s; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 640px) {
+            .nav-bar { flex-wrap: wrap; }
+            .nav-item { padding: 10px 16px; font-size: 0.65em; }
+            main { padding: 36px 18px 60px; }
+            .tools-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🎓 WADE CLASSICAL 🎓</h1>
-            <p class="tagline">Classical Education, Modern Tools</p>
-        </div>
 
-        <!-- RYDER'S SECTION -->
+    <!-- HEADER -->
+    <header>
+        <div class="header-columns">
+            <div class="column-decoration"></div>
+            <div class="column-decoration"></div>
+            <div class="column-decoration"></div>
+            <div class="column-decoration"></div>
+            <div class="column-decoration"></div>
+            <div class="column-decoration"></div>
+            <div class="column-decoration"></div>
+        </div>
+        <div class="header-inner">
+            <div class="header-rule-top"></div>
+            <p class="header-label">Est. 2020 &nbsp;·&nbsp; North Georgia</p>
+            <h1 class="header-title">Wade Classical</h1>
+            <div class="header-divider">
+                <div class="header-divider-line"></div>
+                <span class="header-divider-ornament">✦</span>
+                <div class="header-divider-line"></div>
+            </div>
+            <p class="header-tagline">Classical Education, Modern Tools</p>
+            <div class="header-rule-bottom"></div>
+        </div>
+    </header>
+
+    <!-- NAV -->
+    <nav class="nav-bar">
+        <span class="nav-item">Ryder</span>
+        <span class="nav-item">Hadley</span>
+        <span class="nav-item">Guest</span>
+        <span class="nav-item">Mom</span>
+    </nav>
+
+    <!-- MAIN -->
+    <main>
+
+        <!-- RYDER -->
         <div class="section">
-            <h2>👦 RYDER'S TOOLS</h2>
+            <div class="section-header">
+                <div class="section-header-line"></div>
+                <div class="section-title-block">
+                    <span class="section-numeral">I.</span>
+                    <span class="section-icon">⚔️</span>
+                    <span class="section-title">Ryder's Tools</span>
+                </div>
+                <div class="section-header-line"></div>
+            </div>
             <div class="tools-grid">
-                <a href="wade-math-practice.html" class="tool-btn blue">
-                    <span class="emoji">✖️</span> Multiplication & Skip Counting
+                <a href="wade-math-practice.html" class="tool-btn green">
+                    <span class="tool-btn-icon">✖️</span>
+                    <span class="tool-btn-text">
+                        <span class="tool-btn-name">Multiplication & Skip Counting</span>
+                        <span class="tool-btn-sub">Math Practice</span>
+                    </span>
                 </a>
-                <div class="tool-btn purple coming-soon">
-                    <span class="emoji">🇯🇵</span> Japanese Learning
+                <div class="tool-btn coming-soon">
+                    <span class="tool-btn-icon">🇯🇵</span>
+                    <span class="tool-btn-text">
+                        <span class="tool-btn-name">Japanese Learning</span>
+                        <span class="tool-btn-sub">Hiragana · Vocabulary</span>
+                    </span>
+                    <span class="coming-soon-badge">Soon</span>
                 </div>
-                <div class="tool-btn teal coming-soon">
-                    <span class="emoji">✏️</span> Spelling Practice
+                <div class="tool-btn coming-soon">
+                    <span class="tool-btn-icon">✏️</span>
+                    <span class="tool-btn-text">
+                        <span class="tool-btn-name">Spelling Practice</span>
+                        <span class="tool-btn-sub">Typing Accommodated</span>
+                    </span>
+                    <span class="coming-soon-badge">Soon</span>
                 </div>
-                <div class="tool-btn orange coming-soon">
-                    <span class="emoji">📺</span> Video Library
+                <div class="tool-btn coming-soon">
+                    <span class="tool-btn-icon">📺</span>
+                    <span class="tool-btn-text">
+                        <span class="tool-btn-name">Video Library</span>
+                        <span class="tool-btn-sub">Curated Educational</span>
+                    </span>
+                    <span class="coming-soon-badge">Soon</span>
                 </div>
             </div>
         </div>
 
-        <!-- HADLEY'S SECTION -->
+        <!-- HADLEY -->
         <div class="section">
-            <h2>👧 HADLEY'S TOOLS</h2>
-            <div class="tools-grid">
-                <a href="wade-math-practice.html" class="tool-btn pink">
-                    <span class="emoji">✖️</span> Multiplication & Skip Counting
-                </a>
-                <a href="mcguffeys-authentic.html" class="tool-btn purple">
-                    <span class="emoji">📖</span> McGuffey's Reader
-                </a>
-                <div class="tool-btn teal coming-soon">
-                    <span class="emoji">🇫🇷</span> French + Fluffy
+            <div class="section-header">
+                <div class="section-header-line"></div>
+                <div class="section-title-block">
+                    <span class="section-numeral">II.</span>
+                    <span class="section-icon">🌷</span>
+                    <span class="section-title">Hadley's Tools</span>
                 </div>
-                <div class="tool-btn orange coming-soon">
-                    <span class="emoji">🎮</span> Math Games
+                <div class="section-header-line"></div>
+            </div>
+            <div class="tools-grid">
+                <a href="wade-math-practice.html" class="tool-btn green">
+                    <span class="tool-btn-icon">✖️</span>
+                    <span class="tool-btn-text">
+                        <span class="tool-btn-name">Multiplication & Skip Counting</span>
+                        <span class="tool-btn-sub">Math Practice</span>
+                    </span>
+                </a>
+                <a href="mcguffeys-authentic.html" class="tool-btn green">
+                    <span class="tool-btn-icon">📖</span>
+                    <span class="tool-btn-text">
+                        <span class="tool-btn-name">McGuffey's Reader</span>
+                        <span class="tool-btn-sub">Authentic Edition</span>
+                    </span>
+                </a>
+                <div class="tool-btn coming-soon">
+                    <span class="tool-btn-icon">🇫🇷</span>
+                    <span class="tool-btn-text">
+                        <span class="tool-btn-name">French + Fluffy</span>
+                        <span class="tool-btn-sub">Language · Pet Rewards</span>
+                    </span>
+                    <span class="coming-soon-badge">Soon</span>
+                </div>
+                <div class="tool-btn coming-soon">
+                    <span class="tool-btn-icon">🎮</span>
+                    <span class="tool-btn-text">
+                        <span class="tool-btn-name">Math Games</span>
+                        <span class="tool-btn-sub">Interactive Practice</span>
+                    </span>
+                    <span class="coming-soon-badge">Soon</span>
                 </div>
             </div>
         </div>
 
-        <!-- GUEST SECTION -->
+        <!-- GUEST -->
         <div class="section">
-            <h2>👤 GUEST / TRY IT OUT</h2>
-            <div class="tools-grid">
-                <a href="wade-math-practice.html" class="tool-btn">
-                    <span class="emoji">✖️</span> Multiplication & Skip Counting
+            <div class="section-header">
+                <div class="section-header-line"></div>
+                <div class="section-title-block">
+                    <span class="section-numeral">III.</span>
+                    <span class="section-icon">👤</span>
+                    <span class="section-title">Guest · Try It Out</span>
+                </div>
+                <div class="section-header-line"></div>
+            </div>
+            <div class="tools-grid" style="max-width: 280px;">
+                <a href="wade-math-practice.html" class="tool-btn green">
+                    <span class="tool-btn-icon">✖️</span>
+                    <span class="tool-btn-text">
+                        <span class="tool-btn-name">Multiplication & Skip Counting</span>
+                        <span class="tool-btn-sub">Math Practice</span>
+                    </span>
                 </a>
             </div>
         </div>
 
-        <!-- MOM'S SECTION (Optional - can remove if you don't want it visible) -->
-        <div class="section" style="background: #fef5e7; border-color: #d4af37;">
-            <h2>👩‍🏫 MOM'S TOOLS</h2>
+        <!-- MOM -->
+        <div class="section moms">
+            <div class="section-header">
+                <div class="section-header-line" style="background: var(--gold-light); opacity: 0.4;"></div>
+                <div class="section-title-block">
+                    <span class="section-numeral">IV.</span>
+                    <span class="section-icon">🦋</span>
+                    <span class="section-title">Mom's Tools</span>
+                </div>
+                <div class="section-header-line" style="background: var(--gold-light); opacity: 0.4;"></div>
+            </div>
             <div class="tools-grid">
-                <div class="tool-btn orange coming-soon">
-                    <span class="emoji">🧹</span> Cleaning Tracker
+                <div class="tool-btn coming-soon">
+                    <span class="tool-btn-icon">🧹</span>
+                    <span class="tool-btn-text">
+                        <span class="tool-btn-name">Cleaning Tracker</span>
+                        <span class="tool-btn-sub">Zones · Daily Tasks</span>
+                    </span>
+                    <span class="coming-soon-badge">Soon</span>
                 </div>
-                <div class="tool-btn blue coming-soon">
-                    <span class="emoji">📚</span> Reading Log
+                <div class="tool-btn coming-soon">
+                    <span class="tool-btn-icon">📚</span>
+                    <span class="tool-btn-text">
+                        <span class="tool-btn-name">Reading Log</span>
+                        <span class="tool-btn-sub">Book Tracking</span>
+                    </span>
+                    <span class="coming-soon-badge">Soon</span>
                 </div>
-                <div class="tool-btn purple coming-soon">
-                    <span class="emoji">📅</span> Attendance Calendar
+                <div class="tool-btn coming-soon">
+                    <span class="tool-btn-icon">📅</span>
+                    <span class="tool-btn-text">
+                        <span class="tool-btn-name">Attendance Calendar</span>
+                        <span class="tool-btn-sub">Portfolio · Georgia Req.</span>
+                    </span>
+                    <span class="coming-soon-badge">Soon</span>
                 </div>
-                <div class="tool-btn teal coming-soon">
-                    <span class="emoji">📖</span> Library Tracker
+                <div class="tool-btn coming-soon">
+                    <span class="tool-btn-icon">📖</span>
+                    <span class="tool-btn-text">
+                        <span class="tool-btn-name">Library Tracker</span>
+                        <span class="tool-btn-sub">PINES System</span>
+                    </span>
+                    <span class="coming-soon-badge">Soon</span>
                 </div>
             </div>
         </div>
 
-        <!-- FOOTER -->
-        <div style="text-align: center; margin-top: 40px; padding-top: 30px; border-top: 3px solid #2d3748;">
-            <p style="color: #4a5568; font-size: 1.1em;">
-                <strong>Wade Classical Homeschool</strong><br>
-                Building our custom curriculum, one tool at a time 🚀
-            </p>
-        </div>
-    </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-rule"></div>
+        <p class="footer-title">Wade Classical Homeschool</p>
+        <p class="footer-sub">Building our custom curriculum, one tool at a time</p>
+    </footer>
+
 </body>
 </html>
