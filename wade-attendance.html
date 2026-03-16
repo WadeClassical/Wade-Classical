@@ -75,15 +75,24 @@
         .dow { text-align:center; font-family:'Jost',sans-serif; font-size:0.5em; letter-spacing:0.08em; color:var(--ink-light); font-weight:400; padding:2px 0; text-transform:uppercase; }
 
         .days-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
-        .day-cell { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-family:'Jost',sans-serif; font-size:0.65em; font-weight:400; border-radius:50%; cursor:pointer; transition:all 0.15s; color:var(--ink); user-select:none; }
+        .day-cell { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-family:'Jost',sans-serif; font-size:0.65em; font-weight:400; border-radius:50%; cursor:pointer; transition:all 0.15s; color:var(--sage); user-select:none; }
         .day-cell:hover:not(.empty):not(.future) { background:var(--sage-pale); color:var(--sage); }
         .day-cell.empty { cursor:default; }
         .day-cell.future { color:var(--cream-deeper); cursor:default; }
-        .day-cell.school { background:var(--sage); color:white; font-weight:500; }
-        .day-cell.school:hover { background:var(--rose); color:white; }
+        .day-cell.school { color:white; font-weight:500; }
+        .day-cell.school:hover { filter:brightness(0.88); }
+        /* School year color palette */
+        .day-cell.sy-0 { background:#7a9a7e; } /* sage */
+        .day-cell.sy-1 { background:#8a6a9a; } /* dusty purple */
+        .day-cell.sy-2 { background:#9a7a5a; } /* warm amber */
+        .day-cell.sy-3 { background:#5a8a9a; } /* slate blue */
+        .day-cell.sy-4 { background:#9a6a7a; } /* dusty mauve */
+        .day-cell.sy-5 { background:#6a8a6a; } /* deep sage */
+        .day-cell.sy-6 { background:#7a6a9a; } /* lavender */
+        .day-cell.sy-7 { background:#9a8a5a; } /* golden olive */
         .day-cell.today { outline:1.5px solid var(--gold); outline-offset:1px; }
         .day-cell.today:not(.school) { color:var(--gold); font-weight:500; }
-        .day-cell.holiday:not(.school) { color:var(--ink-light); font-weight:300; }
+        .day-cell.holiday:not(.school) { color:var(--sage-light); font-weight:300; }
         .day-cell.holiday:not(.school):hover { background:var(--rose-pale); color:var(--rose); }
         .day-cell.holiday.school { background:var(--sage); }
         .day-cell.holiday::after { content:''; position:absolute; bottom:2px; left:50%; transform:translateX(-50%); width:3px; height:3px; border-radius:50%; background:var(--rose-light); }
@@ -164,7 +173,7 @@
 
     <div class="year-controls">
         <button class="year-btn" onclick="changeYear(-1)">←</button>
-        <span class="year-label" id="yearLabel">2026</span>
+        <span class="year-label" id="yearLabel">2025–2026</span>
         <button class="year-btn" onclick="changeYear(1)">→</button>
     </div>
 
@@ -186,23 +195,69 @@
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const DAYS_SHORT = ['Su','Mo','Tu','We','Th','Fr','Sa'];
 
-let currentYear = new Date().getFullYear();
+// School year = Sep(startYear) through Aug(startYear+1)
+// "2025-2026" means Sep 2025 - Aug 2026, startYear=2025
 const today = new Date();
 today.setHours(0,0,0,0);
 
-function storageKey(year) { return 'wc_attendance_' + year; }
-function loadData(year) { const s = localStorage.getItem(storageKey(year)); return s ? JSON.parse(s) : {}; }
-function saveData(year, data) { localStorage.setItem(storageKey(year), JSON.stringify(data)); }
-
-function render() {
-    const data = loadData(currentYear);
-    federalHolidays = getFederalHolidays(currentYear);
-    document.getElementById('yearLabel').textContent = currentYear;
-    renderProgress(data);
-    renderCalendar(data);
+// Determine current school year start based on today
+function currentSchoolYearStart() {
+    const m = today.getMonth(); // 0=Jan
+    return m >= 8 ? today.getFullYear() : today.getFullYear() - 1;
 }
 
-function renderProgress(data) {
+let syStart = currentSchoolYearStart(); // e.g. 2025
+
+// Storage key per school year
+function storageKey(sy) { return 'wc_attendance_sy_' + sy; }
+function loadData(sy) { const s = localStorage.getItem(storageKey(sy)); return s ? JSON.parse(s) : {}; }
+function saveData(sy, data) { localStorage.setItem(storageKey(sy), JSON.stringify(data)); }
+
+// School year color index (stable per syStart)
+function syColorIndex(sy) { return ((sy - 2020) % 8 + 8) % 8; }
+
+// Get the key for the school year a given date belongs to
+function schoolYearOf(dateStr) {
+    // dateStr = "YYYY-MM-DD"
+    const [y, m] = dateStr.split('-').map(Number);
+    return m >= 9 ? y : y - 1; // Sep=9 onward = that year
+}
+
+// Get most recently clicked school year from ALL stored data (for progress display)
+function getMostRecentSchoolYear() {
+    // Check all stored school years, return the one with the latest marked date
+    let latest = null;
+    let latestSy = syStart;
+    for (let sy = 2020; sy <= 2040; sy++) {
+        const data = loadData(sy);
+        const keys = Object.keys(data).filter(k => data[k]);
+        keys.forEach(k => {
+            if (!latest || k > latest) { latest = k; latestSy = sy; }
+        });
+    }
+    return latestSy;
+}
+
+// The 12 months of a school year: Sep year through Aug year+1
+function schoolYearMonths(sy) {
+    const months = [];
+    for (let m = 8; m <= 11; m++) months.push({ year: sy,   month: m });
+    for (let m = 0; m <= 7;  m++) months.push({ year: sy+1, month: m });
+    return months;
+}
+
+function render() {
+    const data = loadData(syStart);
+    const colorIdx = syColorIndex(syStart);
+    federalHolidays = Object.assign({}, getFederalHolidays(syStart), getFederalHolidays(syStart + 1));
+
+    document.getElementById('yearLabel').textContent = syStart + '–' + (syStart + 1);
+    renderProgress(syStart);
+    renderCalendar(syStart, data, colorIdx);
+}
+
+function renderProgress(sy) {
+    const data = loadData(sy);
     const total = Object.values(data).filter(Boolean).length;
     const pct = Math.min(100, Math.round((total / 180) * 100));
     const remaining = Math.max(0, 180 - total);
@@ -216,13 +271,16 @@ function renderProgress(data) {
     else { mid.textContent = ''; }
 }
 
-function renderCalendar(data) {
+function renderCalendar(sy, data, colorIdx) {
     const grid = document.getElementById('calendarGrid');
     grid.innerHTML = '';
-    for (let m = 0; m < 12; m++) grid.appendChild(buildMonthCard(m, currentYear, data));
+    const months = schoolYearMonths(sy);
+    months.forEach(({ year, month }) => {
+        grid.appendChild(buildMonthCard(month, year, data, colorIdx));
+    });
 }
 
-function buildMonthCard(monthIndex, year, data) {
+function buildMonthCard(monthIndex, year, data, colorIdx) {
     const card = document.createElement('div');
     card.className = 'month-card';
     const firstDay = new Date(year, monthIndex, 1).getDay();
@@ -234,15 +292,18 @@ function buildMonthCard(monthIndex, year, data) {
         if (data[key]) monthCount++;
     }
 
+    // Month label shows year if it's January (to clarify year change)
+    const monthLabel = MONTHS[monthIndex] + (monthIndex === 0 ? ' ' + year : '');
+
     card.innerHTML =
         '<div class="month-header">' +
-            '<span class="month-name">' + MONTHS[monthIndex] + '</span>' +
+            '<span class="month-name">' + monthLabel + '</span>' +
             '<span class="month-count">' + (monthCount > 0 ? monthCount + ' day' + (monthCount !== 1 ? 's' : '') : '') + '</span>' +
         '</div>' +
         '<div class="dow-row">' + DAYS_SHORT.map(d => '<div class="dow">' + d + '</div>').join('') + '</div>' +
-        '<div class="days-grid" id="mg-' + monthIndex + '"></div>';
+        '<div class="days-grid" id="mg-' + monthIndex + '-' + year + '"></div>';
 
-    const daysGrid = card.querySelector('#mg-' + monthIndex);
+    const daysGrid = card.querySelector('#mg-' + monthIndex + '-' + year);
 
     for (let i = 0; i < firstDay; i++) {
         const e = document.createElement('div');
@@ -261,7 +322,11 @@ function buildMonthCard(monthIndex, year, data) {
         const holidayName = federalHolidays[key] || '';
 
         const cell = document.createElement('div');
-        cell.className = 'day-cell' + (isSchool ? ' school' : '') + (isToday ? ' today' : '') + (isFuture ? ' future' : '') + (isHoliday ? ' holiday' : '');
+        cell.className = 'day-cell' +
+            (isSchool  ? ' school sy-' + colorIdx : '') +
+            (isToday   ? ' today'   : '') +
+            (isFuture  ? ' future'  : '') +
+            (isHoliday ? ' holiday' : '');
         cell.textContent = d;
         cell.title = MONTHS[monthIndex] + ' ' + d + ', ' + year + (holidayName ? ' — ' + holidayName : '');
 
@@ -272,85 +337,70 @@ function buildMonthCard(monthIndex, year, data) {
 }
 
 function toggleDay(key) {
-    const data = loadData(currentYear);
+    // Always save to the school year this date belongs to
+    const sy = schoolYearOf(key);
+    const data = loadData(sy);
     if (data[key]) delete data[key]; else data[key] = true;
-    saveData(currentYear, data);
+    saveData(sy, data);
+    // If toggling in currently viewed year, re-render
     render();
 }
 
-function changeYear(delta) { currentYear += delta; render(); }
+function changeYear(delta) { syStart += delta; render(); }
 
 function confirmClear() {
-    if (confirm('Clear all attendance data for ' + currentYear + '? This cannot be undone.')) {
-        localStorage.removeItem(storageKey(currentYear));
+    if (confirm('Clear all attendance data for ' + syStart + '–' + (syStart+1) + '? This cannot be undone.')) {
+        localStorage.removeItem(storageKey(syStart));
         render();
     }
 }
 
-// ══════════════════════════════════════════════
-// FEDERAL HOLIDAYS (computed per year)
-// ══════════════════════════════════════════════
+// ── FEDERAL HOLIDAYS ──
 function getNthWeekday(year, month, weekday, n) {
-    // Get nth occurrence of weekday in month (1-indexed)
-    // weekday: 0=Sun,1=Mon,...,6=Sat
     let count = 0;
     for (let d = 1; d <= 31; d++) {
         const date = new Date(year, month, d);
         if (date.getMonth() !== month) break;
-        if (date.getDay() === weekday) {
-            count++;
-            if (count === n) return d;
-        }
+        if (date.getDay() === weekday) { count++; if (count === n) return d; }
     }
     return null;
 }
-
 function getLastWeekday(year, month, weekday) {
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    for (let d = daysInMonth; d >= 1; d--) {
-        if (new Date(year, month, d).getDay() === weekday) return d;
-    }
+    const dim = new Date(year, month + 1, 0).getDate();
+    for (let d = dim; d >= 1; d--) { if (new Date(year, month, d).getDay() === weekday) return d; }
     return null;
 }
-
 function getFederalHolidays(year) {
-    const holidays = {};
+    const h = {};
     const add = (month, day, name) => {
+        if (!day) return;
         const key = year + '-' + String(month+1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
-        holidays[key] = name;
+        h[key] = name;
     };
-
-    // Fixed holidays (observed Mon if Sun, Fri if Sat)
-    const fixed = [
-        [0,  1,  "New Year's Day"],
-        [6,  4,  "Independence Day"],
-        [10, 11, "Veterans Day"],
-        [11, 25, "Christmas Day"],
-    ];
-    fixed.forEach(([m, d, name]) => {
-        const dow = new Date(year, m, d).getDay();
-        if (dow === 0) add(m, d + 1, name + ' (observed)');
-        else if (dow === 6) add(m, d - 1, name + ' (observed)');
-        else add(m, d, name);
+    const fixed = [[0,1,"New Year's Day"],[6,4,"Independence Day"],[10,11,"Veterans Day"],[11,25,"Christmas Day"]];
+    fixed.forEach(([m,d,name]) => {
+        const dow = new Date(year,m,d).getDay();
+        if (dow===0) add(m,d+1,name+' (observed)');
+        else if (dow===6) add(m,d-1,name+' (observed)');
+        else add(m,d,name);
     });
+    add(0, getNthWeekday(year,0,1,3), "MLK Jr. Day");
+    add(1, getNthWeekday(year,1,1,3), "Presidents' Day");
+    add(4, getLastWeekday(year,4,1),  "Memorial Day");
+    add(8, getNthWeekday(year,8,1,1), "Labor Day");
+    add(9, getNthWeekday(year,9,1,2), "Columbus Day");
+    add(10,getNthWeekday(year,10,4,4),"Thanksgiving");
+    const jd = new Date(year,5,19).getDay();
+    if (jd===0) add(5,20,"Juneteenth (observed)");
+    else if (jd===6) add(5,18,"Juneteenth (observed)");
+    else add(5,19,"Juneteenth");
+    return h;
+}
 
-    // Floating holidays
-    add(0,  getNthWeekday(year, 0, 1, 3),  "MLK Jr. Day");           // 3rd Mon Jan
-    add(1,  getNthWeekday(year, 1, 1, 3),  "Presidents' Day");       // 3rd Mon Feb
-    add(4,  getLastWeekday(year, 4, 1),    "Memorial Day");           // Last Mon May
-    add(5,  getNthWeekday(year, 5, 1, 3) || 19, "Juneteenth");        // Jun 19 fixed
-    add(8,  getNthWeekday(year, 8, 1, 1),  "Labor Day");              // 1st Mon Sep
-    add(9,  getNthWeekday(year, 9, 1, 2),  "Columbus Day");           // 2nd Mon Oct
-    add(10, getNthWeekday(year, 10, 4, 4), "Thanksgiving");           // 4th Thu Nov
-
-    // Juneteenth fixed
-    const jd = new Date(year, 5, 19).getDay();
-    const jkey = year + '-06-19';
-    if (jd === 0) holidays[year + '-06-20'] = 'Juneteenth (observed)';
-    else if (jd === 6) holidays[year + '-06-18'] = 'Juneteenth (observed)';
-    else holidays[jkey] = 'Juneteenth';
-
-    return holidays;
+// Merge two holiday objects
+getFederalHolidays.prototype = {};
+function mergeFederalHolidays(y1, y2) {
+    return Object.assign({}, getFederalHolidays(y1), getFederalHolidays(y2));
 }
 
 let federalHolidays = {};
