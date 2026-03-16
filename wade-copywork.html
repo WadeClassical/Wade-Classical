@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wade Classical Copywork</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --stone: #f2ede6;
+            --parchment: #faf7f2;
+            --charcoal: #2a2a2a;
+            --charcoal-light: #5a5a5a;
+            --forest: #2d5a3d;
+            --forest-light: #3a7050;
+            --gold: #8a7340;
+            --gold-light: #b09a5a;
+            --stone-deeper: #c8bfb0;
+            --hadley-pink: #d4829a;
+            --hadley-pink-pale: #fdf0f4;
+            --ryder-blue: #3a6b9e;
+            --ryder-blue-pale: #eef4fb;
+            --ryder-baseline: #fff3b0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: var(--stone);
+            min-height: 100vh;
+            color: var(--charcoal);
+        }
+
+        /* ── HEADER ── */
+        header {
+            background: var(--charcoal);
+            text-align: center;
+            padding: 32px 20px 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-columns {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            opacity: 0.05;
+            pointer-events: none;
+        }
+
+        .col-dec { width: 60px; border-left: 1px solid white; border-right: 1px solid white; }
+
+        .header-rule {
+            width: 140px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+            margin: 0 auto 14px;
+        }
+
+        .header-title {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.6em, 4vw, 2.6em);
+            color: var(--stone);
+            letter-spacing: 0.08em;
+            margin-bottom: 8px;
+        }
+
+        .header-sub {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.72em;
+            letter-spacing: 0.25em;
+            color: var(--gold-light);
+            text-transform: uppercase;
+        }
+
+        /* ── NAV ── */
+        .nav {
+            background: var(--forest);
+            display: flex;
+            justify-content: center;
+            border-bottom: 2px solid var(--forest-light);
+        }
+
+        .nav-btn {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.72em;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.65);
+            padding: 13px 32px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-right: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.2s;
+            font-weight: 400;
+        }
+
+        .nav-btn:first-child { border-left: 1px solid rgba(255,255,255,0.1); }
+
+        .nav-btn.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav-btn:hover { color: white; background: rgba(255,255,255,0.07); }
+
+        /* ── MAIN ── */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 36px 24px 60px;
+        }
+
+        /* ── USER PANEL ── */
+        .user-panel { display: none; }
+        .user-panel.active { display: block; animation: fadeUp 0.4s ease; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── SECTION HEADER ── */
+        .section-head {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .section-line { flex: 1; height: 1px; background: var(--stone-deeper); }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1em;
+            letter-spacing: 0.12em;
+            color: var(--charcoal);
+        }
+
+        /* ── CONTROLS ── */
+        .controls {
+            background: var(--parchment);
+            border: 1px solid var(--stone-deeper);
+            border-radius: 4px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .control-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .control-row:last-child { margin-bottom: 0; }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .control-label {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.65em;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--charcoal-light);
+            font-weight: 500;
+        }
+
+        .control-select, .control-input {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.05em;
+            background: white;
+            border: 1px solid var(--stone-deeper);
+            color: var(--charcoal);
+            padding: 9px 12px;
+            border-radius: 3px;
+            transition: border-color 0.2s;
+            width: 100%;
+        }
+
+        .control-select:focus, .control-input:focus {
+            outline: none;
+            border-color: var(--forest);
+        }
+
+        .control-textarea {
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.1em;
+            background: white;
+            border: 1px solid var(--stone-deeper);
+            color: var(--charcoal);
+            padding: 10px 12px;
+            border-radius: 3px;
+            width: 100%;
+            resize: vertical;
+            min-height: 80px;
+            line-height: 1.5;
+            transition: border-color 0.2s;
+        }
+
+        .control-textarea:focus { outline: none; border-color: var(--forest); }
+
+        .btn-row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+        .btn {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.72em;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 11px 24px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-weight: 500;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--forest);
+            color: white;
+            box-shadow: 0 2px 8px rgba(45,90,61,0.2);
+        }
+
+        .btn-primary:hover { background: var(--forest-light); transform: translateY(-1px); }
+
+        .btn-secondary {
+            background: white;
+            color: var(--charcoal);
+            border: 1px solid var(--stone-deeper);
+        }
+
+        .btn-secondary:hover { border-color: var(--forest); color: var(--forest); }
+
+        .btn-print {
+            background: var(--gold);
+            color: white;
+            box-shadow: 0 2px 8px rgba(138,115,64,0.25);
+        }
+
+        .btn-print:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+        /* ── HADLEY OVERRIDES ── */
+        .hadley .btn-primary { background: var(--hadley-pink); box-shadow: 0 2px 8px rgba(212,130,154,0.25); }
+        .hadley .btn-primary:hover { background: #c0708a; }
+        .hadley .section-title { color: var(--hadley-pink); }
+        .hadley .control-select:focus,
+        .hadley .control-input:focus,
+        .hadley .control-textarea:focus { border-color: var(--hadley-pink); }
+
+        /* ── RYDER OVERRIDES ── */
+        .ryder .btn-primary { background: var(--ryder-blue); box-shadow: 0 2px 8px rgba(58,107,158,0.25); }
+        .ryder .btn-primary:hover { background: #2d5a8e; }
+        .ryder .section-title { color: var(--ryder-blue); }
+        .ryder .control-select:focus,
+        .ryder .control-input:focus,
+        .ryder .control-textarea:focus { border-color: var(--ryder-blue); }
+
+        /* ── QUOTE PREVIEW ── */
+        .quote-preview {
+            background: white;
+            border: 1px solid var(--stone-deeper);
+            border-left: 3px solid var(--forest);
+            border-radius: 3px;
+            padding: 14px 18px;
+            margin-bottom: 16px;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.15em;
+            color: var(--charcoal);
+            line-height: 1.6;
+            display: none;
+        }
+
+        .hadley .quote-preview { border-left-color: var(--hadley-pink); }
+        .ryder .quote-preview { border-left-color: var(--ryder-blue); }
+
+        .quote-preview.show { display: block; }
+        .quote-source {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 0.8em;
+            color: var(--charcoal-light);
+            margin-top: 6px;
+        }
+
+        /* ══════════════════════════════════
+           WORKSHEET PREVIEW
+        ══════════════════════════════════ */
+        .worksheet-wrap {
+            display: none;
+            margin-top: 8px;
+        }
+
+        .worksheet-wrap.show { display: block; }
+
+        .worksheet {
+            background: white;
+            border: 1px solid var(--stone-deeper);
+            border-radius: 4px;
+            padding: 40px 48px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            font-family: 'Patrick Hand', cursive;
+        }
+
+        /* Worksheet header */
+        .ws-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 28px;
+            padding-bottom: 14px;
+            border-bottom: 2px solid var(--charcoal);
+        }
+
+        .ws-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1em;
+            color: var(--charcoal);
+            letter-spacing: 0.1em;
+        }
+
+        .ws-title-sub {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.58em;
+            letter-spacing: 0.18em;
+            color: var(--charcoal-light);
+            margin-top: 3px;
+            text-transform: uppercase;
+        }
+
+        .ws-meta { text-align: right; }
+
+        .ws-meta-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-bottom: 8px;
+        }
+
+        .ws-meta-label {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.6em;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--charcoal-light);
+        }
+
+        .ws-meta-line-blank {
+            width: 140px;
+            height: 1px;
+            background: var(--charcoal);
+        }
+
+        /* Reference text */
+        .ws-reference {
+            margin-bottom: 20px;
+        }
+
+        .ws-ref-label {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.58em;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--charcoal-light);
+            margin-bottom: 8px;
+        }
+
+        .ws-ref-text {
+            font-family: 'Patrick Hand', cursive;
+            line-height: 1.7;
+            color: var(--charcoal);
+        }
+
+        /* ── HADLEY DOTTED TRACE LINES ── */
+        .ws-trace-section { margin-bottom: 24px; }
+
+        .ws-trace-label {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.58em;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--hadley-pink);
+            margin-bottom: 10px;
+        }
+
+        .trace-line-wrap {
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .trace-svg { width: 100%; display: block; }
+
+        /* ── COPY LINES ── */
+        .ws-copy-section { margin-bottom: 20px; }
+
+        .ws-copy-label {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.58em;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--charcoal-light);
+            margin-bottom: 10px;
+        }
+
+        /* Hadley ruled lines — top line, dotted midline, solid baseline */
+        .ruled-line-hadley {
+            position: relative;
+            height: 56px;
+            margin-bottom: 10px;
+            border-top: 1.5px solid #b0c4de;
+            border-bottom: 1.5px solid #b0c4de;
+        }
+
+        .ruled-line-hadley::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0; right: 0;
+            border-top: 1.5px dashed #d4b0cc;
+            transform: translateY(-50%);
+        }
+
+        /* Ryder ruled lines with baseline */
+        .ruled-line-ryder {
+            position: relative;
+            height: 48px;
+            margin-bottom: 8px;
+            border-top: 1.5px solid #7a9ab8;
+        }
+
+        .ruled-line-ryder .baseline {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 14px;
+            background: var(--ryder-baseline);
+            opacity: 0.55;
+        }
+
+        .ruled-line-ryder .writeline {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 1.5px;
+            background: #7a9ab8;
+        }
+
+        /* ── ILLUSTRATION BOX (Hadley) ── */
+        .ws-illustration {
+            margin-top: 24px;
+            border: 1.5px dashed var(--hadley-pink);
+            border-radius: 4px;
+            height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ws-illustration-label {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.6em;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--hadley-pink);
+            opacity: 0.5;
+        }
+
+        /* Source line */
+        .ws-source {
+            margin-top: 20px;
+            text-align: right;
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 0.85em;
+            color: var(--charcoal-light);
+        }
+
+        /* ══════════════════════════════
+           PRINT STYLES
+        ══════════════════════════════ */
+        @media print {
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            header, nav, .controls, .btn-row-outer, .quote-preview,
+            .section-head, .btn-row { display: none !important; }
+            body { background: white !important; padding: 0 !important; }
+            main { padding: 0 !important; max-width: 100% !important; }
+            .user-panel { display: none !important; }
+            .user-panel.active { display: block !important; }
+            .worksheet-wrap { display: block !important; }
+            .worksheet {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 24px 40px !important;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .worksheet { padding: 24px 20px; }
+            .control-group { min-width: 140px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-columns">
+        <div class="col-dec"></div><div class="col-dec"></div>
+        <div class="col-dec"></div><div class="col-dec"></div>
+        <div class="col-dec"></div><div class="col-dec"></div>
+    </div>
+    <div class="header-rule"></div>
+    <div class="header-title">Wade Classical</div>
+    <div class="header-sub">✦ Copywork Worksheets ✦</div>
+    <div class="header-rule" style="margin-top:14px; margin-bottom:0;"></div>
+</header>
+
+<nav class="nav">
+    <button class="nav-btn active" onclick="switchUser('hadley')" id="nav-hadley">🌷 Hadley</button>
+    <button class="nav-btn" onclick="switchUser('ryder')" id="nav-ryder">⚔️ Ryder</button>
+</nav>
+
+<main>
+
+    <!-- ══ HADLEY PANEL ══ -->
+    <div class="user-panel hadley active" id="panel-hadley">
+
+        <div class="section-head">
+            <div class="section-line"></div>
+            <span class="section-title">Hadley's Copywork</span>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="controls">
+            <div class="control-row">
+                <div class="control-group">
+                    <label class="control-label">Category</label>
+                    <select class="control-select" id="hadley-category" onchange="loadQuote('hadley')">
+                        <option value="nature">🌿 Nature & Seasons</option>
+                        <option value="facts">💡 Interesting Facts</option>
+                        <option value="quotes">✨ Famous Quotes</option>
+                        <option value="custom">✏️ Custom Text</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Name on Worksheet</label>
+                    <input class="control-input" id="hadley-name" type="text" value="Hadley" />
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Date</label>
+                    <input class="control-input" id="hadley-date" type="text" placeholder="e.g. March 2026" />
+                </div>
+            </div>
+
+            <div class="control-row" id="hadley-custom-row" style="display:none;">
+                <div class="control-group" style="min-width:100%;">
+                    <label class="control-label">Your Custom Text</label>
+                    <textarea class="control-textarea" id="hadley-custom-text" placeholder="Type the sentence or passage here..."></textarea>
+                </div>
+            </div>
+
+            <div class="quote-preview show" id="hadley-quote-preview">
+                <div id="hadley-quote-text"></div>
+                <div class="quote-source" id="hadley-quote-source"></div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-secondary" onclick="randomQuote('hadley')">↻ New Quote</button>
+                <button class="btn btn-primary" onclick="generateWorksheet('hadley')">Generate Worksheet</button>
+            </div>
+        </div>
+
+        <div class="worksheet-wrap" id="hadley-worksheet-wrap">
+            <div class="btn-row btn-row-outer" style="margin-bottom:16px;">
+                <button class="btn btn-print" onclick="printWorksheet('hadley')">🖨️ Print Worksheet</button>
+                <button class="btn btn-secondary" onclick="closeWorksheet('hadley')">✕ Close</button>
+            </div>
+            <div class="worksheet" id="hadley-worksheet"></div>
+        </div>
+
+    </div>
+
+    <!-- ══ RYDER PANEL ══ -->
+    <div class="user-panel ryder" id="panel-ryder">
+
+        <div class="section-head">
+            <div class="section-line"></div>
+            <span class="section-title">Ryder's Copywork</span>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="controls">
+            <div class="control-row">
+                <div class="control-group">
+                    <label class="control-label">Category</label>
+                    <select class="control-select" id="ryder-category" onchange="loadQuote('ryder')">
+                        <option value="nature">🌿 Nature & Seasons</option>
+                        <option value="facts">💡 Interesting Facts</option>
+                        <option value="quotes">✨ Famous Quotes</option>
+                        <option value="custom">✏️ Custom Text</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Name on Worksheet</label>
+                    <input class="control-input" id="ryder-name" type="text" value="Ryder" />
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Date</label>
+                    <input class="control-input" id="ryder-date" type="text" placeholder="e.g. March 2026" />
+                </div>
+            </div>
+
+            <div class="control-row" id="ryder-custom-row" style="display:none;">
+                <div class="control-group" style="min-width:100%;">
+                    <label class="control-label">Your Custom Text</label>
+                    <textarea class="control-textarea" id="ryder-custom-text" placeholder="Type the sentence or passage here..."></textarea>
+                </div>
+            </div>
+
+            <div class="quote-preview show" id="ryder-quote-preview">
+                <div id="ryder-quote-text"></div>
+                <div class="quote-source" id="ryder-quote-source"></div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-secondary" onclick="randomQuote('ryder')">↻ New Quote</button>
+                <button class="btn btn-primary" onclick="generateWorksheet('ryder')">Generate Worksheet</button>
+            </div>
+        </div>
+
+        <div class="worksheet-wrap" id="ryder-worksheet-wrap">
+            <div class="btn-row btn-row-outer" style="margin-bottom:16px;">
+                <button class="btn btn-print" onclick="printWorksheet('ryder')">🖨️ Print Worksheet</button>
+                <button class="btn btn-secondary" onclick="closeWorksheet('ryder')">✕ Close</button>
+            </div>
+            <div class="worksheet" id="ryder-worksheet"></div>
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+// ══════════════════════════════════════════════
+// QUOTE BANKS
+// ══════════════════════════════════════════════
+const QUOTES = {
+    nature: [
+        { text: "In every walk with nature, one receives far more than he seeks.", source: "John Muir" },
+        { text: "Look deep into nature, and then you will understand everything better.", source: "Albert Einstein" },
+        { text: "The butterfly counts not months but moments, and has time enough.", source: "Rabindranath Tagore" },
+        { text: "Adopt the pace of nature: her secret is patience.", source: "Ralph Waldo Emerson" },
+        { text: "The earth has music for those who listen.", source: "William Shakespeare" },
+        { text: "Spring is nature's way of saying, let's party!", source: "Robin Williams" },
+        { text: "Autumn is a second spring when every leaf is a flower.", source: "Albert Camus" },
+        { text: "To see a world in a grain of sand, and heaven in a wildflower.", source: "William Blake" },
+        { text: "Winter is not a season, it's a celebration.", source: "Anamika Mishra" },
+        { text: "The clearest way into the universe is through a forest wilderness.", source: "John Muir" },
+        { text: "A bee is never as busy as it seems; it's just that it can't buzz any slower.", source: "Kin Hubbard" },
+        { text: "Snow falling soundlessly in the middle of the night will always fill my heart with sweet clarity.", source: "Novala Takemoto" },
+        { text: "A single sunbeam is enough to drive away many shadows.", source: "Francis of Assisi" },
+        { text: "The mountains are calling and I must go.", source: "John Muir" },
+        { text: "Nature always wears the colors of the spirit.", source: "Ralph Waldo Emerson" },
+        { text: "Every flower is a soul blossoming in nature.", source: "Gerard De Nerval" },
+        { text: "In the spring, at the end of the day, you should smell like dirt.", source: "Margaret Atwood" },
+        { text: "The ocean stirs the heart, inspires the imagination, and brings eternal joy to the soul.", source: "Robert Wyland" },
+        { text: "Fireflies light up the darkness, reminding us that small things can shine the brightest.", source: "Anonymous" },
+        { text: "A river seems a magic thing, a magic moving life of wonderful power.", source: "Laura Gilpin" },
+        { text: "Not all those who wander are lost.", source: "J.R.R. Tolkien" },
+        { text: "The poetry of the earth is never dead.", source: "John Keats" },
+        { text: "Trees are poems that the earth writes upon the sky.", source: "Khalil Gibran" },
+        { text: "Wild geese that fly with the moon on their wings.", source: "Oscar Hammerstein II" },
+        { text: "The world is mud-luscious and puddle-wonderful.", source: "e.e. cummings" },
+        { text: "Rain is grace; rain is the sky condescending to the earth.", source: "John Updike" },
+        { text: "Even the darkest night will end and the sun will rise.", source: "Victor Hugo" },
+        { text: "A morning glory at my window satisfies me more than the metaphysics of books.", source: "Walt Whitman" },
+        { text: "Stars are the street lights of eternity.", source: "Anonymous" },
+        { text: "The sun does not shine for a few trees and flowers, but for the wide world's joy.", source: "Henry Ward Beecher" },
+    ],
+    facts: [
+        { text: "Honey never spoils. Archaeologists have found 3,000-year-old honey in Egyptian tombs that was still edible.", source: "Amazing Fact" },
+        { text: "A group of flamingos is called a flamboyance. They get their pink color from the food they eat.", source: "Nature Fact" },
+        { text: "Octopuses have three hearts and blue blood. Two hearts pump blood to the gills, and one pumps it to the body.", source: "Science Fact" },
+        { text: "The Great Wall of China is not visible from space with the naked eye, despite what many people believe.", source: "History Fact" },
+        { text: "Butterflies taste with their feet. They have taste sensors on their legs to help find food.", source: "Nature Fact" },
+        { text: "A day on Venus is longer than a year on Venus. It rotates so slowly that it takes longer to spin once than to orbit the sun.", source: "Space Fact" },
+        { text: "Trees can communicate with each other through underground fungal networks called the Wood Wide Web.", source: "Nature Fact" },
+        { text: "The shortest war in history lasted only 38 to 45 minutes, between Britain and Zanzibar in 1896.", source: "History Fact" },
+        { text: "A single bolt of lightning is five times hotter than the surface of the sun.", source: "Science Fact" },
+        { text: "Cleopatra lived closer in time to the moon landing than to the building of the Great Pyramid.", source: "History Fact" },
+        { text: "There are more possible iterations of a game of chess than there are atoms in the observable universe.", source: "Math Fact" },
+        { text: "Crows can recognize human faces and will hold a grudge against people who have been unkind to them.", source: "Animal Fact" },
+        { text: "Water can boil and freeze at the same time. This is called the triple point.", source: "Science Fact" },
+        { text: "The human body contains enough carbon to fill about 9,000 pencils.", source: "Biology Fact" },
+        { text: "Some turtles can breathe through their bottom during winter hibernation.", source: "Nature Fact" },
+        { text: "The first computer bug was an actual bug — a moth found in a relay of the Harvard Mark II computer in 1947.", source: "Tech Fact" },
+        { text: "A group of owls is called a parliament. Owls have been symbols of wisdom since ancient Greece.", source: "Nature Fact" },
+        { text: "Bananas are technically berries, but strawberries are not. Neither are raspberries or blackberries.", source: "Science Fact" },
+        { text: "The Eiffel Tower grows about six inches taller in summer because heat makes the metal expand.", source: "Engineering Fact" },
+        { text: "Wolves help rivers flow better. When wolves were reintroduced to Yellowstone, they changed the behavior of deer, which let forests grow along riverbanks.", source: "Ecology Fact" },
+        { text: "There are more stars in the universe than grains of sand on all of Earth's beaches.", source: "Astronomy Fact" },
+        { text: "Sharks are older than trees. Sharks have existed for around 450 million years, while trees appeared about 350 million years ago.", source: "Paleontology Fact" },
+        { text: "The word salary comes from the Latin word for salt. Roman soldiers were sometimes paid in salt.", source: "History Fact" },
+        { text: "Elephants are the only animals that cannot jump. They are also the only mammals with four knees.", source: "Animal Fact" },
+        { text: "The average cloud weighs about 1.1 million pounds, yet floats because the water droplets are so small.", source: "Weather Fact" },
+        { text: "Oxford University is older than the Aztec Empire. Teaching began at Oxford in 1096, while the Aztec Empire started around 1300.", source: "History Fact" },
+        { text: "A day on Mars is only slightly longer than a day on Earth — 24 hours and 37 minutes.", source: "Space Fact" },
+        { text: "Wombats are the only animals that produce cube-shaped droppings. Scientists believe this helps mark territory.", source: "Animal Fact" },
+        { text: "The shortest sentence in the English language is also one of the most powerful: I am.", source: "Language Fact" },
+        { text: "Hummingbirds are the only birds that can fly backwards. Their wings beat up to 80 times per second.", source: "Nature Fact" },
+    ],
+    quotes: [
+        { text: "The more that you read, the more things you will know.", source: "Dr. Seuss" },
+        { text: "It does not matter how slowly you go as long as you do not stop.", source: "Confucius" },
+        { text: "In the middle of every difficulty lies opportunity.", source: "Albert Einstein" },
+        { text: "The secret of getting ahead is getting started.", source: "Mark Twain" },
+        { text: "You are never too old to set another goal or to dream a new dream.", source: "C.S. Lewis" },
+        { text: "A reader lives a thousand lives before he dies. The man who never reads lives only one.", source: "George R.R. Martin" },
+        { text: "Knowledge is power.", source: "Francis Bacon" },
+        { text: "Well done is better than well said.", source: "Benjamin Franklin" },
+        { text: "Try to be a rainbow in someone's cloud.", source: "Maya Angelou" },
+        { text: "It always seems impossible until it is done.", source: "Nelson Mandela" },
+        { text: "Education is the most powerful weapon which you can use to change the world.", source: "Nelson Mandela" },
+        { text: "The roots of education are bitter, but the fruit is sweet.", source: "Aristotle" },
+        { text: "Courage is not the absence of fear, but the triumph over it.", source: "Nelson Mandela" },
+        { text: "To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment.", source: "Ralph Waldo Emerson" },
+        { text: "Two roads diverged in a wood, and I took the one less traveled by.", source: "Robert Frost" },
+        { text: "Imagination is more important than knowledge.", source: "Albert Einstein" },
+        { text: "In the beginning was the Word.", source: "John 1:1" },
+        { text: "Do to others as you would have them do to you.", source: "Luke 6:31" },
+        { text: "Whatever you do, work at it with all your heart.", source: "Colossians 3:23" },
+        { text: "Be kind, for everyone you meet is fighting a harder battle.", source: "Plato" },
+        { text: "The only way to do great work is to love what you do.", source: "Steve Jobs" },
+        { text: "Life is what happens when you're busy making other plans.", source: "John Lennon" },
+        { text: "Be the change that you wish to see in the world.", source: "Mahatma Gandhi" },
+        { text: "In character, in manner, in style, in all things, the supreme excellence is simplicity.", source: "Henry Wadsworth Longfellow" },
+        { text: "Not all who wander are lost.", source: "J.R.R. Tolkien" },
+        { text: "It is not in the stars to hold our destiny but in ourselves.", source: "William Shakespeare" },
+        { text: "The only true wisdom is in knowing you know nothing.", source: "Socrates" },
+        { text: "This above all: to thine own self be true.", source: "William Shakespeare" },
+        { text: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", source: "Aristotle" },
+        { text: "Genius is one percent inspiration and ninety-nine percent perspiration.", source: "Thomas Edison" },
+    ]
+};
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+const state = {
+    hadley: { quoteIndex: 0, category: 'nature' },
+    ryder:  { quoteIndex: 0, category: 'nature' }
+};
+
+// ══════════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════════
+function switchUser(user) {
+    document.querySelectorAll('.user-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + user).classList.add('active');
+    document.getElementById('nav-' + user).classList.add('active');
+}
+
+// ══════════════════════════════════════════════
+// QUOTES
+// ══════════════════════════════════════════════
+function loadQuote(user) {
+    const cat = document.getElementById(user + '-category').value;
+    state[user].category = cat;
+
+    const customRow = document.getElementById(user + '-custom-row');
+    const preview = document.getElementById(user + '-quote-preview');
+
+    if (cat === 'custom') {
+        customRow.style.display = 'flex';
+        preview.classList.remove('show');
+        return;
+    }
+
+    customRow.style.display = 'none';
+    preview.classList.add('show');
+
+    const pool = QUOTES[cat];
+    state[user].quoteIndex = Math.floor(Math.random() * pool.length);
+    showQuote(user);
+}
+
+function randomQuote(user) {
+    const cat = state[user].category;
+    if (cat === 'custom') return;
+    const pool = QUOTES[cat];
+    let newIdx;
+    do { newIdx = Math.floor(Math.random() * pool.length); }
+    while (newIdx === state[user].quoteIndex && pool.length > 1);
+    state[user].quoteIndex = newIdx;
+    showQuote(user);
+}
+
+function showQuote(user) {
+    const cat = state[user].category;
+    const q = QUOTES[cat][state[user].quoteIndex];
+    document.getElementById(user + '-quote-text').textContent = '"' + q.text + '"';
+    document.getElementById(user + '-quote-source').textContent = '— ' + q.source;
+}
+
+function getQuoteText(user) {
+    const cat = state[user].category;
+    if (cat === 'custom') {
+        return {
+            text: document.getElementById(user + '-custom-text').value.trim(),
+            source: ''
+        };
+    }
+    return QUOTES[cat][state[user].quoteIndex];
+}
+
+// ══════════════════════════════════════════════
+// WORKSHEET GENERATION
+// ══════════════════════════════════════════════
+function generateWorksheet(user) {
+    const q = getQuoteText(user);
+    if (!q.text) { alert('Please enter some text first.'); return; }
+
+    const name = document.getElementById(user + '-name').value || user.charAt(0).toUpperCase() + user.slice(1);
+    const date = document.getElementById(user + '-date').value || '';
+
+    const ws = document.getElementById(user + '-worksheet');
+
+    if (user === 'hadley') {
+        ws.innerHTML = buildHadleyWorksheet(q, name, date);
+    } else {
+        ws.innerHTML = buildRyderWorksheet(q, name, date);
+    }
+
+    const wrap = document.getElementById(user + '-worksheet-wrap');
+    wrap.classList.add('show');
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closeWorksheet(user) {
+    document.getElementById(user + '-worksheet-wrap').classList.remove('show');
+}
+
+// ── HADLEY WORKSHEET ──
+function buildHadleyWorksheet(q, name, date) {
+
+    return `
+        <div class="ws-header">
+            <div>
+                <div class="ws-title">Copywork</div>
+                <div class="ws-title-sub">🌷 Hadley's Page</div>
+            </div>
+            <div class="ws-meta">
+                <div class="ws-meta-line">
+                    <span class="ws-meta-label">Name</span>
+                    <span style="font-family:'Patrick Hand',cursive; font-size:1em; min-width:120px; text-align:right;">${name}</span>
+                </div>
+                <div class="ws-meta-line">
+                    <span class="ws-meta-label">Date</span>
+                    <span style="font-family:'Patrick Hand',cursive; font-size:1em; min-width:120px; text-align:right;">${date}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="ws-reference">
+            <div class="ws-ref-label">Read This</div>
+            <div class="ws-ref-text" style="font-size:1.35em; color:#333;">${q.text}</div>
+            ${q.source ? `<div style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.85em; color:#888; margin-top:6px;">— ${q.source}</div>` : ''}
+        </div>
+
+        <div class="ws-copy-section">
+            <div class="ws-copy-label">Copy the passage below</div>
+            <div class="ruled-line-hadley"></div>
+            <div class="ruled-line-hadley"></div>
+            <div class="ruled-line-hadley"></div>
+            <div class="ruled-line-hadley"></div>
+        </div>
+
+        <div class="ws-illustration">
+            <span class="ws-illustration-label">Draw a picture here 🖍️</span>
+        </div>
+
+    `;
+}
+
+// ── RYDER WORKSHEET ──
+function buildRyderWorksheet(q, name, date) {
+    return `
+        <div class="ws-header">
+            <div>
+                <div class="ws-title">Copywork</div>
+                <div class="ws-title-sub">⚔️ Ryder's Page</div>
+            </div>
+            <div class="ws-meta">
+                <div class="ws-meta-line">
+                    <span class="ws-meta-label">Name</span>
+                    <span style="font-family:'Patrick Hand',cursive; font-size:1em; min-width:120px; text-align:right;">${name}</span>
+                </div>
+                <div class="ws-meta-line">
+                    <span class="ws-meta-label">Date</span>
+                    <span style="font-family:'Patrick Hand',cursive; font-size:1em; min-width:120px; text-align:right;">${date}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="ws-reference">
+            <div class="ws-ref-label">Copy This Passage</div>
+            <div class="ws-ref-text" style="font-size:1.05em; line-height:1.9; color:#222; background:#fafafa; border-left:3px solid #7a9ab8; padding:12px 16px; border-radius:2px;">${q.text}</div>
+            ${q.source ? `<div style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.82em; color:#888; margin-top:6px; text-align:right;">— ${q.source}</div>` : ''}
+        </div>
+
+        <div class="ws-copy-section">
+            <div class="ws-copy-label">Copy below — take your time, make each letter clear</div>
+            ${buildRyderLines(4)}
+        </div>
+
+    `;
+}
+
+function buildRyderLines(count) {
+    let html = '';
+    for (let i = 0; i < count; i++) {
+        html += `
+            <div class="ruled-line-ryder">
+                <div class="baseline"></div>
+                <div class="writeline"></div>
+            </div>`;
+    }
+    return html;
+}
+
+// ── DOTTED TRACE SVG FOR HADLEY ──
+function buildTraceSVG(text, fontSize) {
+    // Build a dotted/dashed version of the text using SVG
+    const lineHeight = fontSize * 1.8;
+    const svgH = lineHeight + 16;
+
+    return `<svg class="trace-svg" height="${svgH}" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <style>
+                @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+                .trace-text {
+                    font-family: 'Patrick Hand', cursive;
+                    font-size: ${fontSize}px;
+                    fill: none;
+                    stroke: #c0afd0;
+                    stroke-width: 1.5;
+                    stroke-dasharray: 4 4;
+                    paint-order: stroke fill;
+                }
+                .baseline-svg {
+                    stroke: #b0c4de;
+                    stroke-width: 1.5;
+                }
+                .midline-svg {
+                    stroke: #dde8f5;
+                    stroke-width: 1;
+                }
+            </style>
+        </defs>
+        <line class="midline-svg" x1="0" y1="${svgH * 0.42}" x2="100%" y2="${svgH * 0.42}" />
+        <line class="baseline-svg" x1="0" y1="${svgH - 10}" x2="100%" y2="${svgH - 10}" />
+        <text class="trace-text" x="4" y="${svgH - 12}">${escapeHTML(text)}</text>
+    </svg>`;
+}
+
+function escapeHTML(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════════════════════
+// PRINT
+// ══════════════════════════════════════════════
+function printWorksheet(user) {
+    const wsEl = document.getElementById(user + '-worksheet');
+    if (!wsEl || !wsEl.innerHTML.trim()) {
+        alert('Please generate a worksheet first.');
+        return;
+    }
+    // Make sure worksheet wrap is visible for print
+    const wrap = document.getElementById(user + '-worksheet-wrap');
+    wrap.classList.add('show');
+    // Make sure correct panel is active
+    document.querySelectorAll('.user-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + user).classList.add('active');
+    // Small delay to let DOM settle then print
+    setTimeout(() => window.print(), 150);
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+function init() {
+    // Set today's date as default
+    const today = new Date();
+    const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const dateStr = monthNames[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear();
+    document.getElementById('hadley-date').value = dateStr;
+    document.getElementById('ryder-date').value = dateStr;
+
+    // Load initial quotes
+    loadQuote('hadley');
+    loadQuote('ryder');
+}
+
+// Watch for category changes
+document.getElementById('hadley-category').addEventListener('change', () => loadQuote('hadley'));
+document.getElementById('ryder-category').addEventListener('change', () => loadQuote('ryder'));
+
+init();
+</script>
+</body>
+</html>
