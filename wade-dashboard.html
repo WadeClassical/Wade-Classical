@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wade Classical — Morning Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cream:    #faf6ef;
+            --parchment:#f2ead8;
+            --ink:      #2c2416;
+            --ink-mid:  #5a4e3a;
+            --ink-light:#9a8c78;
+            --clay:     #c8bfb0;
+            --sage:     #4a7c5f;
+            --sage-light:#7aac8f;
+            --sage-pale: #e4f0e8;
+            --rose:     #b87878;
+            --rose-pale: #f8eded;
+            --blue:     #5a7fa0;
+            --blue-pale: #e8f0f8;
+            --lavender: #8878b8;
+            --lav-pale:  #f0edf8;
+            --gold:     #b8974a;
+            --gold-light:#d4b870;
+            --white:    #ffffff;
+            --shadow:   rgba(44,36,22,0.1);
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            font-family: 'Jost', sans-serif;
+            background: #c8d0d8;
+            color: var(--ink);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── SEASONAL BACKGROUND GRADIENT ── */
+        .season-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.18;
+            transition: background 2s ease;
+        }
+
+        /* ── BOTANICAL CORNERS ── */
+        .botanical {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.12;
+        }
+        .botanical.tl { top:0; left:0; }
+        .botanical.br { bottom:0; right:0; transform: scale(-1); }
+
+        /* ── MAIN LAYOUT ── */
+        .dashboard {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 28px 60px;
+        }
+
+        /* ── HERO HEADER ── */
+        .hero {
+            text-align: center;
+            padding: 24px 0 32px;
+            position: relative;
+        }
+
+        .hero-rule {
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #8aaac8, transparent);
+            margin: 0 auto 18px;
+        }
+
+        .hero-label {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.68em;
+            letter-spacing: 0.35em;
+            color: #6a8aaa;
+            text-transform: uppercase;
+            font-weight: 400;
+            margin-bottom: 10px;
+        }
+
+        .hero-date {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.8em, 4vw, 3em);
+            color: var(--ink);
+            letter-spacing: 0.06em;
+            font-weight: 400;
+            margin-bottom: 10px;
+            animation: fadeDown 0.8s ease both;
+        }
+
+        .hero-greeting {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: clamp(1em, 2vw, 1.35em);
+            color: #5a7a98;
+            font-weight: 300;
+            margin-bottom: 6px;
+            animation: fadeDown 0.8s ease 0.15s both;
+        }
+
+        .hero-quote {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.15em;
+            color: #7a9ab8;
+            max-width: 520px;
+            margin: 8px auto 0;
+            line-height: 1.6;
+            font-weight: 300;
+            animation: fadeDown 0.8s ease 0.25s both;
+        }
+
+        .hero-rule-bottom {
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #8aaac8, transparent);
+            margin: 20px auto 0;
+        }
+
+        @keyframes fadeDown {
+            from { opacity:0; transform:translateY(-12px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+
+        /* ── WEATHER STRIP ── */
+        .weather-strip {
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            padding: 14px 24px;
+            background: var(--white);
+            border: 1px solid var(--clay);
+            border-radius: 40px;
+            max-width: 500px;
+            margin: 0 auto 36px;
+            box-shadow: 0 2px 12px var(--shadow);
+            animation: fadeUp 0.6s ease 0.3s both;
+            flex-wrap: wrap;
+        }
+
+        .weather-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78em;
+            color: var(--ink-mid);
+        }
+
+        .weather-icon { font-size: 1.2em; }
+        .weather-val  { font-weight: 500; color: var(--ink); }
+
+        @keyframes fadeUp {
+            from { opacity:0; transform:translateY(12px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+
+        /* ── SECTION DIVIDER ── */
+        .section-divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 0 0 20px;
+        }
+
+        .divider-line { flex:1; height:1px; background: var(--clay); opacity:0.5; }
+
+        .divider-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78em;
+            letter-spacing: 0.18em;
+            color: var(--ink-mid);
+            font-weight: 400;
+        }
+
+        /* ── ATTENDANCE CARD ── */
+        .attendance-card {
+            background: var(--white);
+            border: 1px solid var(--clay);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 32px;
+            box-shadow: 0 2px 12px var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            animation: fadeUp 0.6s ease 0.35s both;
+        }
+
+        .attendance-main { flex: 1; min-width: 200px; }
+
+        .attendance-count {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.8em;
+            color: var(--ink);
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .attendance-count span {
+            font-size: 0.45em;
+            color: var(--ink-light);
+            font-weight: 300;
+        }
+
+        .attendance-label {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.65em;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--ink-light);
+            margin-top: 4px;
+            font-weight: 300;
+        }
+
+        .attendance-bar-wrap { flex: 2; min-width: 180px; }
+
+        .att-bar-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.62em;
+            color: var(--ink-light);
+            margin-bottom: 6px;
+            font-family: 'Jost', sans-serif;
+        }
+
+        .att-bar-track {
+            height: 8px;
+            background: var(--parchment);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .att-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--sage-light), var(--sage));
+            border-radius: 10px;
+            transition: width 0.8s ease;
+        }
+
+        .att-bar-sub {
+            font-size: 0.6em;
+            color: var(--sage);
+            font-family: 'Jost', sans-serif;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+        }
+
+        .att-mark-btn {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.68em;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 12px 22px;
+            background: #5a7a98;
+            color: var(--white);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            box-shadow: 0 3px 12px rgba(74,124,95,0.3);
+        }
+
+        .att-mark-btn:hover { background: #3a5a78; transform: translateY(-2px); }
+        .att-mark-btn.marked { background: var(--ink-light); cursor: default; }
+        .att-mark-btn.marked:hover { transform: none; }
+
+        /* ── PERSON CARDS ── */
+        .person-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 36px;
+        }
+
+        .person-card {
+            background: var(--white);
+            border: 1px solid var(--clay);
+            border-radius: 12px;
+            padding: 18px 20px;
+            box-shadow: 0 2px 10px var(--shadow);
+            text-decoration: none;
+            color: var(--ink);
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.6s ease both;
+        }
+
+        .person-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .person-card.ryder::before  { background: #4a7c5f; }
+        .person-card.hadley::before { background: #5a7fa0; }
+        .person-card.mom::before    { background: #b87878; }
+        .person-card.house::before  { background: #8878b8; }
+
+        .person-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 24px var(--shadow);
+        }
+
+        .person-card:nth-child(1) { animation-delay: 0.4s; }
+        .person-card:nth-child(2) { animation-delay: 0.48s; }
+        .person-card:nth-child(3) { animation-delay: 0.56s; }
+        .person-card:nth-child(4) { animation-delay: 0.64s; }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .card-person {
+            font-family: 'Cinzel', serif;
+            font-size: 0.88em;
+            letter-spacing: 0.1em;
+            font-weight: 500;
+        }
+
+        .card-icon { font-size: 1.3em; }
+
+        .card-progress-track {
+            height: 4px;
+            background: var(--parchment);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .card-progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.6s ease;
+        }
+
+        .ryder .card-progress-fill  { background: #4a7c5f; }
+        .hadley .card-progress-fill { background: #5a7fa0; }
+        .mom .card-progress-fill    { background: #b87878; }
+        .house .card-progress-fill  { background: #8878b8; }
+
+        .card-stats {
+            font-size: 0.7em;
+            color: var(--ink-light);
+            font-family: 'Jost', sans-serif;
+            font-weight: 300;
+        }
+
+        .card-done {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .ryder .card-done  { color: #4a7c5f; }
+        .hadley .card-done { color: #5a7fa0; }
+        .mom .card-done    { color: #b87878; }
+        .house .card-done  { color: #8878b8; }
+
+        /* ── TOOLS GRID ── */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 36px;
+        }
+
+        .tool-link {
+            background: var(--white);
+            border: 1px solid var(--clay);
+            border-radius: 10px;
+            padding: 16px 18px;
+            text-decoration: none;
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.18s;
+            box-shadow: 0 1px 6px var(--shadow);
+            animation: fadeUp 0.5s ease both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-link::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 3px;
+            background: #5a7a98;
+            opacity: 0;
+            transition: opacity 0.18s;
+        }
+
+        .tool-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px var(--shadow);
+            border-color: var(--sage);
+        }
+
+        .tool-link:hover::before { opacity: 1; }
+
+        .tool-link:nth-child(1) { animation-delay: 0.5s; }
+        .tool-link:nth-child(2) { animation-delay: 0.55s; }
+        .tool-link:nth-child(3) { animation-delay: 0.60s; }
+        .tool-link:nth-child(4) { animation-delay: 0.65s; }
+        .tool-link:nth-child(5) { animation-delay: 0.70s; }
+        .tool-link:nth-child(6) { animation-delay: 0.75s; }
+        .tool-link:nth-child(7) { animation-delay: 0.80s; }
+
+        .tool-icon { font-size: 1.5em; flex-shrink:0; }
+
+        .tool-text-wrap { flex:1; }
+
+        .tool-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1em;
+            font-weight: 600;
+            color: var(--ink);
+            line-height: 1.2;
+        }
+
+        .tool-sub {
+            font-size: 0.62em;
+            color: var(--ink-light);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-family: 'Jost', sans-serif;
+            font-weight: 300;
+            margin-top: 2px;
+        }
+
+        /* ── SEASONAL ILLUSTRATION ── */
+        .seasonal-wrap {
+            text-align: center;
+            margin-bottom: 32px;
+            animation: fadeUp 0.6s ease 0.7s both;
+        }
+
+        .seasonal-svg { max-width: 340px; width: 100%; opacity: 0.7; }
+
+        /* ── FOOTER ── */
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid var(--clay);
+        }
+
+        .footer-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 0.88em;
+            color: var(--ink-light);
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 600px) {
+            .dashboard { padding: 20px 16px 40px; }
+            .attendance-card { flex-direction: column; text-align: center; }
+            .person-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- SEASONAL BACKGROUND -->
+<div class="season-bg" id="seasonBg"></div>
+
+<!-- BOTANICAL CORNERS -->
+<svg class="botanical tl" width="220" height="220" viewBox="0 0 220 220" fill="none">
+    <path d="M8 185 Q28 128 75 92 Q115 58 155 15" stroke="#4a7c5f" stroke-width="1.5" fill="none"/>
+    <path d="M75 92 Q55 72 36 82 Q22 90 27 107" stroke="#4a7c5f" stroke-width="1" fill="none"/>
+    <ellipse cx="38" cy="100" rx="14" ry="8" fill="#4a7c5f" opacity="0.5" transform="rotate(-30 38 100)"/>
+    <path d="M108 63 Q88 48 73 58 Q60 66 66 81" stroke="#4a7c5f" stroke-width="1" fill="none"/>
+    <ellipse cx="70" cy="75" rx="12" ry="7" fill="#4a7c5f" opacity="0.45" transform="rotate(-45 70 75)"/>
+    <ellipse cx="113" cy="46" rx="10" ry="6" fill="#b87878" opacity="0.35" transform="rotate(-20 113 46)"/>
+    <circle cx="46" cy="158" r="5" fill="#dba8aa" opacity="0.45"/>
+    <circle cx="39" cy="152" r="3.5" fill="#dba8aa" opacity="0.4"/>
+    <circle cx="53" cy="152" r="3.5" fill="#dba8aa" opacity="0.4"/>
+    <circle cx="46" cy="165" r="3.5" fill="#dba8aa" opacity="0.4"/>
+    <circle cx="46" cy="158" r="3" fill="#faf6ef" opacity="0.8"/>
+    <circle cx="22" cy="148" r="2" fill="#b8974a" opacity="0.3"/>
+    <circle cx="32" cy="133" r="1.5" fill="#b8974a" opacity="0.25"/>
+</svg>
+<svg class="botanical br" width="220" height="220" viewBox="0 0 220 220" fill="none">
+    <path d="M8 185 Q28 128 75 92 Q115 58 155 15" stroke="#4a7c5f" stroke-width="1.5" fill="none"/>
+    <path d="M75 92 Q55 72 36 82 Q22 90 27 107" stroke="#4a7c5f" stroke-width="1" fill="none"/>
+    <ellipse cx="38" cy="100" rx="14" ry="8" fill="#4a7c5f" opacity="0.5" transform="rotate(-30 38 100)"/>
+    <path d="M108 63 Q88 48 73 58 Q60 66 66 81" stroke="#4a7c5f" stroke-width="1" fill="none"/>
+    <ellipse cx="70" cy="75" rx="12" ry="7" fill="#4a7c5f" opacity="0.45" transform="rotate(-45 70 75)"/>
+    <ellipse cx="113" cy="46" rx="10" ry="6" fill="#8878b8" opacity="0.3" transform="rotate(-20 113 46)"/>
+    <circle cx="46" cy="158" r="5" fill="#a898d0" opacity="0.4"/>
+    <circle cx="39" cy="152" r="3.5" fill="#a898d0" opacity="0.35"/>
+    <circle cx="53" cy="152" r="3.5" fill="#a898d0" opacity="0.35"/>
+    <circle cx="46" cy="165" r="3.5" fill="#a898d0" opacity="0.35"/>
+</svg>
+
+<div class="dashboard">
+
+    <!-- HERO -->
+    <div class="hero">
+        <div class="hero-rule"></div>
+        <p class="hero-label" id="heroLabel">Good Morning</p>
+        <h1 class="hero-date" id="heroDate">Monday, March 16</h1>
+        <p class="hero-greeting">Welcome to Wade Classical</p>
+        <p class="hero-quote" id="heroQuote"></p>
+        <div class="hero-rule-bottom"></div>
+    </div>
+
+    <!-- WEATHER -->
+    <div class="weather-strip" id="weatherStrip">
+        <div class="weather-item">
+            <span class="weather-icon" id="wxIcon">🌤</span>
+            <span class="weather-val" id="wxTemp">—</span>
+        </div>
+        <div class="weather-item">
+            <span class="weather-icon">💧</span>
+            <span id="wxHumid">—</span>
+        </div>
+        <div class="weather-item">
+            <span class="weather-icon">🌬</span>
+            <span id="wxWind">—</span>
+        </div>
+        <div class="weather-item" style="color:var(--ink-light); font-size:0.85em;">
+            North Georgia
+        </div>
+    </div>
+
+    <!-- ATTENDANCE -->
+    <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-title">Attendance</span>
+        <div class="divider-line"></div>
+    </div>
+
+    <div class="attendance-card">
+        <div class="attendance-main">
+            <div class="attendance-count" id="attCount">0 <span>/ 180 days</span></div>
+            <div class="attendance-label">School Year Progress</div>
+        </div>
+        <div class="attendance-bar-wrap">
+            <div class="att-bar-labels">
+                <span id="attPct">0%</span>
+                <span id="attRemain">180 days remaining</span>
+            </div>
+            <div class="att-bar-track">
+                <div class="att-bar-fill" id="attFill" style="width:0%"></div>
+            </div>
+            <div class="att-bar-sub" id="attSub"></div>
+        </div>
+        <button class="att-mark-btn" id="attMarkBtn" onclick="markToday()">✓ Mark Today</button>
+    </div>
+
+    <!-- PEOPLE -->
+    <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-title">Today's Tasks</span>
+        <div class="divider-line"></div>
+    </div>
+
+    <div class="person-grid">
+        <a href="wade-planner.html" class="person-card ryder">
+            <div class="card-top">
+                <span class="card-person">Ryder</span>
+                <span class="card-icon">⚔️</span>
+            </div>
+            <div class="card-progress-track">
+                <div class="card-progress-fill" id="prog-ryder" style="width:0%"></div>
+            </div>
+            <div class="card-stats">
+                <span class="card-done" id="done-ryder">0</span> of <span id="total-ryder">0</span> tasks done
+            </div>
+        </a>
+        <a href="wade-planner.html" class="person-card hadley">
+            <div class="card-top">
+                <span class="card-person">Hadley</span>
+                <span class="card-icon">🌷</span>
+            </div>
+            <div class="card-progress-track">
+                <div class="card-progress-fill" id="prog-hadley" style="width:0%"></div>
+            </div>
+            <div class="card-stats">
+                <span class="card-done" id="done-hadley">0</span> of <span id="total-hadley">0</span> tasks done
+            </div>
+        </a>
+        <a href="wade-planner.html" class="person-card mom">
+            <div class="card-top">
+                <span class="card-person">Mom</span>
+                <span class="card-icon">🦋</span>
+            </div>
+            <div class="card-progress-track">
+                <div class="card-progress-fill" id="prog-mom" style="width:0%"></div>
+            </div>
+            <div class="card-stats">
+                <span class="card-done" id="done-mom">0</span> of <span id="total-mom">0</span> tasks done
+            </div>
+        </a>
+        <a href="wade-planner.html" class="person-card house">
+            <div class="card-top">
+                <span class="card-person">Household</span>
+                <span class="card-icon">🏠</span>
+            </div>
+            <div class="card-progress-track">
+                <div class="card-progress-fill" id="prog-house" style="width:0%"></div>
+            </div>
+            <div class="card-stats">
+                <span class="card-done" id="done-house">0</span> of <span id="total-house">0</span> tasks done
+            </div>
+        </a>
+    </div>
+
+    <!-- SEASONAL -->
+    <div class="seasonal-wrap">
+        <svg class="seasonal-svg" id="seasonalArt" viewBox="0 0 340 80" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+
+    <!-- TOOLS -->
+    <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-title">Tools</span>
+        <div class="divider-line"></div>
+    </div>
+
+    <div class="tools-grid">
+        <a href="wade-planner.html" class="tool-link">
+            <span class="tool-icon">📋</span>
+            <div class="tool-text-wrap">
+                <div class="tool-name">Daily Planner</div>
+                <div class="tool-sub">Tasks · Schedule</div>
+            </div>
+        </a>
+        <a href="wade-attendance.html" class="tool-link">
+            <span class="tool-icon">📅</span>
+            <div class="tool-text-wrap">
+                <div class="tool-name">Attendance</div>
+                <div class="tool-sub">Georgia Req.</div>
+            </div>
+        </a>
+        <a href="wade-spelling.html" class="tool-link">
+            <span class="tool-icon">✏️</span>
+            <div class="tool-text-wrap">
+                <div class="tool-name">Spelling Arcade</div>
+                <div class="tool-sub">Pac-Man · Mastery</div>
+            </div>
+        </a>
+        <a href="wade-math-practice.html" class="tool-link">
+            <span class="tool-icon">✖️</span>
+            <div class="tool-text-wrap">
+                <div class="tool-name">Math Practice</div>
+                <div class="tool-sub">Multiplication</div>
+            </div>
+        </a>
+        <a href="mcguffeys-authentic.html" class="tool-link">
+            <span class="tool-icon">📖</span>
+            <div class="tool-text-wrap">
+                <div class="tool-name">McGuffey's Reader</div>
+                <div class="tool-sub">Authentic Edition</div>
+            </div>
+        </a>
+        <a href="wade-copywork.html" class="tool-link">
+            <span class="tool-icon">🖊️</span>
+            <div class="tool-text-wrap">
+                <div class="tool-name">Copywork</div>
+                <div class="tool-sub">Writing Worksheets</div>
+            </div>
+        </a>
+        <a href="index.html" class="tool-link">
+            <span class="tool-icon">🎓</span>
+            <div class="tool-text-wrap">
+                <div class="tool-name">All Tools</div>
+                <div class="tool-sub">Full Homepage</div>
+            </div>
+        </a>
+    </div>
+
+    <footer>
+        <p class="footer-text">Wade Classical Homeschool · North Georgia · Est. 2020</p>
+    </footer>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// DATE & GREETING
+// ══════════════════════════════════════════════
+const now   = new Date();
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+document.getElementById('heroDate').textContent =
+    DAYS[now.getDay()] + ', ' + MONTHS[now.getMonth()] + ' ' + now.getDate();
+
+const hour = now.getHours();
+const label = hour < 12 ? 'Good Morning' : hour < 17 ? 'Good Afternoon' : 'Good Evening';
+document.getElementById('heroLabel').textContent = label;
+
+// ── ROTATING QUOTES ──
+const QUOTES = [
+    "The roots of education are bitter, but the fruit is sweet. — Aristotle",
+    "Education is not the filling of a pail, but the lighting of a fire. — W.B. Yeats",
+    "The more that you read, the more things you will know. — Dr. Seuss",
+    "Whatever you do, work at it with all your heart. — Colossians 3:23",
+    "It does not matter how slowly you go as long as you do not stop. — Confucius",
+    "Adopt the pace of nature: her secret is patience. — Emerson",
+    "In every walk with nature, one receives far more than he seeks. — John Muir",
+    "Knowledge is power. — Francis Bacon",
+    "The earth has music for those who listen. — Shakespeare",
+    "Well done is better than well said. — Benjamin Franklin",
+    "To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment. — Emerson",
+    "We are what we repeatedly do. Excellence, then, is not an act, but a habit. — Aristotle",
+];
+
+const todayQuote = QUOTES[now.getDate() % QUOTES.length];
+document.getElementById('heroQuote').textContent = '"' + todayQuote + '"';
+
+// ══════════════════════════════════════════════
+// SEASONAL BACKGROUND + ART
+// ══════════════════════════════════════════════
+const month = now.getMonth(); // 0=Jan
+
+const SEASONS = {
+    winter: { bg: 'radial-gradient(ellipse at 20% 0%, #d0e4f0 0%, transparent 60%), radial-gradient(ellipse at 80% 100%, #c8d8e8 0%, transparent 60%)', months: [11,0,1] },
+    spring: { bg: 'radial-gradient(ellipse at 20% 0%, #d8f0d8 0%, transparent 60%), radial-gradient(ellipse at 80% 100%, #f0d8e8 0%, transparent 60%)', months: [2,3,4] },
+    summer: { bg: 'radial-gradient(ellipse at 20% 0%, #f0f0c8 0%, transparent 60%), radial-gradient(ellipse at 80% 100%, #d8f0d0 0%, transparent 60%)', months: [5,6,7] },
+    autumn: { bg: 'radial-gradient(ellipse at 20% 0%, #f0e0c0 0%, transparent 60%), radial-gradient(ellipse at 80% 100%, #f0d0b8 0%, transparent 60%)', months: [8,9,10] },
+};
+
+let currentSeason = 'spring';
+for (const [s, data] of Object.entries(SEASONS)) {
+    if (data.months.includes(month)) { currentSeason = s; break; }
+}
+
+document.getElementById('seasonBg').style.background = SEASONS[currentSeason].bg;
+
+// Seasonal art
+const art = document.getElementById('seasonalArt');
+const SEASON_ART = {
+    spring: `<g stroke="#4a7c5f" fill="none" stroke-linecap="round">
+        <path d="M30 70 C30 50 20 40 30 25 C40 10 55 15 50 30 C60 15 75 10 70 30 C65 15 80 20 75 35 C80 45 70 55 60 60 L60 70" stroke-width="1.5"/>
+        <ellipse cx="50" cy="28" rx="12" ry="7" fill="#4a7c5f" opacity="0.3" transform="rotate(-10 50 28)"/>
+        <path d="M100 70 C100 55 90 45 95 32" stroke-width="1.2"/>
+        <circle cx="95" cy="26" r="8" fill="#b87878" opacity="0.4" stroke="#b87878"/>
+        <circle cx="92" cy="20" r="5" fill="#dba8aa" opacity="0.5" stroke="none"/>
+        <circle cx="100" cy="19" r="5" fill="#dba8aa" opacity="0.5" stroke="none"/>
+        <circle cx="105" cy="23" r="5" fill="#dba8aa" opacity="0.5" stroke="none"/>
+        <path d="M160 70 C160 55 150 42 155 28" stroke-width="1.2"/>
+        <ellipse cx="155" cy="22" rx="10" ry="6" fill="#7aac8f" opacity="0.4" transform="rotate(-20 155 22)"/>
+        <ellipse cx="168" cy="25" rx="8" ry="5" fill="#7aac8f" opacity="0.35" transform="rotate(15 168 25)"/>
+        <path d="M220 70 Q230 50 240 35 Q245 25 255 20" stroke-width="1.2"/>
+        <circle cx="255" cy="15" r="6" fill="#d4b870" opacity="0.5" stroke="#b8974a" stroke-width="0.8"/>
+        <circle cx="248" cy="12" r="4" fill="#d4b870" opacity="0.4" stroke="none"/>
+        <circle cx="263" cy="13" r="4" fill="#d4b870" opacity="0.4" stroke="none"/>
+        <path d="M300 70 C295 55 285 45 290 30" stroke-width="1.2"/>
+        <ellipse cx="290" cy="24" rx="11" ry="6" fill="#4a7c5f" opacity="0.35" transform="rotate(-30 290 24)"/>
+        <path d="M20 72 Q80 68 160 72 Q240 68 320 72" stroke-width="0.8" opacity="0.3"/>
+    </g>`,
+    summer: `<g stroke="#4a7c5f" fill="none" stroke-linecap="round">
+        <path d="M40 70 C40 45 30 35 40 20 C50 5 65 12 58 28 C68 10 85 8 78 28 C82 38 70 52 60 60 L60 70" stroke-width="1.5"/>
+        <ellipse cx="55" cy="22" rx="15" ry="9" fill="#4a7c5f" opacity="0.35" transform="rotate(-5 55 22)"/>
+        <ellipse cx="48" cy="30" rx="12" ry="7" fill="#7aac8f" opacity="0.3" transform="rotate(20 48 30)"/>
+        <path d="M120 70 C118 50 110 38 115 22" stroke-width="1.2"/>
+        <ellipse cx="115" cy="15" rx="12" ry="7" fill="#4a7c5f" opacity="0.4" transform="rotate(-15 115 15)"/>
+        <ellipse cx="125" cy="18" rx="10" ry="6" fill="#7aac8f" opacity="0.35" transform="rotate(10 125 18)"/>
+        <path d="M190 70 Q195 50 200 35 Q205 22 210 15" stroke-width="1.2"/>
+        <circle cx="210" cy="10" r="7" fill="#b8974a" opacity="0.35" stroke="#b8974a" stroke-width="0.5"/>
+        <path d="M260 70 C255 50 248 40 252 25" stroke-width="1.2"/>
+        <ellipse cx="252" cy="18" rx="13" ry="8" fill="#4a7c5f" opacity="0.4" transform="rotate(-20 252 18)"/>
+        <path d="M310 70 C308 52 300 42 305 28" stroke-width="1.2"/>
+        <ellipse cx="305" cy="22" rx="11" ry="6" fill="#7aac8f" opacity="0.35"/>
+        <path d="M10 72 Q100 66 170 72 Q250 66 330 72" stroke-width="0.8" opacity="0.25"/>
+    </g>`,
+    autumn: `<g stroke="#8a5c3a" fill="none" stroke-linecap="round">
+        <path d="M40 70 C38 55 30 45 35 30" stroke-width="1.5"/>
+        <ellipse cx="32" cy="22" rx="13" ry="8" fill="#c87840" opacity="0.4" transform="rotate(-20 32 22)"/>
+        <ellipse cx="42" cy="18" rx="11" ry="7" fill="#d89850" opacity="0.35" transform="rotate(10 42 18)"/>
+        <path d="M55 15 Q58 8 65 10 Q60 16 55 15Z" fill="#b86030" opacity="0.45" stroke="none"/>
+        <path d="M110 70 C108 52 100 40 105 25" stroke-width="1.2"/>
+        <ellipse cx="103" cy="18" rx="12" ry="7" fill="#d87838" opacity="0.4" transform="rotate(-15 103 18)"/>
+        <ellipse cx="115" cy="15" rx="10" ry="6" fill="#c89848" opacity="0.35" transform="rotate(15 115 15)"/>
+        <path d="M180 70 C178 55 170 42 175 28" stroke-width="1.2"/>
+        <ellipse cx="173" cy="22" rx="14" ry="8" fill="#b86830" opacity="0.4" transform="rotate(-25 173 22)"/>
+        <path d="M250 70 Q255 50 258 35 Q262 20 268 14" stroke-width="1.2"/>
+        <ellipse cx="268" cy="8" rx="11" ry="6" fill="#d89040" opacity="0.4" transform="rotate(-10 268 8)"/>
+        <path d="M310 70 C308 55 302 44 306 30" stroke-width="1.2"/>
+        <ellipse cx="306" cy="24" rx="12" ry="7" fill="#c87838" opacity="0.38"/>
+        <path d="M10 72 Q100 68 170 72 Q250 68 330 72" stroke-width="0.8" stroke="#8a5c3a" opacity="0.25"/>
+        <circle cx="80" cy="45" r="4" fill="#c87840" opacity="0.4" stroke="none"/>
+        <circle cx="145" cy="38" r="3" fill="#d89050" opacity="0.35" stroke="none"/>
+        <circle cx="230" cy="42" r="4" fill="#b86030" opacity="0.35" stroke="none"/>
+    </g>`,
+    winter: `<g stroke="#5a7fa0" fill="none" stroke-linecap="round">
+        <path d="M40 70 C40 52 32 42 38 28" stroke-width="1.5"/>
+        <path d="M38 28 L28 18 M38 28 L48 18 M38 28 L25 28 M38 28 L51 28 M38 28 L30 38 M38 28 L46 38" stroke-width="0.8" opacity="0.6"/>
+        <circle cx="38" cy="28" r="2" fill="#5a7fa0" opacity="0.5"/>
+        <path d="M110 70 C108 55 100 45 105 30" stroke-width="1.2"/>
+        <path d="M105 30 L95 20 M105 30 L115 20 M105 30 L92 30 M105 30 L118 30" stroke-width="0.8" opacity="0.5"/>
+        <circle cx="105" cy="30" r="1.8" fill="#7aacca" opacity="0.5"/>
+        <path d="M170 70 C168 52 160 40 165 25" stroke-width="1.2"/>
+        <ellipse cx="163" cy="18" rx="10" ry="5" fill="#7aacca" opacity="0.25" transform="rotate(-10 163 18)"/>
+        <path d="M240 70 C238 55 230 44 235 30" stroke-width="1.2"/>
+        <path d="M235 30 L225 22 M235 30 L245 22 M235 30 L223 30 M235 30 L247 30 M235 30 L228 38 M235 30 L242 38" stroke-width="0.8" opacity="0.5"/>
+        <circle cx="235" cy="30" r="1.8" fill="#5a7fa0" opacity="0.45"/>
+        <path d="M300 70 C298 55 292 44 296 30" stroke-width="1.2"/>
+        <ellipse cx="295" cy="24" rx="9" ry="5" fill="#7aacca" opacity="0.25"/>
+        <path d="M10 72 Q100 70 170 72 Q250 70 330 72" stroke-width="0.8" stroke="#5a7fa0" opacity="0.2"/>
+        <circle cx="75" cy="20" r="2.5" fill="#c8e0f0" opacity="0.6" stroke="none"/>
+        <circle cx="155" cy="15" r="2" fill="#c8e0f0" opacity="0.5" stroke="none"/>
+        <circle cx="210" cy="22" r="3" fill="#c8e0f0" opacity="0.55" stroke="none"/>
+        <circle cx="280" cy="18" r="2" fill="#c8e0f0" opacity="0.5" stroke="none"/>
+    </g>`
+};
+
+art.innerHTML = SEASON_ART[currentSeason] || SEASON_ART.spring;
+
+// ══════════════════════════════════════════════
+// WEATHER (Open-Meteo, free, no key needed)
+// ══════════════════════════════════════════════
+async function loadWeather() {
+    try {
+        // Clarkesville, GA coords
+        const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=34.61&longitude=-83.52&current_weather=true&hourly=relativehumidity_2m&temperature_unit=fahrenheit&windspeed_unit=mph&timezone=America%2FNew_York');
+        if (!res.ok) return;
+        const data = await res.json();
+        const w = data.current_weather;
+        const humid = data.hourly?.relativehumidity_2m?.[new Date().getHours()] || '—';
+
+        const WX_ICONS = { 0:'☀️', 1:'🌤', 2:'⛅', 3:'☁️', 45:'🌫', 48:'🌫', 51:'🌦', 53:'🌦', 55:'🌧', 61:'🌧', 63:'🌧', 65:'🌧', 71:'🌨', 73:'🌨', 75:'❄️', 80:'🌦', 81:'🌧', 82:'⛈', 95:'⛈', 99:'⛈' };
+        const icon = WX_ICONS[w.weathercode] || '🌤';
+
+        document.getElementById('wxIcon').textContent = icon;
+        document.getElementById('wxTemp').textContent = Math.round(w.temperature) + '°F';
+        document.getElementById('wxHumid').textContent = humid + '% humidity';
+        document.getElementById('wxWind').textContent = Math.round(w.windspeed) + ' mph';
+    } catch(e) {
+        document.getElementById('weatherStrip').style.display = 'none';
+    }
+}
+loadWeather();
+
+// ══════════════════════════════════════════════
+// ATTENDANCE
+// ══════════════════════════════════════════════
+function getCurrentSchoolYear() {
+    const m = now.getMonth();
+    return m >= 8 ? now.getFullYear() : now.getFullYear() - 1;
+}
+
+function dateKey(d) {
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function loadAttendance() {
+    const sy = getCurrentSchoolYear();
+    const s = localStorage.getItem('wc_attendance_sy_' + sy);
+    return s ? JSON.parse(s) : {};
+}
+
+function saveAttendance(data) {
+    const sy = getCurrentSchoolYear();
+    localStorage.setItem('wc_attendance_sy_' + sy, JSON.stringify(data));
+}
+
+function renderAttendance() {
+    const data = loadAttendance();
+    const total = Object.values(data).filter(Boolean).length;
+    const pct = Math.min(100, Math.round((total / 180) * 100));
+    const remaining = Math.max(0, 180 - total);
+    const todayMarked = !!data[dateKey(now)];
+
+    document.getElementById('attCount').innerHTML = total + ' <span>/ 180 days</span>';
+    document.getElementById('attFill').style.width = pct + '%';
+    document.getElementById('attPct').textContent = pct + '%';
+    document.getElementById('attRemain').textContent = remaining > 0 ? remaining + ' days remaining' : '🎉 Goal reached!';
+    document.getElementById('attSub').textContent = total >= 180 ? '✦ Complete ✦' : total >= 90 ? 'Halfway there!' : '';
+
+    const btn = document.getElementById('attMarkBtn');
+    if (todayMarked) {
+        btn.textContent = '✓ Today Marked';
+        btn.classList.add('marked');
+    } else {
+        btn.textContent = '✓ Mark Today';
+        btn.classList.remove('marked');
+    }
+}
+
+function markToday() {
+    const data = loadAttendance();
+    const key = dateKey(now);
+    if (data[key]) return;
+    data[key] = true;
+    saveAttendance(data);
+    renderAttendance();
+}
+
+renderAttendance();
+
+// ══════════════════════════════════════════════
+// PLANNER TASK COUNTS
+// ══════════════════════════════════════════════
+function loadPlannerData(person) {
+    const tasks  = JSON.parse(localStorage.getItem('wc_planner_tasks_'  + person) || '[]');
+    const checks = JSON.parse(localStorage.getItem('wc_planner_checks_' + person) || '{}');
+    return { tasks, checks };
+}
+
+function taskAppliesToToday(task) {
+    const dow = now.getDay();
+    const key = dateKey(now);
+    const r = task.recurring;
+    if (!r) return task.date === key;
+    if (r.type === 'daily')    return true;
+    if (r.type === 'weekdays') return dow >= 1 && dow <= 5;
+    if (r.type === 'specific') return (r.days || []).includes(dow);
+    if (r.type === 'weekly')   return true;
+    if (r.type === 'oneoff')   return task.date === key;
+    return false;
+}
+
+function checkKey(taskId) {
+    return taskId + '_' + dateKey(now);
+}
+
+function renderPlannerCards() {
+    ['ryder','hadley','mom','house'].forEach(person => {
+        const { tasks, checks } = loadPlannerData(person);
+        const todayTasks = tasks.filter(taskAppliesToToday);
+        const done  = todayTasks.filter(t => !!checks[checkKey(t.id)]).length;
+        const total = todayTasks.length;
+        const pct   = total > 0 ? Math.round((done/total)*100) : 0;
+
+        document.getElementById('prog-'  + person).style.width = pct + '%';
+        document.getElementById('done-'  + person).textContent = done;
+        document.getElementById('total-' + person).textContent = total;
+    });
+}
+
+renderPlannerCards();
+</script>
+</body>
+</html>
