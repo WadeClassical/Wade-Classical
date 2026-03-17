@@ -1077,6 +1077,7 @@ function renderWeekView(person) {
                     '<div class="week-check">' + (done ? '✓' : '') + '</div>' +
                     '<span class="week-task-name">' + escHtml(task.name) + '</span>' +
                     (task.momFlag ? '<span class="week-task-mom">🦋</span>' : '') +
+                    (editMode ? '<button class="task-delete" data-taskid="' + task.id + '" style="display:block;">✕</button>' : '') +
                 '</div>';
             });
         }
@@ -1098,6 +1099,14 @@ function renderWeekView(person) {
     container.querySelectorAll('.week-task-row').forEach(el => {
         el.addEventListener('click', function() {
             toggleCheck(this.dataset.person, this.dataset.ckey);
+        });
+    });
+
+    // Bind week delete buttons
+    container.querySelectorAll('.week-task-row .task-delete').forEach(el => {
+        el.addEventListener('click', function(e) {
+            e.stopPropagation();
+            deleteTask(person, this.dataset.taskid);
         });
     });
 
