@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wade Classical — Morning Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <style>
         :root {
             --cream:    #faf6ef;
@@ -856,6 +859,7 @@ async function loadWeather() {
         document.getElementById('weatherStrip').style.display = 'none';
     }
 }
+initDashFirebase();
 loadWeather();
 
 // ══════════════════════════════════════════════
@@ -870,15 +874,68 @@ function dateKey(d) {
     return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
 
+const DB_CONFIG = {
+    apiKey: "AIzaSyAw9V30gR9hc3WKS3zhO61IU6NeeKghyQM",
+    authDomain: "wade-classical.firebaseapp.com",
+    databaseURL: "https://wade-classical-default-rtdb.firebaseio.com",
+    projectId: "wade-classical",
+    storageBucket: "wade-classical.firebasestorage.app",
+    messagingSenderId: "72309085457",
+    appId: "1:72309085457:web:3d8b5a07302248ded6a8b0"
+};
+let dashDb = null;
+const dashCache = {};
+
+function initDashFirebase() {
+    try {
+        if (firebase.apps.length) { dashDb = firebase.database(); }
+        else { firebase.initializeApp(DB_CONFIG); dashDb = firebase.database(); }
+
+        // Listen for attendance changes
+        const sy = getCurrentSchoolYear();
+        dashDb.ref('attendance/' + sy).on('value', snap => {
+            const val = snap.val();
+            if (val) {
+                dashCache['att_' + sy] = val;
+                localStorage.setItem('wc_attendance_sy_' + sy, JSON.stringify(val));
+            }
+            renderAttendance();
+        });
+
+        // Listen for planner changes
+        ['ryder','hadley','mom','house'].forEach(person => {
+            dashDb.ref('planner/tasks/' + person).on('value', snap => {
+                const val = snap.val();
+                if (val) {
+                    dashCache['tasks_' + person] = val;
+                    localStorage.setItem('wc_planner_tasks_' + person, JSON.stringify(val));
+                }
+                renderPlannerCards();
+            });
+            dashDb.ref('planner/checks/' + person).on('value', snap => {
+                const val = snap.val();
+                if (val) {
+                    dashCache['checks_' + person] = val;
+                    localStorage.setItem('wc_planner_checks_' + person, JSON.stringify(val));
+                }
+                renderPlannerCards();
+            });
+        });
+    } catch(e) { console.warn('Dashboard Firebase failed', e); }
+}
+
 function loadAttendance() {
     const sy = getCurrentSchoolYear();
+    if (dashCache['att_' + sy]) return dashCache['att_' + sy];
     const s = localStorage.getItem('wc_attendance_sy_' + sy);
     return s ? JSON.parse(s) : {};
 }
 
 function saveAttendance(data) {
     const sy = getCurrentSchoolYear();
+    dashCache['att_' + sy] = data;
     localStorage.setItem('wc_attendance_sy_' + sy, JSON.stringify(data));
+    if (dashDb) dashDb.ref('attendance/' + sy).set(data).catch(e => console.warn(e));
 }
 
 function renderAttendance() {
@@ -919,8 +976,8 @@ renderAttendance();
 // PLANNER TASK COUNTS
 // ══════════════════════════════════════════════
 function loadPlannerData(person) {
-    const tasks  = JSON.parse(localStorage.getItem('wc_planner_tasks_'  + person) || '[]');
-    const checks = JSON.parse(localStorage.getItem('wc_planner_checks_' + person) || '{}');
+    const tasks  = dashCache['tasks_'  + person] || JSON.parse(localStorage.getItem('wc_planner_tasks_'  + person) || '[]');
+    const checks = dashCache['checks_' + person] || JSON.parse(localStorage.getItem('wc_planner_checks_' + person) || '{}');
     return { tasks, checks };
 }
 
