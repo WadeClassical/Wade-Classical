@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wade Classical — Daily Planner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Cinzel:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --linen:       #f5f0e8;
+            --linen-dark:  #ede5d8;
+            --clay:        #d4c4b0;
+            --clay-dark:   #b8a898;
+            --ink:         #2e2a24;
+            --ink-mid:     #5c5449;
+            --ink-light:   #9a9088;
+
+            /* Ryder — forest green */
+            --ryder:       #4a7c5f;
+            --ryder-light: #6a9c7f;
+            --ryder-pale:  #e8f2ec;
+            --ryder-mid:   #3a6c4f;
+
+            /* Hadley — muted sky blue */
+            --hadley:      #5a7fa0;
+            --hadley-light:#7a9fc0;
+            --hadley-pale: #e8f0f8;
+            --hadley-mid:  #4a6f90;
+
+            /* Mom — dusty rose */
+            --mom:         #b87878;
+            --mom-light:   #d09898;
+            --mom-pale:    #f8eded;
+            --mom-mid:     #a06868;
+
+            --white:       #ffffff;
+            --shadow:      rgba(46,42,36,0.08);
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            font-family: 'Jost', sans-serif;
+            background: #dde8dd;
+            color: var(--ink);
+            min-height: 100vh;
+        }
+
+        /* ── HEADER ── */
+        header {
+            background: var(--white);
+            border-bottom: 1px solid var(--linen-dark);
+            padding: 18px 24px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 12px var(--shadow);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .header-logo {
+            font-family: 'Cinzel', serif;
+            font-size: 1em;
+            color: var(--ink);
+            letter-spacing: 0.12em;
+            font-weight: 400;
+        }
+
+        .header-date {
+            font-family: 'Lora', serif;
+            font-size: 0.85em;
+            color: var(--ink-light);
+            font-style: italic;
+        }
+
+        .edit-toggle {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.65em;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-weight: 500;
+            padding: 7px 16px;
+            border-radius: 20px;
+            border: 1.5px solid var(--clay);
+            background: var(--white);
+            color: var(--ink-mid);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .edit-toggle:hover { border-color: var(--ink-mid); color: var(--ink); }
+        .edit-toggle.active { background: var(--ink); color: var(--white); border-color: var(--ink); }
+
+        /* ── PERSON TABS ── */
+        .person-tabs {
+            display: flex;
+            gap: 0;
+        }
+
+        .person-tab {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.72em;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            padding: 10px 22px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: var(--ink-light);
+            border-bottom: 2.5px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .person-tab:hover { color: var(--ink-mid); }
+        .person-tab.ryder.active  { color: var(--ryder);  border-bottom-color: var(--ryder);  }
+        .person-tab.hadley.active { color: var(--hadley); border-bottom-color: var(--hadley); }
+        .person-tab.mom.active    { color: var(--mom);    border-bottom-color: var(--mom);    }
+
+        /* ── VIEW TOGGLE ── */
+        .view-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 20px 24px 4px;
+        }
+
+        .view-btn {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.65em;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 7px 18px;
+            border-radius: 20px;
+            border: 1.5px solid var(--clay);
+            background: var(--white);
+            color: var(--ink-mid);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .view-btn.active { background: var(--ink); color: var(--white); border-color: var(--ink); }
+        .view-btn:hover:not(.active) { border-color: var(--ink-mid); }
+
+        /* ── MAIN ── */
+        main { max-width: 680px; margin: 0 auto; padding: 16px 20px 80px; }
+
+        /* ── PERSON PANEL ── */
+        .person-panel { display: none; }
+        .person-panel.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+        /* ── PROGRESS BAR ── */
+        .progress-wrap {
+            margin-bottom: 20px;
+            background: var(--white);
+            border: 1px solid var(--linen-dark);
+            border-radius: 10px;
+            padding: 14px 18px;
+            box-shadow: 0 1px 6px var(--shadow);
+        }
+
+        .progress-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .progress-label {
+            font-size: 0.65em;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--ink-light);
+            font-weight: 400;
+        }
+
+        .progress-count { font-size: 0.75em; color: var(--ink-mid); font-weight: 500; }
+
+        .progress-track {
+            height: 5px;
+            background: var(--linen-dark);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        .ryder-fill  { background: var(--ryder); }
+        .hadley-fill { background: var(--hadley); }
+        .mom-fill    { background: var(--mom); }
+
+        /* ── DAY VIEW ── */
+        .day-header {
+            font-family: 'Lora', serif;
+            font-size: 1.3em;
+            font-style: italic;
+            color: var(--ink-mid);
+            margin-bottom: 14px;
+            font-weight: 400;
+        }
+
+        /* ── TASK ITEM ── */
+        .task-list { display: flex; flex-direction: column; gap: 8px; }
+
+        .task-item {
+            background: var(--white);
+            border: 1px solid var(--linen-dark);
+            border-radius: 10px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 1px 4px var(--shadow);
+            transition: all 0.15s;
+            cursor: pointer;
+            position: relative;
+            animation: slideIn 0.3s ease both;
+        }
+
+        @keyframes slideIn { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
+
+        .task-item:hover { box-shadow: 0 3px 12px var(--shadow); transform: translateY(-1px); }
+        .task-item.done { opacity: 0.5; }
+        .task-item.done .task-name { text-decoration: line-through; color: var(--ink-light); }
+
+        .task-check {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            border: 2px solid var(--clay);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 0.7em;
+            color: transparent;
+        }
+
+        .task-item.done .task-check { color: white; }
+        .ryder-panel  .task-item.done .task-check { background: var(--ryder);  border-color: var(--ryder); }
+        .hadley-panel .task-item.done .task-check { background: var(--hadley); border-color: var(--hadley); }
+        .mom-panel    .task-item.done .task-check { background: var(--mom);    border-color: var(--mom); }
+
+        .ryder-panel  .task-item:hover .task-check:not(.checked) { border-color: var(--ryder-light); }
+        .hadley-panel .task-item:hover .task-check:not(.checked) { border-color: var(--hadley-light); }
+        .mom-panel    .task-item:hover .task-check:not(.checked) { border-color: var(--mom-light); }
+
+        .task-body { flex: 1; min-width: 0; }
+        .task-name { font-size: 0.95em; font-weight: 400; color: var(--ink); line-height: 1.3; }
+        .task-note { font-size: 0.72em; color: var(--ink-light); margin-top: 2px; font-style: italic; }
+
+        .task-badges { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
+
+        .badge-mom {
+            font-size: 0.7em;
+            background: var(--mom-pale);
+            color: var(--mom);
+            border: 1px solid var(--mom-light);
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .badge-link {
+            font-size: 0.65em;
+            color: var(--ink-light);
+            border: 1px solid var(--clay);
+            border-radius: 20px;
+            padding: 2px 8px;
+            text-decoration: none;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .badge-link:hover { border-color: var(--ink-mid); color: var(--ink); }
+        .ryder-panel  .badge-link:hover { border-color: var(--ryder);  color: var(--ryder); }
+        .hadley-panel .badge-link:hover { border-color: var(--hadley); color: var(--hadley); }
+        .mom-panel    .badge-link:hover { border-color: var(--mom);    color: var(--mom); }
+
+        .task-drag { color: var(--clay); font-size: 0.8em; cursor: grab; padding: 0 2px; display: none; }
+        .edit-mode .task-drag { display: block; }
+
+        .task-delete {
+            font-size: 0.75em;
+            color: var(--clay);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 2px 4px;
+            display: none;
+            transition: color 0.15s;
+        }
+
+        .edit-mode .task-delete { display: block; }
+        .task-delete:hover { color: var(--mom); }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            color: var(--ink-light);
+        }
+
+        .empty-icon { font-size: 2em; margin-bottom: 12px; }
+        .empty-text { font-family: 'Lora', serif; font-style: italic; font-size: 1em; }
+        .empty-sub  { font-size: 0.72em; margin-top: 6px; letter-spacing: 0.08em; }
+
+        /* ── WEEK VIEW ── */
+        .week-grid { display: flex; flex-direction: column; gap: 12px; }
+
+        .week-day-block {
+            background: var(--white);
+            border: 1px solid var(--linen-dark);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px var(--shadow);
+        }
+
+        .week-day-header {
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            border-bottom: 1px solid var(--linen-dark);
+        }
+
+        .week-day-header.today-header { background: var(--linen-dark); }
+
+        .week-day-name {
+            font-family: 'Lora', serif;
+            font-size: 0.9em;
+            font-style: italic;
+            color: var(--ink-mid);
+        }
+
+        .week-day-name.today-name { font-weight: 600; color: var(--ink); }
+
+        .week-day-count {
+            font-size: 0.62em;
+            letter-spacing: 0.1em;
+            color: var(--ink-light);
+            text-transform: uppercase;
+        }
+
+        .week-day-tasks { padding: 10px 16px; display: flex; flex-direction: column; gap: 6px; }
+
+        .week-task-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            background: #dde8dd;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .week-task-row:hover { background: var(--linen-dark); }
+        .week-task-row.done { opacity: 0.45; }
+        .week-task-row.done .week-task-name { text-decoration: line-through; }
+
+        .week-check {
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            border: 1.5px solid var(--clay);
+            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.55em;
+            color: transparent;
+            transition: all 0.15s;
+        }
+
+        .week-task-row.done .week-check { color: white; }
+        .ryder-panel  .week-task-row.done .week-check { background: var(--ryder);  border-color: var(--ryder); }
+        .hadley-panel .week-task-row.done .week-check { background: var(--hadley); border-color: var(--hadley); }
+        .mom-panel    .week-task-row.done .week-check { background: var(--mom);    border-color: var(--mom); }
+
+        .week-task-name { font-size: 0.82em; color: var(--ink); flex: 1; }
+        .week-task-mom  { font-size: 0.65em; color: var(--mom); }
+
+        /* ── EDIT MODE ── */
+        .edit-panel {
+            display: none;
+            background: var(--white);
+            border: 1px solid var(--linen-dark);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px var(--shadow);
+        }
+
+        .edit-panel.show { display: block; animation: fadeIn 0.3s ease; }
+
+        .edit-panel-title {
+            font-family: 'Lora', serif;
+            font-style: italic;
+            font-size: 1em;
+            color: var(--ink-mid);
+            margin-bottom: 16px;
+            font-weight: 400;
+        }
+
+        .edit-field {
+            margin-bottom: 12px;
+        }
+
+        .edit-label {
+            font-size: 0.62em;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--ink-light);
+            font-weight: 500;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .edit-input, .edit-select, .edit-textarea {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.88em;
+            background: #dde8dd;
+            border: 1px solid var(--clay);
+            color: var(--ink);
+            padding: 9px 12px;
+            border-radius: 8px;
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+
+        .edit-input:focus, .edit-select:focus, .edit-textarea:focus {
+            outline: none;
+            border-color: var(--ink-mid);
+        }
+
+        .edit-row { display: flex; gap: 10px; flex-wrap: wrap; }
+        .edit-row .edit-field { flex: 1; min-width: 140px; }
+
+        .edit-checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .edit-checkbox-row input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--mom); cursor: pointer; }
+        .edit-checkbox-row label { font-size: 0.82em; color: var(--ink-mid); cursor: pointer; }
+
+        .days-checkboxes {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .day-check-btn {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.62em;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            padding: 5px 10px;
+            border-radius: 20px;
+            border: 1.5px solid var(--clay);
+            background: var(--white);
+            color: var(--ink-mid);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .day-check-btn.selected { background: var(--ink); color: var(--white); border-color: var(--ink); }
+
+        .edit-btn-row { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+
+        .btn-add {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.7em;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .ryder-panel  .btn-add { background: var(--ryder);  color: white; }
+        .hadley-panel .btn-add { background: var(--hadley); color: white; }
+        .mom-panel    .btn-add { background: var(--mom);    color: white; }
+
+        .btn-add:hover { filter: brightness(0.9); transform: translateY(-1px); }
+
+        .btn-cancel {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.7em;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1.5px solid var(--clay);
+            background: var(--white);
+            color: var(--ink-mid);
+            cursor: pointer;
+        }
+
+        /* Add task FAB */
+        .add-task-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            font-family: 'Jost', sans-serif;
+            font-size: 0.72em;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 13px 22px;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 16px var(--shadow);
+            transition: all 0.2s;
+            z-index: 50;
+        }
+
+        .add-task-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--shadow); }
+        .edit-mode .add-task-btn { display: flex; }
+
+        .ryder-panel  .add-task-btn { background: var(--ryder);  color: white; }
+        .hadley-panel .add-task-btn { background: var(--hadley); color: white; }
+        .mom-panel    .add-task-btn { background: var(--mom);    color: white; }
+
+        /* ── QUICK ADD ── */
+        .week-quick-add {
+            padding: 8px 10px;
+            border-top: 1px solid var(--linen-dark);
+            display: none;
+        }
+        .week-quick-add.show { display: block; }
+        .week-quick-add-row {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .week-quick-input {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.82em;
+            flex: 1;
+            background: var(--linen);
+            border: 1px solid var(--clay);
+            color: var(--ink);
+            padding: 7px 10px;
+            border-radius: 8px;
+            transition: border-color 0.2s;
+        }
+        .week-quick-input:focus { outline: none; border-color: var(--ink-mid); }
+        .week-quick-save {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.68em;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            padding: 7px 14px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            color: white;
+            transition: filter 0.15s;
+            white-space: nowrap;
+        }
+        .week-quick-save:hover { filter: brightness(0.9); }
+        .week-quick-cancel {
+            font-size: 0.8em;
+            color: var(--ink-light);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 6px;
+        }
+        .week-quick-cancel:hover { color: var(--mom); }
+        .week-add-btn {
+            font-size: 0.75em;
+            font-weight: 600;
+            color: var(--ink-light);
+            background: none;
+            border: 1px solid var(--clay);
+            border-radius: 20px;
+            padding: 3px 10px;
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .week-add-btn:hover { border-color: var(--ink-mid); color: var(--ink); }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 600px) {
+            .header-top { flex-wrap: wrap; gap: 8px; }
+            .person-tab { padding: 10px 14px; font-size: 0.68em; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-top">
+        <span class="header-logo">Wade Classical</span>
+        <span class="header-date" id="headerDate"></span>
+        <button class="edit-toggle" id="editToggle" onclick="toggleEditMode()">⚙ Edit</button>
+    </div>
+    <div class="person-tabs">
+        <button class="person-tab ryder active" onclick="switchPerson('ryder')">⚔️ Ryder</button>
+        <button class="person-tab hadley" onclick="switchPerson('hadley')">🌷 Hadley</button>
+        <button class="person-tab mom" onclick="switchPerson('mom')">🦋 Mom</button>
+    </div>
+</header>
+
+<div class="view-toggle">
+    <button class="view-btn active" id="btn-today" onclick="switchView('today')">Today</button>
+    <button class="view-btn" id="btn-week" onclick="switchView('week')">This Week</button>
+</div>
+
+<main>
+
+    <!-- RYDER PANEL -->
+    <div class="person-panel ryder-panel active" id="panel-ryder">
+        <div class="progress-wrap" id="prog-ryder" style="display:none">
+            <div class="progress-top">
+                <span class="progress-label">Today's Progress</span>
+                <span class="progress-count" id="prog-count-ryder">0 / 0</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill ryder-fill" id="prog-fill-ryder" style="width:0%"></div></div>
+        </div>
+        <div class="edit-panel" id="edit-panel-ryder"></div>
+        <div id="view-ryder"></div>
+        <button class="add-task-btn" onclick="openAddTask('ryder')">+ Add Task</button>
+    </div>
+
+    <!-- HADLEY PANEL -->
+    <div class="person-panel hadley-panel" id="panel-hadley">
+        <div class="progress-wrap" id="prog-hadley" style="display:none">
+            <div class="progress-top">
+                <span class="progress-label">Today's Progress</span>
+                <span class="progress-count" id="prog-count-hadley">0 / 0</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill hadley-fill" id="prog-fill-hadley" style="width:0%"></div></div>
+        </div>
+        <div class="edit-panel" id="edit-panel-hadley"></div>
+        <div id="view-hadley"></div>
+        <button class="add-task-btn" onclick="openAddTask('hadley')">+ Add Task</button>
+    </div>
+
+    <!-- MOM PANEL -->
+    <div class="person-panel mom-panel" id="panel-mom">
+        <div class="progress-wrap" id="prog-mom" style="display:none">
+            <div class="progress-top">
+                <span class="progress-label">Today's Progress</span>
+                <span class="progress-count" id="prog-count-mom">0 / 0</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill mom-fill" id="prog-fill-mom" style="width:0%"></div></div>
+        </div>
+        <div class="edit-panel" id="edit-panel-mom"></div>
+        <div id="view-mom"></div>
+        <button class="add-task-btn" onclick="openAddTask('mom')">+ Add Task</button>
+    </div>
+
+</main>
+
+<script>
+// ══════════════════════════════════════════════
+// CONSTANTS & STATE
+// ══════════════════════════════════════════════
+const PEOPLE = ['ryder','hadley','mom'];
+const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const DAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const APPS = {
+    'Spelling Practice': 'wade-spelling.html',
+    'Multiplication & Math': 'wade-math-practice.html',
+    "McGuffey's Reader": 'mcguffeys-authentic.html',
+    'Copywork': 'wade-copywork.html',
+    'Attendance': 'wade-attendance.html',
+    'None': null
+};
+
+let currentPerson = 'ryder';
+let currentView   = 'today';
+let editMode      = false;
+let addTaskOpen   = {};
+
+const today = new Date();
+today.setHours(0,0,0,0);
+const todayDow = today.getDay(); // 0=Sun
+
+// ── STORAGE ──
+function loadTasks(person) {
+    const s = localStorage.getItem('wc_planner_tasks_' + person);
+    return s ? JSON.parse(s) : [];
+}
+function saveTasks(person, tasks) {
+    localStorage.setItem('wc_planner_tasks_' + person, JSON.stringify(tasks));
+}
+function loadChecks(person) {
+    const s = localStorage.getItem('wc_planner_checks_' + person);
+    return s ? JSON.parse(s) : {};
+}
+function saveChecks(person, checks) {
+    localStorage.setItem('wc_planner_checks_' + person, JSON.stringify(checks));
+}
+
+// ── DATE HELPERS ──
+function dateKey(date) {
+    return date.getFullYear() + '-' + String(date.getMonth()+1).padStart(2,'0') + '-' + String(date.getDate()).padStart(2,'0');
+}
+
+function getWeekDates() {
+    // Mon–Fri of current week
+    const dates = [];
+    const base = new Date(today);
+    const dow = base.getDay(); // 0=Sun
+    // Go to Monday
+    const diff = dow === 0 ? -6 : 1 - dow;
+    for (let i = 0; i < 5; i++) {
+        const d = new Date(base);
+        d.setDate(base.getDate() + diff + i);
+        d.setHours(0,0,0,0);
+        dates.push(d);
+    }
+    return dates;
+}
+
+// ── TASK MATCHING ──
+// A task appears on a date if:
+// - recurring.type === 'daily' (every day)
+// - recurring.type === 'weekdays' (Mon-Fri)
+// - recurring.type === 'specific' and recurring.days includes dow
+// - recurring.type === 'weekly' (once a week - any day this week)
+// - recurring.type === 'oneoff' and task.date === dateKey
+function taskAppliesToDate(task, date) {
+    const key = dateKey(date);
+    const dow  = date.getDay();
+    const r    = task.recurring;
+    if (!r) return task.date === key;
+    if (r.type === 'daily')    return true;
+    if (r.type === 'weekdays') return dow >= 1 && dow <= 5;
+    if (r.type === 'specific') return (r.days || []).includes(dow);
+    if (r.type === 'weekly')   return true; // show every day this week, check once
+    if (r.type === 'oneoff')   return task.date === key;
+    return false;
+}
+
+function getTasksForDate(person, date) {
+    const tasks = loadTasks(person);
+    return tasks.filter(t => taskAppliesToDate(t, date));
+}
+
+// ── CHECK KEY ──
+function checkKey(taskId, date) {
+    return taskId + '_' + dateKey(date);
+}
+
+// ── AUTO RESET ──
+function autoReset() {
+    const lastReset = localStorage.getItem('wc_planner_lastreset');
+    const todayStr  = dateKey(today);
+    if (lastReset !== todayStr) {
+        // Don't delete checks — they're keyed by date so old ones naturally don't appear
+        localStorage.setItem('wc_planner_lastreset', todayStr);
+    }
+}
+
+// ══════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════
+function render() {
+    // Update header date
+    document.getElementById('headerDate').textContent =
+        DAY_NAMES[today.getDay()] + ', ' +
+        today.toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});
+
+    PEOPLE.forEach(p => {
+        if (currentView === 'today') {
+            renderDayView(p, today);
+        } else {
+            renderWeekView(p);
+        }
+        updateProgress(p);
+    });
+}
+
+function renderDayView(person, date) {
+    const container = document.getElementById('view-' + person);
+    const tasks = getTasksForDate(person, date);
+    const checks = loadChecks(person);
+    const isToday = dateKey(date) === dateKey(today);
+
+    let html = '<div class="day-header">' +
+        (isToday ? 'Today' : DAY_NAMES[date.getDay()]) +
+        '</div>';
+
+    if (tasks.length === 0) {
+        html += '<div class="empty-state">' +
+            '<div class="empty-icon">🌿</div>' +
+            '<div class="empty-text">No tasks for today</div>' +
+            '<div class="empty-sub">' + (editMode ? 'Click + Add Task to get started' : 'Enjoy your free time!') + '</div>' +
+            '</div>';
+    } else {
+        html += '<div class="task-list">';
+        tasks.forEach((task, i) => {
+            const ckey = checkKey(task.id, date);
+            const done = !!checks[ckey];
+            html += buildTaskItem(task, done, ckey, i);
+        });
+        html += '</div>';
+    }
+
+    container.innerHTML = html;
+
+    // Bind check events
+    container.querySelectorAll('.task-item').forEach(el => {
+        el.addEventListener('click', function(e) {
+            if (e.target.classList.contains('task-delete') ||
+                e.target.classList.contains('badge-link') ||
+                e.target.closest('.badge-link')) return;
+            const ckey = this.dataset.ckey;
+            toggleCheck(person, ckey);
+        });
+    });
+
+    // Bind delete
+    container.querySelectorAll('.task-delete').forEach(el => {
+        el.addEventListener('click', function(e) {
+            e.stopPropagation();
+            deleteTask(person, this.dataset.taskid);
+        });
+    });
+}
+
+function buildTaskItem(task, done, ckey, idx) {
+    const delay = idx * 0.04;
+    let badges = '';
+    if (task.momFlag) badges += '<span class="badge-mom">🦋 Mom</span>';
+    if (task.app && APPS[task.app]) {
+        badges += '<a class="badge-link" href="' + APPS[task.app] + '" onclick="event.stopPropagation()">Open ↗</a>';
+    }
+
+    return '<div class="task-item' + (done ? ' done' : '') + '" data-ckey="' + ckey + '" style="animation-delay:' + delay + 's">' +
+        (editMode ? '<span class="task-drag">⠿</span>' : '') +
+        '<div class="task-check">' + (done ? '✓' : '') + '</div>' +
+        '<div class="task-body">' +
+            '<div class="task-name">' + escHtml(task.name) + '</div>' +
+            (task.note ? '<div class="task-note">' + escHtml(task.note) + '</div>' : '') +
+        '</div>' +
+        (badges ? '<div class="task-badges">' + badges + '</div>' : '') +
+        (editMode ? '<button class="task-delete" data-taskid="' + task.id + '">✕</button>' : '') +
+    '</div>';
+}
+
+function renderWeekView(person) {
+    const container = document.getElementById('view-' + person);
+    const weekDates = getWeekDates();
+    const checks    = loadChecks(person);
+    const todayKey  = dateKey(today);
+
+    let html = '<div class="week-grid">';
+    weekDates.forEach(date => {
+        const key   = dateKey(date);
+        const tasks = getTasksForDate(person, date);
+        const isT   = key === todayKey;
+        const doneCount = tasks.filter(t => !!checks[checkKey(t.id, date)]).length;
+
+        html += '<div class="week-day-block">' +
+            '<div class="week-day-header' + (isT ? ' today-header' : '') + '" onclick="toggleWeekDay(this)">' +
+                '<span class="week-day-name' + (isT ? ' today-name' : '') + '">' + DAY_NAMES[date.getDay()] + (isT ? ' · Today' : '') + '</span>' +
+                '<div style="display:flex;align-items:center;gap:8px;" onclick="event.stopPropagation()">' +
+                    '<span class="week-day-count">' + doneCount + '/' + tasks.length + ' done</span>' +
+                    '<button class="week-add-btn" onclick="toggleWeekQuickAdd(&quot;week-qa-' + person + '-' + key + '&quot;)">+ Add</button>' +
+                '</div>' +
+            '</div>' +
+            '<div class="week-day-tasks" id="week-tasks-' + person + '-' + key + '"' + (!isT ? ' style="display:none"' : '') + '>';
+
+        if (tasks.length === 0) {
+            html += '<div style="font-size:0.75em;color:var(--ink-light);padding:6px 0;font-style:italic;">No tasks</div>';
+        } else {
+            tasks.forEach(task => {
+                const ckey = checkKey(task.id, date);
+                const done = !!checks[ckey];
+                html += '<div class="week-task-row' + (done ? ' done' : '') + '" data-ckey="' + ckey + '" data-person="' + person + '">' +
+                    '<div class="week-check">' + (done ? '✓' : '') + '</div>' +
+                    '<span class="week-task-name">' + escHtml(task.name) + '</span>' +
+                    (task.momFlag ? '<span class="week-task-mom">🦋</span>' : '') +
+                '</div>';
+            });
+        }
+
+        html += '</div>' +
+            '<div class="week-quick-add' + (isT ? ' show' : '') + '" id="week-qa-' + person + '-' + key + '">' +
+                '<div class="week-quick-add-row">' +
+                    '<input class="week-quick-input" id="week-qi-' + person + '-' + key + '" placeholder="Task name..." />' +
+                    '<button class="week-quick-save" data-person="' + person + '" data-date="' + key + '" onclick="saveWeekQuickTask(this)">Add</button>' +
+                    '<button class="week-quick-cancel" onclick="toggleWeekQuickAdd(&quot;week-qa-' + person + '-' + key + '&quot;)">✕</button>' +
+                '</div>' +
+            '</div>' +
+        '</div>';
+    });
+    html += '</div>';
+    container.innerHTML = html;
+
+    // Bind week check events
+    container.querySelectorAll('.week-task-row').forEach(el => {
+        el.addEventListener('click', function() {
+            toggleCheck(this.dataset.person, this.dataset.ckey);
+        });
+    });
+
+    // Color quick-save buttons per person
+    container.querySelectorAll('.week-quick-save').forEach(btn => {
+        btn.style.background = 'var(--' + person + ')';
+    });
+
+    // Enter key on quick inputs
+    container.querySelectorAll('.week-quick-input').forEach(input => {
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const btn = this.nextElementSibling;
+                saveWeekQuickTask(btn);
+            }
+        });
+    });
+}
+
+function toggleWeekDay(header) {
+    const tasks = header.nextElementSibling;
+    tasks.style.display = tasks.style.display === 'none' ? 'block' : 'none';
+}
+
+function toggleWeekQuickAdd(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('show');
+    // Also expand the day tasks
+    const tasksEl = el.previousElementSibling;
+    if (tasksEl && el.classList.contains('show')) {
+        tasksEl.style.display = 'block';
+        el.querySelector('.week-quick-input').focus();
+    }
+}
+
+function saveWeekQuickTask(btn) {
+    const person = btn.dataset.person;
+    const date   = btn.dataset.date;
+    const inputId = 'week-qi-' + person + '-' + date;
+    const input  = document.getElementById(inputId);
+    if (!input) return;
+    const name = input.value.trim();
+    if (!name) { input.focus(); return; }
+
+    const task = {
+        id:        'task_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+        name,
+        note:      null,
+        app:       null,
+        momFlag:   false,
+        recurring: null,
+        date:      date,
+        order:     loadTasks(person).length
+    };
+
+    const tasks = loadTasks(person);
+    tasks.push(task);
+    saveTasks(person, tasks);
+    input.value = '';
+    render();
+}
+
+function updateProgress(person) {
+    const tasks  = getTasksForDate(person, today);
+    const checks = loadChecks(person);
+    const total  = tasks.length;
+    const done   = tasks.filter(t => !!checks[checkKey(t.id, today)]).length;
+    const pct    = total > 0 ? Math.round((done / total) * 100) : 0;
+
+    const wrap = document.getElementById('prog-' + person);
+    if (total > 0) {
+        wrap.style.display = 'block';
+        document.getElementById('prog-count-' + person).textContent = done + ' / ' + total;
+        document.getElementById('prog-fill-' + person).style.width  = pct + '%';
+    } else {
+        wrap.style.display = 'none';
+    }
+}
+
+// ══════════════════════════════════════════════
+// TOGGLE CHECK
+// ══════════════════════════════════════════════
+function toggleCheck(person, ckey) {
+    const checks = loadChecks(person);
+    if (checks[ckey]) delete checks[ckey]; else checks[ckey] = true;
+    saveChecks(person, checks);
+    render();
+}
+
+// ══════════════════════════════════════════════
+// ADD / DELETE TASKS
+// ══════════════════════════════════════════════
+function openAddTask(person) {
+    const panel = document.getElementById('edit-panel-' + person);
+    panel.classList.add('show');
+    panel.innerHTML = buildAddTaskForm(person);
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function buildAddTaskForm(person) {
+    const color = 'var(--' + person + ')';
+    return '<div class="edit-panel-title">Add a new task</div>' +
+    '<div class="edit-field"><label class="edit-label">Task Name</label>' +
+        '<input class="edit-input" id="new-name-' + person + '" placeholder="e.g. Math Practice" /></div>' +
+    '<div class="edit-field"><label class="edit-label">Note (optional)</label>' +
+        '<input class="edit-input" id="new-note-' + person + '" placeholder="e.g. Pages 12-14" /></div>' +
+    '<div class="edit-row">' +
+        '<div class="edit-field"><label class="edit-label">Linked App</label>' +
+            '<select class="edit-select" id="new-app-' + person + '">' +
+                Object.keys(APPS).map(a => '<option value="' + a + '">' + a + '</option>').join('') +
+            '</select></div>' +
+        '<div class="edit-field"><label class="edit-label">Repeats</label>' +
+            '<select class="edit-select" id="new-recur-' + person + '" onchange="updateRecurUI(\'' + person + '\')">' +
+                '<option value="daily">Every Day</option>' +
+                '<option value="weekdays">Weekdays (Mon–Fri)</option>' +
+                '<option value="specific">Specific Days</option>' +
+                '<option value="weekly">Once a Week (any day)</option>' +
+                '<option value="oneoff">One-Off Date</option>' +
+            '</select></div>' +
+    '</div>' +
+    '<div class="edit-field" id="specific-days-' + person + '" style="display:none">' +
+        '<label class="edit-label">Which Days?</label>' +
+        '<div class="days-checkboxes">' +
+            ['Mon','Tue','Wed','Thu','Fri'].map((d,i) =>
+                '<button type="button" class="day-check-btn" data-dow="' + (i+1) + '" onclick="toggleDayBtn(this)">' + d + '</button>'
+            ).join('') +
+        '</div>' +
+    '</div>' +
+    '<div class="edit-field" id="oneoff-date-' + person + '" style="display:none">' +
+        '<label class="edit-label">Date</label>' +
+        '<input class="edit-input" type="date" id="new-date-' + person + '" /></div>' +
+    '<div class="edit-checkbox-row">' +
+        '<input type="checkbox" id="new-mom-' + person + '" />' +
+        '<label for="new-mom-' + person + '">🦋 Needs Mom</label>' +
+    '</div>' +
+    '<div class="edit-btn-row">' +
+        '<button class="btn-add" onclick="saveNewTask(\'' + person + '\')">Add Task</button>' +
+        '<button class="btn-cancel" onclick="closeAddTask(\'' + person + '\')">Cancel</button>' +
+    '</div>';
+}
+
+function updateRecurUI(person) {
+    const val = document.getElementById('new-recur-' + person).value;
+    document.getElementById('specific-days-' + person).style.display = val === 'specific' ? 'block' : 'none';
+    document.getElementById('oneoff-date-' + person).style.display   = val === 'oneoff'  ? 'block' : 'none';
+}
+
+function toggleDayBtn(btn) {
+    btn.classList.toggle('selected');
+}
+
+function closeAddTask(person) {
+    const panel = document.getElementById('edit-panel-' + person);
+    panel.classList.remove('show');
+    panel.innerHTML = '';
+}
+
+function saveNewTask(person) {
+    const name  = document.getElementById('new-name-'  + person).value.trim();
+    if (!name) { alert('Please enter a task name.'); return; }
+
+    const note  = document.getElementById('new-note-'  + person).value.trim();
+    const app   = document.getElementById('new-app-'   + person).value;
+    const recur = document.getElementById('new-recur-' + person).value;
+    const momF  = document.getElementById('new-mom-'   + person).checked;
+
+    let recurObj = { type: recur };
+    if (recur === 'specific') {
+        const days = [...document.querySelectorAll('#specific-days-' + person + ' .day-check-btn.selected')]
+            .map(b => parseInt(b.dataset.dow));
+        if (days.length === 0) { alert('Please select at least one day.'); return; }
+        recurObj.days = days;
+    }
+
+    let date = null;
+    if (recur === 'oneoff') {
+        date = document.getElementById('new-date-' + person).value;
+        if (!date) { alert('Please select a date.'); return; }
+        recurObj = null;
+    }
+
+    const task = {
+        id:       'task_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+        name,
+        note:     note || null,
+        app:      app !== 'None' ? app : null,
+        momFlag:  momF,
+        recurring: recurObj,
+        date:     date,
+        order:    loadTasks(person).length
+    };
+
+    const tasks = loadTasks(person);
+    tasks.push(task);
+    saveTasks(person, tasks);
+    closeAddTask(person);
+    render();
+}
+
+function deleteTask(person, taskId) {
+    if (!confirm('Remove this task?')) return;
+    let tasks = loadTasks(person);
+    tasks = tasks.filter(t => t.id !== taskId);
+    saveTasks(person, tasks);
+    render();
+}
+
+// ══════════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════════
+function switchPerson(person) {
+    currentPerson = person;
+    document.querySelectorAll('.person-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.person-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + person).classList.add('active');
+    document.querySelector('.person-tab.' + person).classList.add('active');
+    render();
+}
+
+function switchView(view) {
+    currentView = view;
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-' + view).classList.add('active');
+    render();
+}
+
+function toggleEditMode() {
+    editMode = !editMode;
+    const btn = document.getElementById('editToggle');
+    btn.classList.toggle('active', editMode);
+    btn.textContent = editMode ? '✓ Done' : '⚙ Edit';
+    document.querySelectorAll('.person-panel').forEach(p => p.classList.toggle('edit-mode', editMode));
+    if (!editMode) PEOPLE.forEach(p => closeAddTask(p));
+    render();
+}
+
+// ══════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════
+function escHtml(str) {
+    return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+autoReset();
+render();
+</script>
+</body>
+</html>
