@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wade Classical — Attendance</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -209,9 +212,46 @@ function currentSchoolYearStart() {
 let syStart = currentSchoolYearStart(); // e.g. 2025
 
 // Storage key per school year
+const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyAw9V30gR9hc3WKS3zhO61IU6NeeKghyQM",
+    authDomain: "wade-classical.firebaseapp.com",
+    databaseURL: "https://wade-classical-default-rtdb.firebaseio.com",
+    projectId: "wade-classical",
+    storageBucket: "wade-classical.firebasestorage.app",
+    messagingSenderId: "72309085457",
+    appId: "1:72309085457:web:3d8b5a07302248ded6a8b0"
+};
+let attDb = null;
+const attCache = {};
+
+function initAttFirebase() {
+    try {
+        if (firebase.apps.length) { attDb = firebase.database(); }
+        else { firebase.initializeApp(FIREBASE_CONFIG); attDb = firebase.database(); }
+        attDb.ref('attendance').on('value', snap => {
+            const val = snap.val();
+            if (val) {
+                Object.entries(val).forEach(([k, v]) => {
+                    attCache[k] = v;
+                    localStorage.setItem('wc_attendance_sy_' + k, JSON.stringify(v));
+                });
+                render();
+            }
+        });
+    } catch(e) { console.warn('Attendance Firebase failed', e); }
+}
+
 function storageKey(sy) { return 'wc_attendance_sy_' + sy; }
-function loadData(sy) { const s = localStorage.getItem(storageKey(sy)); return s ? JSON.parse(s) : {}; }
-function saveData(sy, data) { localStorage.setItem(storageKey(sy), JSON.stringify(data)); }
+function loadData(sy) {
+    if (attCache[sy]) return attCache[sy];
+    const s = localStorage.getItem(storageKey(sy));
+    return s ? JSON.parse(s) : {};
+}
+function saveData(sy, data) {
+    attCache[sy] = data;
+    localStorage.setItem(storageKey(sy), JSON.stringify(data));
+    if (attDb) attDb.ref('attendance/' + sy).set(data).catch(e => console.warn(e));
+}
 
 // School year color index (stable per syStart)
 function syColorIndex(sy) { return ((sy - 2020) % 8 + 8) % 8; }
@@ -405,6 +445,7 @@ function mergeFederalHolidays(y1, y2) {
 
 let federalHolidays = {};
 
+initAttFirebase();
 render();
 </script>
 </body>

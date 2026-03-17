@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wade Classical — Daily Planner</title>
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Cinzel:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <style>
         :root {
             --linen:       #f5f0e8;
@@ -733,6 +736,74 @@
 
 <script>
 // ══════════════════════════════════════════════
+// FIREBASE CONFIG
+// ══════════════════════════════════════════════
+const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyAw9V30gR9hc3WKS3zhO61IU6NeeKghyQM",
+    authDomain: "wade-classical.firebaseapp.com",
+    databaseURL: "https://wade-classical-default-rtdb.firebaseio.com",
+    projectId: "wade-classical",
+    storageBucket: "wade-classical.firebasestorage.app",
+    messagingSenderId: "72309085457",
+    appId: "1:72309085457:web:3d8b5a07302248ded6a8b0"
+};
+
+// Firebase refs (set after init)
+let db = null;
+let firebaseReady = false;
+const pendingWrites = [];
+
+function initFirebase() {
+    try {
+        firebase.initializeApp(FIREBASE_CONFIG);
+        db = firebase.database();
+        firebaseReady = true;
+        // Flush any pending writes
+        pendingWrites.forEach(fn => fn());
+        pendingWrites.length = 0;
+        console.log('Firebase connected');
+    } catch(e) {
+        console.warn('Firebase init failed, falling back to localStorage', e);
+    }
+}
+
+function fbRef(path) {
+    return db ? db.ref(path) : null;
+}
+
+// ── FIREBASE READ/WRITE HELPERS ──
+function fbGet(path, callback) {
+    const ref = fbRef(path);
+    if (!ref) {
+        // fallback to localStorage
+        const val = localStorage.getItem('wc_' + path.replace(/\//g,'_'));
+        callback(val ? JSON.parse(val) : null);
+        return;
+    }
+    ref.once('value', snap => callback(snap.val()));
+}
+
+function fbSet(path, value) {
+    // Always write to localStorage as cache
+    localStorage.setItem('wc_' + path.replace(/\//g,'_'), JSON.stringify(value));
+    const ref = fbRef(path);
+    if (ref) {
+        ref.set(value).catch(e => console.warn('fbSet error', e));
+    }
+}
+
+function fbListen(path, callback) {
+    const ref = fbRef(path);
+    if (!ref) {
+        // fallback: read from localStorage once
+        const val = localStorage.getItem('wc_' + path.replace(/\//g,'_'));
+        callback(val ? JSON.parse(val) : null);
+        return;
+    }
+    ref.on('value', snap => callback(snap.val()));
+}
+
+// ══════════════════════════════════════════════
 // CONSTANTS & STATE
 // ══════════════════════════════════════════════
 const PEOPLE = ['ryder','hadley','mom','house'];
@@ -757,19 +828,32 @@ today.setHours(0,0,0,0);
 const todayDow = today.getDay(); // 0=Sun
 
 // ── STORAGE ──
+// Tasks and checks are kept in memory + synced to Firebase
+// localCache mirrors Firebase so UI stays fast
+const localCache = {};
+
 function loadTasks(person) {
-    const s = localStorage.getItem('wc_planner_tasks_' + person);
-    return s ? JSON.parse(s) : [];
+    const key = 'tasks_' + person;
+    return localCache[key] || JSON.parse(localStorage.getItem('wc_planner_tasks_' + person) || '[]');
 }
+
 function saveTasks(person, tasks) {
+    const key = 'tasks_' + person;
+    localCache[key] = tasks;
     localStorage.setItem('wc_planner_tasks_' + person, JSON.stringify(tasks));
+    fbSet('planner/tasks/' + person, tasks);
 }
+
 function loadChecks(person) {
-    const s = localStorage.getItem('wc_planner_checks_' + person);
-    return s ? JSON.parse(s) : {};
+    const key = 'checks_' + person;
+    return localCache[key] || JSON.parse(localStorage.getItem('wc_planner_checks_' + person) || '{}');
 }
+
 function saveChecks(person, checks) {
+    const key = 'checks_' + person;
+    localCache[key] = checks;
     localStorage.setItem('wc_planner_checks_' + person, JSON.stringify(checks));
+    fbSet('planner/checks/' + person, checks);
 }
 
 // ── DATE HELPERS ──
@@ -1357,7 +1441,7 @@ function renderMonthView(person) {
     const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     const monthName = MONTHS_FULL[today.getMonth()] + ' ' + today.getFullYear();
     const storageKey = 'wc_monthly_' + person + '_' + today.getFullYear() + '_' + today.getMonth();
-    const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    const items = localCache[storageKey] || JSON.parse(localStorage.getItem('wc_' + storageKey) || '[]');
 
     let html = '<div class="day-header">' + monthName + '</div>';
     html += '<div class="task-list" id="monthly-list">';
@@ -1391,9 +1475,11 @@ function renderMonthView(person) {
         el.addEventListener('click', function(e) {
             if (e.target.classList.contains('task-delete')) return;
             const idx = parseInt(this.dataset.idx);
-            const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            const items = localCache[storageKey] || JSON.parse(localStorage.getItem('wc_' + storageKey) || '[]');
             items[idx].done = !items[idx].done;
-            localStorage.setItem(storageKey, JSON.stringify(items));
+            localCache[storageKey] = items;
+    localStorage.setItem('wc_' + storageKey, JSON.stringify(items));
+    fbSet('planner/' + storageKey, items);
             renderMonthView(person);
         });
     });
@@ -1403,9 +1489,11 @@ function renderMonthView(person) {
         el.addEventListener('click', function(e) {
             e.stopPropagation();
             const idx = parseInt(this.dataset.idx);
-            const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            const items = localCache[storageKey] || JSON.parse(localStorage.getItem('wc_' + storageKey) || '[]');
             items.splice(idx, 1);
-            localStorage.setItem(storageKey, JSON.stringify(items));
+            localCache[storageKey] = items;
+    localStorage.setItem('wc_' + storageKey, JSON.stringify(items));
+    fbSet('planner/' + storageKey, items);
             renderMonthView(person);
         });
     });
@@ -1423,9 +1511,11 @@ function addMonthlyItem() {
     const inp = document.getElementById('monthly-new-input');
     if (!inp || !inp.value.trim()) return;
     const storageKey = 'wc_monthly_' + currentPerson + '_' + today.getFullYear() + '_' + today.getMonth();
-    const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    const items = localCache[storageKey] || JSON.parse(localStorage.getItem('wc_' + storageKey) || '[]');
     items.push({ text: inp.value.trim(), done: false });
-    localStorage.setItem(storageKey, JSON.stringify(items));
+    localCache[storageKey] = items;
+    localStorage.setItem('wc_' + storageKey, JSON.stringify(items));
+    fbSet('planner/' + storageKey, items);
     inp.value = '';
     renderMonthView('mom');
 }
@@ -1434,7 +1524,7 @@ function renderYearView(person) {
     const container = document.getElementById('view-' + person);
     const year = today.getFullYear();
     const storageKey = 'wc_yearly_' + person + '_' + year;
-    const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    const items = localCache[storageKey] || JSON.parse(localStorage.getItem('wc_' + storageKey) || '[]');
 
     let html = '<div class="day-header">' + year + ' Goals & Tasks</div>';
     html += '<div class="task-list" id="yearly-list">';
@@ -1467,9 +1557,11 @@ function renderYearView(person) {
         el.addEventListener('click', function(e) {
             if (e.target.classList.contains('task-delete')) return;
             const idx = parseInt(this.dataset.idx);
-            const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            const items = localCache[storageKey] || JSON.parse(localStorage.getItem('wc_' + storageKey) || '[]');
             items[idx].done = !items[idx].done;
-            localStorage.setItem(storageKey, JSON.stringify(items));
+            localCache[storageKey] = items;
+    localStorage.setItem('wc_' + storageKey, JSON.stringify(items));
+    fbSet('planner/' + storageKey, items);
             renderYearView(person);
         });
     });
@@ -1478,9 +1570,11 @@ function renderYearView(person) {
         el.addEventListener('click', function(e) {
             e.stopPropagation();
             const idx = parseInt(this.dataset.idx);
-            const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            const items = localCache[storageKey] || JSON.parse(localStorage.getItem('wc_' + storageKey) || '[]');
             items.splice(idx, 1);
-            localStorage.setItem(storageKey, JSON.stringify(items));
+            localCache[storageKey] = items;
+    localStorage.setItem('wc_' + storageKey, JSON.stringify(items));
+    fbSet('planner/' + storageKey, items);
             renderYearView(person);
         });
     });
@@ -1493,9 +1587,11 @@ function addYearlyItem() {
     const inp = document.getElementById('yearly-new-input');
     if (!inp || !inp.value.trim()) return;
     const storageKey = 'wc_yearly_' + currentPerson + '_' + today.getFullYear();
-    const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    const items = localCache[storageKey] || JSON.parse(localStorage.getItem('wc_' + storageKey) || '[]');
     items.push({ text: inp.value.trim(), done: false });
-    localStorage.setItem(storageKey, JSON.stringify(items));
+    localCache[storageKey] = items;
+    localStorage.setItem('wc_' + storageKey, JSON.stringify(items));
+    fbSet('planner/' + storageKey, items);
     inp.value = '';
     renderYearView('mom');
 }
@@ -1527,6 +1623,79 @@ function escHtml(str) {
 // ══════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════
+// ── FIREBASE REAL-TIME LISTENERS ──
+// When data changes on ANY device, update local cache and re-render
+function setupFirebaseListeners() {
+    if (!firebaseReady) return;
+    PEOPLE.forEach(person => {
+        // Listen for task changes
+        fbRef('planner/tasks/' + person).on('value', snap => {
+            const val = snap.val();
+            if (val !== null) {
+                localCache['tasks_' + person] = val;
+                localStorage.setItem('wc_planner_tasks_' + person, JSON.stringify(val));
+            }
+            render();
+        });
+        // Listen for check changes
+        fbRef('planner/checks/' + person).on('value', snap => {
+            const val = snap.val();
+            if (val !== null) {
+                localCache['checks_' + person] = val;
+                localStorage.setItem('wc_planner_checks_' + person, JSON.stringify(val));
+            }
+            render();
+        });
+    });
+
+    // Listen for monthly/yearly lists
+    fbRef('planner/monthly').on('value', snap => {
+        const val = snap.val();
+        if (val) {
+            Object.entries(val).forEach(([k, v]) => {
+                localCache[k] = v;
+                localStorage.setItem('wc_' + k, JSON.stringify(v));
+            });
+            if (currentView === 'month') render();
+        }
+    });
+    fbRef('planner/yearly').on('value', snap => {
+        const val = snap.val();
+        if (val) {
+            Object.entries(val).forEach(([k, v]) => {
+                localCache[k] = v;
+                localStorage.setItem('wc_' + k, JSON.stringify(v));
+            });
+            if (currentView === 'year') render();
+        }
+    });
+}
+
+// Show sync status indicator
+function showSyncStatus(msg, color) {
+    let el = document.getElementById('sync-status');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'sync-status';
+        el.style.cssText = 'position:fixed;bottom:70px;right:24px;font-family:Jost,sans-serif;font-size:0.6em;letter-spacing:0.1em;padding:6px 14px;border-radius:20px;z-index:200;transition:opacity 0.5s;';
+        document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.style.background = color || '#4a7c5f';
+    el.style.color = 'white';
+    el.style.opacity = '1';
+    setTimeout(() => { el.style.opacity = '0'; }, 2500);
+}
+
+// Init Firebase then set up listeners
+initFirebase();
+if (firebaseReady) {
+    setupFirebaseListeners();
+    showSyncStatus('✓ Synced', '#4a7c5f');
+} else {
+    showSyncStatus('Offline — local only', '#b87878');
+}
+
 autoReset();
 render();
 </script>
