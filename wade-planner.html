@@ -41,7 +41,8 @@
 
         body {
             font-family: 'Jost', sans-serif;
-            background: #dde8dd;
+            background: #faf8f3;
+        font-size: 18px;
             color: var(--ink);
             min-height: 100vh;
         }
@@ -57,6 +58,9 @@
             box-shadow: 0 2px 12px var(--shadow);
         }
 
+
+
+
         .header-top {
             display: flex;
             justify-content: space-between;
@@ -66,17 +70,18 @@
 
         .header-logo {
             font-family: 'Cinzel', serif;
-            font-size: 1em;
+            font-size: 1.7em;
             color: var(--ink);
-            letter-spacing: 0.12em;
+            letter-spacing: 0.15em;
             font-weight: 400;
         }
 
         .header-date {
             font-family: 'Lora', serif;
-            font-size: 0.85em;
-            color: var(--ink-light);
+            font-size: 1.15em;
+            color: var(--ink-mid);
             font-style: italic;
+            font-weight: 400;
         }
 
         .edit-toggle {
@@ -105,10 +110,10 @@
 
         .person-tab {
             font-family: 'Jost', sans-serif;
-            font-size: 0.72em;
+            font-size: 0.82em;
             font-weight: 500;
             letter-spacing: 0.08em;
-            padding: 10px 22px;
+            padding: 12px 26px;
             border: none;
             background: none;
             cursor: pointer;
@@ -124,6 +129,9 @@
         .person-tab.ryder.active  { color: var(--ryder);  border-bottom-color: var(--ryder);  }
         .person-tab.hadley.active { color: var(--hadley); border-bottom-color: var(--hadley); }
         .person-tab.mom.active    { color: var(--mom);    border-bottom-color: var(--mom);    }
+        .ryder-panel.active  { background: #c4d9c4; }
+        .hadley-panel.active { background: #d4e0ea; }
+        .mom-panel.active    { background: #ecdada; }
 
         /* ── VIEW TOGGLE ── */
         .view-toggle {
@@ -135,11 +143,11 @@
 
         .view-btn {
             font-family: 'Jost', sans-serif;
-            font-size: 0.65em;
+            font-size: 0.75em;
             font-weight: 500;
             letter-spacing: 0.12em;
             text-transform: uppercase;
-            padding: 7px 18px;
+            padding: 9px 22px;
             border-radius: 20px;
             border: 1.5px solid var(--clay);
             background: var(--white);
@@ -156,13 +164,13 @@
 
         /* ── PERSON PANEL ── */
         .person-panel { display: none; }
-        .person-panel.active { display: block; animation: fadeIn 0.3s ease; }
+        .person-panel.active { display: block; animation: fadeIn 0.3s ease; min-height: 100vh; margin: -16px -20px; padding: 16px 20px 80px; }
         @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 
         /* ── PROGRESS BAR ── */
         .progress-wrap {
             margin-bottom: 20px;
-            background: var(--white);
+            background: #faf8f3;
             border: 1px solid var(--linen-dark);
             border-radius: 10px;
             padding: 14px 18px;
@@ -177,14 +185,14 @@
         }
 
         .progress-label {
-            font-size: 0.65em;
+            font-size: 0.72em;
             letter-spacing: 0.15em;
             text-transform: uppercase;
             color: var(--ink-light);
             font-weight: 400;
         }
 
-        .progress-count { font-size: 0.75em; color: var(--ink-mid); font-weight: 500; }
+        .progress-count { font-size: 0.85em; color: var(--ink-mid); font-weight: 500; }
 
         .progress-track {
             height: 5px;
@@ -206,11 +214,15 @@
         /* ── DAY VIEW ── */
         .day-header {
             font-family: 'Lora', serif;
-            font-size: 1.3em;
+            font-size: 1.5em;
             font-style: italic;
             color: var(--ink-mid);
             margin-bottom: 14px;
             font-weight: 400;
+            background: #faf8f3;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--linen-dark);
         }
 
         /* ── TASK ITEM ── */
@@ -220,10 +232,10 @@
             background: var(--white);
             border: 1px solid var(--linen-dark);
             border-radius: 10px;
-            padding: 14px 16px;
+            padding: 16px 18px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             box-shadow: 0 1px 4px var(--shadow);
             transition: all 0.15s;
             cursor: pointer;
@@ -238,7 +250,7 @@
         .task-item.done .task-name { text-decoration: line-through; color: var(--ink-light); }
 
         .task-check {
-            width: 22px; height: 22px;
+            width: 26px; height: 26px;
             border-radius: 50%;
             border: 2px solid var(--clay);
             flex-shrink: 0;
@@ -260,13 +272,13 @@
         .mom-panel    .task-item:hover .task-check:not(.checked) { border-color: var(--mom-light); }
 
         .task-body { flex: 1; min-width: 0; }
-        .task-name { font-size: 0.95em; font-weight: 400; color: var(--ink); line-height: 1.3; }
-        .task-note { font-size: 0.72em; color: var(--ink-light); margin-top: 2px; font-style: italic; }
+        .task-name { font-size: 1.05em; font-weight: 400; color: var(--ink); line-height: 1.3; }
+        .task-note { font-size: 0.8em; color: var(--ink-light); margin-top: 3px; font-style: italic; }
 
         .task-badges { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
 
         .badge-mom {
-            font-size: 0.7em;
+            font-size: 0.78em;
             background: var(--mom-pale);
             color: var(--mom);
             border: 1px solid var(--mom-light);
@@ -292,8 +304,14 @@
         .hadley-panel .badge-link:hover { border-color: var(--hadley); color: var(--hadley); }
         .mom-panel    .badge-link:hover { border-color: var(--mom);    color: var(--mom); }
 
-        .task-drag { color: var(--clay); font-size: 0.8em; cursor: grab; padding: 0 2px; display: none; }
+        .task-drag { color: var(--clay); font-size: 0.8em; cursor: grab; padding: 0 2px; display: none; touch-action: none; }
         .edit-mode .task-drag { display: block; }
+        .task-item.dragging { opacity: 0.4; border-style: dashed; transform: none !important; box-shadow: none !important; }
+        .task-item.drag-over { border-color: var(--clay-dark); background: var(--linen-dark); }
+        .week-task-row.dragging { opacity: 0.35; }
+        .week-task-row.drag-over { background: var(--linen-dark); outline: 1.5px dashed var(--clay-dark); border-radius: 8px; }
+        .week-drag-handle { color: var(--clay); font-size: 0.75em; cursor: grab; padding: 0 4px 0 0; display: none; flex-shrink: 0; }
+        .edit-mode .week-drag-handle { display: block; }
 
         .task-delete {
             font-size: 0.75em;
@@ -338,13 +356,14 @@
             align-items: center;
             cursor: pointer;
             border-bottom: 1px solid var(--linen-dark);
+            background: #faf8f3;
         }
 
-        .week-day-header.today-header { background: var(--linen-dark); }
+        .week-day-header.today-header { background: #f0ece4; }
 
         .week-day-name {
             font-family: 'Lora', serif;
-            font-size: 0.9em;
+            font-size: 1.05em;
             font-style: italic;
             color: var(--ink-mid);
         }
@@ -352,7 +371,7 @@
         .week-day-name.today-name { font-weight: 600; color: var(--ink); }
 
         .week-day-count {
-            font-size: 0.62em;
+            font-size: 0.72em;
             letter-spacing: 0.1em;
             color: var(--ink-light);
             text-transform: uppercase;
@@ -363,8 +382,8 @@
         .week-task-row {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 10px;
+            gap: 12px;
+            padding: 11px 12px;
             border-radius: 8px;
             background: #dde8dd;
             cursor: pointer;
@@ -376,7 +395,7 @@
         .week-task-row.done .week-task-name { text-decoration: line-through; }
 
         .week-check {
-            width: 16px; height: 16px;
+            width: 20px; height: 20px;
             border-radius: 50%;
             border: 1.5px solid var(--clay);
             flex-shrink: 0;
@@ -391,7 +410,7 @@
         .hadley-panel .week-task-row.done .week-check { background: var(--hadley); border-color: var(--hadley); }
         .mom-panel    .week-task-row.done .week-check { background: var(--mom);    border-color: var(--mom); }
 
-        .week-task-name { font-size: 0.82em; color: var(--ink); flex: 1; }
+        .week-task-name { font-size: 0.92em; color: var(--ink); flex: 1; }
         .week-task-mom  { font-size: 0.65em; color: var(--mom); }
 
         /* ── EDIT MODE ── */
@@ -432,8 +451,8 @@
 
         .edit-input, .edit-select, .edit-textarea {
             font-family: 'Jost', sans-serif;
-            font-size: 0.88em;
-            background: #dde8dd;
+            font-size: 0.95em;
+            background: #faf8f3;
             border: 1px solid var(--clay);
             color: var(--ink);
             padding: 9px 12px;
@@ -522,11 +541,11 @@
             bottom: 24px;
             right: 24px;
             font-family: 'Jost', sans-serif;
-            font-size: 0.72em;
+            font-size: 0.82em;
             font-weight: 600;
             letter-spacing: 0.1em;
             text-transform: uppercase;
-            padding: 13px 22px;
+            padding: 15px 26px;
             border-radius: 30px;
             border: none;
             cursor: pointer;
@@ -561,7 +580,7 @@
             font-family: 'Jost', sans-serif;
             font-size: 0.82em;
             flex: 1;
-            background: var(--linen);
+            background: #faf8f3;
             border: 1px solid var(--clay);
             color: var(--ink);
             padding: 7px 10px;
@@ -618,8 +637,10 @@
 <header>
     <div class="header-top">
         <span class="header-logo">Wade Classical</span>
-        <span class="header-date" id="headerDate"></span>
         <button class="edit-toggle" id="editToggle" onclick="toggleEditMode()">⚙ Edit</button>
+    </div>
+    <div style="text-align:center; margin-bottom:14px;">
+        <span class="header-date" id="headerDate"></span>
     </div>
     <div class="person-tabs">
         <button class="person-tab ryder active" onclick="switchPerson('ryder')">⚔️ Ryder</button>
@@ -763,7 +784,9 @@ function taskAppliesToDate(task, date) {
 
 function getTasksForDate(person, date) {
     const tasks = loadTasks(person);
-    return tasks.filter(t => taskAppliesToDate(t, date));
+    return tasks
+        .filter(t => taskAppliesToDate(t, date))
+        .sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
 }
 
 // ── CHECK KEY ──
@@ -846,6 +869,123 @@ function renderDayView(person, date) {
             deleteTask(person, this.dataset.taskid);
         });
     });
+
+    // Bind drag-and-drop reordering
+    if (editMode) bindDrag(container, person);
+}
+
+function bindDrag(container, person) {
+    const list = container.querySelector('.task-list');
+    if (!list) return;
+    let dragSrc = null;
+
+    list.querySelectorAll('.task-item').forEach(item => {
+        item.addEventListener('dragstart', function(e) {
+            dragSrc = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', this.dataset.taskid);
+        });
+
+        item.addEventListener('dragend', function() {
+            this.classList.remove('dragging');
+            list.querySelectorAll('.task-item').forEach(i => i.classList.remove('drag-over'));
+        });
+
+        item.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            list.querySelectorAll('.task-item').forEach(i => i.classList.remove('drag-over'));
+            if (this !== dragSrc) this.classList.add('drag-over');
+        });
+
+        item.addEventListener('dragleave', function() {
+            this.classList.remove('drag-over');
+        });
+
+        item.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (this === dragSrc) return;
+            this.classList.remove('drag-over');
+
+            // Get new order from DOM
+            const items = [...list.querySelectorAll('.task-item')];
+            const srcIdx  = items.indexOf(dragSrc);
+            const destIdx = items.indexOf(this);
+
+            // Reorder in DOM
+            if (srcIdx < destIdx) {
+                list.insertBefore(dragSrc, this.nextSibling);
+            } else {
+                list.insertBefore(dragSrc, this);
+            }
+
+            // Save new order to localStorage
+            saveDragOrder(person, list);
+        });
+    });
+}
+
+function bindWeekDrag(dayList, person) {
+    let dragSrc = null;
+
+    dayList.querySelectorAll('.week-task-row').forEach(item => {
+        item.addEventListener('dragstart', function(e) {
+            dragSrc = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', this.dataset.taskid);
+        });
+
+        item.addEventListener('dragend', function() {
+            this.classList.remove('dragging');
+            dayList.querySelectorAll('.week-task-row').forEach(i => i.classList.remove('drag-over'));
+        });
+
+        item.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            dayList.querySelectorAll('.week-task-row').forEach(i => i.classList.remove('drag-over'));
+            if (this !== dragSrc) this.classList.add('drag-over');
+        });
+
+        item.addEventListener('dragleave', function() {
+            this.classList.remove('drag-over');
+        });
+
+        item.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (this === dragSrc) return;
+            this.classList.remove('drag-over');
+            const items = [...dayList.querySelectorAll('.week-task-row')];
+            const srcIdx  = items.indexOf(dragSrc);
+            const destIdx = items.indexOf(this);
+            if (srcIdx < destIdx) dayList.insertBefore(dragSrc, this.nextSibling);
+            else dayList.insertBefore(dragSrc, this);
+            // Save using the same order-save logic
+            const fakeList = { querySelectorAll: (sel) => dayList.querySelectorAll(sel) };
+            saveDragOrder(person, dayList);
+        });
+    });
+}
+
+function saveDragOrder(person, list) {
+    const sel = list.querySelector('.task-item') ? '.task-item' : '.week-task-row';
+    const newOrder = [...list.querySelectorAll(sel)].map(el => el.dataset.taskid);
+    const tasks = loadTasks(person);
+    // Sort tasks array by new DOM order
+    const ordered = [];
+    newOrder.forEach(id => {
+        const t = tasks.find(t => t.id === id);
+        if (t) ordered.push(t);
+    });
+    // Any tasks not in the visible list (different day) append at end
+    tasks.forEach(t => { if (!ordered.find(o => o.id === t.id)) ordered.push(t); });
+    // Update order property
+    ordered.forEach((t, i) => t.order = i);
+    saveTasks(person, ordered);
 }
 
 function buildTaskItem(task, done, ckey, idx) {
@@ -856,7 +996,7 @@ function buildTaskItem(task, done, ckey, idx) {
         badges += '<a class="badge-link" href="' + APPS[task.app] + '" onclick="event.stopPropagation()">Open ↗</a>';
     }
 
-    return '<div class="task-item' + (done ? ' done' : '') + '" data-ckey="' + ckey + '" style="animation-delay:' + delay + 's">' +
+    return '<div class="task-item' + (done ? ' done' : '') + '" data-ckey="' + ckey + '" data-taskid="' + task.id + '" ' + (editMode ? 'draggable="true"' : '') + ' style="animation-delay:' + delay + 's">' +
         (editMode ? '<span class="task-drag">⠿</span>' : '') +
         '<div class="task-check">' + (done ? '✓' : '') + '</div>' +
         '<div class="task-body">' +
@@ -897,7 +1037,8 @@ function renderWeekView(person) {
             tasks.forEach(task => {
                 const ckey = checkKey(task.id, date);
                 const done = !!checks[ckey];
-                html += '<div class="week-task-row' + (done ? ' done' : '') + '" data-ckey="' + ckey + '" data-person="' + person + '">' +
+                html += '<div class="week-task-row' + (done ? ' done' : '') + '" data-ckey="' + ckey + '" data-person="' + person + '" data-taskid="' + task.id + '" ' + (editMode ? 'draggable="true"' : '') + '>' +
+                    (editMode ? '<span class="week-drag-handle">⠿</span>' : '') +
                     '<div class="week-check">' + (done ? '✓' : '') + '</div>' +
                     '<span class="week-task-name">' + escHtml(task.name) + '</span>' +
                     (task.momFlag ? '<span class="week-task-mom">🦋</span>' : '') +
@@ -924,6 +1065,13 @@ function renderWeekView(person) {
             toggleCheck(this.dataset.person, this.dataset.ckey);
         });
     });
+
+    // Bind week drag reordering
+    if (editMode) {
+        container.querySelectorAll('.week-day-tasks').forEach(dayList => {
+            bindWeekDrag(dayList, person);
+        });
+    }
 
     // Color quick-save buttons per person
     container.querySelectorAll('.week-quick-save').forEach(btn => {
@@ -1133,12 +1281,19 @@ function deleteTask(person, taskId) {
 // ══════════════════════════════════════════════
 // NAV
 // ══════════════════════════════════════════════
+const BG_COLORS = {
+    ryder:  '#a8c4a8',
+    hadley: '#b8ccd8',
+    mom:    '#dcc0c0'
+};
+
 function switchPerson(person) {
     currentPerson = person;
     document.querySelectorAll('.person-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.person-tab').forEach(t => t.classList.remove('active'));
     document.getElementById('panel-' + person).classList.add('active');
     document.querySelector('.person-tab.' + person).classList.add('active');
+    document.body.style.background = BG_COLORS[person];
     render();
 }
 
