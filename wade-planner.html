@@ -33,6 +33,12 @@
             --mom-pale:    #f8eded;
             --mom-mid:     #a06868;
 
+            /* Household — lavender */
+            --house:       #8878b8;
+            --house-light: #a898d0;
+            --house-pale:  #f0edf8;
+            --house-mid:   #7868a8;
+
             --white:       #ffffff;
             --shadow:      rgba(46,42,36,0.08);
         }
@@ -78,7 +84,7 @@
 
         .header-date {
             font-family: 'Lora', serif;
-            font-size: 1.15em;
+            font-size: 2.3em;
             color: var(--ink-mid);
             font-style: italic;
             font-weight: 400;
@@ -126,12 +132,20 @@
         }
 
         .person-tab:hover { color: var(--ink-mid); }
-        .person-tab.ryder.active  { color: var(--ryder);  border-bottom-color: var(--ryder);  }
-        .person-tab.hadley.active { color: var(--hadley); border-bottom-color: var(--hadley); }
-        .person-tab.mom.active    { color: var(--mom);    border-bottom-color: var(--mom);    }
+        .person-tab.ryder.active   { color: var(--ryder);  border-bottom-color: var(--ryder);  }
+        .person-tab.hadley.active  { color: var(--hadley); border-bottom-color: var(--hadley); }
+        .person-tab.mom.active     { color: var(--mom);    border-bottom-color: var(--mom);    }
+        .person-tab.house.active   { color: var(--house);  border-bottom-color: var(--house);  }
         .ryder-panel.active  { background: #c4d9c4; }
         .hadley-panel.active { background: #d4e0ea; }
         .mom-panel.active    { background: #ecdada; }
+        .house-panel.active  { background: #e4ddf0; }
+        .house-panel .task-item.done .task-check { background: var(--house); border-color: var(--house); }
+        .house-panel .task-item:hover .task-check:not(.checked) { border-color: var(--house-light); }
+        .house-panel .progress-fill { background: var(--house); }
+        .house-panel .add-task-btn { background: var(--house); }
+        .house-panel .btn-add { background: var(--house); }
+        .week-task-row.done .house-panel .week-check { background: var(--house); border-color: var(--house); }
 
         /* ── VIEW TOGGLE ── */
         .view-toggle {
@@ -646,12 +660,15 @@
         <button class="person-tab ryder active" onclick="switchPerson('ryder')">⚔️ Ryder</button>
         <button class="person-tab hadley" onclick="switchPerson('hadley')">🌷 Hadley</button>
         <button class="person-tab mom" onclick="switchPerson('mom')">🦋 Mom</button>
+        <button class="person-tab house" onclick="switchPerson('house')">🏠 Household</button>
     </div>
 </header>
 
 <div class="view-toggle">
     <button class="view-btn active" id="btn-today" onclick="switchView('today')">Today</button>
     <button class="view-btn" id="btn-week" onclick="switchView('week')">This Week</button>
+    <button class="view-btn" id="btn-month" onclick="switchView('month')" style="display:none">This Month</button>
+    <button class="view-btn" id="btn-year" onclick="switchView('year')" style="display:none">This Year</button>
 </div>
 
 <main>
@@ -684,6 +701,20 @@
         <button class="add-task-btn" onclick="openAddTask('hadley')">+ Add Task</button>
     </div>
 
+    <!-- HOUSEHOLD PANEL -->
+    <div class="person-panel house-panel" id="panel-house">
+        <div class="progress-wrap" id="prog-house" style="display:none">
+            <div class="progress-top">
+                <span class="progress-label">Today's Progress</span>
+                <span class="progress-count" id="prog-count-house">0 / 0</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" id="prog-fill-house" style="width:0%;background:var(--house);"></div></div>
+        </div>
+        <div class="edit-panel" id="edit-panel-house"></div>
+        <div id="view-house"></div>
+        <button class="add-task-btn" onclick="openAddTask('house')" style="background:var(--house);">+ Add Task</button>
+    </div>
+
     <!-- MOM PANEL -->
     <div class="person-panel mom-panel" id="panel-mom">
         <div class="progress-wrap" id="prog-mom" style="display:none">
@@ -704,7 +735,7 @@
 // ══════════════════════════════════════════════
 // CONSTANTS & STATE
 // ══════════════════════════════════════════════
-const PEOPLE = ['ryder','hadley','mom'];
+const PEOPLE = ['ryder','hadley','mom','house'];
 const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const DAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const APPS = {
@@ -816,8 +847,12 @@ function render() {
     PEOPLE.forEach(p => {
         if (currentView === 'today') {
             renderDayView(p, today);
-        } else {
+        } else if (currentView === 'week') {
             renderWeekView(p);
+        } else if (currentView === 'month' && (p === 'mom' || p === 'house')) {
+            renderMonthView(p);
+        } else if (currentView === 'year' && (p === 'mom' || p === 'house')) {
+            renderYearView(p);
         }
         updateProgress(p);
     });
@@ -1284,7 +1319,8 @@ function deleteTask(person, taskId) {
 const BG_COLORS = {
     ryder:  '#a8c4a8',
     hadley: '#b8ccd8',
-    mom:    '#dcc0c0'
+    mom:    '#dcc0c0',
+    house:  '#c8c0dc'
 };
 
 function switchPerson(person) {
@@ -1294,7 +1330,165 @@ function switchPerson(person) {
     document.getElementById('panel-' + person).classList.add('active');
     document.querySelector('.person-tab.' + person).classList.add('active');
     document.body.style.background = BG_COLORS[person];
+    // Show monthly tab only for mom
+    const monthBtn = document.getElementById('btn-month');
+    const yearBtn  = document.getElementById('btn-year');
+    const showExtra = person === 'mom' || person === 'house';
+    if (monthBtn) monthBtn.style.display = showExtra ? 'inline-block' : 'none';
+    if (yearBtn)  yearBtn.style.display  = showExtra ? 'inline-block' : 'none';
+    if (!showExtra && (currentView === 'month' || currentView === 'year')) switchView('today');
+    // Masteryview btn only for mom
+    const masteryBtn2 = document.getElementById('masteryViewBtn');
+    if (masteryBtn2) masteryBtn2.style.display = person === 'mom' ? 'inline-block' : 'none';
     render();
+}
+
+function renderMonthView(person) {
+    const container = document.getElementById('view-' + person);
+    const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const monthName = MONTHS_FULL[today.getMonth()] + ' ' + today.getFullYear();
+    const storageKey = 'wc_monthly_' + person + '_' + today.getFullYear() + '_' + today.getMonth();
+    const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+
+    let html = '<div class="day-header">' + monthName + '</div>';
+    html += '<div class="task-list" id="monthly-list">';
+
+    if (items.length === 0 && !editMode) {
+        html += '<div class="empty-state"><div class="empty-icon">🌿</div><div class="empty-text">No monthly tasks yet</div><div class="empty-sub">Switch to Edit mode to add tasks</div></div>';
+    } else {
+        items.forEach((item, i) => {
+            html += '<div class="task-item' + (item.done ? ' done' : '') + '" data-idx="' + i + '" style="animation-delay:' + (i*0.04) + 's">' +
+                (editMode ? '<span class="task-drag">⠿</span>' : '') +
+                '<div class="task-check">' + (item.done ? '✓' : '') + '</div>' +
+                '<div class="task-body"><div class="task-name">' + escHtml(item.text) + '</div></div>' +
+                (editMode ? '<button class="task-delete" data-idx="' + i + '">✕</button>' : '') +
+            '</div>';
+        });
+    }
+
+    html += '</div>';
+
+    if (editMode) {
+        html += '<div style="margin-top:12px;display:flex;gap:8px;">' +
+            '<input class="edit-input" id="monthly-new-input" placeholder="Add a monthly task..." style="flex:1;" />' +
+            '<button class="btn-add mom-panel" onclick="addMonthlyItem()" style="background:var(--mom);color:white;border:none;padding:10px 18px;border-radius:8px;cursor:pointer;font-family:Jost,sans-serif;font-size:0.75em;font-weight:600;letter-spacing:0.1em;white-space:nowrap;">+ Add</button>' +
+        '</div>';
+    }
+
+    container.innerHTML = html;
+
+    // Bind check toggles
+    container.querySelectorAll('.task-item').forEach(el => {
+        el.addEventListener('click', function(e) {
+            if (e.target.classList.contains('task-delete')) return;
+            const idx = parseInt(this.dataset.idx);
+            const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            items[idx].done = !items[idx].done;
+            localStorage.setItem(storageKey, JSON.stringify(items));
+            renderMonthView(person);
+        });
+    });
+
+    // Bind deletes
+    container.querySelectorAll('.task-delete').forEach(el => {
+        el.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const idx = parseInt(this.dataset.idx);
+            const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            items.splice(idx, 1);
+            localStorage.setItem(storageKey, JSON.stringify(items));
+            renderMonthView(person);
+        });
+    });
+
+    // Enter key on input
+    const inp = document.getElementById('monthly-new-input');
+    if (inp) {
+        inp.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') addMonthlyItem();
+        });
+    }
+}
+
+function addMonthlyItem() {
+    const inp = document.getElementById('monthly-new-input');
+    if (!inp || !inp.value.trim()) return;
+    const storageKey = 'wc_monthly_' + currentPerson + '_' + today.getFullYear() + '_' + today.getMonth();
+    const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    items.push({ text: inp.value.trim(), done: false });
+    localStorage.setItem(storageKey, JSON.stringify(items));
+    inp.value = '';
+    renderMonthView('mom');
+}
+
+function renderYearView(person) {
+    const container = document.getElementById('view-' + person);
+    const year = today.getFullYear();
+    const storageKey = 'wc_yearly_' + person + '_' + year;
+    const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+
+    let html = '<div class="day-header">' + year + ' Goals & Tasks</div>';
+    html += '<div class="task-list" id="yearly-list">';
+
+    if (items.length === 0 && !editMode) {
+        html += '<div class="empty-state"><div class="empty-icon">🌿</div><div class="empty-text">No yearly tasks yet</div><div class="empty-sub">Switch to Edit mode to add tasks</div></div>';
+    } else {
+        items.forEach((item, i) => {
+            html += '<div class="task-item' + (item.done ? ' done' : '') + '" data-idx="' + i + '" style="animation-delay:' + (i*0.04) + 's">' +
+                (editMode ? '<span class="task-drag">⠿</span>' : '') +
+                '<div class="task-check">' + (item.done ? '✓' : '') + '</div>' +
+                '<div class="task-body"><div class="task-name">' + escHtml(item.text) + '</div></div>' +
+                (editMode ? '<button class="task-delete" data-idx="' + i + '">✕</button>' : '') +
+            '</div>';
+        });
+    }
+
+    html += '</div>';
+
+    if (editMode) {
+        html += '<div style="margin-top:12px;display:flex;gap:8px;">' +
+            '<input class="edit-input" id="yearly-new-input" placeholder="Add a yearly goal or task..." style="flex:1;" />' +
+            '<button onclick="addYearlyItem()" style="background:var(--' + person + ');color:white;border:none;padding:10px 18px;border-radius:8px;cursor:pointer;font-family:Jost,sans-serif;font-size:0.75em;font-weight:600;letter-spacing:0.1em;white-space:nowrap;">+ Add</button>' +
+        '</div>';
+    }
+
+    container.innerHTML = html;
+
+    container.querySelectorAll('.task-item').forEach(el => {
+        el.addEventListener('click', function(e) {
+            if (e.target.classList.contains('task-delete')) return;
+            const idx = parseInt(this.dataset.idx);
+            const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            items[idx].done = !items[idx].done;
+            localStorage.setItem(storageKey, JSON.stringify(items));
+            renderYearView(person);
+        });
+    });
+
+    container.querySelectorAll('.task-delete').forEach(el => {
+        el.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const idx = parseInt(this.dataset.idx);
+            const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            items.splice(idx, 1);
+            localStorage.setItem(storageKey, JSON.stringify(items));
+            renderYearView(person);
+        });
+    });
+
+    const inp = document.getElementById('yearly-new-input');
+    if (inp) inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') addYearlyItem(); });
+}
+
+function addYearlyItem() {
+    const inp = document.getElementById('yearly-new-input');
+    if (!inp || !inp.value.trim()) return;
+    const storageKey = 'wc_yearly_' + currentPerson + '_' + today.getFullYear();
+    const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    items.push({ text: inp.value.trim(), done: false });
+    localStorage.setItem(storageKey, JSON.stringify(items));
+    inp.value = '';
+    renderYearView('mom');
 }
 
 function switchView(view) {
