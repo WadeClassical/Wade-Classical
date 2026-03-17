@@ -6,8 +6,8 @@
     <title>Wade Classical — Daily Planner</title>
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Cinzel:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.min.js"></script>
     <style>
         :root {
             --linen:       #f5f0e8;
@@ -755,15 +755,24 @@ const pendingWrites = [];
 
 function initFirebase() {
     try {
-        firebase.initializeApp(FIREBASE_CONFIG);
-        db = firebase.database();
+        if (typeof firebase === 'undefined') {
+            console.warn('Firebase SDK not loaded, falling back to localStorage');
+            showSyncStatus('Offline — local only', '#b87878');
+            return;
+        }
+        if (firebase.apps.length) {
+            db = firebase.database();
+        } else {
+            firebase.initializeApp(FIREBASE_CONFIG);
+            db = firebase.database();
+        }
         firebaseReady = true;
-        // Flush any pending writes
         pendingWrites.forEach(fn => fn());
         pendingWrites.length = 0;
         console.log('Firebase connected');
     } catch(e) {
         console.warn('Firebase init failed, falling back to localStorage', e);
+        showSyncStatus('Offline — local only', '#b87878');
     }
 }
 
@@ -1623,6 +1632,49 @@ function escHtml(str) {
 // ══════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════
+// ── MIGRATE EXISTING LOCALSTORAGE TO FIREBASE ──
+function migrateLocalStorageToFirebase() {
+    if (!firebaseReady) return;
+    const migrated = localStorage.getItem('wc_firebase_migrated');
+    if (migrated) return; // already done
+
+    console.log('Migrating localStorage to Firebase...');
+    PEOPLE.forEach(person => {
+        // Migrate tasks
+        const tasks = localStorage.getItem('wc_planner_tasks_' + person);
+        if (tasks) {
+            const parsed = JSON.parse(tasks);
+            if (parsed && parsed.length > 0) {
+                fbRef('planner/tasks/' + person).set(parsed);
+                console.log('Migrated tasks for', person, parsed.length, 'items');
+            }
+        }
+        // Migrate checks
+        const checks = localStorage.getItem('wc_planner_checks_' + person);
+        if (checks) {
+            const parsed = JSON.parse(checks);
+            if (parsed && Object.keys(parsed).length > 0) {
+                fbRef('planner/checks/' + person).set(parsed);
+                console.log('Migrated checks for', person);
+            }
+        }
+    });
+    // Migrate monthly/yearly
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && (key.includes('wc_monthly_') || key.includes('wc_yearly_'))) {
+            const val = localStorage.getItem(key);
+            if (val) {
+                const fbKey = key.replace('wc_', '').replace(/_/g, '/');
+                fbRef('planner/' + fbKey).set(JSON.parse(val));
+            }
+        }
+    }
+    localStorage.setItem('wc_firebase_migrated', 'true');
+    console.log('Migration complete!');
+    showSyncStatus('✓ Data synced to cloud', '#4a7c5f');
+}
+
 // ── FIREBASE REAL-TIME LISTENERS ──
 // When data changes on ANY device, update local cache and re-render
 function setupFirebaseListeners() {
@@ -1690,6 +1742,8 @@ function showSyncStatus(msg, color) {
 // Init Firebase then set up listeners
 initFirebase();
 if (firebaseReady) {
+    // Migrate any existing localStorage data up to Firebase once
+    migrateLocalStorageToFirebase();
     setupFirebaseListeners();
     showSyncStatus('✓ Synced', '#4a7c5f');
 } else {
