@@ -1378,10 +1378,12 @@ function moveBook(id, from, to) {
 }
 
 function removeBook(id, shelf) {
-  if (!confirm('Remove this book?')) return;
-  deleteBook(shelf, id);
   closeModal('modal-detail');
-  showToast('Book removed');
+  setTimeout(function() {
+    if (!confirm('Remove this book from your shelf?')) return;
+    deleteBook(shelf, id);
+    showToast('Book removed');
+  }, 150);
 }
 
 // ── REPORTS LIST ──
