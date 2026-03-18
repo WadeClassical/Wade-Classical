@@ -126,6 +126,100 @@ body{min-height:100vh;background:#1a1208;font-family:'Cormorant Garamond',serif;
 .toast{position:fixed;bottom:30px;right:30px;background:linear-gradient(135deg,#2a1a3a,#1e1228);border:1px solid var(--wisteria);border-radius:10px;padding:14px 20px;color:var(--wisteria-light);font-family:'Jost',sans-serif;font-size:13px;z-index:2000;opacity:0;transform:translateY(10px);transition:all .3s;box-shadow:0 8px 30px rgba(0,0,0,.5);pointer-events:none}
 .toast.show{opacity:1;transform:translateY(0)}
 @media(max-width:600px){.library-container{padding:0 10px 80px}.modal{padding:24px 18px}.book-spine{width:30px}.add-book-btn{width:30px}}
+
+/* ── COVERFLOW ── */
+.cf-section { margin-bottom: 50px; }
+.cf-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding:0 8px; }
+.cf-label { font-family:'Cinzel',serif; font-size:13px; letter-spacing:3px; text-transform:uppercase; color:var(--wisteria-light); opacity:.85; display:flex; align-items:center; gap:12px; }
+.cf-label::before { content:''; display:inline-block; width:24px; height:1px; background:var(--wisteria); }
+.cf-add-btn { background:none; border:1px solid rgba(155,114,170,.3); border-radius:20px; color:var(--wisteria-light); font-family:'Jost',sans-serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; padding:6px 16px; cursor:pointer; transition:all .2s; }
+.cf-add-btn:hover { background:rgba(155,114,170,.15); border-color:var(--wisteria); }
+
+.cf-stage { position:relative; height:280px; display:flex; align-items:center; justify-content:center; perspective:1000px; overflow:visible; }
+.cf-track { position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center; transform-style:preserve-3d; }
+
+/* COVERFLOW BOOK CARD */
+.cf-book { position:absolute; width:160px; height:220px; cursor:pointer; transition:all 0.45s cubic-bezier(.25,.8,.25,1); transform-style:preserve-3d; transform-origin:center center; }
+.cf-book-inner { width:100%; height:100%; position:relative; border-radius:4px; overflow:hidden; box-shadow: 0 20px 60px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.05); }
+.cf-book-cover { width:100%; height:100%; object-fit:cover; display:block; }
+.cf-book-no-cover { width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; text-align:center; }
+.cf-book-no-cover-title { font-family:'Cinzel',serif; font-size:13px; color:rgba(255,255,255,.9); line-height:1.4; margin-top:12px; }
+
+/* Glass reflection */
+.cf-book-inner::after { content:''; position:absolute; bottom:0; left:0; right:0; height:40%; background:linear-gradient(0deg, rgba(255,255,255,.06) 0%, transparent 100%); pointer-events:none; border-radius:0 0 4px 4px; }
+
+/* Reflection below */
+.cf-book-reflection { position:absolute; bottom:-80px; left:0; right:0; height:80px; overflow:hidden; opacity:.35; transform:scaleY(-1); filter:blur(2px); pointer-events:none; border-radius:0 0 4px 4px; }
+.cf-book-reflection img { width:100%; height:100%; object-fit:cover; object-position:top; }
+
+/* Position states */
+.cf-book[data-pos="0"] {
+  transform: translateX(0) translateZ(0px) rotateY(0deg) scale(1);
+  z-index: 10;
+  filter: brightness(1);
+}
+.cf-book[data-pos="1"] {
+  transform: translateX(190px) translateZ(-120px) rotateY(-38deg) scale(.88);
+  z-index: 8;
+  filter: brightness(.65);
+}
+.cf-book[data-pos="2"] {
+  transform: translateX(330px) translateZ(-220px) rotateY(-42deg) scale(.75);
+  z-index: 6;
+  filter: brightness(.45);
+}
+.cf-book[data-pos="3"] {
+  transform: translateX(430px) translateZ(-300px) rotateY(-44deg) scale(.65);
+  z-index: 4;
+  filter: brightness(.3);
+}
+.cf-book[data-pos="-1"] {
+  transform: translateX(-190px) translateZ(-120px) rotateY(38deg) scale(.88);
+  z-index: 8;
+  filter: brightness(.65);
+}
+.cf-book[data-pos="-2"] {
+  transform: translateX(-330px) translateZ(-220px) rotateY(42deg) scale(.75);
+  z-index: 6;
+  filter: brightness(.45);
+}
+.cf-book[data-pos="-3"] {
+  transform: translateX(-430px) translateZ(-300px) rotateY(44deg) scale(.65);
+  z-index: 4;
+  filter: brightness(.3);
+}
+.cf-book[data-pos="hidden-right"] {
+  transform: translateX(600px) translateZ(-400px) rotateY(-45deg) scale(.5);
+  z-index: 1; opacity:0; pointer-events:none;
+}
+.cf-book[data-pos="hidden-left"] {
+  transform: translateX(-600px) translateZ(-400px) rotateY(45deg) scale(.5);
+  z-index: 1; opacity:0; pointer-events:none;
+}
+.cf-book[data-pos="0"]:hover { transform:translateX(0) translateZ(30px) rotateY(0deg) scale(1.04); }
+
+/* Arrows */
+.cf-arrow { position:absolute; top:50%; transform:translateY(-50%); background:none; border:1px solid rgba(155,114,170,.25); border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; color:var(--wisteria-light); font-size:28px; cursor:pointer; transition:all .2s; z-index:20; line-height:1; padding-bottom:2px; }
+.cf-arrow:hover { background:rgba(155,114,170,.2); border-color:var(--wisteria); }
+.cf-arrow-left { left:0; }
+.cf-arrow-right { right:0; }
+.cf-arrow:disabled { opacity:.2; cursor:default; }
+
+/* Info below */
+.cf-info { text-align:center; padding:16px 0 0; min-height:60px; }
+.cf-info-title { font-family:'Cinzel',serif; font-size:16px; color:var(--wisteria-light); letter-spacing:1px; margin-bottom:4px; transition:all .3s; }
+.cf-info-author { font-style:italic; font-size:14px; color:var(--stone); opacity:.8; transition:all .3s; }
+.cf-dots { display:flex; justify-content:center; gap:6px; margin-top:10px; }
+.cf-dot { width:6px; height:6px; border-radius:50%; background:rgba(155,114,170,.25); transition:all .3s; cursor:pointer; }
+.cf-dot.active { background:var(--wisteria); transform:scale(1.3); }
+
+/* Empty state */
+.cf-empty { display:none; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:12px; }
+.cf-empty-icon { font-size:28px; color:rgba(155,114,170,.25); }
+.cf-empty-text { font-style:italic; font-size:15px; color:rgba(200,180,160,.3); }
+
+/* Stray old shelf classes we no longer need - just hide gracefully */
+.shelf, .shelf-board, .books-row, .add-book-btn, .book, .book-spine { display:none !important; }
 </style>
 </head>
 <body>
@@ -180,29 +274,65 @@ body{min-height:100vh;background:#1a1208;font-family:'Cormorant Garamond',serif;
   </div>
 
   <div id="tab-shelves">
-    <div class="bookcase">
-      <div class="shelf-label">Currently Reading</div>
-      <div class="shelf">
-        <div class="books-row" id="shelf-reading"><div class="shelf-empty" id="empty-reading">✦ &nbsp; No books yet — add one below</div></div>
-        <button class="add-book-btn" onclick="openAddModal('reading')" title="Add book">+</button>
+    <div class="cf-section">
+      <div class="cf-header">
+        <div class="cf-label">Currently Reading</div>
+        <button class="cf-add-btn" onclick="openAddModal('reading')">+ Add Book</button>
       </div>
-      <div class="shelf-board"></div>
+      <div class="cf-stage" id="cf-reading">
+        <div class="cf-empty" id="empty-reading">
+          <div class="cf-empty-icon">✦</div>
+          <div class="cf-empty-text">Your current reads will appear here</div>
+        </div>
+        <button class="cf-arrow cf-arrow-left" id="arr-left-reading" onclick="cfShift('reading',-1)">&#8249;</button>
+        <div class="cf-track" id="track-reading"></div>
+        <button class="cf-arrow cf-arrow-right" id="arr-right-reading" onclick="cfShift('reading',1)">&#8250;</button>
+      </div>
+      <div class="cf-info" id="info-reading">
+        <div class="cf-info-title" id="info-title-reading"></div>
+        <div class="cf-info-author" id="info-author-reading"></div>
+        <div class="cf-dots" id="dots-reading"></div>
+      </div>
     </div>
-    <div class="bookcase">
-      <div class="shelf-label">Have Read</div>
-      <div class="shelf">
-        <div class="books-row" id="shelf-read"><div class="shelf-empty" id="empty-read">✦ &nbsp; Your finished books will live here</div></div>
-        <button class="add-book-btn" onclick="openAddModal('read')" title="Add book">+</button>
+    <div class="cf-section">
+      <div class="cf-header">
+        <div class="cf-label">Have Read</div>
+        <button class="cf-add-btn" onclick="openAddModal('read')">+ Add Book</button>
       </div>
-      <div class="shelf-board"></div>
+      <div class="cf-stage" id="cf-read">
+        <div class="cf-empty" id="empty-read">
+          <div class="cf-empty-icon">✦</div>
+          <div class="cf-empty-text">Your finished books will live here</div>
+        </div>
+        <button class="cf-arrow cf-arrow-left" id="arr-left-read" onclick="cfShift('read',-1)">&#8249;</button>
+        <div class="cf-track" id="track-read"></div>
+        <button class="cf-arrow cf-arrow-right" id="arr-right-read" onclick="cfShift('read',1)">&#8250;</button>
+      </div>
+      <div class="cf-info" id="info-read">
+        <div class="cf-info-title" id="info-title-read"></div>
+        <div class="cf-info-author" id="info-author-read"></div>
+        <div class="cf-dots" id="dots-read"></div>
+      </div>
     </div>
-    <div class="bookcase">
-      <div class="shelf-label">Want to Read</div>
-      <div class="shelf">
-        <div class="books-row" id="shelf-want"><div class="shelf-empty" id="empty-want">✦ &nbsp; Books you're saving for later</div></div>
-        <button class="add-book-btn" onclick="openAddModal('want')" title="Add book">+</button>
+    <div class="cf-section">
+      <div class="cf-header">
+        <div class="cf-label">Want to Read</div>
+        <button class="cf-add-btn" onclick="openAddModal('want')">+ Add Book</button>
       </div>
-      <div class="shelf-board"></div>
+      <div class="cf-stage" id="cf-want">
+        <div class="cf-empty" id="empty-want">
+          <div class="cf-empty-icon">✦</div>
+          <div class="cf-empty-text">Books you're saving for later</div>
+        </div>
+        <button class="cf-arrow cf-arrow-left" id="arr-left-want" onclick="cfShift('want',-1)">&#8249;</button>
+        <div class="cf-track" id="track-want"></div>
+        <button class="cf-arrow cf-arrow-right" id="arr-right-want" onclick="cfShift('want',1)">&#8250;</button>
+      </div>
+      <div class="cf-info" id="info-want">
+        <div class="cf-info-title" id="info-title-want"></div>
+        <div class="cf-info-author" id="info-author-want"></div>
+        <div class="cf-dots" id="dots-want"></div>
+      </div>
     </div>
   </div>
 
@@ -358,38 +488,139 @@ function saveAssigned(child,book){
   db.ref('library/'+child+'/assigned/'+book.id).set(b);
 }
 
-// RENDER
+// ── COVERFLOW ──
+var cfIndex = { reading:0, read:0, want:0 };
+var COLORS = ['bc-wisteria','bc-moss','bc-stone','bc-rose','bc-candle','bc-sage','bc-lavender','bc-terracotta','bc-slate','bc-cream'];
+var COLOR_BGSIDES = {
+  'bc-wisteria':'linear-gradient(135deg,#4a2a6a,#7a52a0)',
+  'bc-moss':'linear-gradient(135deg,#2a4020,#4a6038)',
+  'bc-stone':'linear-gradient(135deg,#5a4a38,#8a7868)',
+  'bc-rose':'linear-gradient(135deg,#6a3048,#a06070)',
+  'bc-candle':'linear-gradient(135deg,#7a5820,#b8903a)',
+  'bc-sage':'linear-gradient(135deg,#3a5838,#7a9878)',
+  'bc-lavender':'linear-gradient(135deg,#4a3870,#8878a8)',
+  'bc-terracotta':'linear-gradient(135deg,#5a2818,#9a5840)',
+  'bc-slate':'linear-gradient(135deg,#283848,#586878)',
+  'bc-cream':'linear-gradient(135deg,#786848,#c8b898)'
+};
+
 function renderShelves(){ renderShelf('reading'); renderShelf('read'); renderShelf('want'); }
+
 function renderShelf(shelf) {
-  var row=document.getElementById('shelf-'+shelf);
-  var emp=document.getElementById('empty-'+shelf);
-  if(!row) return;
-  var old=row.querySelectorAll('.book');
-  for(var i=0;i<old.length;i++) old[i].remove();
-  var arr=books[shelf]||[];
-  emp.style.display=arr.length?'none':'flex';
-  for(var j=0;j<arr.length;j++) row.insertBefore(makeBookEl(arr[j],shelf),row.lastElementChild);
+  var arr = books[shelf] || [];
+  var track = document.getElementById('track-'+shelf);
+  var emp = document.getElementById('empty-'+shelf);
+  var info = document.getElementById('info-'+shelf);
+  var arrL = document.getElementById('arr-left-'+shelf);
+  var arrR = document.getElementById('arr-right-'+shelf);
+  if(!track) return;
+
+  // clear
+  track.innerHTML = '';
+  if(!arr.length) {
+    emp.style.display = 'flex';
+    info.style.visibility = 'hidden';
+    if(arrL) arrL.style.display = 'none';
+    if(arrR) arrR.style.display = 'none';
+    return;
+  }
+  emp.style.display = 'none';
+  info.style.visibility = 'visible';
+  if(arrL) arrL.style.display = 'flex';
+  if(arrR) arrR.style.display = 'flex';
+
+  // clamp index
+  if(cfIndex[shelf] >= arr.length) cfIndex[shelf] = arr.length - 1;
+  if(cfIndex[shelf] < 0) cfIndex[shelf] = 0;
+
+  // build cards
+  for(var i = 0; i < arr.length; i++) {
+    var book = arr[i];
+    var card = document.createElement('div');
+    card.className = 'cf-book';
+    var pos = i - cfIndex[shelf];
+    if(pos > 3) pos = 'hidden-right';
+    else if(pos < -3) pos = 'hidden-left';
+    card.dataset.pos = pos;
+    card.dataset.idx = i;
+
+    var inner = document.createElement('div');
+    inner.className = 'cf-book-inner';
+
+    if(book.cover) {
+      var img = document.createElement('img');
+      img.className = 'cf-book-cover';
+      img.src = book.cover;
+      img.alt = book.title;
+      img.addEventListener('error', function() {
+        this.style.display = 'none';
+        this.parentNode.style.background = COLOR_BGSIDES[randColor(book.id||book.title||'x')];
+        var nt = document.createElement('div');
+        nt.className = 'cf-book-no-cover';
+        nt.innerHTML = '<div class="cf-book-no-cover-title">'+esc(book.title)+'</div>';
+        this.parentNode.appendChild(nt);
+      });
+      inner.appendChild(img);
+      // reflection
+      var ref = document.createElement('div');
+      ref.className = 'cf-book-reflection';
+      var refImg = document.createElement('img');
+      refImg.src = book.cover;
+      ref.appendChild(refImg);
+      card.appendChild(ref);
+    } else {
+      var colorKey = randColor(book.id||book.title||'x');
+      inner.style.background = COLOR_BGSIDES[colorKey];
+      var nc = document.createElement('div');
+      nc.className = 'cf-book-no-cover';
+      nc.innerHTML = '<div style="font-size:32px;opacity:.4">📖</div><div class="cf-book-no-cover-title">'+esc(book.title)+'</div>';
+      inner.appendChild(nc);
+    }
+
+    card.appendChild(inner);
+    card.addEventListener('click', (function(b,s,idx){ return function(){
+      if(cfIndex[s] === idx) { openDetailModal(b,s); }
+      else { cfIndex[s] = idx; renderShelf(s); }
+    };})(book, shelf, i));
+    track.appendChild(card);
+  }
+
+  // update info
+  var active = arr[cfIndex[shelf]];
+  document.getElementById('info-title-'+shelf).textContent = active.title;
+  document.getElementById('info-author-'+shelf).textContent = active.author || '';
+
+  // dots
+  var dotsEl = document.getElementById('dots-'+shelf);
+  dotsEl.innerHTML = '';
+  var maxDots = Math.min(arr.length, 12);
+  for(var d = 0; d < maxDots; d++) {
+    var dot = document.createElement('div');
+    dot.className = 'cf-dot' + (d === cfIndex[shelf] ? ' active' : '');
+    dot.addEventListener('click', (function(s,di){ return function(){ cfIndex[s]=di; renderShelf(s); }; })(shelf,d));
+    dotsEl.appendChild(dot);
+  }
+
+  // arrows
+  if(arrL) arrL.disabled = cfIndex[shelf] === 0;
+  if(arrR) arrR.disabled = cfIndex[shelf] === arr.length - 1;
 }
-function makeBookEl(book,shelf) {
-  var el=document.createElement('div');
-  el.className='book';
-  var h=100+(book.id?(parseInt(book.id,36)%50):30);
-  var sp=document.createElement('div');
-  sp.className='book-spine '+randColor(book.id||book.title||'x');
-  sp.style.minHeight=h+'px';
-  var ti=document.createElement('span');
-  ti.className='book-spine-title';
-  ti.textContent=book.title;
-  sp.appendChild(ti);
-  var tt=document.createElement('div');
-  tt.className='book-tooltip';
-  var tt1=document.createElement('div'); tt1.className='book-tooltip-title'; tt1.textContent=book.title;
-  var tt2=document.createElement('div'); tt2.className='book-tooltip-author'; tt2.textContent=book.author||'';
-  tt.appendChild(tt1); tt.appendChild(tt2);
-  el.appendChild(sp); el.appendChild(tt);
-  el.addEventListener('click',(function(b,s){return function(){openDetailModal(b,s);};})(book,shelf));
-  return el;
+
+function cfShift(shelf, dir) {
+  var arr = books[shelf] || [];
+  var newIdx = cfIndex[shelf] + dir;
+  if(newIdx < 0 || newIdx >= arr.length) return;
+  cfIndex[shelf] = newIdx;
+  renderShelf(shelf);
 }
+
+// keyboard navigation
+document.addEventListener('keydown', function(e) {
+  var activeTab = document.getElementById('tab-shelves');
+  if(!activeTab || activeTab.style.display === 'none') return;
+  if(e.key === 'ArrowLeft')  { cfShift('reading',-1); cfShift('read',-1); cfShift('want',-1); }
+  if(e.key === 'ArrowRight') { cfShift('reading',1);  cfShift('read',1);  cfShift('want',1); }
+});
 
 // TABS
 function switchTab(tab) {
