@@ -420,7 +420,7 @@ function openAddModal(shelf) {
 
 // GOOGLE BOOKS API
 async function gbSearch(q) {
-  var url='https://www.googleapis.com/books/v1/volumes?q='+encodeURIComponent(q)+'&maxResults=10&printType=books&key=AIzaSyBlBAmTcUDYqJO_F63k0PFcEvnDE_kdDjg';
+  var url='https://www.googleapis.com/books/v1/volumes?q='+encodeURIComponent(q)+'&maxResults=10&printType=books&key=AIzaSyBsjx3JKjCQOMuus07MSoj3o-Vu9eRW6zc';
   var res=await fetch(url);
   if(!res.ok) throw new Error('HTTP '+res.status);
   var data=await res.json();
