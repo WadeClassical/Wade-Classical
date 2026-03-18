@@ -898,6 +898,99 @@ function renderSpotlight() {
   }
 }
 
+function renderShelf(shelf) {
+  var arr = books[shelf] || [];
+  var track = document.getElementById('track-'+shelf);
+  var emp = document.getElementById('empty-'+shelf);
+  var info = document.getElementById('info-'+shelf);
+  var arrL = document.getElementById('arr-left-'+shelf);
+  var arrR = document.getElementById('arr-right-'+shelf);
+  if(!track) return;
+  track.innerHTML = '';
+  if(!arr.length) {
+    if(emp) emp.style.display = 'flex';
+    if(info) info.style.visibility = 'hidden';
+    if(arrL) arrL.style.display = 'none';
+    if(arrR) arrR.style.display = 'none';
+    if(shelf==='read'){var c=document.getElementById('bfc-number');if(c)c.textContent='0';}
+    return;
+  }
+  if(emp) emp.style.display = 'none';
+  if(info) info.style.visibility = 'visible';
+  if(arrL) arrL.style.display = 'flex';
+  if(arrR) arrR.style.display = 'flex';
+  if(cfIndex[shelf] >= arr.length) cfIndex[shelf] = arr.length-1;
+  if(cfIndex[shelf] < 0) cfIndex[shelf] = 0;
+  for(var i=0;i<arr.length;i++) {
+    var book=arr[i];
+    var card=document.createElement('div');
+    card.className='cf-book';
+    var pos=i-cfIndex[shelf];
+    if(pos>3) pos='hidden-right';
+    else if(pos<-3) pos='hidden-left';
+    card.dataset.pos=pos;
+    var inner=document.createElement('div');
+    inner.className='cf-book-inner';
+    if(book.cover){
+      var img=document.createElement('img');
+      img.className='cf-book-cover';
+      img.src=book.cover;
+      img.alt=book.title;
+      inner.appendChild(img);
+      var ref=document.createElement('div');
+      ref.className='cf-book-reflection';
+      var ri=document.createElement('img');
+      ri.src=book.cover;
+      ref.appendChild(ri);
+      card.appendChild(ref);
+    } else {
+      var ck=randColor(book.id||book.title||'x');
+      inner.style.background=COLOR_BGSIDES[ck];
+      var nc=document.createElement('div');
+      nc.className='cf-book-no-cover';
+      nc.innerHTML='<div style="font-size:32px;opacity:.4">📖</div><div class="cf-book-no-cover-title">'+esc(book.title)+'</div>';
+      inner.appendChild(nc);
+    }
+    card.appendChild(inner);
+    card.addEventListener('click',(function(b,s,di){return function(){if(cfIndex[s]===di){openDetailModal(b,s);}else{cfIndex[s]=di;renderShelf(s);}};})(book,shelf,i));
+    track.appendChild(card);
+  }
+  var active=arr[cfIndex[shelf]];
+  var te=document.getElementById('info-title-'+shelf);
+  var ae=document.getElementById('info-author-'+shelf);
+  if(te) te.textContent=active.title;
+  if(ae) ae.textContent=active.author||'';
+  var de=document.getElementById('dots-'+shelf);
+  if(de){
+    de.innerHTML='';
+    var md=Math.min(arr.length,12);
+    for(var d=0;d<md;d++){
+      var dot=document.createElement('div');
+      dot.className='cf-dot'+(d===cfIndex[shelf]?' active':'');
+      dot.addEventListener('click',(function(s,di){return function(){cfIndex[s]=di;renderShelf(s);};})(shelf,d));
+      de.appendChild(dot);
+    }
+  }
+  if(arrL) arrL.disabled=cfIndex[shelf]===0;
+  if(arrR) arrR.disabled=cfIndex[shelf]===arr.length-1;
+  if(shelf==='read'){
+    var ctr=document.getElementById('bfc-number');
+    if(ctr){
+      var prev=parseInt(ctr.textContent)||0;
+      ctr.textContent=arr.length;
+      if(arr.length>prev){ctr.classList.remove('bump');void ctr.offsetWidth;ctr.classList.add('bump');setTimeout(function(){ctr.classList.remove('bump');},500);}
+    }
+  }
+}
+
+function crOpenDetail(idx) {
+  var arr=books.reading||[];
+  if(!arr.length) return;
+  var i=idx||0;
+  if(i>=arr.length) i=0;
+  openDetailModal(arr[i],'reading');
+}
+
 function cfShift(shelf, dir) {
   var arr = books[shelf] || [];
   var newIdx = cfIndex[shelf] + dir;
