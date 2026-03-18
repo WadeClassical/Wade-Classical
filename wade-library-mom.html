@@ -1261,23 +1261,33 @@ function openDetailModal(book, shelf) {
   }
 
   // Book report (read shelf only)
-  if (shelf === 'read') {
+  if (shelf === 'read' || shelf === 'reading') {
     var repSection = document.createElement('div');
     repSection.className = 'report-section';
+    var starOptHtml = '';
+    for (var rs=1; rs<=5; rs++) {
+      starOptHtml += '<option value="'+rs+'"'+(rep.stars==rs?' selected':'')+'>'+rs+' star'+(rs>1?'s':'')+'</option>';
+    }
     repSection.innerHTML = '<h3>&#x2726; Book Report</h3>' +
-      '<div class="form-group"><label class="form-label">Favorite Part</label>' +
-        '<textarea class="form-textarea" id="report-fav" placeholder="What was your favorite part?">'+esc(rep.favorite||'')+'</textarea></div>' +
-      '<div class="form-group"><label class="form-label">In One Sentence</label>' +
-        '<input type="text" class="form-input" id="report-sentence" placeholder="Describe the book in one sentence..." value="'+esc(rep.sentence||'')+'"></div>' +
-      '<div class="form-group"><label class="form-label">Would You Recommend It?</label>' +
-        '<select class="form-select" id="report-recommend">' +
+      '<div style="background:rgba(155,114,170,0.06);border:1px solid rgba(155,114,170,0.15);border-radius:10px;padding:14px;margin-bottom:16px;">' +
+        '<div style="font-family:Cinzel,serif;font-size:15px;color:var(--wisteria-light);margin-bottom:2px;">'+esc(book.title)+'</div>' +
+        '<div style="font-style:italic;font-size:13px;color:var(--stone);">'+esc(book.author||'')+'</div>' +
+      '</div>' +
+      '<div class="form-group"><label class="form-label">Star Rating</label>' +
+        '<select class="form-select" id="report-stars">' +
           '<option value="">&#8212; select &#8212;</option>' +
-          '<option value="yes"'+(rep.recommend==='yes'?' selected':'')+'>Yes, absolutely!</option>' +
-          '<option value="maybe"'+(rep.recommend==='maybe'?' selected':'')+'>Maybe, to the right reader</option>' +
-          '<option value="no"'+(rep.recommend==='no'?' selected':'')+'>Not really</option>' +
+          starOptHtml +
         '</select></div>' +
-      '<div class="form-group"><label class="form-label">Additional Notes</label>' +
-        '<textarea class="form-textarea" id="report-notes" placeholder="Anything else...">'+esc(rep.notes||'')+'</textarea></div>';
+      '<div class="form-group"><label class="form-label">Characters</label>' +
+        '<input type="text" class="form-input" id="report-characters" placeholder="Who are the main characters?" value="'+esc(rep.characters||'')+'"></div>' +
+      '<div class="form-group"><label class="form-label">Setting</label>' +
+        '<input type="text" class="form-input" id="report-setting" placeholder="Where and when does the story take place?" value="'+esc(rep.setting||'')+'"></div>' +
+      '<div class="form-group"><label class="form-label">1. What was this book about?</label>' +
+        '<textarea class="form-textarea" id="report-about" placeholder="Summarize the story in a few sentences...">'+esc(rep.about||'')+'</textarea></div>' +
+      '<div class="form-group"><label class="form-label">2. What was your favorite part?</label>' +
+        '<textarea class="form-textarea" id="report-fav" placeholder="Describe your favorite scene or moment...">'+esc(rep.favorite||'')+'</textarea></div>' +
+      '<div class="form-group"><label class="form-label">3. What is something you learned from this book?</label>' +
+        '<textarea class="form-textarea" id="report-learned" placeholder="What did you take away from reading this?">'+esc(rep.learned||'')+'</textarea></div>';
     var saveRepBtn = document.createElement('button');
     saveRepBtn.className = 'btn btn-primary btn-sm';
     saveRepBtn.textContent = 'Save Report';
@@ -1350,11 +1360,13 @@ function saveReport(id, shelf) {
   for (var i=0;i<arr.length;i++) {
     if (arr[i].id===id) {
       arr[i].report = {
-        favorite:  document.getElementById('report-fav').value,
-        sentence:  document.getElementById('report-sentence').value,
-        recommend: document.getElementById('report-recommend').value,
-        notes:     document.getElementById('report-notes').value,
-        savedAt:   Date.now()
+        stars:      document.getElementById('report-stars').value,
+        characters: document.getElementById('report-characters').value,
+        setting:    document.getElementById('report-setting').value,
+        about:      document.getElementById('report-about').value,
+        favorite:   document.getElementById('report-fav').value,
+        learned:    document.getElementById('report-learned').value,
+        savedAt:    Date.now()
       };
       saveBook(shelf, arr[i]);
       break;
@@ -1389,16 +1401,28 @@ function removeBook(id, shelf) {
 // ── REPORTS LIST ──
 function renderReportsList() {
   var el = document.getElementById('reports-list'); if(!el) return;
-  var wr = (books.read||[]).filter(function(b){ return b.report&&b.report.sentence; });
-  if (!wr.length) { el.innerHTML='<p style="color:var(--stone);font-style:italic">No reports yet.</p>'; return; }
+  var allBooks = (books.read||[]).concat(books.reading||[]);
+  var wr = allBooks.filter(function(b){ return b.report && (b.report.about||b.report.favorite||b.report.learned); });
+  if (!wr.length) { el.innerHTML='<p style="color:var(--stone);font-style:italic">No reports yet. Open a book and fill in its report to see it here.</p>'; return; }
   var html = '';
   for (var i=0;i<wr.length;i++) {
     var b = wr[i];
-    html += '<div style="padding:18px;margin-bottom:14px;background:rgba(155,114,170,.06);border:1px solid rgba(155,114,170,.18);border-radius:10px;display:flex;gap:16px;align-items:flex-start">';
-    if (b.cover) html += '<img src="'+esc(b.cover)+'" style="width:48px;height:68px;object-fit:cover;border-radius:3px;flex-shrink:0">';
-    html += '<div><div style="font-family:Cinzel,serif;font-size:13px;color:var(--wisteria-light);margin-bottom:4px">'+esc(b.title)+'</div><div style="font-style:italic;font-size:12px;color:var(--stone);margin-bottom:8px">'+esc(b.author)+'</div><div style="font-size:13px;color:var(--cream);line-height:1.5">'+esc(b.report.sentence)+'</div>';
-    if (b.report.recommend) html += '<div style="margin-top:6px;font-size:11px;font-family:Jost,sans-serif;letter-spacing:1px;color:var(--moss-light)">Recommend: '+esc(b.report.recommend)+'</div>';
+    var rep = b.report;
+    var stars = '';
+    if (rep.stars) { for(var s=0;s<5;s++) stars += s<parseInt(rep.stars)?'★':'☆'; }
+    html += '<div style="padding:20px;margin-bottom:18px;background:rgba(155,114,170,.06);border:1px solid rgba(155,114,170,.18);border-radius:12px;">';
+    html += '<div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:14px;">';
+    if (b.cover) html += '<img src="'+esc(b.cover)+'" style="width:54px;height:76px;object-fit:cover;border-radius:4px;flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,.5)">';
+    html += '<div style="flex:1"><div style="font-family:Cinzel,serif;font-size:15px;color:var(--wisteria-light);margin-bottom:3px">'+esc(b.title)+'</div>';
+    html += '<div style="font-style:italic;font-size:13px;color:var(--stone);margin-bottom:6px">'+esc(b.author||'')+'</div>';
+    if (stars) html += '<div style="color:var(--candle);font-size:16px;letter-spacing:2px">'+stars+'</div>';
     html += '</div></div>';
+    if (rep.characters) html += '<div style="margin-bottom:10px"><span style="font-family:Jost,sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--moss-light)">Characters</span><div style="font-size:13px;color:var(--cream);margin-top:3px">'+esc(rep.characters)+'</div></div>';
+    if (rep.setting)    html += '<div style="margin-bottom:10px"><span style="font-family:Jost,sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--moss-light)">Setting</span><div style="font-size:13px;color:var(--cream);margin-top:3px">'+esc(rep.setting)+'</div></div>';
+    if (rep.about)      html += '<div style="margin-bottom:10px"><span style="font-family:Jost,sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--moss-light)">What was this book about?</span><div style="font-size:13px;color:var(--cream);margin-top:3px;line-height:1.6">'+esc(rep.about)+'</div></div>';
+    if (rep.favorite)   html += '<div style="margin-bottom:10px"><span style="font-family:Jost,sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--moss-light)">Favorite part</span><div style="font-size:13px;color:var(--cream);margin-top:3px;line-height:1.6">'+esc(rep.favorite)+'</div></div>';
+    if (rep.learned)    html += '<div style="margin-bottom:4px"><span style="font-family:Jost,sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--moss-light)">Something I learned</span><div style="font-size:13px;color:var(--cream);margin-top:3px;line-height:1.6">'+esc(rep.learned)+'</div></div>';
+    html += '</div>';
   }
   el.innerHTML = html;
 }
