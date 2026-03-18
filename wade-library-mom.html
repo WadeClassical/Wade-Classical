@@ -133,6 +133,7 @@ body{min-height:100vh;background:#1a1208;font-family:'Cormorant Garamond',serif;
 
 /* Empty state */
 .cf-empty { display:none; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:12px; }
+.cr-empty { display:none; flex-direction:column; align-items:center; justify-content:center; min-height:180px; gap:12px; }
 .cf-empty-icon { font-size:28px; color:rgba(155,114,170,.25); }
 .cf-empty-text { font-style:italic; font-size:15px; color:rgba(200,180,160,.3); }
 
@@ -266,6 +267,205 @@ body{min-height:100vh;background:#1a1208;font-family:'Cormorant Garamond',serif;
 @keyframes spin{to{transform:rotate(360deg)}}
 .toast{position:fixed;bottom:30px;right:30px;background:linear-gradient(135deg,#2a1a3a,#1e1228);border:1px solid var(--wisteria);border-radius:10px;padding:14px 20px;color:var(--wisteria-light);font-family:'Jost',sans-serif;font-size:13px;z-index:10000;opacity:0;transform:translateY(10px);transition:all .3s;box-shadow:0 8px 30px rgba(0,0,0,.5);pointer-events:none}
 .toast.show{opacity:1;transform:translateY(0)}
+
+/* ── BOOKS FINISHED COUNTER ── */
+.books-finished-counter {
+  text-align:center;
+  margin-bottom:18px;
+  animation: counterFadeIn 1s ease-out forwards;
+}
+@keyframes counterFadeIn { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+.bfc-number {
+  font-family:'Cinzel',serif;
+  font-size:clamp(48px,8vw,80px);
+  font-weight:600;
+  color:var(--wisteria-light);
+  line-height:1;
+  text-shadow: 0 0 40px rgba(155,114,170,0.9), 0 0 80px rgba(155,114,170,0.4), 0 2px 12px rgba(0,0,0,0.9);
+  display:block;
+  transition: all 0.5s cubic-bezier(.2,.8,.3,1.2);
+}
+.bfc-number.bump {
+  animation: numberBump 0.5s cubic-bezier(.2,.8,.3,1.2);
+}
+@keyframes numberBump {
+  0%  { transform:scale(1); }
+  50% { transform:scale(1.25); color:#fff; text-shadow:0 0 60px rgba(200,160,255,1), 0 0 120px rgba(155,114,170,0.8); }
+  100%{ transform:scale(1); }
+}
+.bfc-label {
+  font-family:'Jost',sans-serif;
+  font-size:11px;
+  letter-spacing:4px;
+  text-transform:uppercase;
+  color:rgba(200,170,230,0.7);
+  margin-top:6px;
+  display:block;
+  text-shadow:0 1px 6px rgba(0,0,0,0.8);
+}
+.bfc-divider {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  margin-top:10px;
+  color:rgba(155,114,170,0.5);
+  font-size:13px;
+}
+.bfc-divider::before,.bfc-divider::after {
+  content:'';
+  display:block;
+  width:60px;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(155,114,170,0.4));
+}
+.bfc-divider::after { transform:scaleX(-1); }
+
+/* ── CURRENTLY READING SPOTLIGHT ── */
+.cr-section { margin-bottom:50px; position:relative; border-radius:16px; padding:24px; min-height:220px; }
+.cr-section::before { content:""; position:absolute; inset:0; background:rgba(0,0,0,0.28); border-radius:16px; border:1px solid rgba(255,255,255,0.06); pointer-events:none; z-index:0; }
+.cr-section > * { position:relative; z-index:1; }
+.cr-header { display:flex; justify-content:center; align-items:center; gap:20px; margin-bottom:24px; flex-wrap:wrap; }
+
+.cr-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:200px; gap:12px; }
+
+.cr-spotlight {
+  display:flex;
+  gap:40px;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
+  padding:10px 0 20px;
+}
+
+/* Cover */
+.cr-cover-wrap {
+  position:relative;
+  flex-shrink:0;
+  transform: rotate(-3deg);
+  transition: transform 0.4s ease;
+}
+.cr-cover-wrap:hover { transform: rotate(0deg) scale(1.02); }
+
+.cr-cover-glow {
+  position:absolute;
+  inset:-30px;
+  border-radius:50%;
+  background: radial-gradient(circle, rgba(155,114,170,0.35) 0%, rgba(100,60,140,0.15) 50%, transparent 75%);
+  filter: blur(20px);
+  animation: crGlowPulse 4s ease-in-out infinite;
+  z-index:0;
+}
+@keyframes crGlowPulse {
+  0%,100% { opacity:0.7; transform:scale(1); }
+  50%      { opacity:1;   transform:scale(1.08); }
+}
+
+.cr-cover-img {
+  position:relative;
+  z-index:1;
+  width:180px;
+  height:260px;
+  object-fit:cover;
+  border-radius:4px 10px 10px 4px;
+  box-shadow:
+    -6px 6px 0 rgba(0,0,0,0.4),
+    -12px 12px 30px rgba(0,0,0,0.6),
+    4px 0 12px rgba(0,0,0,0.5),
+    inset -4px 0 8px rgba(0,0,0,0.3);
+  display:block;
+}
+.cr-cover-no-img {
+  position:relative; z-index:1;
+  width:180px; height:260px;
+  border-radius:4px 10px 10px 4px;
+  background:linear-gradient(135deg,#4a2a6a,#7a52a0,#5a3a80);
+  display:flex; align-items:center; justify-content:center;
+  padding:20px; text-align:center;
+  box-shadow:-6px 6px 0 rgba(0,0,0,0.4),-12px 12px 30px rgba(0,0,0,0.6);
+  font-family:'Cinzel',serif; font-size:14px; color:rgba(255,255,255,0.9); line-height:1.4;
+}
+
+/* Info panel */
+.cr-info {
+  flex:1;
+  min-width:220px;
+  max-width:380px;
+}
+.cr-eyebrow {
+  font-family:'Jost',sans-serif;
+  font-size:10px;
+  letter-spacing:4px;
+  text-transform:uppercase;
+  color:rgba(200,170,230,0.6);
+  margin-bottom:10px;
+  text-shadow:0 1px 4px rgba(0,0,0,0.8);
+}
+.cr-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(18px,3vw,26px);
+  color:#fff;
+  font-weight:600;
+  line-height:1.25;
+  margin-bottom:8px;
+  text-shadow:0 0 30px rgba(155,114,170,0.6), 0 2px 10px rgba(0,0,0,0.9);
+}
+.cr-author {
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:17px;
+  color:var(--wisteria-light);
+  margin-bottom:10px;
+  text-shadow:0 1px 6px rgba(0,0,0,0.8);
+}
+.cr-meta {
+  font-family:'Jost',sans-serif;
+  font-size:11px;
+  letter-spacing:1px;
+  color:rgba(180,160,200,0.6);
+  margin-bottom:20px;
+  text-shadow:0 1px 4px rgba(0,0,0,0.8);
+}
+
+/* Progress */
+.cr-progress-wrap { margin-bottom:22px; }
+.cr-progress-labels {
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:8px;
+}
+.cr-progress-text {
+  font-family:'Jost',sans-serif;
+  font-size:11px;
+  letter-spacing:1px;
+  color:rgba(200,180,220,0.7);
+  text-shadow:0 1px 4px rgba(0,0,0,0.8);
+}
+.cr-progress-pct {
+  font-family:'Cinzel',serif;
+  font-size:13px;
+  color:var(--wisteria-light);
+  text-shadow:0 0 12px rgba(155,114,170,0.6);
+}
+.cr-progress-track {
+  height:6px;
+  background:rgba(255,255,255,0.08);
+  border-radius:3px;
+  overflow:hidden;
+}
+.cr-progress-fill {
+  height:100%;
+  background:linear-gradient(90deg,var(--wisteria-deep),var(--wisteria-light));
+  border-radius:3px;
+  transition:width 0.8s cubic-bezier(.2,.8,.3,1);
+  box-shadow:0 0 8px rgba(155,114,170,0.6);
+}
+
+/* Actions */
+.cr-actions { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.cr-dots { display:flex; gap:6px; }
+.cr-dot { width:7px; height:7px; border-radius:50%; background:rgba(155,114,170,0.25); cursor:pointer; transition:all .3s; border:none; }
+.cr-dot.active { background:var(--wisteria); transform:scale(1.3); }
 </style>
 </head>
 <body>
@@ -316,30 +516,56 @@ body{min-height:100vh;background:#1a1208;font-family:'Cormorant Garamond',serif;
   </div>
 
   <div id="tab-shelves">
-    <div class="cf-section">
-      <div class="cf-header">
+    <!-- CURRENTLY READING SPOTLIGHT -->
+    <div class="cr-section" id="cr-section">
+      <div class="cr-header">
         <div class="cf-label">Currently Reading</div>
         <button class="cf-add-btn" onclick="openAddModal('reading')">+ Add Book</button>
       </div>
-      <div class="cf-stage" id="cf-reading">
-        <div class="cf-empty" id="empty-reading">
-          <div class="cf-empty-icon">✦</div>
-          <div class="cf-empty-text">Your current reads will appear here</div>
-        </div>
-        <button class="cf-arrow cf-arrow-left" id="arr-left-reading" onclick="cfShift('reading',-1)">&#8249;</button>
-        <div class="cf-track" id="track-reading"></div>
-        <button class="cf-arrow cf-arrow-right" id="arr-right-reading" onclick="cfShift('reading',1)">&#8250;</button>
+      <!-- Empty state -->
+      <div class="cr-empty" id="empty-reading" style="display:flex">
+        <div class="cf-empty-icon">✦</div>
+        <div class="cf-empty-text">Your current read will appear here</div>
       </div>
-      <div class="cf-info" id="info-reading">
-        <div class="cf-info-title" id="info-title-reading"></div>
-        <div class="cf-info-author" id="info-author-reading"></div>
-        <div class="cf-dots" id="dots-reading"></div>
+      <!-- Spotlight -->
+      <div class="cr-spotlight" id="cr-spotlight" style="display:none">
+        <div class="cr-cover-wrap">
+          <div class="cr-cover-glow" id="cr-cover-glow"></div>
+          <img class="cr-cover-img" id="cr-cover-img" src="" alt="">
+          <div class="cr-cover-no-img" id="cr-cover-no-img" style="display:none">
+            <span id="cr-cover-title-fallback"></span>
+          </div>
+        </div>
+        <div class="cr-info">
+          <div class="cr-eyebrow">Now Reading</div>
+          <div class="cr-title" id="cr-title"></div>
+          <div class="cr-author" id="cr-author"></div>
+          <div class="cr-meta" id="cr-meta"></div>
+          <div class="cr-progress-wrap" id="cr-progress-wrap">
+            <div class="cr-progress-labels">
+              <span class="cr-progress-text" id="cr-progress-text">Page 0</span>
+              <span class="cr-progress-pct" id="cr-progress-pct">0%</span>
+            </div>
+            <div class="cr-progress-track">
+              <div class="cr-progress-fill" id="cr-progress-fill" style="width:0%"></div>
+            </div>
+          </div>
+          <div class="cr-actions">
+            <button class="btn btn-primary btn-sm" onclick="crOpenDetail()">Open Book</button>
+            <div class="cr-dots" id="cr-dots"></div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="cf-section">
       <div class="cf-header">
         <div class="cf-label">Have Read</div>
         <button class="cf-add-btn" onclick="openAddModal('read')">+ Add Book</button>
+      </div>
+      <div class="books-finished-counter">
+        <span class="bfc-number" id="bfc-number">0</span>
+        <span class="bfc-label">books finished</span>
+        <div class="bfc-divider">✦</div>
       </div>
       <div class="cf-stage" id="cf-read">
         <div class="cf-empty" id="empty-read">
@@ -532,6 +758,7 @@ function saveAssigned(child,book){
 
 // ── COVERFLOW ──
 var cfIndex = { reading:0, read:0, want:0 };
+var crCurrentIdx = 0;
 var COLORS = ['bc-wisteria','bc-moss','bc-stone','bc-rose','bc-candle','bc-sage','bc-lavender','bc-terracotta','bc-slate','bc-cream'];
 var COLOR_BGSIDES = {
   'bc-wisteria':'linear-gradient(135deg,#4a2a6a,#7a52a0)',
@@ -546,7 +773,72 @@ var COLOR_BGSIDES = {
   'bc-cream':'linear-gradient(135deg,#786848,#c8b898)'
 };
 
-function renderShelves(){ renderShelf('reading'); renderShelf('read'); renderShelf('want'); }
+function renderShelves(){ renderSpotlight(); renderShelf('read'); renderShelf('want'); }
+
+function renderSpotlight() {
+  var arr = books.reading || [];
+  var empty = document.getElementById('empty-reading');
+  var spotlight = document.getElementById('cr-spotlight');
+  if(!arr.length) {
+    if(empty) empty.style.display = 'flex';
+    if(spotlight) spotlight.style.display = 'none';
+    return;
+  }
+  if(empty) empty.style.display = 'none';
+  if(spotlight) spotlight.style.display = 'flex';
+  if(crCurrentIdx >= arr.length) crCurrentIdx = 0;
+  var book = arr[crCurrentIdx];
+
+  // Cover
+  var img = document.getElementById('cr-cover-img');
+  var noImg = document.getElementById('cr-cover-no-img');
+  var glow = document.getElementById('cr-cover-glow');
+  if(book.cover) {
+    img.src = book.cover;
+    img.style.display = 'block';
+    noImg.style.display = 'none';
+    // Extract dominant color hint from cover position for glow
+    glow.style.background = 'radial-gradient(circle, rgba(155,114,170,0.4) 0%, rgba(100,60,140,0.15) 50%, transparent 75%)';
+  } else {
+    img.style.display = 'none';
+    noImg.style.display = 'flex';
+    document.getElementById('cr-cover-title-fallback').textContent = book.title;
+  }
+
+  // Info
+  document.getElementById('cr-title').textContent = book.title;
+  document.getElementById('cr-author').textContent = book.author || '';
+  var meta = '';
+  if(book.year) meta += book.year;
+  if(book.pages) meta += (meta ? ' · ' : '') + book.pages + ' pages';
+  document.getElementById('cr-meta').textContent = meta;
+
+  // Progress
+  var pct = (book.pages && book.currentPage) ? Math.round((book.currentPage/book.pages)*100) : 0;
+  document.getElementById('cr-progress-fill').style.width = pct + '%';
+  document.getElementById('cr-progress-pct').textContent = pct + '%';
+  var pageText = book.currentPage ? 'Page ' + book.currentPage : 'Not started';
+  if(book.pages) pageText += ' of ' + book.pages;
+  document.getElementById('cr-progress-text').textContent = pageText;
+
+  // Dots for multiple books
+  var dotsEl = document.getElementById('cr-dots');
+  dotsEl.innerHTML = '';
+  if(arr.length > 1) {
+    for(var i=0;i<arr.length;i++) {
+      var dot = document.createElement('button');
+      dot.className = 'cr-dot' + (i===crCurrentIdx?' active':'');
+      dot.addEventListener('click', (function(idx){ return function(){ crCurrentIdx=idx; renderSpotlight(); }; })(i));
+      dotsEl.appendChild(dot);
+    }
+  }
+}
+
+function crOpenDetail() {
+  var arr = books.reading || [];
+  if(!arr.length) return;
+  openDetailModal(arr[crCurrentIdx], 'reading');
+}
 
 function renderShelf(shelf) {
   var arr = books[shelf] || [];
@@ -646,6 +938,22 @@ function renderShelf(shelf) {
   // arrows
   if(arrL) arrL.disabled = cfIndex[shelf] === 0;
   if(arrR) arrR.disabled = cfIndex[shelf] === arr.length - 1;
+
+  // update finished counter
+  if(shelf === 'read') {
+    var ctr = document.getElementById('bfc-number');
+    if(ctr) {
+      var prev = parseInt(ctr.textContent) || 0;
+      var next = arr.length;
+      ctr.textContent = next;
+      if(next > prev) {
+        ctr.classList.remove('bump');
+        void ctr.offsetWidth; // force reflow
+        ctr.classList.add('bump');
+        setTimeout(function(){ ctr.classList.remove('bump'); }, 500);
+      }
+    }
+  }
 }
 
 function cfShift(shelf, dir) {
