@@ -483,7 +483,68 @@
             .attendance-card { flex-direction: column; text-align: center; }
             .person-grid { grid-template-columns: repeat(2, 1fr); }
         }
-    </style>
+    
+        /* Library Door Card */
+        .library-door-card {
+            display: block;
+            text-decoration: none;
+            margin: 0 0 20px 0;
+            border-radius: 14px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #2a1a3a 0%, #1e1228 50%, #2a1a10 100%);
+            border: 1px solid rgba(155,114,170,0.35);
+            box-shadow: 0 4px 20px rgba(100,50,150,0.2);
+            transition: all 0.25s ease;
+            position: relative;
+        }
+        .library-door-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(155,114,170,0.08), transparent);
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+        .library-door-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(100,50,150,0.35);
+            border-color: rgba(155,114,170,0.6);
+        }
+        .library-door-card:hover::before { opacity: 1; }
+        .library-door-inner {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 20px;
+        }
+        .library-door-icon {
+            font-size: 2em;
+            flex-shrink: 0;
+        }
+        .library-door-text { flex: 1; }
+        .library-door-title {
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            color: #c9a8d8;
+            letter-spacing: 1px;
+            margin-bottom: 3px;
+        }
+        .library-door-sub {
+            font-size: 12px;
+            color: rgba(180,160,200,0.6);
+            font-style: italic;
+            letter-spacing: 0.5px;
+        }
+        .library-door-arrow {
+            font-size: 20px;
+            color: rgba(155,114,170,0.5);
+            transition: transform 0.2s, color 0.2s;
+        }
+        .library-door-card:hover .library-door-arrow {
+            transform: translateX(4px);
+            color: #c9a8d8;
+        }
+        </style>
 </head>
 <body>
 
@@ -645,6 +706,18 @@
         <div class="divider-line"></div>
     </div>
 
+    <!-- Library Door Card -->
+    <a href="wade-library-mom.html" class="library-door-card">
+        <div class="library-door-inner">
+            <div class="library-door-icon">📚</div>
+            <div class="library-door-text">
+                <div class="library-door-title">Enter the Library</div>
+                <div class="library-door-sub">Books · Coverflow · Reports</div>
+            </div>
+            <div class="library-door-arrow">→</div>
+        </div>
+    </a>
+
     <div class="tools-grid">
         <a href="wade-planner.html" class="tool-link">
             <span class="tool-icon">📋</span>
@@ -686,6 +759,13 @@
             <div class="tool-text-wrap">
                 <div class="tool-name">Copywork</div>
                 <div class="tool-sub">Writing Worksheets</div>
+            </div>
+        </a>
+        <a href="wade-library-mom.html" class="tool-link tool-link-library">
+            <span class="tool-icon">📚</span>
+            <div class="tool-text-wrap">
+                <div class="tool-name">The Library</div>
+                <div class="tool-sub">Books · Reading · Reports</div>
             </div>
         </a>
         <a href="index.html" class="tool-link">
@@ -859,6 +939,17 @@ async function loadWeather() {
         document.getElementById('weatherStrip').style.display = 'none';
     }
 }
+const DB_CONFIG = {
+    apiKey: "AIzaSyAw9V30gR9hc3WKS3zhO61IU6NeeKghyQM",
+    authDomain: "wade-classical.firebaseapp.com",
+    databaseURL: "https://wade-classical-default-rtdb.firebaseio.com",
+    projectId: "wade-classical",
+    storageBucket: "wade-classical.firebasestorage.app",
+    messagingSenderId: "72309085457",
+    appId: "1:72309085457:web:3d8b5a07302248ded6a8b0"
+};
+let dashDb = null;
+const dashCache = {};
 initDashFirebase();
 loadWeather();
 
@@ -873,18 +964,6 @@ function getCurrentSchoolYear() {
 function dateKey(d) {
     return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
-
-const DB_CONFIG = {
-    apiKey: "AIzaSyAw9V30gR9hc3WKS3zhO61IU6NeeKghyQM",
-    authDomain: "wade-classical.firebaseapp.com",
-    databaseURL: "https://wade-classical-default-rtdb.firebaseio.com",
-    projectId: "wade-classical",
-    storageBucket: "wade-classical.firebasestorage.app",
-    messagingSenderId: "72309085457",
-    appId: "1:72309085457:web:3d8b5a07302248ded6a8b0"
-};
-let dashDb = null;
-const dashCache = {};
 
 function initDashFirebase() {
     try {
