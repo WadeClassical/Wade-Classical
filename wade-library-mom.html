@@ -731,11 +731,14 @@ function uid() { return Date.now()+'-'+Math.random().toString(36).slice(2,7); }
 
 // ── FIREBASE ──
 function loadBooks() {
+  console.log('[Library] loadBooks called, PERSON='+PERSON);
   db.ref('library/'+PERSON).on('value', function(snap) {
     var d = snap.val() || {};
+    console.log('[Library] Firebase data received:', JSON.stringify(d).slice(0,200));
     books.reading = d.reading ? Object.values(d.reading) : [];
     books.read    = d.read    ? Object.values(d.read)    : [];
     books.want    = d.want    ? Object.values(d.want)    : [];
+    console.log('[Library] books.reading:', books.reading.length, 'books.read:', books.read.length, 'books.want:', books.want.length);
     renderShelves();
     renderReportsList();
   });
@@ -1317,6 +1320,68 @@ function openDetailModal(book, shelf) {
   container.appendChild(btnRow);
 
   openModal('modal-detail');
+}
+
+function updateProgress(id, shelf) {
+  var page = parseInt(document.getElementById('detail-page').value)||0;
+  var arr = books[shelf];
+  for (var i=0;i<arr.length;i++) {
+    if (arr[i].id===id) { arr[i].currentPage=page; saveBook(shelf,arr[i]); break; }
+  }
+  showToast('Progress saved ✦');
+  closeModal('modal-detail');
+}
+
+function setRating(n, id, shelf) {
+  var arr = books[shelf];
+  for (var i=0;i<arr.length;i++) {
+    if (arr[i].id===id) { arr[i].rating=n; saveBook(shelf,arr[i]); break; }
+  }
+  var c = document.getElementById('stars-'+id);
+  if (c) {
+    var ss = c.querySelectorAll('.star');
+    for (var j=0;j<ss.length;j++) ss[j].classList.toggle('active', parseInt(ss[j].dataset.n)<=n);
+  }
+  showToast('Rating saved ✦');
+}
+
+function saveReport(id, shelf) {
+  var arr = books[shelf];
+  for (var i=0;i<arr.length;i++) {
+    if (arr[i].id===id) {
+      arr[i].report = {
+        favorite:  document.getElementById('report-fav').value,
+        sentence:  document.getElementById('report-sentence').value,
+        recommend: document.getElementById('report-recommend').value,
+        notes:     document.getElementById('report-notes').value,
+        savedAt:   Date.now()
+      };
+      saveBook(shelf, arr[i]);
+      break;
+    }
+  }
+  showToast('Report saved ✦');
+}
+
+function moveBook(id, from, to) {
+  var arr = books[from];
+  for (var i=0;i<arr.length;i++) {
+    if (arr[i].id===id) {
+      var b = Object.assign({}, arr[i], {movedAt:Date.now()});
+      deleteBook(from, id);
+      saveBook(to, b);
+      break;
+    }
+  }
+  closeModal('modal-detail');
+  showToast('Moved ✦');
+}
+
+function removeBook(id, shelf) {
+  if (!confirm('Remove this book?')) return;
+  deleteBook(shelf, id);
+  closeModal('modal-detail');
+  showToast('Book removed');
 }
 
 // ── REPORTS LIST ──
