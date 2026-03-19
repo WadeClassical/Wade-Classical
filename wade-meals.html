@@ -53,10 +53,11 @@ body{
   transform-origin:center center;
 }
 @keyframes petalFall{
-  0%  { opacity:0;   transform:translateY(0)      rotate(0deg)   translateX(0px)  scale(1); }
-  5%  { opacity:.75; }
-  80% { opacity:.55; }
-  100%{ opacity:0;   transform:translateY(105vh)  rotate(540deg) translateX(60px) scale(.7); }
+  0%  { opacity:0;   transform:translateY(0)     rotate(0deg)   scale(1); }
+  6%  { opacity:.78; }
+  75% { opacity:.55; }
+  90% { opacity:.15; }
+  100%{ opacity:0;   transform:translateY(88vh)  rotate(500deg) scale(.65); }
 }
 @keyframes petalSway{
   0%,100%{ margin-left:0; }
@@ -1429,7 +1430,7 @@ function showToast(msg,color='pink'){clearTimeout(toastT);const el=document.getE
       border-radius:${s.r};
       background:${c};
       opacity:0;
-      animation:petalFall ${duration}s ${delay}s linear infinite;
+      animation:petalFall ${duration}s ${delay}s linear forwards;
       transform:rotate(${Math.random()*360}deg) scale(${size});
       filter:blur(${blur});
       box-shadow:inset 0 1px 3px rgba(255,255,255,.5),0 1px 3px rgba(180,80,140,.15);
