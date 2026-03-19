@@ -484,6 +484,130 @@
             .person-grid { grid-template-columns: repeat(2, 1fr); }
         }
     
+        /* ── MEAL PLANNER RECIPE CARD ── */
+        .meal-card-btn {
+            display: block;
+            text-decoration: none;
+            margin: 0 0 14px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1e0f2a 0%, #2a0f1e 60%, #0f1a2a 100%);
+            border: 1px solid rgba(232,85,154,0.28);
+            box-shadow: 0 4px 18px rgba(180,40,120,0.18);
+            transition: all 0.22s ease;
+            position: relative;
+        }
+        .meal-card-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(232,85,154,0.07), rgba(155,89,212,0.07));
+            opacity: 0;
+            transition: opacity 0.22s;
+        }
+        .meal-card-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(180,40,120,0.32);
+            border-color: rgba(232,85,154,0.5);
+        }
+        .meal-card-btn:hover::before { opacity: 1; }
+        .mcb-inner {
+            display: flex;
+            align-items: stretch;
+            position: relative;
+            z-index: 1;
+        }
+        /* the little recipe card on the left */
+        .mcb-recipe {
+            background: rgba(253,246,240,0.97);
+            padding: 12px 14px;
+            min-width: 148px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid rgba(232,85,154,0.15);
+        }
+        .mcb-recipe-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.55em;
+            letter-spacing: 0.14em;
+            color: #b8206a;
+            text-transform: uppercase;
+            margin-bottom: 7px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #f0d0e0;
+        }
+        .mcb-day {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 2px;
+        }
+        .mcb-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%; flex-shrink: 0;
+        }
+        .mcb-day-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.72em;
+            color: #2a1428;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        /* right text side */
+        .mcb-text {
+            flex: 1;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+        }
+        .mcb-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.95em;
+            color: #f0c8e0;
+            letter-spacing: 0.07em;
+            font-weight: 600;
+        }
+        .mcb-sub {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 0.82em;
+            color: rgba(240,200,220,0.55);
+        }
+        .mcb-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 6px;
+        }
+        .mcb-pill {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.52em;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 2px 7px;
+            border-radius: 20px;
+            color: #fff;
+        }
+        .mcb-arrow {
+            padding: 0 14px;
+            display: flex;
+            align-items: center;
+            font-size: 1.1em;
+            color: rgba(232,85,154,0.4);
+            transition: transform 0.2s, color 0.2s;
+            flex-shrink: 0;
+        }
+        .meal-card-btn:hover .mcb-arrow {
+            transform: translateX(3px);
+            color: #e8559a;
+        }
+        @media (max-width: 500px) { .mcb-recipe { display: none; } }
+
         /* Library Door Card */
         .library-door-card {
             display: block;
@@ -715,6 +839,36 @@
                 <div class="library-door-sub">Amanda · Ryder · Hadley · Ava</div>
             </div>
             <div class="library-door-arrow">→</div>
+        </div>
+    </a>
+
+    <!-- Meal Planner Recipe Card -->
+    <a href="wade-meals.html" class="meal-card-btn">
+        <div class="mcb-inner">
+            <div class="mcb-recipe">
+                <div class="mcb-recipe-title">This Week's Menu</div>
+                <div class="mcb-day"><div class="mcb-dot" style="background:#e8559a"></div><span class="mcb-day-text">Mon · Quick &amp; Easy</span></div>
+                <div class="mcb-day"><div class="mcb-dot" style="background:#9b59d4"></div><span class="mcb-day-text">Tue · Taco Tuesday</span></div>
+                <div class="mcb-day"><div class="mcb-dot" style="background:#3a8fbf"></div><span class="mcb-day-text">Wed · Home Cooked</span></div>
+                <div class="mcb-day"><div class="mcb-dot" style="background:#2a8a5a"></div><span class="mcb-day-text">Thu · Crockpot</span></div>
+                <div class="mcb-day"><div class="mcb-dot" style="background:#c44090"></div><span class="mcb-day-text">Fri · Pasta Night</span></div>
+                <div class="mcb-day"><div class="mcb-dot" style="background:#5870d4"></div><span class="mcb-day-text">Sat · Takeout</span></div>
+                <div class="mcb-day"><div class="mcb-dot" style="background:#a040c8"></div><span class="mcb-day-text">Sun · Breakfast</span></div>
+            </div>
+            <div class="mcb-text">
+                <div class="mcb-title">🌿 Meal Planner</div>
+                <div class="mcb-sub">What's for dinner? Decided.</div>
+                <div class="mcb-pills">
+                    <span class="mcb-pill" style="background:#e8559a">⚡ Quick</span>
+                    <span class="mcb-pill" style="background:#9b59d4">🌮 Tacos</span>
+                    <span class="mcb-pill" style="background:#3a8fbf">🏠 Home</span>
+                    <span class="mcb-pill" style="background:#2a8a5a">🍲 Crockpot</span>
+                    <span class="mcb-pill" style="background:#c44090">🍝 Pasta</span>
+                    <span class="mcb-pill" style="background:#5870d4">🥡 Takeout</span>
+                    <span class="mcb-pill" style="background:#a040c8">🥞 Breakfast</span>
+                </div>
+            </div>
+            <div class="mcb-arrow">→</div>
         </div>
     </a>
 

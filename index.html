@@ -310,6 +310,128 @@
         .section.moms .section-title { color: var(--gold); }
         .section.moms .section-numeral { color: var(--gold); }
 
+        /* ── KITCHEN SECTION ── */
+        .section.kitchen .section-title { color: #b8206a; }
+        .section.kitchen .section-numeral { color: #b8206a; }
+        .section.kitchen .section-header-line { background: #e8559a; opacity: 0.35; }
+
+        /* ── MEAL PLANNER CARD ── */
+        .meal-planner-card {
+            display: block;
+            text-decoration: none;
+            background: linear-gradient(135deg, #1e0f2a 0%, #2a0f1e 50%, #0f1a2a 100%);
+            border: 1px solid rgba(232,85,154,0.3);
+            border-radius: 6px;
+            padding: 28px 32px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 20px rgba(180,40,120,0.15);
+        }
+        .meal-planner-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(232,85,154,0.06), rgba(155,89,212,0.06));
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+        .meal-planner-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(180,40,120,0.28);
+            border-color: rgba(232,85,154,0.55);
+        }
+        .meal-planner-card:hover::before { opacity: 1; }
+        .mpc-inner {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .mpc-recipe-card {
+            background: rgba(253,246,240,0.96);
+            border-radius: 4px;
+            padding: 12px 14px;
+            min-width: 140px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.3), inset 0 0 0 1px rgba(232,85,154,0.2);
+            flex-shrink: 0;
+        }
+        .mpc-recipe-card-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.6em;
+            letter-spacing: 0.15em;
+            color: #b8206a;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #f0d0e0;
+        }
+        .mpc-day-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 3px;
+        }
+        .mpc-day-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .mpc-day-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.78em;
+            color: #2a1428;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .mpc-text { flex: 1; }
+        .mpc-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3em;
+            color: #f0c8e0;
+            letter-spacing: 0.08em;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        .mpc-sub {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1em;
+            color: rgba(240,200,220,0.6);
+            margin-bottom: 14px;
+        }
+        .mpc-themes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .mpc-theme-pill {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.58em;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 3px 9px;
+            border-radius: 20px;
+            color: #fff;
+        }
+        .mpc-arrow {
+            font-size: 1.4em;
+            color: rgba(232,85,154,0.5);
+            transition: transform 0.2s, color 0.2s;
+            flex-shrink: 0;
+        }
+        .meal-planner-card:hover .mpc-arrow {
+            transform: translateX(4px);
+            color: #e8559a;
+        }
+        @media (max-width: 640px) {
+            .mpc-recipe-card { display: none; }
+        }
+
         /* ── FOOTER ── */
         footer {
             background: var(--charcoal);
@@ -394,6 +516,7 @@
         <span class="nav-item">Ryder</span>
         <span class="nav-item">Hadley</span>
         <span class="nav-item">Mom</span>
+        <span class="nav-item">Kitchen</span>
     </nav>
 
     <main>
@@ -604,6 +727,51 @@
             </div>
         </div>
 
+    </main>
+
+    <!-- KITCHEN -->
+    <main style="max-width:1100px;margin:0 auto;padding:0 30px 80px;position:relative;z-index:1;">
+        <div class="section kitchen">
+            <div class="section-header">
+                <div class="section-header-line"></div>
+                <div class="section-title-block">
+                    <span class="section-numeral">IV.</span>
+                    <span style="font-size:1em;">🌿</span>
+                    <span class="section-title">The Kitchen</span>
+                </div>
+                <div class="section-header-line"></div>
+            </div>
+
+            <a href="wade-meals.html" class="meal-planner-card">
+                <div class="mpc-inner">
+                    <!-- mini recipe card illustration -->
+                    <div class="mpc-recipe-card">
+                        <div class="mpc-recipe-card-title">This Week's Menu</div>
+                        <div class="mpc-day-row"><div class="mpc-day-dot" style="background:#e8559a"></div><span class="mpc-day-text">Mon · Quick & Easy</span></div>
+                        <div class="mpc-day-row"><div class="mpc-day-dot" style="background:#9b59d4"></div><span class="mpc-day-text">Tue · Taco Tuesday</span></div>
+                        <div class="mpc-day-row"><div class="mpc-day-dot" style="background:#3a8fbf"></div><span class="mpc-day-text">Wed · Home Cooked</span></div>
+                        <div class="mpc-day-row"><div class="mpc-day-dot" style="background:#2a8a5a"></div><span class="mpc-day-text">Thu · Crockpot</span></div>
+                        <div class="mpc-day-row"><div class="mpc-day-dot" style="background:#c44090"></div><span class="mpc-day-text">Fri · Pasta Night</span></div>
+                        <div class="mpc-day-row"><div class="mpc-day-dot" style="background:#5870d4"></div><span class="mpc-day-text">Sat · Takeout</span></div>
+                        <div class="mpc-day-row"><div class="mpc-day-dot" style="background:#a040c8"></div><span class="mpc-day-text">Sun · Breakfast</span></div>
+                    </div>
+                    <div class="mpc-text">
+                        <div class="mpc-title">Meal Planner</div>
+                        <div class="mpc-sub">What's for dinner? Decided.</div>
+                        <div class="mpc-themes">
+                            <span class="mpc-theme-pill" style="background:#e8559a">⚡ Quick &amp; Easy</span>
+                            <span class="mpc-theme-pill" style="background:#9b59d4">🌮 Taco Tuesday</span>
+                            <span class="mpc-theme-pill" style="background:#3a8fbf">🏠 Home Cooked</span>
+                            <span class="mpc-theme-pill" style="background:#2a8a5a">🍲 Crockpot</span>
+                            <span class="mpc-theme-pill" style="background:#c44090">🍝 Pasta Night</span>
+                            <span class="mpc-theme-pill" style="background:#5870d4">🥡 Takeout</span>
+                            <span class="mpc-theme-pill" style="background:#a040c8">🥞 Breakfast</span>
+                        </div>
+                    </div>
+                    <div class="mpc-arrow">→</div>
+                </div>
+            </a>
+        </div>
     </main>
 
     <footer>
