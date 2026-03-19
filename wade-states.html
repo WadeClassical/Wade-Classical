@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>USA States — Wade Classical</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Nunito:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #0f1520;
+  --panel:     #161e2e;
+  --panel2:    #1c2640;
+  --border:    #2a3550;
+  --gold:      #f5c842;
+  --gold2:     #e0a820;
+  --blue:      #3b82f6;
+  --blue2:     #2563eb;
+  --green:     #22c55e;
+  --red:       #ef4444;
+  --text:      #e2e8f0;
+  --subtext:   #8899b8;
+  --white:     #ffffff;
+
+  /* Region colors */
+  --northeast: #6aaedc;
+  --southeast: #f4a7c3;
+  --midwest:   #f5c842;
+  --southwest: #f97316;
+  --west:      #a78bfa;
+  --alaska:    #67e8f9;
+  --hawaii:    #34d399;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; overflow-x:hidden; }
+
+/* ── HEADER ── */
+.header {
+  background:var(--panel); border-bottom:1px solid var(--border);
+  padding:0 24px; height:54px; display:flex; align-items:center;
+  justify-content:space-between; position:sticky; top:0; z-index:100;
+}
+.header-left { display:flex; align-items:center; gap:16px; }
+.back-btn { color:var(--subtext); text-decoration:none; font-size:13px; font-weight:600; transition:color .15s; }
+.back-btn:hover { color:var(--text); }
+.header-title { font-family:'Cinzel',serif; font-size:16px; color:var(--gold); letter-spacing:.5px; }
+.person-badge {
+  font-size:12px; font-weight:700; padding:3px 12px; border-radius:12px;
+  background:rgba(59,130,246,0.15); color:var(--blue); border:1px solid rgba(59,130,246,0.25);
+  cursor:pointer; transition:all .15s;
+}
+.person-badge:hover { background:rgba(59,130,246,0.25); }
+
+/* ── SCREENS ── */
+.screen { display:none; }
+.screen.active { display:flex; flex-direction:column; }
+
+/* ── PERSON SELECT ── */
+#screen-person {
+  min-height:100vh; align-items:center; justify-content:center;
+  background: radial-gradient(ellipse at 50% 30%, rgba(59,130,246,0.08) 0%, transparent 60%);
+}
+.person-title { font-family:'Cinzel',serif; font-size:32px; color:var(--gold); text-align:center; margin-bottom:8px; }
+.person-sub   { color:var(--subtext); text-align:center; margin-bottom:40px; font-size:15px; }
+.person-cards { display:flex; gap:20px; flex-wrap:wrap; justify-content:center; }
+.person-card {
+  width:160px; padding:28px 20px; background:var(--panel);
+  border:2px solid var(--border); border-radius:16px; text-align:center;
+  cursor:pointer; transition:all .2s;
+}
+.person-card:hover { border-color:var(--gold); transform:translateY(-4px); box-shadow:0 12px 30px rgba(245,200,66,0.15); }
+.person-card-icon { font-size:40px; margin-bottom:10px; }
+.person-card-name { font-family:'Cinzel',serif; font-size:15px; color:var(--text); font-weight:600; }
+
+/* ── LEVEL SELECT ── */
+#screen-level {
+  min-height:100vh; align-items:center; justify-content:center;
+  background: radial-gradient(ellipse at 50% 30%, rgba(59,130,246,0.08) 0%, transparent 60%);
+}
+.level-title { font-family:'Cinzel',serif; font-size:28px; color:var(--gold); text-align:center; margin-bottom:6px; }
+.level-sub   { color:var(--subtext); text-align:center; margin-bottom:36px; }
+.level-cards { display:flex; gap:18px; flex-wrap:wrap; justify-content:center; }
+.level-card {
+  width:200px; padding:28px 20px; background:var(--panel);
+  border:2px solid var(--border); border-radius:16px; text-align:center;
+  cursor:pointer; transition:all .2s; position:relative;
+}
+.level-card:hover:not(.locked) { border-color:var(--blue); transform:translateY(-3px); box-shadow:0 10px 28px rgba(59,130,246,0.15); }
+.level-card.locked { opacity:.5; cursor:default; }
+.level-card-num  { font-family:'Cinzel',serif; font-size:11px; letter-spacing:3px; color:var(--subtext); margin-bottom:8px; text-transform:uppercase; }
+.level-card-icon { font-size:36px; margin-bottom:10px; }
+.level-card-name { font-size:16px; font-weight:700; color:var(--text); margin-bottom:6px; }
+.level-card-desc { font-size:12px; color:var(--subtext); line-height:1.4; }
+.level-card-progress {
+  margin-top:14px; height:6px; background:var(--border); border-radius:3px; overflow:hidden;
+}
+.level-card-bar { height:100%; background:var(--gold); border-radius:3px; transition:width .5s; }
+.level-card-pct { font-size:11px; color:var(--subtext); margin-top:5px; }
+
+/* ── MAIN APP ── */
+#screen-app { flex-direction:row; min-height:calc(100vh - 54px); }
+
+/* MAP AREA */
+.map-area {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  justify-content:flex-start; padding:20px 16px; position:relative;
+  overflow:hidden;
+}
+.map-wrap {
+  width:100%; max-width:780px;
+  background:var(--panel); border-radius:16px;
+  border:1px solid var(--border);
+  padding:12px; position:relative;
+}
+#usa-map { width:100%; height:auto; display:block; }
+
+/* State paths */
+.state-path {
+  fill: #1e2d48;
+  stroke: #2a3d5a;
+  stroke-width: 0.8;
+  cursor: pointer;
+  transition: fill .2s, stroke .2s;
+}
+.state-path:hover { fill:#2a3d60; stroke:#4a6080; }
+.state-path.region-northeast { fill:#1a3850; }
+.state-path.region-southeast { fill:#3a2030; }
+.state-path.region-midwest   { fill:#3a3010; }
+.state-path.region-southwest { fill:#3a2010; }
+.state-path.region-west      { fill:#2a1a50; }
+.state-path.region-alaska    { fill:#0a3040; }
+.state-path.region-hawaii    { fill:#0a3028; }
+
+/* State fill states */
+.state-path.highlight   { fill:#3b82f6 !important; stroke:#60a0ff !important; }
+.state-path.correct     { fill:#16a34a !important; stroke:#22c55e !important; animation:correctPop .4s ease; }
+.state-path.wrong       { fill:#b91c1c !important; stroke:#ef4444 !important; animation:wrongShake .35s ease; }
+.state-path.mastered    { fill:#92400e !important; stroke:var(--gold) !important; }
+.state-path.mastered-1  { fill:#1c3a1a !important; stroke:#22c55e !important; }
+.state-path.mastered-2  { fill:#1c2a3a !important; stroke:#60a0ff !important; }
+.state-path.mastered-3  { fill:#3a3010 !important; stroke:var(--gold) !important; }
+.state-path.seen        { fill:#1e2d40 !important; }
+.state-path.quiz-target { fill:#1a3a1a !important; stroke:#22c55e !important; stroke-width:1.5 !important; animation:pulse 1.5s ease-in-out infinite; }
+
+@keyframes correctPop  { 0%{transform:scale(1)} 50%{transform:scale(1.08)} 100%{transform:scale(1)} }
+@keyframes wrongShake  { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.65} }
+
+/* Alaska & Hawaii insets */
+.inset-label { font-size:9px; fill:var(--subtext); font-family:'DM Sans',sans-serif; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width:300px; flex-shrink:0; background:var(--panel);
+  border-left:1px solid var(--border); display:flex; flex-direction:column;
+  height:calc(100vh - 54px); overflow-y:auto; overflow-x:hidden;
+}
+
+/* Mode tabs */
+.mode-tabs { display:flex; border-bottom:1px solid var(--border); }
+.mode-tab {
+  flex:1; padding:12px 8px; background:none; border:none;
+  color:var(--subtext); font-family:'DM Sans',sans-serif; font-size:13px;
+  font-weight:600; cursor:pointer; transition:all .15s;
+  border-bottom:2px solid transparent; margin-bottom:-1px;
+}
+.mode-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+
+/* Info panel (study mode) */
+.info-panel { padding:20px; flex:1; }
+.info-empty { text-align:center; padding:40px 20px; color:var(--subtext); font-size:14px; line-height:1.6; }
+.info-state-name { font-family:'Cinzel',serif; font-size:22px; color:var(--white); margin-bottom:4px; }
+.info-state-abbr { font-size:12px; font-weight:700; letter-spacing:2px; color:var(--subtext); margin-bottom:16px; }
+.info-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); }
+.info-row:last-child { border-bottom:none; }
+.info-label { font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:var(--subtext); }
+.info-value { font-size:14px; font-weight:600; color:var(--text); }
+.region-chip {
+  display:inline-block; padding:3px 12px; border-radius:10px; font-size:12px; font-weight:700;
+}
+.mastery-dots { display:flex; gap:6px; }
+.mastery-dot  { width:12px; height:12px; border-radius:50%; background:var(--border); transition:all .3s; }
+.mastery-dot.filled { background:var(--gold); box-shadow:0 0 8px rgba(245,200,66,0.5); }
+
+/* Quiz panel */
+.quiz-panel { padding:20px; flex:1; display:flex; flex-direction:column; }
+.quiz-prompt {
+  background:var(--panel2); border:1px solid var(--border); border-radius:12px;
+  padding:20px; text-align:center; margin-bottom:20px;
+}
+.quiz-level-badge {
+  font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+  color:var(--subtext); margin-bottom:8px;
+}
+.quiz-question { font-size:15px; font-weight:700; color:var(--text); line-height:1.4; margin-bottom:6px; }
+.quiz-hint     { font-size:12px; color:var(--subtext); }
+.quiz-feedback {
+  padding:14px 16px; border-radius:10px; text-align:center; font-weight:700; font-size:15px;
+  margin-bottom:16px; display:none;
+}
+.quiz-feedback.correct { background:rgba(34,197,94,.15); border:1px solid rgba(34,197,94,.3); color:#4ade80; }
+.quiz-feedback.wrong   { background:rgba(239,68,68,.12);  border:1px solid rgba(239,68,68,.3);  color:#f87171; }
+
+.quiz-stats { display:flex; gap:12px; margin-bottom:20px; }
+.quiz-stat  { flex:1; background:var(--panel2); border-radius:10px; padding:12px; text-align:center; border:1px solid var(--border); }
+.quiz-stat-n  { font-family:'Cinzel',serif; font-size:24px; color:var(--gold); }
+.quiz-stat-l  { font-size:11px; color:var(--subtext); font-weight:600; margin-top:2px; }
+
+.quiz-btn {
+  width:100%; padding:12px; border:none; border-radius:10px; font-family:'DM Sans',sans-serif;
+  font-size:14px; font-weight:700; cursor:pointer; transition:all .15s;
+}
+.quiz-btn-primary { background:var(--blue2); color:#fff; margin-bottom:8px; }
+.quiz-btn-primary:hover { background:var(--blue); }
+.quiz-btn-secondary { background:var(--panel2); color:var(--subtext); border:1px solid var(--border); }
+.quiz-btn-secondary:hover { color:var(--text); }
+
+/* Progress section in sidebar */
+.progress-section { padding:16px 20px; border-top:1px solid var(--border); }
+.progress-title { font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--subtext); margin-bottom:12px; }
+.progress-grid  { display:grid; grid-template-columns:repeat(10,1fr); gap:3px; }
+.prog-dot {
+  width:100%; aspect-ratio:1; border-radius:2px; background:var(--border);
+  cursor:pointer; transition:all .2s; position:relative;
+}
+.prog-dot:hover::after { content:attr(data-name); position:absolute; bottom:120%; left:50%; transform:translateX(-50%); background:var(--panel); border:1px solid var(--border); color:var(--text); font-size:10px; white-space:nowrap; padding:3px 6px; border-radius:4px; z-index:10; pointer-events:none; }
+.prog-dot.seen     { background:#2a3d58; }
+.prog-dot.streak1  { background:#1c4a3a; }
+.prog-dot.streak2  { background:#1c6a4a; }
+.prog-dot.mastered { background:var(--gold); box-shadow:0 0 4px rgba(245,200,66,.4); }
+
+/* Region legend */
+.legend { display:flex; flex-wrap:wrap; gap:8px; padding:16px 20px; border-top:1px solid var(--border); }
+.legend-item { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--subtext); font-weight:600; }
+.legend-dot  { width:10px; height:10px; border-radius:2px; flex-shrink:0; }
+
+/* Toast */
+.toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:var(--panel); border:1px solid var(--border); border-radius:10px;
+  padding:12px 24px; font-size:14px; font-weight:600; color:var(--text);
+  z-index:1000; opacity:0; transition:all .25s; pointer-events:none;
+  box-shadow:0 8px 30px rgba(0,0,0,.4); white-space:nowrap;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+.state-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  fill: rgba(255,255,255,0.45);
+  letter-spacing: 0.3px;
+  transition: opacity .3s;
+}
+#usa-map.hide-labels .state-label { opacity: 0; }
+
+/* State tooltip on map */
+.map-tooltip {
+  position:absolute; background:var(--panel); border:1px solid var(--border);
+  border-radius:8px; padding:8px 12px; font-size:13px; font-weight:600;
+  pointer-events:none; z-index:20; opacity:0; transition:opacity .15s;
+  box-shadow:0 4px 16px rgba(0,0,0,.4);
+}
+.map-tooltip.show { opacity:1; }
+
+@media(max-width:800px) {
+  #screen-app { flex-direction:column; }
+  .sidebar { width:100%; height:auto; border-left:none; border-top:1px solid var(--border); }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header" id="app-header" style="display:none">
+  <div class="header-left">
+    <a href="index.html" class="back-btn">← Home</a>
+    <span class="header-title">🗺 USA Explorer</span>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center">
+    <span id="level-badge" style="font-size:12px;font-weight:700;color:var(--subtext)"></span>
+    <span class="person-badge" id="person-badge" onclick="changePerson()"></span>
+  </div>
+</header>
+
+<!-- SCREEN: PERSON SELECT -->
+<div class="screen active" id="screen-person">
+  <div style="text-align:center;padding:40px 20px">
+    <div style="font-size:48px;margin-bottom:16px">🗺️</div>
+    <div class="person-title">USA Explorer</div>
+    <div class="person-sub">Learn the states, regions & capitals</div>
+    <div class="person-cards">
+      <div class="person-card" onclick="selectPerson('ryder','⚔️','Ryder')">
+        <div class="person-card-icon">⚔️</div>
+        <div class="person-card-name">Ryder</div>
+      </div>
+      <div class="person-card" onclick="selectPerson('hadley','🌷','Hadley')">
+        <div class="person-card-icon">🌷</div>
+        <div class="person-card-name">Hadley</div>
+      </div>
+      <div class="person-card" onclick="selectPerson('amanda','🌿','Amanda')">
+        <div class="person-card-icon">🌿</div>
+        <div class="person-card-name">Amanda</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: LEVEL SELECT -->
+<div class="screen" id="screen-level">
+  <div style="text-align:center;padding:40px 20px">
+    <div class="level-title">Choose a Level</div>
+    <div class="level-sub" id="level-sub-text"></div>
+    <div class="level-cards">
+      <div class="level-card" id="level-card-1" onclick="selectLevel(1)">
+        <div class="level-card-num">Level 1</div>
+        <div class="level-card-icon">🗺️</div>
+        <div class="level-card-name">States</div>
+        <div class="level-card-desc">Learn all 50 states by name and location</div>
+        <div class="level-card-progress"><div class="level-card-bar" id="bar-1" style="width:0%"></div></div>
+        <div class="level-card-pct" id="pct-1">0 / 50 mastered</div>
+      </div>
+      <div class="level-card" id="level-card-2" onclick="selectLevel(2)">
+        <div class="level-card-num">Level 2</div>
+        <div class="level-card-icon">🌎</div>
+        <div class="level-card-name">Regions</div>
+        <div class="level-card-desc">Learn the 6 regions of the United States</div>
+        <div class="level-card-progress"><div class="level-card-bar" id="bar-2" style="width:0%"></div></div>
+        <div class="level-card-pct" id="pct-2">0 / 50 mastered</div>
+      </div>
+      <div class="level-card" id="level-card-3" onclick="selectLevel(3)">
+        <div class="level-card-num">Level 3</div>
+        <div class="level-card-icon">🏛️</div>
+        <div class="level-card-name">Capitals</div>
+        <div class="level-card-desc">Match each state to its capital city</div>
+        <div class="level-card-progress"><div class="level-card-bar" id="bar-3" style="width:0%"></div></div>
+        <div class="level-card-pct" id="pct-3">0 / 50 mastered</div>
+      </div>
+      <div class="level-card" id="level-card-4" onclick="selectLevel(4)">
+        <div class="level-card-num">Level 4</div>
+        <div class="level-card-icon">🔤</div>
+        <div class="level-card-name">Abbreviations</div>
+        <div class="level-card-desc">Match each state to its 2-letter abbreviation</div>
+        <div class="level-card-progress"><div class="level-card-bar" id="bar-4" style="width:0%"></div></div>
+        <div class="level-card-pct" id="pct-4">0 / 50 mastered</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: APP -->
+<div class="screen" id="screen-app">
+
+  <!-- MAP -->
+  <div class="map-area">
+    <div class="map-wrap">
+      <svg id="usa-map" viewBox="0 0 975 610" xmlns="http://www.w3.org/2000/svg">
+      </svg>
+      <div class="map-tooltip" id="map-tooltip"></div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="mode-tabs">
+      <button class="mode-tab active" onclick="setMode('study')"  id="tab-study">📖 Study</button>
+      <button class="mode-tab"        onclick="setMode('quiz')"   id="tab-quiz">🎯 Quiz</button>
+    </div>
+
+    <!-- STUDY MODE -->
+    <div id="study-panel" class="info-panel">
+      <div class="info-empty" id="study-empty">
+        <div style="font-size:32px;margin-bottom:12px">👆</div>
+        Click any state on the map to learn about it
+      </div>
+      <div id="study-info" style="display:none">
+        <div class="info-state-name" id="info-name"></div>
+        <div class="info-state-abbr" id="info-abbr"></div>
+        <div class="info-row">
+          <span class="info-label">Region</span>
+          <span class="info-value"><span class="region-chip" id="info-region"></span></span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Capital</span>
+          <span class="info-value" id="info-capital"></span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Mastery</span>
+          <div class="mastery-dots" id="info-mastery"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUIZ MODE -->
+    <div id="quiz-panel" class="quiz-panel" style="display:none">
+      <div class="quiz-prompt" id="quiz-prompt">
+        <div class="quiz-level-badge" id="quiz-level-badge"></div>
+        <div class="quiz-question" id="quiz-question">Press Start to begin!</div>
+        <div class="quiz-hint" id="quiz-hint"></div>
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback"></div>
+      <div class="quiz-stats">
+        <div class="quiz-stat"><div class="quiz-stat-n" id="stat-correct">0</div><div class="quiz-stat-l">Correct</div></div>
+        <div class="quiz-stat"><div class="quiz-stat-n" id="stat-wrong">0</div><div class="quiz-stat-l">Wrong</div></div>
+        <div class="quiz-stat"><div class="quiz-stat-n" id="stat-streak">0</div><div class="quiz-stat-l">Streak 🔥</div></div>
+      </div>
+      <button class="quiz-btn quiz-btn-primary" id="quiz-start-btn" onclick="startQuiz()">Start Quiz</button>
+      <button class="quiz-btn quiz-btn-secondary" id="quiz-skip-btn" onclick="skipQuestion()" style="display:none">Skip</button>
+    </div>
+
+    <!-- PROGRESS DOTS -->
+    <div class="progress-section">
+      <div class="progress-title">Progress — <span id="prog-mastered-count">0</span> / 50 mastered</div>
+      <div class="progress-grid" id="progress-grid"></div>
+    </div>
+
+    <!-- REGION LEGEND -->
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#1a3850;border:1px solid var(--northeast)"></div>Northeast</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#3a2030;border:1px solid var(--southeast)"></div>Southeast</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#3a3010;border:1px solid var(--midwest)"></div>Midwest</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#3a2010;border:1px solid var(--southwest)"></div>Southwest</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#2a1a50;border:1px solid var(--west)"></div>West</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#0a3040;border:1px solid var(--alaska)"></div>Alaska</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#0a3028;border:1px solid var(--hawaii)"></div>Hawaii</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.js"></script>
+<script>
+// ── FIREBASE ──
+var FB_CFG = {
+  apiKey:"AIzaSyBsjx3JKjCQOMuus07MSoj3o-Vu9eRW6zc",
+  authDomain:"wade-classical.firebaseapp.com",
+  databaseURL:"https://wade-classical-default-rtdb.firebaseio.com",
+  projectId:"wade-classical",
+  storageBucket:"wade-classical.firebasestorage.app",
+  messagingSenderId:"72309085457",
+  appId:"1:72309085457:web:3d8b5a07302248ded6a8b0"
+};
+firebase.initializeApp(FB_CFG);
+var db = firebase.database();
+
+// ── STATE DATA ──
+var STATES = [
+  {id:'AL',name:'Alabama',      capital:'Montgomery',   region:'southeast'},
+  {id:'AK',name:'Alaska',       capital:'Juneau',       region:'alaska'},
+  {id:'AZ',name:'Arizona',      capital:'Phoenix',      region:'southwest'},
+  {id:'AR',name:'Arkansas',     capital:'Little Rock',  region:'southeast'},
+  {id:'CA',name:'California',   capital:'Sacramento',   region:'west'},
+  {id:'CO',name:'Colorado',     capital:'Denver',       region:'west'},
+  {id:'CT',name:'Connecticut',  capital:'Hartford',     region:'northeast'},
+  {id:'DE',name:'Delaware',     capital:'Dover',        region:'northeast'},
+  {id:'FL',name:'Florida',      capital:'Tallahassee',  region:'southeast'},
+  {id:'GA',name:'Georgia',      capital:'Atlanta',      region:'southeast'},
+  {id:'HI',name:'Hawaii',       capital:'Honolulu',     region:'hawaii'},
+  {id:'ID',name:'Idaho',        capital:'Boise',        region:'west'},
+  {id:'IL',name:'Illinois',     capital:'Springfield',  region:'midwest'},
+  {id:'IN',name:'Indiana',      capital:'Indianapolis', region:'midwest'},
+  {id:'IA',name:'Iowa',         capital:'Des Moines',   region:'midwest'},
+  {id:'KS',name:'Kansas',       capital:'Topeka',       region:'midwest'},
+  {id:'KY',name:'Kentucky',     capital:'Frankfort',    region:'southeast'},
+  {id:'LA',name:'Louisiana',    capital:'Baton Rouge',  region:'southeast'},
+  {id:'ME',name:'Maine',        capital:'Augusta',      region:'northeast'},
+  {id:'MD',name:'Maryland',     capital:'Annapolis',    region:'northeast'},
+  {id:'MA',name:'Massachusetts',capital:'Boston',       region:'northeast'},
+  {id:'MI',name:'Michigan',     capital:'Lansing',      region:'midwest'},
+  {id:'MN',name:'Minnesota',    capital:'Saint Paul',   region:'midwest'},
+  {id:'MS',name:'Mississippi',  capital:'Jackson',      region:'southeast'},
+  {id:'MO',name:'Missouri',     capital:'Jefferson City',region:'midwest'},
+  {id:'MT',name:'Montana',      capital:'Helena',       region:'west'},
+  {id:'NE',name:'Nebraska',     capital:'Lincoln',      region:'midwest'},
+  {id:'NV',name:'Nevada',       capital:'Carson City',  region:'west'},
+  {id:'NH',name:'New Hampshire',capital:'Concord',      region:'northeast'},
+  {id:'NJ',name:'New Jersey',   capital:'Trenton',      region:'northeast'},
+  {id:'NM',name:'New Mexico',   capital:'Santa Fe',     region:'southwest'},
+  {id:'NY',name:'New York',     capital:'Albany',       region:'northeast'},
+  {id:'NC',name:'North Carolina',capital:'Raleigh',     region:'southeast'},
+  {id:'ND',name:'North Dakota', capital:'Bismarck',     region:'midwest'},
+  {id:'OH',name:'Ohio',         capital:'Columbus',     region:'midwest'},
+  {id:'OK',name:'Oklahoma',     capital:'Oklahoma City',region:'southwest'},
+  {id:'OR',name:'Oregon',       capital:'Salem',        region:'west'},
+  {id:'PA',name:'Pennsylvania', capital:'Harrisburg',   region:'northeast'},
+  {id:'RI',name:'Rhode Island', capital:'Providence',   region:'northeast'},
+  {id:'SC',name:'South Carolina',capital:'Columbia',    region:'southeast'},
+  {id:'SD',name:'South Dakota', capital:'Pierre',       region:'midwest'},
+  {id:'TN',name:'Tennessee',    capital:'Nashville',    region:'southeast'},
+  {id:'TX',name:'Texas',        capital:'Austin',       region:'southwest'},
+  {id:'UT',name:'Utah',         capital:'Salt Lake City',region:'west'},
+  {id:'VT',name:'Vermont',      capital:'Montpelier',   region:'northeast'},
+  {id:'VA',name:'Virginia',     capital:'Richmond',     region:'southeast'},
+  {id:'WA',name:'Washington',   capital:'Olympia',      region:'west'},
+  {id:'WV',name:'West Virginia',capital:'Charleston',   region:'southeast'},
+  {id:'WI',name:'Wisconsin',    capital:'Madison',      region:'midwest'},
+  {id:'WY',name:'Wyoming',      capital:'Cheyenne',     region:'west'}
+];
+
+var REGION_COLORS = {
+  northeast:'#6aaedc', southeast:'#f4a7c3',
+  midwest:'#f5c842',   southwest:'#f97316',
+  west:'#a78bfa',      alaska:'#67e8f9', hawaii:'#34d399'
+};
+var REGION_LABELS = {
+  northeast:'Northeast', southeast:'Southeast',
+  midwest:'Midwest',     southwest:'Southwest',
+  west:'West',           alaska:'Alaska', hawaii:'Hawaii'
+};
+
+// ── APP STATE ──
+var currentPerson = null;
+var currentPersonLabel = '';
+var currentLevel = 1;
+var currentMode = 'study';
+var mastery = {}; // {stateId: {streak, correct, wrong}}
+var quizActive = false;
+var quizTarget = null;
+var quizQueue = [];
+var qCorrect = 0, qWrong = 0, qStreak = 0;
+var selectedState = null;
+
+// ── PERSON SELECT ──
+function selectPerson(id, icon, label) {
+  currentPerson = id;
+  currentPersonLabel = icon + ' ' + label;
+  document.getElementById('level-sub-text').textContent = 'Welcome, ' + label + '! 👋';
+  showScreen('screen-level');
+  loadMastery();
+}
+
+function changePerson() {
+  quizActive = false;
+  showScreen('screen-person');
+}
+
+// ── LEVEL SELECT ──
+function selectLevel(n) {
+  currentLevel = n;
+  document.getElementById('app-header').style.display = 'flex';
+  document.getElementById('person-badge').textContent = currentPersonLabel;
+  var labels = {1:'Level 1 · States', 2:'Level 2 · Regions', 3:'Level 3 · Capitals', 4:'Level 4 · Abbreviations'};
+  document.getElementById('level-badge').textContent = labels[n];
+  showScreen('screen-app');
+  buildMap();
+  buildProgressGrid();
+  setMode('study');
+  applyMasteryColors();
+}
+
+// ── MASTERY ──
+function loadMastery() {
+  if (!currentPerson) return;
+  db.ref('states-mastery/' + currentPerson).on('value', function(snap) {
+    mastery = snap.val() || {};
+    updateLevelCards();
+    buildProgressGrid();
+    applyMasteryColors();
+  });
+}
+
+function saveMastery(stateId) {
+  if (!currentPerson) return;
+  db.ref('states-mastery/' + currentPerson + '/' + stateId).set(mastery[stateId]);
+}
+
+function getMastery(id) {
+  return mastery[id] || {streak:0, correct:0, wrong:0};
+}
+
+function updateLevelCards() {
+  [1,2,3,4].forEach(function(n) {
+    var count = STATES.filter(function(s){ return getMastery(s.id)['streak'+(n)] >= 3 || (n===1 && getMastery(s.id).streak >= 3); }).length;
+    // simplified: count states with streak >= 3
+    var mastered = STATES.filter(function(s){ return getMastery(s.id).streak >= 3; }).length;
+    document.getElementById('bar-'+n).style.width = (mastered/50*100)+'%';
+    document.getElementById('pct-'+n).textContent = mastered + ' / 50 mastered';
+  });
+}
+
+function applyMasteryColors() {
+  if (!document.getElementById('usa-map')) return;
+  STATES.forEach(function(s) {
+    var el = document.getElementById('state-'+s.id);
+    if (!el) return;
+    var m = getMastery(s.id);
+    // Build class string cleanly
+    var base = 'state-path region-' + s.region;
+    if (m.streak >= 3)    base += ' mastered';
+    else if (m.correct > 0) base += ' seen';
+    el.setAttribute('class', base);
+  });
+}
+
+function buildProgressGrid() {
+  var grid = document.getElementById('progress-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  var mastered = 0;
+  STATES.forEach(function(s) {
+    var m = getMastery(s.id);
+    var dot = document.createElement('div');
+    dot.className = 'prog-dot';
+    dot.setAttribute('data-name', s.name);
+    dot.title = s.name;
+    if (m.streak >= 3)    { dot.classList.add('mastered'); mastered++; }
+    else if (m.correct >= 2) dot.classList.add('streak2');
+    else if (m.correct >= 1) dot.classList.add('streak1');
+    else if (m.wrong > 0)    dot.classList.add('seen');
+    dot.addEventListener('click', function(){ highlightState(s.id); });
+    grid.appendChild(dot);
+  });
+  document.getElementById('prog-mastered-count').textContent = mastered;
+}
+
+// FIPS code → state abbreviation map
+var FIPS_TO_ABBR = {
+  '01':'AL','02':'AK','04':'AZ','05':'AR','06':'CA','08':'CO','09':'CT',
+  '10':'DE','11':'DC','12':'FL','13':'GA','15':'HI','16':'ID','17':'IL',
+  '18':'IN','19':'IA','20':'KS','21':'KY','22':'LA','23':'ME','24':'MD',
+  '25':'MA','26':'MI','27':'MN','28':'MS','29':'MO','30':'MT','31':'NE',
+  '32':'NV','33':'NH','34':'NJ','35':'NM','36':'NY','37':'NC','38':'ND',
+  '39':'OH','40':'OK','41':'OR','42':'PA','44':'RI','45':'SC','46':'SD',
+  '47':'TN','48':'TX','49':'UT','50':'VT','51':'VA','53':'WA','54':'WV',
+  '55':'WI','56':'WY'
+};
+
+// ── MAP BUILD ──
+function buildMap() {
+  var svg = d3.select('#usa-map');
+  svg.selectAll('*').remove();
+
+  d3.json('https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json').then(function(us) {
+    var path = d3.geoPath();
+    var features = topojson.feature(us, us.objects.states).features;
+
+    // Draw state borders (mesh)
+    svg.append('path')
+      .datum(topojson.mesh(us, us.objects.states, function(a,b){ return a !== b; }))
+      .attr('fill','none')
+      .attr('stroke','#2a3d5a')
+      .attr('stroke-width','0.6')
+      .attr('d', path);
+
+    // Draw each state
+    features.forEach(function(feature) {
+      var fips = String(feature.id).padStart(2,'0');
+      var abbr = FIPS_TO_ABBR[fips];
+      if (!abbr) return;
+      var s = STATES.find(function(st){ return st.id === abbr; });
+      if (!s) return;
+
+      svg.append('path')
+        .datum(feature)
+        .attr('id', 'state-'+abbr)
+        .attr('class', 'state-path region-'+s.region)
+        .attr('data-id', abbr)
+        .attr('d', path)
+        .on('click', function(){ onStateClick(abbr); })
+        .on('mouseenter', function(event){ showTooltip(event, s); })
+        .on('mouseleave', hideTooltip)
+        .on('mousemove', function(event){ moveTooltip(event); });
+    });
+
+    // State abbreviation labels
+    features.forEach(function(feature) {
+      var fips = String(feature.id).padStart(2,'0');
+      var abbr = FIPS_TO_ABBR[fips];
+      if (!abbr || abbr === 'AK' || abbr === 'HI') return;
+      var centroid = path.centroid(feature);
+      if (!centroid || isNaN(centroid[0])) return;
+      svg.append('text')
+        .attr('x', centroid[0])
+        .attr('y', centroid[1] + 4)
+        .attr('text-anchor','middle')
+        .attr('class','state-label')
+        .attr('pointer-events','none')
+        .text(abbr);
+    });
+
+    applyMasteryColors();
+  }).catch(function(err){
+    console.error('Map load error:', err);
+  });
+}
+
+function showTooltip(event, s) {
+  var tt = document.getElementById('map-tooltip');
+  tt.textContent = s.name;
+  tt.classList.add('show');
+  moveTooltip(event);
+}
+function moveTooltip(event) {
+  var tt = document.getElementById('map-tooltip');
+  var wrap = document.querySelector('.map-wrap');
+  var rect = wrap.getBoundingClientRect();
+  var e = event.sourceEvent || event;
+  tt.style.left = (e.clientX - rect.left + 10) + 'px';
+  tt.style.top  = (e.clientY - rect.top  - 30) + 'px';
+}
+function hideTooltip() {
+  document.getElementById('map-tooltip').classList.remove('show');
+}
+
+function highlightState(id) {
+  applyMasteryColors();
+  var el = document.getElementById('state-'+id);
+  if (!el) return;
+  var s = STATES.find(function(st){ return st.id === id; });
+  var base = 'state-path region-' + (s ? s.region : '') + ' highlight';
+  el.setAttribute('class', base);
+}
+
+// ── STATE CLICK ──
+function onStateClick(id) {
+  var s = STATES.find(function(st){ return st.id === id; });
+  if (!s) return;
+
+  if (quizActive) {
+    handleQuizAnswer(id);
+    return;
+  }
+
+  // Study mode
+  selectedState = id;
+  highlightState(id);
+  showStateInfo(s);
+}
+
+function showStateInfo(s) {
+  document.getElementById('study-empty').style.display = 'none';
+  document.getElementById('study-info').style.display = 'block';
+  document.getElementById('info-name').textContent = s.name;
+  document.getElementById('info-abbr').textContent = s.id;
+  var chip = document.getElementById('info-region');
+  chip.textContent = REGION_LABELS[s.region];
+  chip.style.background = REGION_COLORS[s.region] + '30';
+  chip.style.color = REGION_COLORS[s.region];
+  chip.style.border = '1px solid ' + REGION_COLORS[s.region] + '60';
+  document.getElementById('info-capital').textContent = s.capital;
+  var m = getMastery(s.id);
+  var dots = document.getElementById('info-mastery');
+  dots.innerHTML = '';
+  for (var i=0;i<3;i++){
+    var d=document.createElement('div');
+    d.className='mastery-dot'+(i<m.streak?' filled':'');
+    dots.appendChild(d);
+  }
+}
+
+// ── QUIZ ──
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('tab-study').classList.toggle('active', mode==='study');
+  document.getElementById('tab-quiz').classList.toggle('active', mode==='quiz');
+  document.getElementById('study-panel').style.display = mode==='study' ? 'block' : 'none';
+  document.getElementById('quiz-panel').style.display  = mode==='quiz'  ? 'flex'  : 'none';
+  if (mode === 'study') {
+    quizActive = false;
+    clearQuizHighlights();
+    var mapEl = document.getElementById('usa-map');
+    if (mapEl) mapEl.classList.remove('hide-labels');
+  }
+}
+
+function startQuiz() {
+  quizActive = true;
+  qCorrect = 0; qWrong = 0; qStreak = 0;
+  updateQuizStats();
+  buildQuizQueue();
+  document.getElementById('quiz-start-btn').style.display = 'none';
+  document.getElementById('quiz-skip-btn').style.display = 'block';
+  document.getElementById('quiz-feedback').style.display = 'none';
+  // Hide abbreviation labels during level 4 quiz so it's actually challenging
+  var mapEl = document.getElementById('usa-map');
+  if (mapEl) mapEl.classList.toggle('hide-labels', currentLevel === 4);
+  nextQuestion();
+}
+
+function buildQuizQueue() {
+  // Prioritize states not yet mastered, weighted toward unseen
+  var pool = STATES.slice();
+  pool.sort(function(a,b) {
+    var ma = getMastery(a.id).streak, mb = getMastery(b.id).streak;
+    return ma - mb; // least mastered first
+  });
+  // Shuffle within tiers
+  quizQueue = pool.concat(pool).concat(pool.slice(0,10)); // repeat for variety
+  shuffle(quizQueue);
+}
+
+function shuffle(arr) {
+  for (var i=arr.length-1;i>0;i--) {
+    var j=Math.floor(Math.random()*(i+1));
+    var t=arr[i]; arr[i]=arr[j]; arr[j]=t;
+  }
+}
+
+function nextQuestion() {
+  clearQuizHighlights();
+  document.getElementById('quiz-feedback').style.display = 'none';
+
+  if (!quizQueue.length) buildQuizQueue();
+  quizTarget = quizQueue.shift();
+
+  var badge = document.getElementById('quiz-level-badge');
+  var question = document.getElementById('quiz-question');
+  var hint = document.getElementById('quiz-hint');
+
+  if (currentLevel === 1) {
+    badge.textContent = 'LEVEL 1 · STATES';
+    question.textContent = 'Find ' + quizTarget.name;
+    hint.textContent = 'Click the state on the map';
+  } else if (currentLevel === 2) {
+    badge.textContent = 'LEVEL 2 · REGIONS';
+    question.textContent = 'Which region is ' + quizTarget.name + ' in?';
+    hint.textContent = 'Click the state — then identify its region';
+    // For level 2 we ask them to click the state AND will show region
+    question.textContent = 'Find a state in the ' + REGION_LABELS[quizTarget.region] + ' region';
+    hint.textContent = 'Click any ' + REGION_LABELS[quizTarget.region] + ' state';
+  } else if (currentLevel === 3) {
+    badge.textContent = 'LEVEL 3 · CAPITALS';
+    question.textContent = 'Which state has ' + quizTarget.capital + ' as its capital?';
+    hint.textContent = 'Click the state on the map';
+  } else if (currentLevel === 4) {
+    badge.textContent = 'LEVEL 4 · ABBREVIATIONS';
+    question.textContent = 'Find the state with abbreviation  ' + quizTarget.id;
+    hint.textContent = 'Click the state on the map';
+  }
+}
+
+function handleQuizAnswer(clickedId) {
+  if (!quizTarget) return;
+  var fb = document.getElementById('quiz-feedback');
+  var correct = false;
+
+  if (currentLevel === 1 || currentLevel === 3 || currentLevel === 4) {
+    correct = clickedId === quizTarget.id;
+  } else if (currentLevel === 2) {
+    // correct if clicked state is in same region
+    var clickedState = STATES.find(function(s){ return s.id === clickedId; });
+    correct = clickedState && clickedState.region === quizTarget.region;
+  }
+
+  // Flash the clicked state
+  var clickedEl = document.getElementById('state-'+clickedId);
+  var clickedS  = STATES.find(function(s){ return s.id===clickedId; });
+  if (clickedEl && clickedS) {
+    clickedEl.setAttribute('class', 'state-path region-'+clickedS.region+' '+(correct?'correct':'wrong'));
+    setTimeout(function(){ applyMasteryColors(); }, 1200);
+  }
+
+  // Show correct state if wrong
+  if (!correct) {
+    var correctEl = document.getElementById('state-'+quizTarget.id);
+    var correctS  = quizTarget;
+    if (correctEl) {
+      setTimeout(function(){
+        correctEl.setAttribute('class','state-path region-'+correctS.region+' highlight');
+        setTimeout(function(){ applyMasteryColors(); }, 1500);
+      }, 400);
+    }
+  }
+
+  // Update mastery
+  var m = getMastery(quizTarget.id);
+  if (!mastery[quizTarget.id]) mastery[quizTarget.id] = {streak:0,correct:0,wrong:0};
+  if (correct) {
+    mastery[quizTarget.id].streak   = Math.min((m.streak||0)+1, 3);
+    mastery[quizTarget.id].correct  = (m.correct||0)+1;
+    qCorrect++; qStreak++;
+    if (mastery[quizTarget.id].streak >= 3) {
+      showToastMsg('⭐ ' + quizTarget.name + ' mastered!');
+    }
+  } else {
+    mastery[quizTarget.id].streak = 0;
+    mastery[quizTarget.id].wrong  = (m.wrong||0)+1;
+    qWrong++; qStreak = 0;
+  }
+  saveMastery(quizTarget.id);
+  buildProgressGrid();
+
+  // Feedback
+  fb.style.display = 'block';
+  fb.className = 'quiz-feedback ' + (correct ? 'correct' : 'wrong');
+  if (correct) {
+    var msgs = ['Correct! ✅', 'Nice work! 🎉', 'That\'s right! ⭐', 'Excellent! 🌟'];
+    fb.textContent = msgs[Math.floor(Math.random()*msgs.length)] + ' ' + quizTarget.name;
+    if (currentLevel === 3) fb.textContent += ' · Capital: ' + quizTarget.capital;
+    if (currentLevel === 4) fb.textContent += ' (' + quizTarget.id + ')';
+  } else {
+    fb.textContent = 'Not quite! That was ' + (STATES.find(function(s){return s.id===clickedId;})||{name:'?'}).name + '. The answer is ' + quizTarget.name + '.';
+  }
+
+  updateQuizStats();
+
+  // Next question after delay
+  setTimeout(function(){
+    if (quizActive) nextQuestion();
+  }, correct ? 1200 : 2200);
+}
+
+function skipQuestion() { if (quizActive) nextQuestion(); }
+
+function updateQuizStats() {
+  document.getElementById('stat-correct').textContent = qCorrect;
+  document.getElementById('stat-wrong').textContent   = qWrong;
+  document.getElementById('stat-streak').textContent  = qStreak;
+}
+
+function clearQuizHighlights() {
+  applyMasteryColors();
+}
+
+// ── UI HELPERS ──
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  if (id !== 'screen-app') document.getElementById('app-header').style.display='none';
+}
+
+function showToastMsg(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2500);
+}
+
+
+// ── INIT ──
+showScreen('screen-person');
+</script>
+</body>
+</html>
