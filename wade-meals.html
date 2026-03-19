@@ -21,9 +21,48 @@
   --sh-lg:0 16px 48px rgba(30,20,40,.17);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Nunito',sans-serif;background:var(--cream);background-image:radial-gradient(ellipse at 8% 0%,rgba(232,85,154,.07) 0%,transparent 50%),radial-gradient(ellipse at 92% 100%,rgba(155,89,212,.07) 0%,transparent 50%),radial-gradient(ellipse at 55% 45%,rgba(58,143,191,.04) 0%,transparent 45%);min-height:100vh;color:var(--ink);overflow-x:hidden;}
-.bot{position:fixed;pointer-events:none;z-index:0;opacity:.18;}
-.bot.tl{top:0;left:0;}.bot.br{bottom:0;right:0;transform:rotate(180deg);}.bot.tr{top:0;right:0;transform:scaleX(-1);}
+body{
+  font-family:'Nunito',sans-serif;
+  background-color:#fdf0f5;
+  background-image:
+    radial-gradient(ellipse at 0% 0%,   rgba(232,85,154,.13) 0%,transparent 45%),
+    radial-gradient(ellipse at 100% 0%,  rgba(155,89,212,.10) 0%,transparent 45%),
+    radial-gradient(ellipse at 100% 100%,rgba(90,112,212,.09) 0%,transparent 40%),
+    radial-gradient(ellipse at 0% 100%,  rgba(42,138,90,.07)  0%,transparent 40%),
+    radial-gradient(ellipse at 50% 50%,  rgba(232,85,154,.04) 0%,transparent 60%);
+  min-height:100vh;color:var(--ink);overflow-x:hidden;
+}
+
+/* ── FIXED BOTANICAL CORNERS ── */
+.bot{position:fixed;pointer-events:none;z-index:0;}
+.bot.tl{top:0;left:0;opacity:.28;}
+.bot.br{bottom:0;right:0;transform:rotate(180deg);opacity:.22;}
+.bot.tr{top:0;right:0;transform:scaleX(-1);opacity:.20;}
+.bot.bl{bottom:0;left:0;transform:scaleY(-1);opacity:.16;}
+
+/* ── PETAL ANIMATION ── */
+.petals-canvas{
+  position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+.petal{
+  position:absolute;
+  top:-40px;
+  border-radius:50% 10% 50% 10%;
+  opacity:0;
+  animation:petalFall linear infinite;
+  transform-origin:center center;
+}
+@keyframes petalFall{
+  0%  { opacity:0;   transform:translateY(0)      rotate(0deg)   translateX(0px)  scale(1); }
+  5%  { opacity:.75; }
+  80% { opacity:.55; }
+  100%{ opacity:0;   transform:translateY(105vh)  rotate(540deg) translateX(60px) scale(.7); }
+}
+@keyframes petalSway{
+  0%,100%{ margin-left:0; }
+  25%    { margin-left:30px; }
+  75%    { margin-left:-20px; }
+}
 header{position:relative;z-index:10;background:rgba(253,246,240,.96);backdrop-filter:blur(8px);border-bottom:2px solid var(--cream2);padding:14px 28px;display:flex;align-items:center;gap:16px;box-shadow:var(--sh-sm);}
 .back-btn{background:var(--cream2);border:1.5px solid #e0d0d8;color:var(--muted);padding:6px 14px;border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;transition:all .18s;}
 .back-btn:hover{background:#ead8e4;color:var(--ink);}
@@ -35,7 +74,7 @@ header{position:relative;z-index:10;background:rgba(253,246,240,.96);backdrop-fi
 .sdot.syncing{background:#9b59d4;animation:pulse .8s infinite;}
 .sdot.err{background:#e8559a;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.page{position:relative;z-index:1;padding:24px 20px 60px;max-width:900px;margin:0 auto;}
+.page{position:relative;z-index:1;padding:24px 20px 60px;max-width:1100px;margin:0 auto;}
 
 /* ── VIEW TABS ── */
 .view-tabs{display:flex;gap:0;justify-content:center;margin-bottom:28px;background:#fff;border-radius:16px;padding:5px;box-shadow:var(--sh-sm);width:fit-content;margin-left:auto;margin-right:auto;}
@@ -47,29 +86,147 @@ header{position:relative;z-index:10;background:rgba(253,246,240,.96);backdrop-fi
 #carView{display:block;}#edView,#dbView{display:none;}
 
 /* ── CAROUSEL ── */
-.car-wrap{display:flex;align-items:center;justify-content:center;gap:18px;perspective:1400px;padding:16px 0 28px;}
-.wcard{background:#fff;border-radius:20px;box-shadow:var(--sh-md);transition:all .35s cubic-bezier(.34,1.56,.64,1);cursor:pointer;position:relative;overflow:hidden;flex-shrink:0;}
-.wcard.side{width:220px;opacity:.6;box-shadow:var(--sh-sm);filter:saturate(.65);}
-.wcard.side.left{transform:scale(.87) rotateY(9deg);}
-.wcard.side.right{transform:scale(.87) rotateY(-9deg);}
-.wcard.center{width:340px;opacity:1;transform:scale(1) rotateY(0);box-shadow:var(--sh-lg);cursor:default;}
-.wcard.side:hover{opacity:.8;filter:saturate(.85);}
-.card-hdr{padding:14px 18px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px dashed rgba(30,20,40,.07);}
-.card-wlbl{font-family:'Cinzel',serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
-.card-comp{font-size:12px;font-weight:800;padding:3px 10px;border-radius:20px;background:var(--cream2);color:var(--muted);}
-.card-comp.done{background:linear-gradient(135deg,#2a8a5a,#1a5a38);color:#fff;}
-.card-days{padding:10px 14px 8px;}
-.card-drow{display:flex;align-items:center;gap:9px;padding:4px 5px;border-radius:7px;margin-bottom:2px;transition:background .15s;}
-.card-drow:hover{background:var(--cream2);}
-.card-dpill{font-size:9px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;width:26px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;}
-.card-demoji{font-size:13px;flex-shrink:0;}
-.card-dmeal{font-family:'Caveat',cursive;font-size:14px;font-weight:600;color:var(--ink);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.card-dempty{font-size:11px;color:#c0a8b8;font-style:italic;flex:1;}
-.bar-wrap{padding:0 14px 12px;}
-.bar-track{background:var(--cream2);border-radius:10px;height:5px;overflow:hidden;}
-.bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--mon),var(--tue));transition:width .5s cubic-bezier(.34,1.56,.64,1);}
-.car-arrow{background:#fff;border:2px solid var(--cream2);width:42px;height:42px;border-radius:50%;font-size:19px;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;box-shadow:var(--sh-sm);transition:all .18s;flex-shrink:0;}
-.car-arrow:hover{background:var(--ink);color:var(--cream);border-color:var(--ink);transform:scale(1.08);}
+.car-wrap{display:flex;align-items:center;justify-content:center;gap:14px;perspective:1600px;padding:8px 0 24px;}
+.wcard{background:#fff;border-radius:24px;box-shadow:var(--sh-md);transition:all .4s cubic-bezier(.34,1.4,.64,1);cursor:pointer;position:relative;overflow:hidden;flex-shrink:0;}
+.wcard.side{width:190px;opacity:.55;box-shadow:var(--sh-sm);filter:saturate(.55) brightness(.97);}
+.wcard.side.left{transform:scale(.84) rotateY(12deg) translateX(10px);}
+.wcard.side.right{transform:scale(.84) rotateY(-12deg) translateX(-10px);}
+.wcard.center{width:520px;opacity:1;transform:scale(1) rotateY(0);box-shadow:0 20px 60px rgba(30,20,40,.18);cursor:default;}
+.wcard.side:hover{opacity:.75;filter:saturate(.8);}
+
+/* center card header — lush botanical banner */
+.card-hdr{padding:0;position:relative;overflow:hidden;}
+.card-hdr-inner{
+  padding:18px 22px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(135deg,#1a0a28 0%,#28102a 40%,#1a0e22 70%,#0c1220 100%);
+  position:relative;z-index:1;
+  min-height:72px;
+}
+/* shimmer sweep */
+.card-hdr-inner::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(105deg,transparent 35%,rgba(232,85,154,.08) 50%,rgba(155,89,212,.06) 60%,transparent 70%);
+  pointer-events:none;
+}
+/* bottom glow line */
+.card-hdr-inner::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent 0%,rgba(232,85,154,.5) 25%,rgba(200,140,255,.6) 50%,rgba(155,89,212,.5) 75%,transparent 100%);
+}
+/* scattered dot sparkles */
+.card-hdr-sparkles{
+  position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(circle,rgba(232,85,154,.5) 1px,transparent 1px),
+    radial-gradient(circle,rgba(200,160,255,.4) 1px,transparent 1px),
+    radial-gradient(circle,rgba(100,180,255,.3) 1px,transparent 1px);
+  background-size:120px 60px, 90px 50px, 140px 70px;
+  background-position:18px 14px, 55px 30px, 90px 10px;
+}
+/* botanical SVG overlay */
+.card-hdr-botanical{
+  position:absolute;right:0;top:0;bottom:0;
+  width:160px;pointer-events:none;z-index:0;opacity:.22;
+}
+.card-hdr-botanical-left{
+  position:absolute;left:0;top:0;bottom:0;
+  width:80px;pointer-events:none;z-index:0;opacity:.15;
+}
+/* week label — script feel */
+.card-wlbl{
+  font-family:'Caveat',cursive;
+  font-size:20px;font-weight:700;
+  color:#f4d0e8;
+  letter-spacing:.04em;
+  text-shadow:0 0 20px rgba(232,85,154,.4);
+  position:relative;z-index:2;
+  line-height:1;
+}
+.card-wlbl-sub{
+  font-family:'Cinzel',serif;
+  font-size:9px;font-weight:600;
+  color:rgba(232,200,240,.45);
+  letter-spacing:.18em;text-transform:uppercase;
+  display:block;margin-top:3px;
+}
+.card-comp{
+  font-size:11px;font-weight:800;
+  padding:4px 12px;border-radius:20px;
+  background:rgba(232,85,154,.18);
+  color:#f4d0e8;
+  border:1px solid rgba(232,85,154,.35);
+  position:relative;z-index:2;
+  letter-spacing:.04em;
+  backdrop-filter:blur(4px);
+}
+.card-comp.done{
+  background:linear-gradient(135deg,rgba(42,138,90,.8),rgba(26,90,56,.9));
+  color:#a8f0c8;border-color:rgba(42,138,90,.5);
+}
+
+/* side card headers — simpler */
+.wcard.side .card-hdr-inner{padding:10px 14px;background:var(--cream2);min-height:auto;}
+.wcard.side .card-hdr-inner::before,.wcard.side .card-hdr-inner::after{display:none;}
+.wcard.side .card-hdr-sparkles,.wcard.side .card-hdr-botanical,.wcard.side .card-hdr-botanical-left{display:none;}
+.wcard.side .card-wlbl{color:var(--muted);font-size:14px;text-shadow:none;}
+.wcard.side .card-wlbl-sub{display:none;}
+.wcard.side .card-comp{background:rgba(30,20,40,.08);color:var(--muted);border:none;font-size:10px;padding:2px 8px;backdrop-filter:none;}
+
+/* day rows — center card */
+.card-days{padding:6px 0 0;}
+.card-drow{display:flex;align-items:center;gap:0;transition:background .35s ease;position:relative;overflow:hidden;}
+.card-drow:last-child{border-bottom:none;}
+
+/* left color bar */
+.card-dbar{width:5px;flex-shrink:0;align-self:stretch;}
+
+/* day label block */
+.card-dlabel{width:110px;flex-shrink:0;padding:10px 12px;display:flex;flex-direction:column;gap:2px;border-right:1px solid rgba(30,20,40,.05);}
+.card-dname{font-family:'Cinzel',serif;font-size:11px;font-weight:700;color:var(--ink);letter-spacing:.05em;}
+.card-dtheme{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.6;}
+.card-demoji-big{font-size:18px;padding:10px 10px;flex-shrink:0;}
+
+/* meal name */
+.card-dmeal-wrap{flex:1;padding:8px 14px 8px 0;display:flex;align-items:center;gap:8px;}
+.card-dmeal{font-family:'Caveat',cursive;font-size:20px;font-weight:700;color:var(--ink);flex:1;line-height:1.1;}
+.card-dempty{font-family:'Nunito',sans-serif;font-size:12px;color:#c0a8b8;font-style:italic;flex:1;}
+
+/* separating lines between days */
+.card-drow::after{content:'';position:absolute;bottom:0;left:5px;right:0;height:1px;background:rgba(30,20,40,.05);}
+.card-drow:last-child::after{display:none;}
+
+/* center card hover row effect */
+.wcard.center .card-drow:hover{background:rgba(30,20,40,.025);}
+
+/* side card day rows — compact */
+.wcard.side .card-days{padding:4px 0 0;}
+.wcard.side .card-dbar{width:3px;}
+.wcard.side .card-dlabel{width:60px;padding:6px 8px;}
+.wcard.side .card-dname{font-size:9px;}
+.wcard.side .card-dtheme{display:none;}
+.wcard.side .card-demoji-big{font-size:13px;padding:6px 7px;}
+.wcard.side .card-dmeal-wrap{padding:5px 10px 5px 0;}
+.wcard.side .card-dmeal{font-size:13px;}
+.wcard.side .card-dempty{font-size:10px;}
+
+/* completion bar */
+.bar-wrap{padding:12px 18px 16px;border-top:1px solid rgba(30,20,40,.05);}
+.bar-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.bar-label{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;}
+.bar-pct{font-family:'Caveat',cursive;font-size:16px;font-weight:700;color:var(--ink);}
+.bar-track{background:var(--cream2);border-radius:10px;height:7px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--mon),var(--tue),var(--sun));transition:width .6s cubic-bezier(.34,1.56,.64,1);}
+.wcard.side .bar-wrap{padding:8px 12px 10px;}
+.wcard.side .bar-meta{display:none;}
+.wcard.side .bar-track{height:4px;}
+
+/* plan button inside center card */
+.card-plan-btn{display:block;margin:0 18px 18px;padding:10px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--mon),var(--tue));color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;cursor:pointer;letter-spacing:.04em;transition:all .2s;text-align:center;box-shadow:0 4px 14px rgba(155,89,212,.3);}
+.card-plan-btn:hover{transform:scale(1.02);box-shadow:0 6px 20px rgba(155,89,212,.45);}
+
+.car-arrow{background:#fff;border:2px solid var(--cream2);width:44px;height:44px;border-radius:50%;font-size:20px;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;box-shadow:var(--sh-sm);transition:all .18s;flex-shrink:0;}
+.car-arrow:hover{background:var(--ink);color:var(--cream);border-color:var(--ink);transform:scale(1.1);}
 .car-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:4px;}
 .act-btn{background:#fff;border:2px solid var(--cream2);color:var(--ink);padding:9px 18px;border-radius:12px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;transition:all .18s;box-shadow:var(--sh-sm);display:flex;align-items:center;gap:6px;}
 .act-btn:hover{transform:translateY(-2px);box-shadow:var(--sh-md);}
@@ -85,7 +242,7 @@ header{position:relative;z-index:10;background:rgba(253,246,240,.96);backdrop-fi
 .ed-comp{margin-left:auto;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;padding:5px 14px;border-radius:20px;background:var(--cream2);color:var(--muted);}
 .ed-comp.done{background:linear-gradient(135deg,#2a8a5a,#1a5a38);color:#fff;}
 .day-secs{display:flex;flex-direction:column;gap:14px;}
-.daycard{background:#fff;border-radius:16px;box-shadow:var(--sh-sm);border-left:6px solid #ddd;overflow:hidden;transition:box-shadow .2s;animation:slideIn .3s ease both;}
+.daycard{background:#fff;border-radius:16px;box-shadow:var(--sh-sm);border-left:6px solid #ddd;overflow:hidden;transition:box-shadow .2s, background .35s ease;animation:slideIn .3s ease both;}
 @keyframes slideIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .daycard:nth-child(1){animation-delay:.00s}.daycard:nth-child(2){animation-delay:.05s}.daycard:nth-child(3){animation-delay:.09s}
 .daycard:nth-child(4){animation-delay:.13s}.daycard:nth-child(5){animation-delay:.17s}.daycard:nth-child(6){animation-delay:.21s}.daycard:nth-child(7){animation-delay:.25s}
@@ -200,29 +357,76 @@ header{position:relative;z-index:10;background:rgba(253,246,240,.96);backdrop-fi
 </style>
 </head>
 <body>
-<!-- botanical decorations -->
-<svg class="bot tl" width="200" height="200" viewBox="0 0 200 200" fill="none">
-  <path d="M18 182 Q48 90 125 28" stroke="#e8559a" stroke-width="2.5" fill="none" opacity=".8"/>
-  <ellipse cx="68" cy="108" rx="22" ry="11" fill="#e8559a" transform="rotate(-38 68 108)"/>
-  <ellipse cx="90" cy="70" rx="18" ry="9" fill="#c44090" transform="rotate(-54 90 70)"/>
-  <ellipse cx="48" cy="142" rx="16" ry="8" fill="#e8559a" transform="rotate(-22 48 142)"/>
-  <ellipse cx="108" cy="42" rx="14" ry="7" fill="#9b59d4" transform="rotate(-66 108 42)"/>
-  <circle cx="126" cy="26" r="6" fill="#9b59d4"/>
-  <circle cx="115" cy="16" r="4" fill="#3a8fbf" opacity=".8"/>
+<!-- petal canvas -->
+<div class="petals-canvas" id="petalsCanvas"></div>
+
+<!-- botanical corners -->
+<svg class="bot tl" width="320" height="320" viewBox="0 0 320 320" fill="none">
+  <!-- main stem -->
+  <path d="M12 305 Q45 200 90 140 Q135 80 195 35" stroke="#e8559a" stroke-width="2.5" fill="none"/>
+  <!-- leaves -->
+  <ellipse cx="72" cy="168" rx="28" ry="13" fill="#e8559a" transform="rotate(-38 72 168)" opacity=".9"/>
+  <ellipse cx="100" cy="120" rx="24" ry="11" fill="#c44090" transform="rotate(-54 100 120)" opacity=".85"/>
+  <ellipse cx="52" cy="218" rx="20" ry="10" fill="#9b59d4" transform="rotate(-22 52 218)" opacity=".8"/>
+  <ellipse cx="135" cy="80" rx="18" ry="9" fill="#e8559a" transform="rotate(-66 135 80)" opacity=".8"/>
+  <ellipse cx="30" cy="260" rx="16" ry="8" fill="#c44090" transform="rotate(-15 30 260)" opacity=".7"/>
+  <!-- flowers -->
+  <circle cx="197" cy="34" r="10" fill="#9b59d4"/>
+  <circle cx="197" cy="34" r="6" fill="#f4d0e8"/>
+  <circle cx="182" cy="22" r="7" fill="#e8559a" opacity=".8"/>
+  <circle cx="210" cy="20" r="6" fill="#a040c8" opacity=".75"/>
+  <!-- petals on big flower -->
+  <ellipse cx="197" cy="20" rx="5" ry="8" fill="#9b59d4" opacity=".7"/>
+  <ellipse cx="211" cy="34" rx="8" ry="5" fill="#9b59d4" opacity=".7"/>
+  <ellipse cx="197" cy="48" rx="5" ry="8" fill="#9b59d4" opacity=".7"/>
+  <ellipse cx="183" cy="34" rx="8" ry="5" fill="#9b59d4" opacity=".7"/>
+  <!-- secondary branch -->
+  <path d="M52 218 Q30 200 18 175" stroke="#c44090" stroke-width="1.5" fill="none" opacity=".6"/>
+  <ellipse cx="20" cy="172" rx="13" ry="6" fill="#c44090" transform="rotate(-30 20 172)" opacity=".65"/>
+  <!-- dots -->
+  <circle cx="165" cy="55" r="4" fill="#3a8fbf" opacity=".7"/>
+  <circle cx="155" cy="44" r="3" fill="#2a8a5a" opacity=".6"/>
+  <circle cx="175" cy="42" r="2.5" fill="#e8559a" opacity=".6"/>
 </svg>
-<svg class="bot br" width="200" height="200" viewBox="0 0 200 200" fill="none">
-  <path d="M18 182 Q48 90 125 28" stroke="#9b59d4" stroke-width="2.5" fill="none" opacity=".8"/>
-  <ellipse cx="68" cy="108" rx="22" ry="11" fill="#9b59d4" transform="rotate(-38 68 108)"/>
-  <ellipse cx="90" cy="70" rx="18" ry="9" fill="#a040c8" transform="rotate(-54 90 70)"/>
-  <ellipse cx="48" cy="142" rx="16" ry="8" fill="#5870d4" transform="rotate(-22 48 142)"/>
-  <circle cx="126" cy="26" r="6" fill="#e8559a"/>
-  <circle cx="115" cy="16" r="4" fill="#2a8a5a" opacity=".8"/>
+
+<svg class="bot br" width="300" height="300" viewBox="0 0 300 300" fill="none">
+  <path d="M12 285 Q50 190 95 130 Q140 70 185 28" stroke="#9b59d4" stroke-width="2.5" fill="none"/>
+  <ellipse cx="70" cy="158" rx="26" ry="12" fill="#9b59d4" transform="rotate(-38 70 158)" opacity=".9"/>
+  <ellipse cx="95" cy="112" rx="22" ry="10" fill="#a040c8" transform="rotate(-54 95 112)" opacity=".85"/>
+  <ellipse cx="48" cy="205" rx="18" ry="9" fill="#5870d4" transform="rotate(-22 48 205)" opacity=".8"/>
+  <ellipse cx="128" cy="72" rx="16" ry="8" fill="#9b59d4" transform="rotate(-66 128 72)" opacity=".8"/>
+  <circle cx="186" cy="27" r="9" fill="#e8559a"/>
+  <circle cx="186" cy="27" r="5" fill="#fde8f4"/>
+  <ellipse cx="186" cy="15" rx="4" ry="7" fill="#e8559a" opacity=".7"/>
+  <ellipse cx="198" cy="27" rx="7" ry="4" fill="#e8559a" opacity=".7"/>
+  <ellipse cx="186" cy="39" rx="4" ry="7" fill="#e8559a" opacity=".7"/>
+  <ellipse cx="174" cy="27" rx="7" ry="4" fill="#e8559a" opacity=".7"/>
+  <circle cx="160" cy="50" r="3.5" fill="#3a8fbf" opacity=".7"/>
+  <circle cx="150" cy="40" r="2.5" fill="#2a8a5a" opacity=".6"/>
 </svg>
-<svg class="bot tr" width="150" height="150" viewBox="0 0 150 150" fill="none">
-  <path d="M14 136 Q38 65 96 18" stroke="#3a8fbf" stroke-width="2" fill="none" opacity=".6"/>
-  <ellipse cx="52" cy="80" rx="17" ry="8" fill="#3a8fbf" transform="rotate(-40 52 80)" opacity=".7"/>
-  <ellipse cx="73" cy="48" rx="14" ry="7" fill="#2a8a5a" transform="rotate(-57 73 48)" opacity=".7"/>
-  <circle cx="98" cy="17" r="6" fill="#e8559a" opacity=".8"/>
+
+<svg class="bot tr" width="260" height="260" viewBox="0 0 260 260" fill="none">
+  <path d="M248 248 Q210 160 155 105 Q100 50 52 12" stroke="#3a8fbf" stroke-width="2" fill="none" opacity=".8"/>
+  <ellipse cx="165" cy="128" rx="22" ry="10" fill="#3a8fbf" transform="rotate(38 165 128)" opacity=".8"/>
+  <ellipse cx="140" cy="90" rx="18" ry="9" fill="#2a8a5a" transform="rotate(54 140 90)" opacity=".75"/>
+  <ellipse cx="195" cy="170" rx="16" ry="8" fill="#3a8fbf" transform="rotate(22 195 170)" opacity=".7"/>
+  <circle cx="51" cy="12" r="8" fill="#c44090"/>
+  <circle cx="51" cy="12" r="4" fill="#fae4f4"/>
+  <ellipse cx="51" cy="1" rx="4" ry="6" fill="#c44090" opacity=".7"/>
+  <ellipse cx="62" cy="12" rx="6" ry="4" fill="#c44090" opacity=".7"/>
+  <ellipse cx="51" cy="23" rx="4" ry="6" fill="#c44090" opacity=".7"/>
+  <ellipse cx="40" cy="12" rx="6" ry="4" fill="#c44090" opacity=".7"/>
+  <circle cx="80" cy="35" r="3" fill="#e8559a" opacity=".6"/>
+  <circle cx="70" cy="25" r="2.5" fill="#9b59d4" opacity=".6"/>
+</svg>
+
+<svg class="bot bl" width="220" height="220" viewBox="0 0 220 220" fill="none">
+  <path d="M8 8 Q45 80 90 130 Q130 175 185 205" stroke="#2a8a5a" stroke-width="2" fill="none" opacity=".7"/>
+  <ellipse cx="65" cy="95" rx="20" ry="9" fill="#2a8a5a" transform="rotate(30 65 95)" opacity=".75"/>
+  <ellipse cx="105" cy="148" rx="17" ry="8" fill="#3a8fbf" transform="rotate(15 105 148)" opacity=".7"/>
+  <circle cx="186" cy="206" r="7" fill="#9b59d4" opacity=".7"/>
+  <circle cx="175" cy="215" r="5" fill="#e8559a" opacity=".6"/>
+  <circle cx="198" cy="215" r="4" fill="#2a8a5a" opacity=".6"/>
 </svg>
 <header>
   <a class="back-btn" href="wade-dashboard.html">&#8592; Dashboard</a>
@@ -363,23 +567,99 @@ function renderCarousel(){buildCard('cLeft',carOff-1,'side left');buildCard('cCe
 function buildCard(elId,off,cls){
   const el=document.getElementById(elId);el.className='wcard '+cls;el.innerHTML='';
   const plan=getPlan(off),count=countPlanned(off);
+  const isCenter=cls.includes('center');
+
+  // ── header ──
   const hdr=document.createElement('div');hdr.className='card-hdr';
+  const hdrInner=document.createElement('div');hdrInner.className='card-hdr-inner';
+
+  if(isCenter){
+    // sparkle dots
+    const sparkles=document.createElement('div');sparkles.className='card-hdr-sparkles';hdrInner.appendChild(sparkles);
+    // botanical SVG right
+    const botR=document.createElement('div');botR.className='card-hdr-botanical';
+    botR.innerHTML='<svg viewBox="0 0 160 72" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%"><path d="M155 60 Q130 35 100 45 Q80 52 70 38 Q58 22 75 10" stroke="#e8559a" stroke-width="1.5" fill="none"/><ellipse cx="100" cy="45" rx="14" ry="7" fill="#e8559a" transform="rotate(-20 100 45)"/><ellipse cx="82" cy="32" rx="11" ry="5.5" fill="#9b59d4" transform="rotate(-35 82 32)"/><ellipse cx="115" cy="52" rx="10" ry="5" fill="#c44090" transform="rotate(-10 115 52)"/><circle cx="76" cy="10" r="5" fill="#a040c8"/><circle cx="68" cy="4" r="3" fill="#e8559a" opacity=".7"/><path d="M130 65 Q118 50 125 38" stroke="#9b59d4" stroke-width="1" fill="none"/><ellipse cx="126" cy="36" rx="9" ry="4.5" fill="#9b59d4" transform="rotate(-50 126 36)" opacity=".8"/></svg>';
+    hdrInner.appendChild(botR);
+    // botanical SVG left
+    const botL=document.createElement('div');botL.className='card-hdr-botanical-left';
+    botL.innerHTML='<svg viewBox="0 0 80 72" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%"><path d="M5 65 Q20 40 15 15" stroke="#3a8fbf" stroke-width="1.5" fill="none"/><ellipse cx="14" cy="30" rx="12" ry="6" fill="#3a8fbf" transform="rotate(20 14 30)"/><ellipse cx="20" cy="50" rx="10" ry="5" fill="#2a8a5a" transform="rotate(10 20 50)"/></svg>';
+    hdrInner.appendChild(botL);
+  }
+
+  // week label
+  const lblWrap=document.createElement('div');lblWrap.style.cssText='position:relative;z-index:2;';
   const lbl=document.createElement('div');lbl.className='card-wlbl';lbl.textContent=weekLabel(off);
-  const comp=document.createElement('div');comp.className='card-comp'+(count===7?' done':'');comp.textContent=count===7?'✓ All Set!':count+'/7';
-  hdr.appendChild(lbl);hdr.appendChild(comp);el.appendChild(hdr);
+  if(isCenter){
+    const sub=document.createElement('span');sub.className='card-wlbl-sub';sub.textContent='Wade Classical Kitchen';
+    lbl.appendChild(sub);
+  }
+  lblWrap.appendChild(lbl);
+
+  const comp=document.createElement('div');comp.className='card-comp'+(count===7?' done':'');
+  comp.textContent=count===7?'✓ All Set!':count+'/7';
+  comp.style.position='relative';comp.style.zIndex='2';
+
+  hdrInner.appendChild(lblWrap);hdrInner.appendChild(comp);
+  hdr.appendChild(hdrInner);
+  el.appendChild(hdr);
+
+  // ── days ──
   const days=document.createElement('div');days.className='card-days';
   THEMES.forEach((t,i)=>{
     const row=document.createElement('div');row.className='card-drow';
-    const pill=document.createElement('div');pill.className='card-dpill';pill.style.background=t.color;pill.textContent=t.short;
-    const em=document.createElement('div');em.className='card-demoji';em.textContent=t.emoji;
+
+    // colored left bar
+    const bar=document.createElement('div');bar.className='card-dbar';bar.style.background=t.color;
+
+    // day label
+    const dlabel=document.createElement('div');dlabel.className='card-dlabel';
+    const dname=document.createElement('div');dname.className='card-dname';dname.textContent=t.day;
+    const dtheme=document.createElement('div');dtheme.className='card-dtheme';dtheme.style.color=t.color;dtheme.textContent=t.label;
+    dlabel.appendChild(dname);dlabel.appendChild(dtheme);
+
+    // emoji
+    const demoji=document.createElement('div');demoji.className='card-demoji-big';demoji.textContent=t.emoji;
+
+    // meal
     const mval=plan[i];const mstr=mealName(mval);
-    if(mstr){const nm=document.createElement('div');nm.className='card-dmeal';nm.textContent=mstr;row.appendChild(pill);row.appendChild(em);row.appendChild(nm);}
-    else{const e2=document.createElement('div');e2.className='card-dempty';e2.textContent='not planned';row.appendChild(pill);row.appendChild(em);row.appendChild(e2);}
+    const mwrap=document.createElement('div');mwrap.className='card-dmeal-wrap';
+    if(mstr){
+      const nm=document.createElement('div');nm.className='card-dmeal';nm.textContent=mstr;
+      mwrap.appendChild(nm);
+      // tint the whole row with a soft wash of the theme color
+      row.style.background=t.bg;
+      dlabel.style.borderRightColor=t.color+'22';
+    } else {
+      const em=document.createElement('div');em.className='card-dempty';
+      em.textContent=isCenter?'tap ✏️ to plan':'—';
+      mwrap.appendChild(em);
+    }
+
+    row.appendChild(bar);row.appendChild(dlabel);row.appendChild(demoji);row.appendChild(mwrap);
     days.appendChild(row);
   });
   el.appendChild(days);
-  const bw=document.createElement('div');bw.className='bar-wrap';const bt=document.createElement('div');bt.className='bar-track';const bf=document.createElement('div');bf.className='bar-fill';bf.style.width=(count/7*100)+'%';bt.appendChild(bf);bw.appendChild(bt);el.appendChild(bw);
-  if(cls.includes('center')){const eb=document.createElement('button');eb.style.cssText='display:block;width:calc(100% - 28px);margin:0 14px 14px;padding:9px;border-radius:10px;border:none;background:linear-gradient(135deg,#e8559a,#9b59d4);color:#fff;font-family:Nunito,sans-serif;font-size:13px;font-weight:900;cursor:pointer;letter-spacing:.04em;transition:all .18s;';eb.textContent='✏️ Plan This Week';eb.onmouseenter=()=>eb.style.transform='scale(1.02)';eb.onmouseleave=()=>eb.style.transform='';eb.onclick=()=>showView('ed');el.appendChild(eb);}
+
+  // ── completion bar ──
+  const bw=document.createElement('div');bw.className='bar-wrap';
+  if(isCenter){
+    const bm=document.createElement('div');bm.className='bar-meta';
+    const bl=document.createElement('div');bl.className='bar-label';bl.textContent='Week Progress';
+    const bp=document.createElement('div');bp.className='bar-pct';
+    bp.textContent=count===7?'🎉 Complete!':count+' of 7 planned';
+    bm.appendChild(bl);bm.appendChild(bp);bw.appendChild(bm);
+  }
+  const bt=document.createElement('div');bt.className='bar-track';
+  const bf=document.createElement('div');bf.className='bar-fill';bf.style.width=(count/7*100)+'%';
+  bt.appendChild(bf);bw.appendChild(bt);el.appendChild(bw);
+
+  // ── plan button (center only) ──
+  if(isCenter){
+    const eb=document.createElement('button');eb.className='card-plan-btn';
+    eb.textContent='✏️ Plan This Week';
+    eb.onclick=()=>showView('ed');
+    el.appendChild(eb);
+  }
 }
 function navCar(dir){carOff+=dir;renderCarousel();}
 document.getElementById('carPrev').onclick=()=>navCar(-1);
@@ -400,7 +680,11 @@ function renderEditor(){
 function buildDayCard(t,di,off,curMeal,open){
   const curName=mealName(curMeal),curLink=mealLink(curMeal);
   const card=document.createElement('div');card.className='daycard'+(open?' open':'');card.dataset.day=t.day;card.style.borderLeftColor=t.color;
+  // tint the whole card background when planned
+  if(curName){ card.style.background=t.bg; }
   const hdr=document.createElement('div');hdr.className='dc-hdr';
+  // tint the header strip when planned
+  if(curName){ hdr.style.background=t.bg+'cc'; hdr.style.borderBottom='1px solid '+t.color+'30'; }
   const badge=document.createElement('div');badge.className='theme-badge';badge.style.background=t.color;badge.innerHTML='<span>'+t.emoji+'</span><span>'+t.label+'</span>';
   const dn=document.createElement('div');dn.className='dc-dayname';dn.textContent=t.day;
   const dt=document.createElement('div');dt.className='dc-date';dt.textContent=dayDate(off,di);
@@ -585,6 +869,49 @@ function randomFill(){const k=weekKey(carOff);if(!S.plan[k])S.plan[k]=new Array(
 function launchConfetti(){const c=document.getElementById('confC'),cols=['#e8559a','#9b59d4','#3a8fbf','#2a8a5a','#c44090','#5870d4','#a040c8','#fff'];for(let i=0;i<90;i++){const p=document.createElement('div');p.className='cpiec';p.style.left=Math.random()*100+'vw';p.style.top='-20px';p.style.background=cols[Math.floor(Math.random()*cols.length)];p.style.width=(7+Math.random()*9)+'px';p.style.height=(7+Math.random()*9)+'px';p.style.borderRadius=Math.random()>.5?'50%':'2px';p.style.animationDuration=(1.4+Math.random()*2.2)+'s';p.style.animationDelay=Math.random()*.6+'s';c.appendChild(p);setTimeout(()=>p.remove(),4500);}}
 let toastT;
 function showToast(msg,color='pink'){clearTimeout(toastT);const el=document.getElementById('toast');el.textContent=msg;el.className='toast show '+color;toastT=setTimeout(()=>el.classList.remove('show'),2800);}
+
+// ── PETALS ────────────────────────────────────────────────────────
+(function spawnPetals(){
+  const canvas=document.getElementById('petalsCanvas');
+  const colors=['#e8559a','#f4a8cc','#9b59d4','#c9a0e8','#c44090','#f0a0cc','#f8d0e8','#fce4f2','#a040c8','#d4a0e8','#3a8fbf','#a0d0f0','#f0e0f8','#e8d0f4'];
+  const shapes=[
+    {w:10,h:14,r:'50% 10% 50% 10%'},
+    {w:12,h:9, r:'50% 50% 10% 10%'},
+    {w:8, h:16,r:'40% 60% 60% 40%'},
+    {w:14,h:10,r:'60% 40% 40% 60%'},
+    {w:9, h:9, r:'50%'},
+    {w:11,h:13,r:'45% 55% 55% 45% / 55% 45% 55% 45%'},
+    {w:7, h:12,r:'35% 65% 65% 35%'},
+    {w:13,h:8, r:'55% 45% 35% 65%'},
+  ];
+  function createPetal(){
+    const p=document.createElement('div');
+    p.className='petal';
+    const s=shapes[Math.floor(Math.random()*shapes.length)];
+    const c=colors[Math.floor(Math.random()*colors.length)];
+    const duration=7+Math.random()*11;
+    const delay=Math.random()*14;
+    const startX=Math.random()*108-4;
+    const size=0.55+Math.random()*1.0;
+    const blur=Math.random()>.65?'.6px':'0';
+    p.style.cssText=`
+      left:${startX}vw;
+      width:${s.w}px;height:${s.h}px;
+      border-radius:${s.r};
+      background:${c};
+      opacity:0;
+      animation:petalFall ${duration}s ${delay}s linear infinite;
+      transform:rotate(${Math.random()*360}deg) scale(${size});
+      filter:blur(${blur});
+      box-shadow:inset 0 1px 3px rgba(255,255,255,.5),0 1px 3px rgba(180,80,140,.15);
+    `;
+    canvas.appendChild(p);
+    setTimeout(()=>{p.remove();createPetal();},(duration+delay)*1000+800);
+  }
+  // spawn 32 petals staggered so they don't all start at once
+  for(let i=0;i<32;i++) setTimeout(createPetal,i*180);
+})();
+
 loadFB();
 </script>
 </body>
