@@ -7,48 +7,77 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Nunito:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:        #0f1520;
-  --panel:     #161e2e;
-  --panel2:    #1c2640;
-  --border:    #2a3550;
-  --gold:      #f5c842;
-  --gold2:     #e0a820;
-  --blue:      #3b82f6;
-  --blue2:     #2563eb;
-  --green:     #22c55e;
-  --red:       #ef4444;
-  --text:      #e2e8f0;
-  --subtext:   #8899b8;
-  --white:     #ffffff;
+  --bg:        #0f1f0f;
+  --bg2:       #162016;
+  --panel:     #1a2e1a;
+  --panel2:    #213621;
+  --panel3:    #2a4428;
+  --border:    #3a5435;
+  --border2:   #4a6842;
+  --gold:      #f0c040;
+  --gold2:     #d4a020;
+  --gold3:     #fde68a;
+  --gold-dim:  rgba(240,192,64,0.15);
+  --green:     #4ade80;
+  --red:       #f87171;
+  --text:      #e8dfc0;
+  --subtext:   #8aaa78;
+  --white:     #fdf8ee;
+  --accent:    #c8a040;
 
-  /* Region colors */
-  --northeast: #6aaedc;
-  --southeast: #f4a7c3;
-  --midwest:   #f5c842;
-  --southwest: #f97316;
-  --west:      #a78bfa;
-  --alaska:    #67e8f9;
-  --hawaii:    #34d399;
+  /* Region colors — classic cartographic */
+  --northeast: #4a90d9;
+  --southeast: #e8c078;
+  --midwest:   #88bb60;
+  --southwest: #e88050;
+  --west:      #b07ab8;
+  --alaska:    #58b8c0;
+  --hawaii:    #70b870;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; overflow-x:hidden; }
+body {
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Nunito',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, rgba(240,192,64,.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(74,222,128,.03) 0%, transparent 50%);
+}
 
 /* ── HEADER ── */
 .header {
-  background:var(--panel); border-bottom:1px solid var(--border);
-  padding:0 24px; height:54px; display:flex; align-items:center;
-  justify-content:space-between; position:sticky; top:0; z-index:100;
+  background:var(--panel);
+  border-bottom:2px solid var(--border);
+  padding:0 24px; height:54px;
+  display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:100;
+  box-shadow:0 2px 16px rgba(0,0,0,.4);
+}
+.header::after {
+  content:'';
+  position:absolute; bottom:-2px; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, transparent, var(--gold2), var(--gold), var(--gold2), transparent);
 }
 .header-left { display:flex; align-items:center; gap:16px; }
-.back-btn { color:var(--subtext); text-decoration:none; font-size:13px; font-weight:600; transition:color .15s; }
-.back-btn:hover { color:var(--text); }
-.header-title { font-family:'Cinzel',serif; font-size:16px; color:var(--gold); letter-spacing:.5px; }
-.person-badge {
-  font-size:12px; font-weight:700; padding:3px 12px; border-radius:12px;
-  background:rgba(59,130,246,0.15); color:var(--blue); border:1px solid rgba(59,130,246,0.25);
-  cursor:pointer; transition:all .15s;
+.back-btn {
+  color:var(--subtext); text-decoration:none; font-size:13px;
+  font-weight:700; transition:color .15s; letter-spacing:.3px;
 }
-.person-badge:hover { background:rgba(59,130,246,0.25); }
+.back-btn:hover { color:var(--gold); }
+.header-title {
+  font-family:'Cinzel',serif; font-size:16px;
+  color:var(--gold); letter-spacing:1px;
+  text-shadow:0 0 20px rgba(240,192,64,.4);
+}
+.person-badge {
+  font-size:12px; font-weight:800; padding:4px 14px; border-radius:12px;
+  background:var(--gold-dim); color:var(--gold);
+  border:1px solid rgba(240,192,64,.35);
+  cursor:pointer; transition:all .15s; letter-spacing:.3px;
+}
+.person-badge:hover { background:rgba(240,192,64,.25); border-color:var(--gold); }
 
 /* ── SCREENS ── */
 .screen { display:none; }
@@ -57,44 +86,64 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
 /* ── PERSON SELECT ── */
 #screen-person {
   min-height:100vh; align-items:center; justify-content:center;
-  background: radial-gradient(ellipse at 50% 30%, rgba(59,130,246,0.08) 0%, transparent 60%);
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(240,192,64,.07) 0%, transparent 55%),
+    radial-gradient(ellipse at 20% 80%, rgba(74,222,128,.04) 0%, transparent 40%);
 }
-.person-title { font-family:'Cinzel',serif; font-size:32px; color:var(--gold); text-align:center; margin-bottom:8px; }
-.person-sub   { color:var(--subtext); text-align:center; margin-bottom:40px; font-size:15px; }
+.person-title {
+  font-family:'Cinzel',serif; font-size:34px; color:var(--gold);
+  text-align:center; margin-bottom:8px;
+  text-shadow:0 0 30px rgba(240,192,64,.4);
+}
+.person-sub { color:var(--subtext); text-align:center; margin-bottom:44px; font-size:15px; }
 .person-cards { display:flex; gap:20px; flex-wrap:wrap; justify-content:center; }
 .person-card {
-  width:160px; padding:28px 20px; background:var(--panel);
-  border:2px solid var(--border); border-radius:16px; text-align:center;
-  cursor:pointer; transition:all .2s;
+  width:165px; padding:30px 20px;
+  background:linear-gradient(160deg, var(--panel2), var(--panel));
+  border:2px solid var(--border); border-radius:18px; text-align:center;
+  cursor:pointer; transition:all .22s; position:relative; overflow:hidden;
 }
-.person-card:hover { border-color:var(--gold); transform:translateY(-4px); box-shadow:0 12px 30px rgba(245,200,66,0.15); }
-.person-card-icon { font-size:40px; margin-bottom:10px; }
-.person-card-name { font-family:'Cinzel',serif; font-size:15px; color:var(--text); font-weight:600; }
+.person-card::before {
+  content:''; position:absolute; inset:0; border-radius:18px;
+  background:linear-gradient(160deg, rgba(240,192,64,.06), transparent);
+  opacity:0; transition:opacity .22s;
+}
+.person-card:hover { border-color:var(--gold); transform:translateY(-5px); box-shadow:0 16px 40px rgba(0,0,0,.4), 0 0 0 1px rgba(240,192,64,.2); }
+.person-card:hover::before { opacity:1; }
+.person-card-icon { font-size:44px; margin-bottom:12px; }
+.person-card-name { font-family:'Cinzel',serif; font-size:15px; color:var(--white); font-weight:600; letter-spacing:.5px; }
 
 /* ── LEVEL SELECT ── */
 #screen-level {
   min-height:100vh; align-items:center; justify-content:center;
-  background: radial-gradient(ellipse at 50% 30%, rgba(59,130,246,0.08) 0%, transparent 60%);
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(240,192,64,.07) 0%, transparent 55%);
 }
-.level-title { font-family:'Cinzel',serif; font-size:28px; color:var(--gold); text-align:center; margin-bottom:6px; }
-.level-sub   { color:var(--subtext); text-align:center; margin-bottom:36px; }
+.level-title {
+  font-family:'Cinzel',serif; font-size:30px; color:var(--gold);
+  text-align:center; margin-bottom:6px;
+  text-shadow:0 0 24px rgba(240,192,64,.35);
+}
+.level-sub { color:var(--subtext); text-align:center; margin-bottom:38px; font-size:14px; }
 .level-cards { display:flex; gap:18px; flex-wrap:wrap; justify-content:center; }
 .level-card {
-  width:200px; padding:28px 20px; background:var(--panel);
-  border:2px solid var(--border); border-radius:16px; text-align:center;
-  cursor:pointer; transition:all .2s; position:relative;
+  width:210px; padding:26px 20px;
+  background:linear-gradient(160deg, var(--panel2), var(--panel));
+  border:2px solid var(--border); border-radius:18px; text-align:center;
+  cursor:pointer; transition:all .22s; position:relative; overflow:hidden;
 }
-.level-card:hover:not(.locked) { border-color:var(--blue); transform:translateY(-3px); box-shadow:0 10px 28px rgba(59,130,246,0.15); }
-.level-card.locked { opacity:.5; cursor:default; }
-.level-card-num  { font-family:'Cinzel',serif; font-size:11px; letter-spacing:3px; color:var(--subtext); margin-bottom:8px; text-transform:uppercase; }
-.level-card-icon { font-size:36px; margin-bottom:10px; }
-.level-card-name { font-size:16px; font-weight:700; color:var(--text); margin-bottom:6px; }
-.level-card-desc { font-size:12px; color:var(--subtext); line-height:1.4; }
-.level-card-progress {
-  margin-top:14px; height:6px; background:var(--border); border-radius:3px; overflow:hidden;
+.level-card:hover:not(.locked) {
+  border-color:var(--gold); transform:translateY(-4px);
+  box-shadow:0 12px 32px rgba(0,0,0,.4), 0 0 0 1px rgba(240,192,64,.15);
 }
-.level-card-bar { height:100%; background:var(--gold); border-radius:3px; transition:width .5s; }
-.level-card-pct { font-size:11px; color:var(--subtext); margin-top:5px; }
+.level-card.locked { opacity:.45; cursor:default; }
+.level-card-num  { font-family:'Cinzel',serif; font-size:10px; letter-spacing:3px; color:var(--subtext); margin-bottom:10px; text-transform:uppercase; }
+.level-card-icon { font-size:38px; margin-bottom:10px; }
+.level-card-name { font-size:17px; font-weight:800; color:var(--white); margin-bottom:6px; }
+.level-card-desc { font-size:12px; color:var(--subtext); line-height:1.5; }
+.level-card-progress { margin-top:16px; height:5px; background:var(--border); border-radius:3px; overflow:hidden; }
+.level-card-bar { height:100%; background:linear-gradient(90deg,var(--gold2),var(--gold)); border-radius:3px; transition:width .5s; }
+.level-card-pct { font-size:11px; color:var(--subtext); margin-top:5px; font-weight:700; }
 
 /* ── MAIN APP ── */
 #screen-app { flex-direction:row; min-height:calc(100vh - 54px); }
@@ -102,169 +151,247 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
 /* MAP AREA */
 .map-area {
   flex:1; display:flex; flex-direction:column; align-items:center;
-  justify-content:flex-start; padding:20px 16px; position:relative;
+  justify-content:flex-start; padding:22px 18px; position:relative;
   overflow:hidden;
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(26,46,26,.0) 0%, transparent 100%);
 }
 .map-wrap {
   width:100%; max-width:780px;
-  background:var(--panel); border-radius:16px;
-  border:1px solid var(--border);
-  padding:12px; position:relative;
+  background:linear-gradient(160deg, #1e3418, #172e14);
+  border-radius:20px;
+  border:2px solid var(--border2);
+  padding:16px; position:relative;
+  box-shadow:
+    0 0 0 1px rgba(240,192,64,.08),
+    0 8px 40px rgba(0,0,0,.5),
+    inset 0 1px 0 rgba(240,192,64,.07);
 }
-#usa-map { width:100%; height:auto; display:block; }
+.map-wrap::before {
+  content:''; position:absolute; inset:0; border-radius:20px;
+  background:repeating-linear-gradient(
+    0deg, transparent, transparent 24px,
+    rgba(240,192,64,.018) 24px, rgba(240,192,64,.018) 25px
+  ),
+  repeating-linear-gradient(
+    90deg, transparent, transparent 24px,
+    rgba(240,192,64,.018) 24px, rgba(240,192,64,.018) 25px
+  );
+  pointer-events:none;
+}
+#usa-map { width:100%; height:auto; display:block; position:relative; z-index:1; }
 
 /* State paths */
 .state-path {
-  fill: #1e2d48;
-  stroke: #2a3d5a;
-  stroke-width: 0.8;
+  fill: #7a9a72;
+  stroke: #1a2e18;
+  stroke-width: 0.6;
   cursor: pointer;
   transition: fill .2s, stroke .2s;
 }
-.state-path:hover { fill:#2a3d60; stroke:#4a6080; }
-.state-path.region-northeast { fill:#1a3850; }
-.state-path.region-southeast { fill:#3a2030; }
-.state-path.region-midwest   { fill:#3a3010; }
-.state-path.region-southwest { fill:#3a2010; }
-.state-path.region-west      { fill:#2a1a50; }
-.state-path.region-alaska    { fill:#0a3040; }
-.state-path.region-hawaii    { fill:#0a3028; }
+.state-path:hover { fill:#c8e0a0; stroke:#0f1f0e; }
+.state-path.region-northeast { fill:#4a90d9; }
+.state-path.region-southeast { fill:#88bb60; }
+.state-path.region-midwest   { fill:#e8c078; }
+.state-path.region-southwest { fill:#e88050; }
+.state-path.region-west      { fill:#b07ab8; }
+.state-path.region-alaska    { fill:#58b8c0; }
+.state-path.region-hawaii    { fill:#70b870; }
 
-/* State fill states */
-.state-path.highlight   { fill:#3b82f6 !important; stroke:#60a0ff !important; }
-.state-path.correct     { fill:#16a34a !important; stroke:#22c55e !important; animation:correctPop .4s ease; }
-.state-path.wrong       { fill:#b91c1c !important; stroke:#ef4444 !important; animation:wrongShake .35s ease; }
-.state-path.mastered    { fill:#92400e !important; stroke:var(--gold) !important; }
-.state-path.mastered-1  { fill:#1c3a1a !important; stroke:#22c55e !important; }
-.state-path.mastered-2  { fill:#1c2a3a !important; stroke:#60a0ff !important; }
-.state-path.mastered-3  { fill:#3a3010 !important; stroke:var(--gold) !important; }
-.state-path.seen        { fill:#1e2d40 !important; }
-.state-path.quiz-target { fill:#1a3a1a !important; stroke:#22c55e !important; stroke-width:1.5 !important; animation:pulse 1.5s ease-in-out infinite; }
+/* State interactive states */
+.state-path.highlight   { fill:#fef9c3 !important; stroke:#78350f !important; stroke-width:1.4 !important; }
+.state-path.correct     { fill:#4ade80 !important; stroke:#166534 !important; stroke-width:1.2 !important; animation:correctPop .4s ease; }
+.state-path.wrong       { fill:#f87171 !important; stroke:#7f1d1d !important; stroke-width:1.2 !important; animation:wrongShake .35s ease; }
+.state-path.mastered    { fill:#f0c040 !important; stroke:#78350f !important; stroke-width:1 !important; }
+.state-path.mastered-1  { fill:#4ade80 !important; stroke:#166534 !important; stroke-width:1 !important; }
+.state-path.mastered-2  { fill:#60a5fa !important; stroke:#1e3a8a !important; stroke-width:1 !important; }
+.state-path.mastered-3  { fill:#f0c040 !important; stroke:#78350f !important; stroke-width:1 !important; }
+.state-path.seen        { fill:#4a6842 !important; stroke:#1a2e18 !important; }
+.state-path.quiz-target { fill:#fef9c3 !important; stroke:#4ade80 !important; stroke-width:2 !important; animation:pulse 1.5s ease-in-out infinite; }
 
 @keyframes correctPop  { 0%{transform:scale(1)} 50%{transform:scale(1.08)} 100%{transform:scale(1)} }
 @keyframes wrongShake  { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.65} }
 
 /* Alaska & Hawaii insets */
-.inset-label { font-size:9px; fill:var(--subtext); font-family:'DM Sans',sans-serif; }
+.inset-label { font-size:9px; fill:var(--subtext); font-family:'Nunito',sans-serif; }
 
 /* ── SIDEBAR ── */
 .sidebar {
-  width:300px; flex-shrink:0; background:var(--panel);
-  border-left:1px solid var(--border); display:flex; flex-direction:column;
+  width:300px; flex-shrink:0;
+  background:linear-gradient(180deg, var(--panel2), var(--panel));
+  border-left:2px solid var(--border);
+  display:flex; flex-direction:column;
   height:calc(100vh - 54px); overflow-y:auto; overflow-x:hidden;
+  box-shadow:-4px 0 20px rgba(0,0,0,.3);
 }
 
 /* Mode tabs */
-.mode-tabs { display:flex; border-bottom:1px solid var(--border); }
+.mode-tabs { display:flex; border-bottom:2px solid var(--border); }
 .mode-tab {
-  flex:1; padding:12px 8px; background:none; border:none;
-  color:var(--subtext); font-family:'DM Sans',sans-serif; font-size:13px;
-  font-weight:600; cursor:pointer; transition:all .15s;
-  border-bottom:2px solid transparent; margin-bottom:-1px;
+  flex:1; padding:13px 8px; background:none; border:none;
+  color:var(--subtext); font-family:'Nunito',sans-serif; font-size:13px;
+  font-weight:700; cursor:pointer; transition:all .15s;
+  border-bottom:2px solid transparent; margin-bottom:-2px; letter-spacing:.3px;
 }
-.mode-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+.mode-tab:hover { color:var(--text); }
+.mode-tab.active { color:var(--gold); border-bottom-color:var(--gold); background:rgba(240,192,64,.04); }
+
+/* ── STATE DETAIL POPUP ── */
+.state-popup-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.65);
+  backdrop-filter:blur(6px); z-index:500;
+  display:flex; align-items:center; justify-content:center;
+  padding:20px; opacity:0; pointer-events:none; transition:opacity .2s;
+}
+.state-popup-overlay.open { opacity:1; pointer-events:all; }
+.state-popup {
+  background:linear-gradient(160deg, var(--panel3), var(--panel));
+  border:2px solid var(--border2);
+  border-radius:22px; padding:28px; max-width:420px; width:100%;
+  box-shadow:0 30px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(240,192,64,.08);
+  transform:translateY(16px); transition:transform .2s;
+  position:relative;
+}
+.state-popup-overlay.open .state-popup { transform:translateY(0); }
+.state-popup-close {
+  position:absolute; top:14px; right:16px;
+  background:none; border:none; color:var(--subtext);
+  font-size:20px; cursor:pointer; line-height:1; transition:color .15s;
+}
+.state-popup-close:hover { color:var(--gold); }
+.state-popup-name {
+  font-family:'Cinzel',serif; font-size:24px; font-weight:700;
+  color:var(--white); margin-bottom:4px; padding-right:28px;
+}
+.state-popup-abbr {
+  font-size:11px; font-weight:700; letter-spacing:2px;
+  color:var(--subtext); margin-bottom:16px; text-transform:uppercase;
+}
+.state-popup-svg-wrap {
+  background:linear-gradient(160deg, #1e3418, #172e14);
+  border:1px solid var(--border2);
+  border-radius:14px; padding:14px; margin-bottom:18px;
+  display:flex; align-items:center; justify-content:center;
+  min-height:180px;
+}
+#state-popup-svg { display:block; max-width:100%; max-height:220px; }
+.state-popup-info { display:flex; flex-direction:column; gap:10px; }
+.state-popup-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 14px;
+  background:rgba(0,0,0,.2);
+  border-radius:10px; border:1px solid var(--border);
+}
+.state-popup-label {
+  font-size:11px; font-weight:700; letter-spacing:.8px;
+  text-transform:uppercase; color:var(--subtext);
+}
+.state-popup-value { font-size:15px; font-weight:700; color:var(--text); font-family:'Nunito',sans-serif; }
+.state-popup-capital-star { color:var(--gold); margin-right:5px; }
 
 /* Info panel (study mode) */
 .info-panel { padding:20px; flex:1; }
-.info-empty { text-align:center; padding:40px 20px; color:var(--subtext); font-size:14px; line-height:1.6; }
+.info-empty { text-align:center; padding:40px 20px; color:var(--subtext); font-size:14px; line-height:1.8; }
 .info-state-name { font-family:'Cinzel',serif; font-size:22px; color:var(--white); margin-bottom:4px; }
-.info-state-abbr { font-size:12px; font-weight:700; letter-spacing:2px; color:var(--subtext); margin-bottom:16px; }
+.info-state-abbr { font-size:12px; font-weight:700; letter-spacing:2px; color:var(--subtext); margin-bottom:16px; text-transform:uppercase; }
 .info-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); }
 .info-row:last-child { border-bottom:none; }
 .info-label { font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:var(--subtext); }
-.info-value { font-size:14px; font-weight:600; color:var(--text); }
-.region-chip {
-  display:inline-block; padding:3px 12px; border-radius:10px; font-size:12px; font-weight:700;
-}
+.info-value { font-size:14px; font-weight:700; color:var(--text); }
+.region-chip { display:inline-block; padding:3px 12px; border-radius:10px; font-size:12px; font-weight:800; }
 .mastery-dots { display:flex; gap:6px; }
-.mastery-dot  { width:12px; height:12px; border-radius:50%; background:var(--border); transition:all .3s; }
-.mastery-dot.filled { background:var(--gold); box-shadow:0 0 8px rgba(245,200,66,0.5); }
+.mastery-dot  { width:13px; height:13px; border-radius:50%; background:var(--border); transition:all .3s; }
+.mastery-dot.filled { background:var(--gold); box-shadow:0 0 8px rgba(240,192,64,.6); }
 
 /* Quiz panel */
 .quiz-panel { padding:20px; flex:1; display:flex; flex-direction:column; }
 .quiz-prompt {
-  background:var(--panel2); border:1px solid var(--border); border-radius:12px;
-  padding:20px; text-align:center; margin-bottom:20px;
+  background:rgba(0,0,0,.25); border:1px solid var(--border2); border-radius:14px;
+  padding:20px; text-align:center; margin-bottom:18px;
 }
 .quiz-level-badge {
-  font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
-  color:var(--subtext); margin-bottom:8px;
+  font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase;
+  color:var(--gold2); margin-bottom:8px;
 }
-.quiz-question { font-size:15px; font-weight:700; color:var(--text); line-height:1.4; margin-bottom:6px; }
+.quiz-question { font-size:15px; font-weight:800; color:var(--white); line-height:1.4; margin-bottom:6px; }
 .quiz-hint     { font-size:12px; color:var(--subtext); }
 .quiz-feedback {
-  padding:14px 16px; border-radius:10px; text-align:center; font-weight:700; font-size:15px;
+  padding:14px 16px; border-radius:10px; text-align:center; font-weight:800; font-size:15px;
   margin-bottom:16px; display:none;
 }
-.quiz-feedback.correct { background:rgba(34,197,94,.15); border:1px solid rgba(34,197,94,.3); color:#4ade80; }
-.quiz-feedback.wrong   { background:rgba(239,68,68,.12);  border:1px solid rgba(239,68,68,.3);  color:#f87171; }
+.quiz-feedback.correct { background:rgba(74,222,128,.15); border:1px solid rgba(74,222,128,.35); color:#4ade80; }
+.quiz-feedback.wrong   { background:rgba(248,113,113,.12); border:1px solid rgba(248,113,113,.3); color:#f87171; }
 
-.quiz-stats { display:flex; gap:12px; margin-bottom:20px; }
-.quiz-stat  { flex:1; background:var(--panel2); border-radius:10px; padding:12px; text-align:center; border:1px solid var(--border); }
+.quiz-stats { display:flex; gap:10px; margin-bottom:18px; }
+.quiz-stat  { flex:1; background:rgba(0,0,0,.25); border-radius:10px; padding:12px; text-align:center; border:1px solid var(--border); }
 .quiz-stat-n  { font-family:'Cinzel',serif; font-size:24px; color:var(--gold); }
-.quiz-stat-l  { font-size:11px; color:var(--subtext); font-weight:600; margin-top:2px; }
+.quiz-stat-l  { font-size:11px; color:var(--subtext); font-weight:700; margin-top:2px; }
 
 .quiz-btn {
-  width:100%; padding:12px; border:none; border-radius:10px; font-family:'DM Sans',sans-serif;
-  font-size:14px; font-weight:700; cursor:pointer; transition:all .15s;
+  width:100%; padding:13px; border:none; border-radius:12px; font-family:'Nunito',sans-serif;
+  font-size:14px; font-weight:800; cursor:pointer; transition:all .15s;
+  letter-spacing:.3px;
 }
-.quiz-btn-primary { background:var(--blue2); color:#fff; margin-bottom:8px; }
-.quiz-btn-primary:hover { background:var(--blue); }
-.quiz-btn-secondary { background:var(--panel2); color:var(--subtext); border:1px solid var(--border); }
-.quiz-btn-secondary:hover { color:var(--text); }
+.quiz-btn-primary { background:linear-gradient(135deg,var(--gold2),var(--gold)); color:#1a2e1a; margin-bottom:8px; box-shadow:0 4px 14px rgba(240,192,64,.25); }
+.quiz-btn-primary:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(240,192,64,.35); }
+.quiz-btn-secondary { background:rgba(0,0,0,.2); color:var(--subtext); border:1px solid var(--border); }
+.quiz-btn-secondary:hover { color:var(--text); border-color:var(--border2); }
 
 /* Progress section in sidebar */
 .progress-section { padding:16px 20px; border-top:1px solid var(--border); }
-.progress-title { font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--subtext); margin-bottom:12px; }
+.progress-title { font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--subtext); margin-bottom:12px; }
 .progress-grid  { display:grid; grid-template-columns:repeat(10,1fr); gap:3px; }
 .prog-dot {
   width:100%; aspect-ratio:1; border-radius:2px; background:var(--border);
   cursor:pointer; transition:all .2s; position:relative;
 }
-.prog-dot:hover::after { content:attr(data-name); position:absolute; bottom:120%; left:50%; transform:translateX(-50%); background:var(--panel); border:1px solid var(--border); color:var(--text); font-size:10px; white-space:nowrap; padding:3px 6px; border-radius:4px; z-index:10; pointer-events:none; }
-.prog-dot.seen     { background:#2a3d58; }
-.prog-dot.streak1  { background:#1c4a3a; }
-.prog-dot.streak2  { background:#1c6a4a; }
-.prog-dot.mastered { background:var(--gold); box-shadow:0 0 4px rgba(245,200,66,.4); }
+.prog-dot:hover::after { content:attr(data-name); position:absolute; bottom:120%; left:50%; transform:translateX(-50%); background:var(--panel); border:1px solid var(--border2); color:var(--text); font-size:10px; white-space:nowrap; padding:3px 6px; border-radius:4px; z-index:10; pointer-events:none; }
+.prog-dot.seen     { background:#3a5435; }
+.prog-dot.streak1  { background:#3a6030; }
+.prog-dot.streak2  { background:#4a8040; }
+.prog-dot.mastered { background:var(--gold); box-shadow:0 0 4px rgba(240,192,64,.5); }
 
 /* Region legend */
 .legend { display:flex; flex-wrap:wrap; gap:8px; padding:16px 20px; border-top:1px solid var(--border); }
-.legend-item { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--subtext); font-weight:600; }
+.legend-item { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--subtext); font-weight:700; }
 .legend-dot  { width:10px; height:10px; border-radius:2px; flex-shrink:0; }
 
 /* Toast */
 .toast {
   position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
-  background:var(--panel); border:1px solid var(--border); border-radius:10px;
-  padding:12px 24px; font-size:14px; font-weight:600; color:var(--text);
+  background:var(--panel3); border:1px solid var(--border2); border-radius:12px;
+  padding:12px 24px; font-size:14px; font-weight:700; color:var(--gold3);
   z-index:1000; opacity:0; transition:all .25s; pointer-events:none;
-  box-shadow:0 8px 30px rgba(0,0,0,.4); white-space:nowrap;
+  box-shadow:0 8px 30px rgba(0,0,0,.5); white-space:nowrap;
 }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
 .state-label {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 8px;
-  font-weight: 700;
-  fill: rgba(255,255,255,0.45);
+  font-family: 'Nunito', sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  fill: rgba(0,0,0,0.65);
   letter-spacing: 0.3px;
   transition: opacity .3s;
+  pointer-events: none;
 }
 #usa-map.hide-labels .state-label { opacity: 0; }
+#world-map.hide-labels .world-label { opacity: 0; }
 
 /* State tooltip on map */
 .map-tooltip {
-  position:absolute; background:var(--panel); border:1px solid var(--border);
-  border-radius:8px; padding:8px 12px; font-size:13px; font-weight:600;
+  position:absolute;
+  background:var(--panel3); border:1px solid var(--border2);
+  border-radius:8px; padding:8px 14px; font-size:13px; font-weight:700;
   pointer-events:none; z-index:20; opacity:0; transition:opacity .15s;
-  box-shadow:0 4px 16px rgba(0,0,0,.4);
+  box-shadow:0 4px 20px rgba(0,0,0,.5); color:var(--text);
 }
 .map-tooltip.show { opacity:1; }
 
 @media(max-width:800px) {
   #screen-app { flex-direction:column; }
-  .sidebar { width:100%; height:auto; border-left:none; border-top:1px solid var(--border); }
+  .sidebar { width:100%; height:auto; border-left:none; border-top:2px solid var(--border); }
 }
 </style>
 </head>
@@ -274,6 +401,7 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
 <header class="header" id="app-header" style="display:none">
   <div class="header-left">
     <a href="index.html" class="back-btn">← Home</a>
+    <button onclick="showScreen('screen-level')" class="back-btn" style="background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;padding:0;">← Levels</button>
     <span class="header-title">🗺 USA Explorer</span>
   </div>
   <div style="display:flex;gap:10px;align-items:center">
@@ -311,10 +439,47 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
 
 <!-- SCREEN: LEVEL SELECT -->
 <div class="screen" id="screen-level">
-  <div style="text-align:center;padding:40px 20px">
+  <div style="text-align:center;padding:40px 20px 30px">
     <div class="level-title">Choose a Level</div>
     <div class="level-sub" id="level-sub-text"></div>
-    <div class="level-cards">
+
+    <!-- USA Section -->
+    <div style="margin-bottom:10px;margin-top:28px">
+      <div style="display:inline-flex;align-items:center;gap:10px;margin-bottom:20px;padding:6px 20px;background:rgba(240,192,64,0.08);border:1px solid rgba(240,192,64,0.25);border-radius:20px;">
+        <span style="font-size:20px">🦅</span>
+        <span style="font-family:'Cinzel',serif;font-size:13px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;">United States</span>
+        <svg width="24" height="16" viewBox="0 0 24 16" style="display:inline-block;vertical-align:middle;margin-left:6px;border-radius:2px;box-shadow:0 0 0 1px rgba(255,255,255,0.15)">
+          <!-- Red and white stripes -->
+          <rect width="24" height="16" fill="#B22234"/>
+          <rect y="1.23" width="24" height="1.23" fill="white"/>
+          <rect y="3.69" width="24" height="1.23" fill="white"/>
+          <rect y="6.15" width="24" height="1.23" fill="white"/>
+          <rect y="8.62" width="24" height="1.23" fill="white"/>
+          <rect y="11.08" width="24" height="1.23" fill="white"/>
+          <rect y="13.54" width="24" height="1.23" fill="white"/>
+          <!-- Blue canton -->
+          <rect width="9.6" height="8.62" fill="#3C3B6E"/>
+          <!-- Stars (5x4 + 4x3 = 50) simplified as small dots -->
+          <g fill="white">
+            <!-- Row 1 -->
+            <circle cx="1.2" cy="1.1" r="0.5"/><circle cx="2.8" cy="1.1" r="0.5"/><circle cx="4.4" cy="1.1" r="0.5"/><circle cx="6.0" cy="1.1" r="0.5"/><circle cx="7.6" cy="1.1" r="0.5"/><circle cx="9.2" cy="1.1" r="0.5"/>
+            <!-- Row 2 -->
+            <circle cx="2.0" cy="2.2" r="0.5"/><circle cx="3.6" cy="2.2" r="0.5"/><circle cx="5.2" cy="2.2" r="0.5"/><circle cx="6.8" cy="2.2" r="0.5"/><circle cx="8.4" cy="2.2" r="0.5"/>
+            <!-- Row 3 -->
+            <circle cx="1.2" cy="3.3" r="0.5"/><circle cx="2.8" cy="3.3" r="0.5"/><circle cx="4.4" cy="3.3" r="0.5"/><circle cx="6.0" cy="3.3" r="0.5"/><circle cx="7.6" cy="3.3" r="0.5"/><circle cx="9.2" cy="3.3" r="0.5"/>
+            <!-- Row 4 -->
+            <circle cx="2.0" cy="4.4" r="0.5"/><circle cx="3.6" cy="4.4" r="0.5"/><circle cx="5.2" cy="4.4" r="0.5"/><circle cx="6.8" cy="4.4" r="0.5"/><circle cx="8.4" cy="4.4" r="0.5"/>
+            <!-- Row 5 -->
+            <circle cx="1.2" cy="5.5" r="0.5"/><circle cx="2.8" cy="5.5" r="0.5"/><circle cx="4.4" cy="5.5" r="0.5"/><circle cx="6.0" cy="5.5" r="0.5"/><circle cx="7.6" cy="5.5" r="0.5"/><circle cx="9.2" cy="5.5" r="0.5"/>
+            <!-- Row 6 -->
+            <circle cx="2.0" cy="6.6" r="0.5"/><circle cx="3.6" cy="6.6" r="0.5"/><circle cx="5.2" cy="6.6" r="0.5"/><circle cx="6.8" cy="6.6" r="0.5"/><circle cx="8.4" cy="6.6" r="0.5"/>
+            <!-- Row 7 -->
+            <circle cx="1.2" cy="7.7" r="0.5"/><circle cx="2.8" cy="7.7" r="0.5"/><circle cx="4.4" cy="7.7" r="0.5"/><circle cx="6.0" cy="7.7" r="0.5"/><circle cx="7.6" cy="7.7" r="0.5"/><circle cx="9.2" cy="7.7" r="0.5"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+    <div class="level-cards" style="margin-bottom:36px">
       <div class="level-card" id="level-card-1" onclick="selectLevel(1)">
         <div class="level-card-num">Level 1</div>
         <div class="level-card-icon">🗺️</div>
@@ -333,21 +498,45 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
       </div>
       <div class="level-card" id="level-card-3" onclick="selectLevel(3)">
         <div class="level-card-num">Level 3</div>
-        <div class="level-card-icon">🏛️</div>
-        <div class="level-card-name">Capitals</div>
-        <div class="level-card-desc">Match each state to its capital city</div>
+        <div class="level-card-icon">🔤</div>
+        <div class="level-card-name">Abbreviations</div>
+        <div class="level-card-desc">Match each state to its 2-letter abbreviation</div>
         <div class="level-card-progress"><div class="level-card-bar" id="bar-3" style="width:0%"></div></div>
         <div class="level-card-pct" id="pct-3">0 / 50 mastered</div>
       </div>
       <div class="level-card" id="level-card-4" onclick="selectLevel(4)">
         <div class="level-card-num">Level 4</div>
-        <div class="level-card-icon">🔤</div>
-        <div class="level-card-name">Abbreviations</div>
-        <div class="level-card-desc">Match each state to its 2-letter abbreviation</div>
+        <div class="level-card-icon">🏛️</div>
+        <div class="level-card-name">Capitals</div>
+        <div class="level-card-desc">Match each state to its capital city</div>
         <div class="level-card-progress"><div class="level-card-bar" id="bar-4" style="width:0%"></div></div>
         <div class="level-card-pct" id="pct-4">0 / 50 mastered</div>
       </div>
     </div>
+
+    <!-- Divider -->
+    <div style="border-top:1px solid var(--border);margin:0 auto 32px;max-width:700px;position:relative">
+      <span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--bg);padding:0 16px;font-size:11px;color:var(--border2);letter-spacing:2px;font-weight:700;">✦</span>
+    </div>
+
+    <!-- World Map Section -->
+    <div style="margin-bottom:20px">
+      <div style="display:inline-flex;align-items:center;gap:10px;margin-bottom:20px;padding:6px 20px;background:rgba(88,184,192,0.08);border:1px solid rgba(88,184,192,0.25);border-radius:20px;">
+        <span style="font-size:20px">🌍</span>
+        <span style="font-family:'Cinzel',serif;font-size:13px;color:#58b8c0;letter-spacing:2px;text-transform:uppercase;">World Map</span>
+      </div>
+    </div>
+    <div class="level-cards">
+      <div class="level-card" id="level-card-5" onclick="selectLevel(5)">
+        <div class="level-card-num">Level 1</div>
+        <div class="level-card-icon">🌍</div>
+        <div class="level-card-name">Continents</div>
+        <div class="level-card-desc">Learn the 7 continents of the world</div>
+        <div class="level-card-progress"><div class="level-card-bar" id="bar-5" style="width:0%"></div></div>
+        <div class="level-card-pct" id="pct-5">0 / 7 mastered</div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -357,8 +546,7 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
   <!-- MAP -->
   <div class="map-area">
     <div class="map-wrap">
-      <svg id="usa-map" viewBox="0 0 975 610" xmlns="http://www.w3.org/2000/svg">
-      </svg>
+      <svg id="usa-map" viewBox="0 0 975 610" xmlns="http://www.w3.org/2000/svg"></svg>
       <div class="map-tooltip" id="map-tooltip"></div>
     </div>
   </div>
@@ -419,18 +607,90 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
 
     <!-- REGION LEGEND -->
     <div class="legend">
-      <div class="legend-item"><div class="legend-dot" style="background:#1a3850;border:1px solid var(--northeast)"></div>Northeast</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#3a2030;border:1px solid var(--southeast)"></div>Southeast</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#3a3010;border:1px solid var(--midwest)"></div>Midwest</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#3a2010;border:1px solid var(--southwest)"></div>Southwest</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#2a1a50;border:1px solid var(--west)"></div>West</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#0a3040;border:1px solid var(--alaska)"></div>Alaska</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#0a3028;border:1px solid var(--hawaii)"></div>Hawaii</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#4a90d9"></div>Northeast</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#88bb60"></div>Southeast</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e8c078"></div>Midwest</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e88050"></div>Southwest</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#b07ab8"></div>West</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#58b8c0"></div>Alaska</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#70b870"></div>Hawaii</div>
     </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- SCREEN: WORLD CONTINENTS (Level 5) -->
+<div class="screen" id="screen-world">
+  <div class="map-area">
+    <div class="map-wrap" style="max-width:900px">
+      <svg id="world-map" viewBox="0 0 960 500" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="map-tooltip" id="world-tooltip"></div>
+    </div>
+  </div>
+  <div class="sidebar">
+    <div class="mode-tabs">
+      <button class="mode-tab active" onclick="setWorldMode('study')" id="world-tab-study">📖 Study</button>
+      <button class="mode-tab"        onclick="setWorldMode('quiz')"  id="world-tab-quiz">🎯 Quiz</button>
+    </div>
+    <div id="world-study-panel" class="info-panel">
+      <div class="info-empty" id="world-study-empty">
+        <div style="font-size:32px;margin-bottom:12px">🌍</div>
+        Click any continent to learn about it
+      </div>
+      <div id="world-study-info" style="display:none">
+        <div class="info-state-name" id="world-info-name"></div>
+        <div class="info-state-abbr" id="world-info-sub"></div>
+        <div class="info-row">
+          <span class="info-label">Largest Country</span>
+          <span class="info-value" id="world-info-country"></span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">🌊 Bordering Oceans</span>
+          <span class="info-value" id="world-info-ocean"></span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Mastery</span>
+          <div class="mastery-dots" id="world-info-mastery"></div>
+        </div>
+        <div style="padding:12px 0 6px">
+          <div class="info-label" style="margin-bottom:8px">Countries</div>
+          <div id="world-info-countries" style="line-height:1.8;max-height:220px;overflow-y:auto;padding-right:4px"></div>
+        </div>
+      </div>
+    </div>
+    <div id="world-quiz-panel" class="quiz-panel" style="display:none">
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <button id="world-qtype-continent" onclick="setWorldQuizType('continent')"
+          style="flex:1;padding:8px;border:none;border-radius:8px;font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a2e1a;letter-spacing:.3px;">
+          🌍 Find Continent
+        </button>
+        <button id="world-qtype-ocean" onclick="setWorldQuizType('ocean')"
+          style="flex:1;padding:8px;border:1px solid var(--border);border-radius:8px;font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer;background:rgba(0,0,0,.2);color:var(--subtext);letter-spacing:.3px;">
+          🌊 Name the Ocean
+        </button>
+      </div>
+      <div class="quiz-prompt">
+        <div class="quiz-level-badge" id="world-quiz-badge"></div>
+        <div class="quiz-question" id="world-quiz-question">Press Start to begin!</div>
+        <div class="quiz-hint" id="world-quiz-hint"></div>
+      </div>
+      <div class="quiz-feedback" id="world-quiz-feedback"></div>
+      <div class="quiz-stats">
+        <div class="quiz-stat"><div class="quiz-stat-n" id="world-stat-correct">0</div><div class="quiz-stat-l">Correct</div></div>
+        <div class="quiz-stat"><div class="quiz-stat-n" id="world-stat-wrong">0</div><div class="quiz-stat-l">Wrong</div></div>
+        <div class="quiz-stat"><div class="quiz-stat-n" id="world-stat-streak">0</div><div class="quiz-stat-l">Streak 🔥</div></div>
+      </div>
+      <button class="quiz-btn quiz-btn-primary" id="world-quiz-start-btn" onclick="startWorldQuiz()">Start Quiz</button>
+      <button class="quiz-btn quiz-btn-secondary" id="world-quiz-skip-btn" onclick="worldNextQuestion()" style="display:none">Skip</button>
+    </div>
+    <div class="progress-section">
+      <div class="progress-title">Progress — <span id="world-prog-count">0</span> / 7 mastered</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px" id="world-progress-chips"></div>
+    </div>
+    <div class="legend" id="world-legend"></div>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
@@ -505,9 +765,9 @@ var STATES = [
 ];
 
 var REGION_COLORS = {
-  northeast:'#6aaedc', southeast:'#f4a7c3',
-  midwest:'#f5c842',   southwest:'#f97316',
-  west:'#a78bfa',      alaska:'#67e8f9', hawaii:'#34d399'
+  northeast:'#4a90d9', southeast:'#88bb60',
+  midwest:'#e8c078',   southwest:'#e88050',
+  west:'#b07ab8',      alaska:'#58b8c0', hawaii:'#70b870'
 };
 var REGION_LABELS = {
   northeast:'Northeast', southeast:'Southeast',
@@ -544,15 +804,33 @@ function changePerson() {
 // ── LEVEL SELECT ──
 function selectLevel(n) {
   currentLevel = n;
+  // Reset quiz state so switching levels starts fresh
+  quizActive = false;
+  quizQueue = [];
+  quizTarget = null;
+  qCorrect = 0; qWrong = 0; qStreak = 0;
+  worldQuizActive = false;
+  worldQuizQueue = [];
+  worldQuizTarget = null;
+  wqCorrect = 0; wqWrong = 0; wqStreak = 0;
+
   document.getElementById('app-header').style.display = 'flex';
   document.getElementById('person-badge').textContent = currentPersonLabel;
-  var labels = {1:'Level 1 · States', 2:'Level 2 · Regions', 3:'Level 3 · Capitals', 4:'Level 4 · Abbreviations'};
+  var labels = {1:'Level 1 · States', 2:'Level 2 · Regions', 3:'Level 3 · Abbreviations', 4:'Level 4 · Capitals', 5:'Level 5 · World Continents'};
   document.getElementById('level-badge').textContent = labels[n];
-  showScreen('screen-app');
-  buildMap();
-  buildProgressGrid();
-  setMode('study');
-  applyMasteryColors();
+
+  if (n === 5) {
+    showScreen('screen-world');
+    buildWorldMap();
+    loadWorldMastery();
+    setWorldMode('study');
+  } else {
+    showScreen('screen-app');
+    buildMap();
+    buildProgressGrid();
+    setMode('study');
+    applyMasteryColors();
+  }
 }
 
 // ── MASTERY ──
@@ -577,12 +855,12 @@ function getMastery(id) {
 
 function updateLevelCards() {
   [1,2,3,4].forEach(function(n) {
-    var count = STATES.filter(function(s){ return getMastery(s.id)['streak'+(n)] >= 3 || (n===1 && getMastery(s.id).streak >= 3); }).length;
-    // simplified: count states with streak >= 3
     var mastered = STATES.filter(function(s){ return getMastery(s.id).streak >= 3; }).length;
     document.getElementById('bar-'+n).style.width = (mastered/50*100)+'%';
     document.getElementById('pct-'+n).textContent = mastered + ' / 50 mastered';
   });
+  // Level 5 world progress updated separately
+  updateWorldProgress();
 }
 
 function applyMasteryColors() {
@@ -633,13 +911,49 @@ var FIPS_TO_ABBR = {
 };
 
 // ── MAP BUILD ──
+var geoPathFn = null;       // D3 path generator
+var geoProjection = null;   // D3 Albers USA projection
+var featureMap = {};        // abbr -> GeoJSON feature
+
+// Real lat/lng for each state capital
+var CAPITAL_COORDS = {
+  AL:[ -86.3001, 32.3617], AK:[-134.4197, 58.3005], AZ:[-112.0740, 33.4484],
+  AR:[ -92.3341, 34.7465], CA:[-121.4694, 38.5556], CO:[-104.9847, 39.7392],
+  CT:[ -72.6851, 41.7637], DE:[ -75.5148, 39.1582], FL:[ -84.2807, 30.4381],
+  GA:[ -84.3880, 33.7490], HI:[-157.8583, 21.3069], ID:[-116.1993, 43.6150],
+  IL:[ -89.6501, 39.7983], IN:[ -86.1580, 39.7684], IA:[ -93.6091, 41.5908],
+  KS:[ -95.6890, 39.0473], KY:[ -84.8753, 38.1867], LA:[ -91.1871, 30.4515],
+  ME:[ -69.7653, 44.3106], MD:[ -76.4922, 38.9784], MA:[ -71.0275, 42.3554],
+  MI:[ -84.5555, 42.7325], MN:[ -93.0940, 44.9537], MS:[ -90.1848, 32.2988],
+  MO:[ -92.1735, 38.5767], MT:[-112.0270, 46.5958], NE:[ -96.6852, 40.8136],
+  NV:[-119.7674, 39.1608], NH:[ -71.5376, 43.2067], NJ:[ -74.7597, 40.2206],
+  NM:[-105.9378, 35.6672], NY:[ -73.7562, 42.6526], NC:[ -78.6389, 35.7721],
+  ND:[-100.7837, 46.8083], OH:[ -83.0007, 39.9612], OK:[ -97.5164, 35.4676],
+  OR:[-123.0351, 44.9429], PA:[ -76.8844, 40.2732], RI:[ -71.4128, 41.8240],
+  SC:[ -81.0348, 34.0007], SD:[-100.3463, 44.3683], TN:[ -86.7844, 36.1627],
+  TX:[ -97.7431, 30.2672], UT:[-111.8910, 40.7608], VT:[ -72.5778, 44.2601],
+  VA:[ -77.4360, 37.5407], WA:[-122.9007, 47.0379], WV:[ -81.6326, 38.3498],
+  WI:[ -89.3838, 43.0747], WY:[-104.8202, 41.1400]
+};
+
 function buildMap() {
   var svg = d3.select('#usa-map');
   svg.selectAll('*').remove();
 
   d3.json('https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json').then(function(us) {
     var path = d3.geoPath();
+    geoPathFn = path;
+    // Separate projection for converting real lat/lng → map pixel coords
+    // us-atlas states-albers-10m uses a 975×610 viewport with built-in Albers projection
+    geoProjection = d3.geoAlbersUsa().scale(1300).translate([487.5, 305]);
     var features = topojson.feature(us, us.objects.states).features;
+
+    // Store each feature by abbr for popup use
+    features.forEach(function(feature) {
+      var fips = String(feature.id).padStart(2,'0');
+      var abbr = FIPS_TO_ABBR[fips];
+      if (abbr) featureMap[abbr] = feature;
+    });
 
     // Draw state borders (mesh)
     svg.append('path')
@@ -728,10 +1042,92 @@ function onStateClick(id) {
     return;
   }
 
-  // Study mode
+  // Study mode — highlight on map, show sidebar info, AND open popup
   selectedState = id;
   highlightState(id);
   showStateInfo(s);
+  openStatePopup(s);
+}
+
+function openStatePopup(s) {
+  // Fill text info
+  document.getElementById('popup-name').textContent = s.name;
+  document.getElementById('popup-abbr').textContent = s.id + ' · ' + s.name.toUpperCase();
+  document.getElementById('popup-capital').textContent = s.capital;
+  var chip = document.getElementById('popup-region');
+  chip.textContent = REGION_LABELS[s.region];
+  chip.style.background = REGION_COLORS[s.region] + '30';
+  chip.style.color = REGION_COLORS[s.region];
+  chip.style.border = '1px solid ' + REGION_COLORS[s.region] + '60';
+
+  // Draw the state shape in the popup SVG
+  var svgEl = document.getElementById('state-popup-svg');
+  svgEl.innerHTML = '';
+  var feature = featureMap[s.id];
+  if (feature && geoPathFn) {
+    // Get the bounding box of just this state
+    var bounds = geoPathFn.bounds(feature);
+    var x0 = bounds[0][0], y0 = bounds[0][1];
+    var x1 = bounds[1][0], y1 = bounds[1][1];
+    var w = x1 - x0, h = y1 - y0;
+
+    // Add padding
+    var pad = Math.max(w, h) * 0.12;
+    x0 -= pad; y0 -= pad; w += pad*2; h += pad*2;
+
+    svgEl.setAttribute('viewBox', x0 + ' ' + y0 + ' ' + w + ' ' + h);
+
+    // Draw the state fill
+    var pathStr = geoPathFn(feature);
+    var pathEl = document.createElementNS('http://www.w3.org/2000/svg','path');
+    pathEl.setAttribute('d', pathStr);
+    pathEl.setAttribute('fill', REGION_COLORS[s.region]);
+    pathEl.setAttribute('stroke', '#1e293b');
+    pathEl.setAttribute('stroke-width', Math.max(w,h) * 0.008);
+    pathEl.setAttribute('stroke-linejoin','round');
+    svgEl.appendChild(pathEl);
+
+    // Capital star — project real lat/lng to map pixel coords
+    var starSize = Math.max(w, h) * 0.09;
+    var capitalPx = null;
+    var coords = CAPITAL_COORDS[s.id];
+    if (coords && geoProjection) {
+      capitalPx = geoProjection(coords);
+    }
+    // Fall back to centroid only if projection fails
+    if (!capitalPx || isNaN(capitalPx[0])) {
+      capitalPx = geoPathFn.centroid(feature);
+    }
+
+    // Draw a circle behind the star for contrast
+    var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx', capitalPx[0]);
+    circle.setAttribute('cy', capitalPx[1]);
+    circle.setAttribute('r', starSize * 0.55);
+    circle.setAttribute('fill','rgba(0,0,0,0.25)');
+    svgEl.appendChild(circle);
+
+    // Draw star
+    var star = document.createElementNS('http://www.w3.org/2000/svg','text');
+    star.setAttribute('x', capitalPx[0]);
+    star.setAttribute('y', capitalPx[1] + starSize * 0.38);
+    star.setAttribute('text-anchor','middle');
+    star.setAttribute('font-size', starSize);
+    star.setAttribute('fill','#fde047');
+    star.setAttribute('stroke','#92400e');
+    star.setAttribute('stroke-width', starSize * 0.05);
+    star.setAttribute('paint-order','stroke');
+    star.textContent = '★';
+    svgEl.appendChild(star);
+    svgEl.appendChild(star);
+  }
+
+  document.getElementById('state-popup-overlay').classList.add('open');
+}
+
+function closeStatePopup(event) {
+  if (event && event.target !== document.getElementById('state-popup-overlay')) return;
+  document.getElementById('state-popup-overlay').classList.remove('open');
 }
 
 function showStateInfo(s) {
@@ -768,6 +1164,18 @@ function setMode(mode) {
     var mapEl = document.getElementById('usa-map');
     if (mapEl) mapEl.classList.remove('hide-labels');
   }
+  if (mode === 'quiz') {
+    // If not active, always show the Start button fresh
+    if (!quizActive) {
+      document.getElementById('quiz-start-btn').style.display = 'block';
+      document.getElementById('quiz-skip-btn').style.display  = 'none';
+      document.getElementById('quiz-feedback').style.display  = 'none';
+      document.getElementById('quiz-question').textContent    = 'Press Start to begin!';
+      document.getElementById('quiz-hint').textContent        = '';
+      document.getElementById('quiz-level-badge').textContent = '';
+      updateQuizStats();
+    }
+  }
 }
 
 function startQuiz() {
@@ -780,7 +1188,7 @@ function startQuiz() {
   document.getElementById('quiz-feedback').style.display = 'none';
   // Hide abbreviation labels during level 4 quiz so it's actually challenging
   var mapEl = document.getElementById('usa-map');
-  if (mapEl) mapEl.classList.toggle('hide-labels', currentLevel === 4);
+  if (mapEl) mapEl.classList.toggle('hide-labels', currentLevel === 3);
   nextQuestion();
 }
 
@@ -820,18 +1228,15 @@ function nextQuestion() {
     hint.textContent = 'Click the state on the map';
   } else if (currentLevel === 2) {
     badge.textContent = 'LEVEL 2 · REGIONS';
-    question.textContent = 'Which region is ' + quizTarget.name + ' in?';
-    hint.textContent = 'Click the state — then identify its region';
-    // For level 2 we ask them to click the state AND will show region
     question.textContent = 'Find a state in the ' + REGION_LABELS[quizTarget.region] + ' region';
     hint.textContent = 'Click any ' + REGION_LABELS[quizTarget.region] + ' state';
   } else if (currentLevel === 3) {
-    badge.textContent = 'LEVEL 3 · CAPITALS';
-    question.textContent = 'Which state has ' + quizTarget.capital + ' as its capital?';
+    badge.textContent = 'LEVEL 3 · ABBREVIATIONS';
+    question.textContent = 'Find the state with abbreviation ' + quizTarget.id;
     hint.textContent = 'Click the state on the map';
   } else if (currentLevel === 4) {
-    badge.textContent = 'LEVEL 4 · ABBREVIATIONS';
-    question.textContent = 'Find the state with abbreviation  ' + quizTarget.id;
+    badge.textContent = 'LEVEL 4 · CAPITALS';
+    question.textContent = 'Which state has ' + quizTarget.capital + ' as its capital?';
     hint.textContent = 'Click the state on the map';
   }
 }
@@ -919,11 +1324,611 @@ function clearQuizHighlights() {
   applyMasteryColors();
 }
 
-// ── UI HELPERS ──
+// ══════════════════════════════════════════════
+// LEVEL 5 — WORLD CONTINENTS
+// ══════════════════════════════════════════════
+
+var CONTINENTS = [
+  { id:'NA', name:'North America', color:'#4a90d9', largest:'Canada', ocean:'Pacific & Atlantic', pop:'579M', area:'24.7M km²',
+    countries:['Antigua & Barbuda','Bahamas','Barbados','Belize','Canada','Costa Rica','Cuba','Dominica','Dominican Republic','El Salvador','Grenada','Guatemala','Haiti','Honduras','Jamaica','Mexico','Nicaragua','Panama','St. Kitts & Nevis','St. Lucia','St. Vincent & Grenadines','Trinidad & Tobago','United States'] },
+  { id:'SA', name:'South America', color:'#88bb60', largest:'Brazil', ocean:'Atlantic & Pacific', pop:'434M', area:'17.8M km²',
+    countries:['Argentina','Bolivia','Brazil','Chile','Colombia','Ecuador','Guyana','Paraguay','Peru','Suriname','Uruguay','Venezuela'] },
+  { id:'EU', name:'Europe', color:'#e8c078', largest:'Ukraine', ocean:'Atlantic', pop:'746M', area:'10.5M km²',
+    countries:['Albania','Andorra','Austria','Belarus','Belgium','Bosnia & Herzegovina','Bulgaria','Croatia','Cyprus','Czech Republic','Denmark','Estonia','Finland','France','Germany','Greece','Hungary','Iceland','Ireland','Italy','Kosovo','Latvia','Liechtenstein','Lithuania','Luxembourg','Malta','Moldova','Monaco','Montenegro','Netherlands','North Macedonia','Norway','Poland','Portugal','Romania','Russia','San Marino','Serbia','Slovakia','Slovenia','Spain','Sweden','Switzerland','Ukraine','United Kingdom','Vatican City'] },
+  { id:'AF', name:'Africa', color:'#e88050', largest:'Algeria', ocean:'Atlantic & Indian', pop:'1.4B', area:'30.4M km²',
+    countries:['Algeria','Angola','Benin','Botswana','Burkina Faso','Burundi','Cabo Verde','Cameroon','Central African Republic','Chad','Comoros','Congo','Côte d\'Ivoire','DR Congo','Djibouti','Egypt','Equatorial Guinea','Eritrea','Eswatini','Ethiopia','Gabon','Gambia','Ghana','Guinea','Guinea-Bissau','Kenya','Lesotho','Liberia','Libya','Madagascar','Malawi','Mali','Mauritania','Mauritius','Morocco','Mozambique','Namibia','Niger','Nigeria','Rwanda','São Tomé & Príncipe','Senegal','Seychelles','Sierra Leone','Somalia','South Africa','South Sudan','Sudan','Tanzania','Togo','Tunisia','Uganda','Western Sahara','Zambia','Zimbabwe'] },
+  { id:'AS', name:'Asia', color:'#b07ab8', largest:'China', ocean:'Pacific & Indian', pop:'4.7B', area:'44.6M km²',
+    countries:['Afghanistan','Armenia','Azerbaijan','Bahrain','Bangladesh','Bhutan','Brunei','Cambodia','China','Cyprus','Georgia','India','Indonesia','Iran','Iraq','Israel','Japan','Jordan','Kazakhstan','Kuwait','Kyrgyzstan','Laos','Lebanon','Malaysia','Maldives','Mongolia','Myanmar','Nepal','North Korea','Oman','Pakistan','Palestine','Philippines','Qatar','Russia','Saudi Arabia','Singapore','South Korea','Sri Lanka','Syria','Taiwan','Tajikistan','Thailand','Timor-Leste','Turkey','Turkmenistan','United Arab Emirates','Uzbekistan','Vietnam','Yemen'] },
+  { id:'OC', name:'Australia / Oceania', color:'#58b8c0', largest:'Australia', ocean:'Pacific & Indian', pop:'43M', area:'8.5M km²',
+    countries:['Australia','Fiji','Kiribati','Marshall Islands','Micronesia','Nauru','New Zealand','Palau','Papua New Guinea','Samoa','Solomon Islands','Tonga','Tuvalu','Vanuatu'] },
+  { id:'AN', name:'Antarctica', color:'#a0b8d0', largest:'(uninhabited)', ocean:'Southern', pop:'~5,000', area:'14.2M km²',
+    countries:['No sovereign nations — governed by the Antarctic Treaty (1959)'] },
+];
+
+// Complete ISO3 → continent mapping
+var COUNTRY_TO_CONTINENT = {
+  // North America
+  'USA':'NA','CAN':'NA','MEX':'NA','GTM':'NA','BLZ':'NA','HND':'NA','SLV':'NA',
+  'NIC':'NA','CRI':'NA','PAN':'NA','CUB':'NA','JAM':'NA','HTI':'NA','DOM':'NA',
+  'PRI':'NA','TTO':'NA','BHS':'NA','BRB':'NA','LCA':'NA','VCT':'NA','GRD':'NA',
+  'ATG':'NA','DMA':'NA','KNA':'NA','ABW':'NA','CYM':'NA','BMU':'NA','VGB':'NA',
+  'TCA':'NA','MSR':'NA','AIA':'NA','SPM':'NA','GLP':'NA','MTQ':'NA','CUW':'NA',
+  'MAF':'NA','SXM':'NA','BLM':'NA','VIR':'NA','PRI':'NA',
+  // South America
+  'BRA':'SA','ARG':'SA','CHL':'SA','COL':'SA','VEN':'SA','PER':'SA','ECU':'SA',
+  'BOL':'SA','PRY':'SA','URY':'SA','GUY':'SA','SUR':'SA','GUF':'SA','FLK':'SA',
+  // Europe (Russia and Turkey moved to Asia — their landmass is overwhelmingly Asian)
+  'DEU':'EU','FRA':'EU','GBR':'EU','ITA':'EU','ESP':'EU','POL':'EU',
+  'NLD':'EU','BEL':'EU','CHE':'EU','AUT':'EU','SWE':'EU','NOR':'EU','DNK':'EU',
+  'FIN':'EU','PRT':'EU','GRC':'EU','CZE':'EU','ROU':'EU','HUN':'EU','SVK':'EU',
+  'BGR':'EU','SRB':'EU','HRV':'EU','BIH':'EU','SVN':'EU','LTU':'EU','LVA':'EU',
+  'EST':'EU','BLR':'EU','UKR':'EU','MDA':'EU','ALB':'EU','MKD':'EU','MNE':'EU',
+  'LUX':'EU','MLT':'EU','ISL':'EU','IRL':'EU','AND':'EU','LIE':'EU','MCO':'EU',
+  'SMR':'EU','VAT':'EU','XKX':'EU','FRO':'EU','GIB':'EU','IMN':'EU','GGY':'EU',
+  'JEY':'EU','ALA':'EU','SJM':'EU',
+  // Africa
+  'DZA':'AF','AGO':'AF','BEN':'AF','BWA':'AF','BFA':'AF','BDI':'AF','CPV':'AF',
+  'CMR':'AF','CAF':'AF','TCD':'AF','COM':'AF','COD':'AF','COG':'AF','CIV':'AF',
+  'DJI':'AF','EGY':'AF','GNQ':'AF','ERI':'AF','SWZ':'AF','ETH':'AF','GAB':'AF',
+  'GMB':'AF','GHA':'AF','GIN':'AF','GNB':'AF','KEN':'AF','LSO':'AF','LBR':'AF',
+  'LBY':'AF','MDG':'AF','MWI':'AF','MLI':'AF','MRT':'AF','MUS':'AF','MAR':'AF',
+  'MOZ':'AF','NAM':'AF','NER':'AF','NGA':'AF','RWA':'AF','STP':'AF','SEN':'AF',
+  'SYC':'AF','SLE':'AF','SOM':'AF','ZAF':'AF','SSD':'AF','SDN':'AF','TZA':'AF',
+  'TGO':'AF','TUN':'AF','UGA':'AF','ESH':'AF','ZMB':'AF','ZWE':'AF','REU':'AF',
+  'MYT':'AF','SHN':'AF','IOT':'AF',
+  // North America (adding Greenland)
+  'GRL':'NA',
+  // Oceania (adding Heard Island)
+  'HMD':'OC',
+  // Asia
+  'RUS':'AS','TUR':'AS',
+  'AFG':'AS','ARM':'AS','AZE':'AS','BHR':'AS','BGD':'AS','BTN':'AS','BRN':'AS',
+  'KHM':'AS','CHN':'AS','CYP':'AS','GEO':'AS','HKG':'AS','IND':'AS','IDN':'AS',
+  'IRN':'AS','IRQ':'AS','ISR':'AS','JPN':'AS','JOR':'AS','KAZ':'AS','KWT':'AS',
+  'KGZ':'AS','LAO':'AS','LBN':'AS','MAC':'AS','MYS':'AS','MDV':'AS','MNG':'AS',
+  'MMR':'AS','NPL':'AS','PRK':'AS','OMN':'AS','PAK':'AS','PSE':'AS','PHL':'AS',
+  'QAT':'AS','SAU':'AS','SGP':'AS','KOR':'AS','LKA':'AS','SYR':'AS','TWN':'AS',
+  'TJK':'AS','THA':'AS','TLS':'AS','TUR':'AS','TKM':'AS','ARE':'AS','UZB':'AS',
+  'VNM':'AS','YEM':'AS',
+  // Oceania
+  'AUS':'OC','FJI':'OC','KIR':'OC','MHL':'OC','FSM':'OC','NRU':'OC','NZL':'OC',
+  'PLW':'OC','PNG':'OC','WSM':'OC','SLB':'OC','TON':'OC','TUV':'OC','VUT':'OC',
+  'COK':'OC','NIU':'OC','NCL':'OC','PYF':'OC','GUM':'OC','MNP':'OC','ASM':'OC',
+  'WLF':'OC','TKL':'OC','PCN':'OC','NFK':'OC','CCK':'OC','CXR':'OC',
+  // Antarctica
+  'ATA':'AN'
+};
+
+var worldMastery = {};
+var worldQuizActive = false;
+var worldQuizTarget = null;
+var worldQuizQueue = [];
+var wqCorrect = 0, wqWrong = 0, wqStreak = 0;
+var worldGeoPath = null;
+var selectedContinent = null;
+
+function loadWorldMastery() {
+  if (!currentPerson) return;
+  db.ref('world-mastery/' + currentPerson).once('value', function(snap) {
+    worldMastery = snap.val() || {};
+    updateWorldProgress();
+    applyWorldColors();
+  });
+}
+
+function saveWorldMastery(cid) {
+  if (!currentPerson) return;
+  db.ref('world-mastery/' + currentPerson + '/' + cid).set(worldMastery[cid]);
+}
+
+function getWorldMastery(id) {
+  return worldMastery[id] || {streak:0, correct:0, wrong:0};
+}
+
+function updateWorldProgress() {
+  var mastered = CONTINENTS.filter(function(c){ return getWorldMastery(c.id).streak >= 3; }).length;
+  var el = document.getElementById('world-prog-count');
+  if (el) el.textContent = mastered;
+  var bar = document.getElementById('bar-5');
+  if (bar) bar.style.width = (mastered/7*100) + '%';
+  var pct = document.getElementById('pct-5');
+  if (pct) pct.textContent = mastered + ' / 7 mastered';
+
+  // Progress chips
+  var chips = document.getElementById('world-progress-chips');
+  if (!chips) return;
+  chips.innerHTML = '';
+  CONTINENTS.forEach(function(c) {
+    var m = getWorldMastery(c.id);
+    var chip = document.createElement('div');
+    chip.style.cssText = 'padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;border:1px solid ' + c.color + '40;background:' + c.color + (m.streak>=3?'':'20') + ';color:' + (m.streak>=3 ? '#1a2e1a' : c.color) + ';cursor:pointer;transition:all .2s';
+    chip.textContent = c.name.split(' ')[0];
+    chip.title = c.name;
+    chip.addEventListener('click', function(){ highlightContinent(c.id); });
+    chips.appendChild(chip);
+  });
+}
+
+function buildWorldMap() {
+  var svg = d3.select('#world-map');
+  svg.selectAll('*').remove();
+
+  var projection = d3.geoNaturalEarth1().scale(153).translate([480, 250]);
+  worldGeoPath = d3.geoPath().projection(projection);
+
+  d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json').then(function(world) {
+    var countries = topojson.feature(world, world.objects.countries).features;
+
+    countries.forEach(function(feature) {
+      var iso = getISO(feature.id);
+      var cid = COUNTRY_TO_CONTINENT[iso];
+
+      // France is a MultiPolygon that includes overseas territories.
+      // Split it: polygons with centroid lon < -20 are in the Americas (SA),
+      // polygons with centroid lon > 50 are in Indian Ocean (AF/OC area — color AF).
+      // Mainland and rest = EU.
+      if (iso === 'FRA' && feature.geometry && feature.geometry.type === 'MultiPolygon') {
+        feature.geometry.coordinates.forEach(function(polygonCoords, pi) {
+          var subFeature = { type:'Feature', geometry:{ type:'Polygon', coordinates: polygonCoords } };
+          var cx = worldGeoPath.centroid(subFeature);
+          // We need the geographic centroid — approximate from coords
+          var pts = polygonCoords[0];
+          var geoLon = pts.reduce(function(s,p){return s+p[0];},0)/pts.length;
+          var subCid = geoLon < -20 ? 'SA' : (geoLon > 50 ? 'AF' : 'EU');
+          var cont = CONTINENTS.find(function(c){ return c.id === subCid; });
+          svg.append('path')
+            .datum(subFeature)
+            .attr('class', 'state-path continent-' + subCid)
+            .attr('d', worldGeoPath)
+            .style('fill', cont ? cont.color : '#888')
+            .style('stroke', '#1a2e18')
+            .style('stroke-width', '0.4')
+            .on('click', function(){ onContinentClick(subCid); })
+            .on('mouseenter', function(event){ showWorldTooltip(event, CONTINENTS.find(function(c){return c.id===subCid;})||{name:''}); })
+            .on('mouseleave', function(){ document.getElementById('world-tooltip').classList.remove('show'); })
+            .on('mousemove', function(event){ moveWorldTooltip(event); });
+        });
+        return; // skip normal rendering for France
+      }
+
+      var cont = CONTINENTS.find(function(c){ return c.id === cid; });
+      if (!cont) return;
+
+      svg.append('path')
+        .datum(feature)
+        .attr('class', 'state-path continent-' + cid)
+        .attr('id', 'country-' + iso)
+        .attr('d', worldGeoPath)
+        .style('fill', cont.color)
+        .style('stroke', '#1a2e18')
+        .style('stroke-width', '0.4')
+        .on('click', function(){ onContinentClick(cid); })
+        .on('mouseenter', function(event){ showWorldTooltip(event, cont); })
+        .on('mouseleave', function(){ document.getElementById('world-tooltip').classList.remove('show'); })
+        .on('mousemove', function(event){ moveWorldTooltip(event); });
+    });
+
+    // Continent labels — custom per continent
+    var contLabels = {
+      NA: { lines: ['North', 'America'], pos: [-100, 45] },
+      SA: { lines: ['South', 'America'], pos: [-58, -10] },
+      EU: { lines: ['Europe'],           pos: [15, 52]   },
+      AF: { lines: ['Africa'],           pos: [20, 5]    },
+      AS: { lines: ['Asia'],             pos: [90, 45]   },
+      OC: { lines: ['Australia /', 'Oceania'], pos: [135, -22] },
+      AN: { lines: ['Antarctica'],       pos: [20, -75]  }
+    };
+    CONTINENTS.forEach(function(c) {
+      var cfg = contLabels[c.id];
+      if (!cfg) return;
+      var proj = projection(cfg.pos);
+      if (!proj) return;
+      var lineH = 15;
+      var totalH = (cfg.lines.length - 1) * lineH;
+      cfg.lines.forEach(function(line, i) {
+        svg.append('text')
+          .attr('x', proj[0])
+          .attr('y', proj[1] - totalH / 2 + i * lineH)
+          .attr('text-anchor', 'middle')
+          .attr('pointer-events', 'none')
+          .attr('font-family', 'Nunito, sans-serif')
+          .attr('font-size', '13px')
+          .attr('font-weight', '900')
+          .attr('fill', 'rgba(0,0,0,0.72)')
+          .attr('stroke', 'rgba(255,255,255,0.5)')
+          .attr('stroke-width', '2.5')
+          .attr('paint-order', 'stroke')
+          .attr('class', 'world-label')
+          .text(line);
+      });
+    });
+
+    // Ocean labels
+    var OCEANS = [
+      { name:'Pacific\nOcean',   lines:['Pacific','Ocean'],   pos:[-150, 5]  },
+      { name:'Atlantic\nOcean',  lines:['Atlantic','Ocean'],  pos:[-30, 10]  },
+      { name:'Indian\nOcean',    lines:['Indian','Ocean'],    pos:[75, -25]  },
+      { name:'Arctic\nOcean',    lines:['Arctic','Ocean'],    pos:[0, 82]    },
+      { name:'Southern\nOcean',  lines:['Southern','Ocean'],  pos:[0, -62]   },
+    ];
+    OCEANS.forEach(function(o) {
+      var proj = projection(o.pos);
+      if (!proj) return;
+      o.lines.forEach(function(line, i) {
+        svg.append('text')
+          .attr('x', proj[0])
+          .attr('y', proj[1] - 7 + i * 14)
+          .attr('text-anchor', 'middle')
+          .attr('pointer-events', 'none')
+          .attr('font-family', 'Cinzel, serif')
+          .attr('font-size', '10px')
+          .attr('font-weight', '600')
+          .attr('fill', 'rgba(180,220,255,0.85)')
+          .attr('letter-spacing', '1.5px')
+          .attr('class', 'world-label')
+          .text(line);
+      });
+    });
+    svg.insert('path','path')
+      .datum(d3.geoGraticule()())
+      .attr('fill','none')
+      .attr('stroke','rgba(240,192,64,0.06)')
+      .attr('stroke-width','0.5')
+      .attr('d', worldGeoPath);
+
+    // Outline sphere
+    svg.insert('path','path')
+      .datum({type:'Sphere'})
+      .attr('fill','#1a4060')
+      .attr('stroke','rgba(240,192,64,0.2)')
+      .attr('stroke-width','1')
+      .attr('d', worldGeoPath);
+
+    applyWorldColors();
+    buildWorldLegend();
+  }).catch(function(err){ console.error('World map error:', err); });
+}
+
+// Convert numeric TopoJSON id to 3-letter ISO3
+function getISO(numId) {
+  var n = String(numId).padStart(3, '0');
+  var lookup = {
+    '004':'AFG','008':'ALB','010':'ATA','012':'DZA','016':'ASM','020':'AND',
+    '024':'AGO','028':'ATG','032':'ARG','036':'AUS','040':'AUT','044':'BHS',
+    '048':'BHR','050':'BGD','051':'ARM','052':'BRB','056':'BEL','060':'BMU',
+    '064':'BTN','068':'BOL','070':'BIH','072':'BWA','076':'BRA','084':'BLZ',
+    '090':'SLB','092':'VGB','096':'BRN','100':'BGR','104':'MMR','108':'BDI',
+    '116':'KHM','120':'CMR','124':'CAN','132':'CPV','136':'CYM','140':'CAF',
+    '144':'LKA','148':'TCD','152':'CHL','156':'CHN','162':'CXR','166':'CCK',
+    '170':'COL','174':'COM','175':'MYT','178':'COG','180':'COD','184':'COK',
+    '188':'CRI','191':'HRV','192':'CUB','196':'CYP','203':'CZE','204':'BEN',
+    '208':'DNK','212':'DMA','214':'DOM','218':'ECU','818':'EGY','222':'SLV',
+    '226':'GNQ','231':'ETH','232':'ERI','233':'EST','234':'FRO','238':'FLK',
+    '242':'FJI','246':'FIN','250':'FRA','254':'GUF','258':'PYF','262':'DJI','266':'GAB',
+    '268':'GEO','276':'DEU','288':'GHA','292':'GIB','296':'KIR','300':'GRC',
+    '304':'GRL','308':'GRD','316':'GUM','320':'GTM','324':'GIN','328':'GUY',
+    '332':'HTI','334':'HMD','336':'VAT','340':'HND','344':'HKG','348':'HUN',
+    '352':'ISL','356':'IND','360':'IDN','364':'IRN','368':'IRQ','372':'IRL',
+    '376':'ISR','380':'ITA','388':'JAM','392':'JPN','398':'KAZ','400':'JOR',
+    '404':'KEN','408':'PRK','410':'KOR','414':'KWT','417':'KGZ','418':'LAO',
+    '422':'LBN','426':'LSO','428':'LVA','430':'LBR','434':'LBY','438':'LIE',
+    '440':'LTU','442':'LUX','446':'MAC','450':'MDG','454':'MWI','458':'MYS',
+    '462':'MDV','466':'MLI','470':'MLT','474':'MTQ','478':'MRT','480':'MUS',
+    '484':'MEX','492':'MCO','496':'MNG','498':'MDA','504':'MAR','508':'MOZ',
+    '516':'NAM','520':'NRU','524':'NPL','528':'NLD','533':'ABW','540':'NCL',
+    '548':'VUT','554':'NZL','558':'NIC','562':'NER','566':'NGA','570':'NIU',
+    '574':'NFK','578':'NOR','580':'MNP','583':'FSM','584':'MHL','585':'PLW',
+    '586':'PAK','591':'PAN','598':'PNG','600':'PRY','604':'PER','608':'PHL',
+    '612':'PCN','616':'POL','620':'PRT','624':'GNB','626':'TLS','630':'PRI',
+    '634':'QAT','638':'REU','642':'ROU','643':'RUS','646':'RWA','654':'SHN',
+    '659':'KNA','662':'LCA','666':'SPM','670':'VCT','678':'STP','682':'SAU',
+    '686':'SEN','690':'SYC','694':'SLE','703':'SVK','704':'VNM','706':'SOM',
+    '710':'ZAF','716':'ZWE','724':'ESP','728':'SSD','729':'SDN','732':'ESH',
+    '740':'SUR','744':'SJM','748':'SWZ','752':'SWE','756':'CHE','760':'SYR',
+    '762':'TJK','764':'THA','768':'TGO','772':'TKL','776':'TON','780':'TTO',
+    '784':'ARE','788':'TUN','792':'TUR','795':'TKM','796':'TCA','798':'TUV',
+    '800':'UGA','804':'UKR','807':'MKD','826':'GBR','831':'GGY','832':'JEY',
+    '833':'IMN','834':'TZA','840':'USA','850':'VIR','854':'BFA','858':'URY',
+    '860':'UZB','862':'VEN','876':'WLF','882':'WSM','887':'YEM','894':'ZMB',
+    '895':'ATA'
+  };
+  return lookup[n] || ('X'+n);
+}
+
+function applyWorldColors() {
+  CONTINENTS.forEach(function(c) {
+    var m = getWorldMastery(c.id);
+    d3.selectAll('.continent-' + c.id).each(function() {
+      var el = d3.select(this);
+      var cls = 'state-path continent-' + c.id;
+      if (c.id === selectedContinent) cls += ' highlight';
+      else if (m.streak >= 3) cls += ' mastered';
+      else if (m.correct > 0) cls += ' seen';
+      el.attr('class', cls).style('fill', null); // let CSS handle mastered/seen, restore color otherwise
+      if (!cls.includes('mastered') && !cls.includes('seen') && !cls.includes('highlight')) {
+        el.style('fill', c.color);
+      }
+    });
+  });
+}
+
+function highlightContinent(cid) {
+  selectedContinent = cid;
+  applyWorldColors();
+  var cont = CONTINENTS.find(function(c){ return c.id === cid; });
+  if (cont) showWorldInfo(cont);
+}
+
+function showWorldInfo(cont) {
+  document.getElementById('world-study-empty').style.display = 'none';
+  document.getElementById('world-study-info').style.display = 'block';
+  document.getElementById('world-info-name').textContent = cont.name;
+  document.getElementById('world-info-sub').textContent = cont.area + ' · Pop. ' + cont.pop;
+  document.getElementById('world-info-country').textContent = cont.largest;
+  document.getElementById('world-info-ocean').textContent = cont.ocean;
+  var m = getWorldMastery(cont.id);
+  var dots = document.getElementById('world-info-mastery');
+  dots.innerHTML = '';
+  for (var i=0;i<3;i++){
+    var d=document.createElement('div');
+    d.className='mastery-dot'+(i<m.streak?' filled':'');
+    dots.appendChild(d);
+  }
+  // Country list with count
+  var listEl = document.getElementById('world-info-countries');
+  if (listEl && cont.countries) {
+    var count = cont.countries.length;
+    // Update the label to include count
+    var labelEl = listEl.previousElementSibling;
+    if (labelEl) labelEl.textContent = 'Countries (' + count + ')';
+    listEl.innerHTML = '';
+    cont.countries.forEach(function(name, i) {
+      var tag = document.createElement('span');
+      tag.style.cssText = 'display:inline-block;padding:3px 9px;margin:3px;border-radius:8px;font-size:11px;font-weight:700;background:' + cont.color + '22;border:1px solid ' + cont.color + '55;color:' + cont.color + ';';
+      tag.textContent = (i + 1) + '. ' + name;
+      listEl.appendChild(tag);
+    });
+  }
+}
+
+function showWorldTooltip(event, cont) {
+  if (worldQuizActive) return; // hide tooltip during quiz
+  var tt = document.getElementById('world-tooltip');
+  tt.textContent = cont.name;
+  tt.classList.add('show');
+  moveWorldTooltip(event);
+}
+function moveWorldTooltip(event) {
+  var tt = document.getElementById('world-tooltip');
+  var wrap = document.querySelector('#screen-world .map-wrap');
+  var rect = wrap.getBoundingClientRect();
+  tt.style.left = (event.clientX - rect.left + 12) + 'px';
+  tt.style.top  = (event.clientY - rect.top  - 30) + 'px';
+}
+
+function onContinentClick(cid) {
+  if (worldQuizActive) {
+    handleWorldAnswer(cid);
+    return;
+  }
+  highlightContinent(cid);
+}
+
+function setWorldMode(mode) {
+  document.getElementById('world-tab-study').classList.toggle('active', mode==='study');
+  document.getElementById('world-tab-quiz').classList.toggle('active', mode==='quiz');
+  document.getElementById('world-study-panel').style.display = mode==='study' ? 'block' : 'none';
+  document.getElementById('world-quiz-panel').style.display  = mode==='quiz'  ? 'flex'  : 'none';
+  var mapEl = document.getElementById('world-map');
+  if (mode === 'study') {
+    worldQuizActive = false;
+    selectedContinent = null;
+    if (mapEl) mapEl.classList.remove('hide-labels');
+    applyWorldColors();
+  }
+  if (mode === 'quiz' && !worldQuizActive) {
+    if (mapEl) mapEl.classList.add('hide-labels');
+    document.getElementById('world-quiz-start-btn').style.display = 'block';
+    document.getElementById('world-quiz-skip-btn').style.display  = 'none';
+    document.getElementById('world-quiz-feedback').style.display  = 'none';
+    document.getElementById('world-quiz-question').textContent    = 'Press Start to begin!';
+    document.getElementById('world-quiz-hint').textContent        = '';
+    document.getElementById('world-quiz-badge').textContent       = '';
+    updateWorldQuizStats();
+  }
+}
+
+var worldQuizType = 'continent';
+
+var OCEAN_DATA = [
+  { id:'pacific',  name:'Pacific Ocean',  hint:'Largest ocean — borders Asia, the Americas & Australia/Oceania' },
+  { id:'atlantic', name:'Atlantic Ocean', hint:'Second largest — borders the Americas, Europe & Africa' },
+  { id:'indian',   name:'Indian Ocean',   hint:'Third largest — between Africa, Asia & Australia/Oceania' },
+  { id:'arctic',   name:'Arctic Ocean',   hint:'Smallest ocean — surrounds the North Pole' },
+  { id:'southern', name:'Southern Ocean', hint:'Encircles Antarctica — also called the Antarctic Ocean' },
+];
+var worldOceanQuizQueue = [];
+var worldOceanTarget = null;
+
+function setWorldQuizType(type) {
+  worldQuizType = type;
+  var btnC = document.getElementById('world-qtype-continent');
+  var btnO = document.getElementById('world-qtype-ocean');
+  if (type === 'continent') {
+    btnC.style.cssText = 'flex:1;padding:8px;border:none;border-radius:8px;font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a2e1a;letter-spacing:.3px;';
+    btnO.style.cssText = 'flex:1;padding:8px;border:1px solid var(--border);border-radius:8px;font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer;background:rgba(0,0,0,.2);color:var(--subtext);letter-spacing:.3px;';
+  } else {
+    btnO.style.cssText = 'flex:1;padding:8px;border:none;border-radius:8px;font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#1a4060,#2060a0);color:#b8e0ff;letter-spacing:.3px;';
+    btnC.style.cssText = 'flex:1;padding:8px;border:1px solid var(--border);border-radius:8px;font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer;background:rgba(0,0,0,.2);color:var(--subtext);letter-spacing:.3px;';
+  }
+  worldQuizActive = false;
+  hideOceanAnswerButtons();
+  document.getElementById('world-quiz-start-btn').style.display = 'block';
+  document.getElementById('world-quiz-skip-btn').style.display  = 'none';
+  document.getElementById('world-quiz-feedback').style.display  = 'none';
+  document.getElementById('world-quiz-question').textContent    = 'Press Start to begin!';
+  document.getElementById('world-quiz-hint').textContent        = '';
+  document.getElementById('world-quiz-badge').textContent       = '';
+}
+
+function startWorldQuiz() {
+  worldQuizActive = true;
+  wqCorrect = 0; wqWrong = 0; wqStreak = 0;
+  updateWorldQuizStats();
+  document.getElementById('world-tooltip').classList.remove('show');
+  if (worldQuizType === 'ocean') {
+    worldOceanQuizQueue = OCEAN_DATA.slice().concat(OCEAN_DATA.slice()).concat(OCEAN_DATA.slice());
+    shuffle(worldOceanQuizQueue);
+  } else {
+    worldQuizQueue = CONTINENTS.slice().concat(CONTINENTS.slice()).concat(CONTINENTS.slice());
+    shuffle(worldQuizQueue);
+  }
+  document.getElementById('world-quiz-start-btn').style.display = 'none';
+  document.getElementById('world-quiz-skip-btn').style.display  = 'block';
+  document.getElementById('world-quiz-feedback').style.display  = 'none';
+  worldNextQuestion();
+}
+
+function worldNextQuestion() {
+  selectedContinent = null;
+  applyWorldColors();
+  document.getElementById('world-quiz-feedback').style.display = 'none';
+
+  if (worldQuizType === 'ocean') {
+    if (!worldOceanQuizQueue.length) { worldOceanQuizQueue = OCEAN_DATA.slice().concat(OCEAN_DATA.slice()); shuffle(worldOceanQuizQueue); }
+    worldOceanTarget = worldOceanQuizQueue.shift();
+    document.getElementById('world-quiz-badge').textContent    = 'LEVEL 5 · OCEANS';
+    var qMap = { pacific:'is the largest in the world?', atlantic:'borders Europe and the Americas?', indian:'lies between Africa and Australia?', arctic:'surrounds the North Pole?', southern:'encircles Antarctica?' };
+    document.getElementById('world-quiz-question').textContent = 'Which ocean ' + (qMap[worldOceanTarget.id] || 'matches this description?');
+    document.getElementById('world-quiz-hint').textContent     = worldOceanTarget.hint;
+    showOceanAnswerButtons();
+  } else {
+    hideOceanAnswerButtons();
+    if (!worldQuizQueue.length) { worldQuizQueue = CONTINENTS.slice().concat(CONTINENTS.slice()); shuffle(worldQuizQueue); }
+    worldQuizTarget = worldQuizQueue.shift();
+    document.getElementById('world-quiz-badge').textContent    = 'LEVEL 5 · CONTINENTS';
+    document.getElementById('world-quiz-question').textContent = 'Find ' + worldQuizTarget.name;
+    document.getElementById('world-quiz-hint').textContent     = 'Click the continent on the map';
+  }
+}
+
+function showOceanAnswerButtons() {
+  hideOceanAnswerButtons();
+  var wrap = document.createElement('div');
+  wrap.id = 'world-ocean-btns';
+  wrap.style.cssText = 'display:flex;flex-direction:column;gap:7px;margin-top:10px;';
+  OCEAN_DATA.forEach(function(o) {
+    var btn = document.createElement('button');
+    btn.className = 'quiz-btn quiz-btn-secondary';
+    btn.textContent = o.name;
+    btn.setAttribute('data-oid', o.id);
+    btn.onclick = function() { handleOceanAnswer(o.id); };
+    wrap.appendChild(btn);
+  });
+  var skipBtn = document.getElementById('world-quiz-skip-btn');
+  skipBtn.parentNode.insertBefore(wrap, skipBtn);
+}
+
+function hideOceanAnswerButtons() {
+  var el = document.getElementById('world-ocean-btns');
+  if (el) el.remove();
+}
+
+function handleOceanAnswer(clickedId) {
+  if (!worldOceanTarget) return;
+  var correct = clickedId === worldOceanTarget.id;
+  // Color the buttons
+  document.querySelectorAll('#world-ocean-btns button').forEach(function(btn) {
+    var oid = btn.getAttribute('data-oid');
+    btn.disabled = true;
+    if (oid === worldOceanTarget.id) { btn.style.background='rgba(74,222,128,.3)'; btn.style.color='#4ade80'; btn.style.border='1px solid rgba(74,222,128,.5)'; }
+    else if (oid === clickedId) { btn.style.background='rgba(248,113,113,.3)'; btn.style.color='#f87171'; btn.style.border='1px solid rgba(248,113,113,.5)'; }
+  });
+  if (correct) { wqCorrect++; wqStreak++; } else { wqWrong++; wqStreak=0; }
+  updateWorldQuizStats();
+  var fb = document.getElementById('world-quiz-feedback');
+  fb.className = 'quiz-feedback ' + (correct ? 'correct' : 'wrong');
+  fb.textContent = correct ? '✓ Correct! ' + worldOceanTarget.name + '!' : '✗ The answer was ' + worldOceanTarget.name + '.';
+  fb.style.display = 'block';
+  setTimeout(function(){ if (worldQuizActive) worldNextQuestion(); }, correct ? 1000 : 2000);
+}
+
+function handleWorldAnswer(clickedCid) {
+  if (!worldQuizTarget || worldQuizType === 'ocean') return;
+  var fb = document.getElementById('world-quiz-feedback');
+  var correct = clickedCid === worldQuizTarget.id;
+  var cont = CONTINENTS.find(function(c){ return c.id === clickedCid; });
+
+  // Flash clicked continent
+  if (cont) {
+    d3.selectAll('.continent-' + clickedCid)
+      .attr('class', 'state-path continent-' + clickedCid + ' ' + (correct ? 'correct' : 'wrong'))
+      .style('fill', null);
+    setTimeout(function(){ applyWorldColors(); }, 1200);
+  }
+
+  if (!correct) {
+    setTimeout(function(){
+      d3.selectAll('.continent-' + worldQuizTarget.id)
+        .attr('class', 'state-path continent-' + worldQuizTarget.id + ' highlight')
+        .style('fill', null);
+      setTimeout(function(){ applyWorldColors(); }, 1500);
+    }, 400);
+  }
+
+  // Mastery
+  if (!worldMastery[worldQuizTarget.id]) worldMastery[worldQuizTarget.id] = {streak:0,correct:0,wrong:0};
+  if (correct) {
+    worldMastery[worldQuizTarget.id].streak  = Math.min((worldMastery[worldQuizTarget.id].streak||0)+1, 3);
+    worldMastery[worldQuizTarget.id].correct = (worldMastery[worldQuizTarget.id].correct||0)+1;
+    wqCorrect++; wqStreak++;
+    if (worldMastery[worldQuizTarget.id].streak >= 3) showToastMsg('⭐ ' + worldQuizTarget.name + ' mastered!');
+  } else {
+    worldMastery[worldQuizTarget.id].streak = 0;
+    worldMastery[worldQuizTarget.id].wrong  = (worldMastery[worldQuizTarget.id].wrong||0)+1;
+    wqWrong++; wqStreak = 0;
+  }
+  saveWorldMastery(worldQuizTarget.id);
+  updateWorldQuizStats();
+  updateWorldProgress();
+
+  fb.className = 'quiz-feedback ' + (correct ? 'correct' : 'wrong');
+  fb.textContent = correct
+    ? '✓ Correct! That\'s ' + worldQuizTarget.name + '!'
+    : '✗ That was ' + (cont ? cont.name : '?') + '. The answer was ' + worldQuizTarget.name + '.';
+  fb.style.display = 'block';
+
+  setTimeout(function(){ if (worldQuizActive) worldNextQuestion(); }, correct ? 1000 : 2200);
+}
+
+function updateWorldQuizStats() {
+  var ec = document.getElementById('world-stat-correct');
+  var ew = document.getElementById('world-stat-wrong');
+  var es = document.getElementById('world-stat-streak');
+  if (ec) ec.textContent = wqCorrect;
+  if (ew) ew.textContent = wqWrong;
+  if (es) es.textContent = wqStreak;
+}
+
+function buildWorldLegend() {
+  var leg = document.getElementById('world-legend');
+  if (!leg) return;
+  leg.innerHTML = '';
+  CONTINENTS.forEach(function(c) {
+    var item = document.createElement('div');
+    item.className = 'legend-item';
+    var dot = document.createElement('div');
+    dot.className = 'legend-dot';
+    dot.style.background = c.color;
+    item.appendChild(dot);
+    item.appendChild(document.createTextNode(c.name));
+    leg.appendChild(item);
+  });
+}
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
   document.getElementById(id).classList.add('active');
-  if (id !== 'screen-app') document.getElementById('app-header').style.display='none';
+  if (id !== 'screen-app' && id !== 'screen-world') document.getElementById('app-header').style.display='none';
 }
 
 function showToastMsg(msg) {
@@ -936,5 +1941,27 @@ function showToastMsg(msg) {
 // ── INIT ──
 showScreen('screen-person');
 </script>
+<!-- STATE DETAIL POPUP -->
+<div class="state-popup-overlay" id="state-popup-overlay" onclick="closeStatePopup(event)">
+  <div class="state-popup" id="state-popup">
+    <button class="state-popup-close" onclick="closeStatePopup()">&#x2715;</button>
+    <div class="state-popup-name" id="popup-name"></div>
+    <div class="state-popup-abbr" id="popup-abbr"></div>
+    <div class="state-popup-svg-wrap">
+      <svg id="state-popup-svg" viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="state-popup-info">
+      <div class="state-popup-row">
+        <span class="state-popup-label">Capital</span>
+        <span class="state-popup-value"><span class="state-popup-capital-star">★</span><span id="popup-capital"></span></span>
+      </div>
+      <div class="state-popup-row">
+        <span class="state-popup-label">Region</span>
+        <span class="state-popup-value"><span class="region-chip" id="popup-region"></span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
