@@ -358,6 +358,9 @@
                 <button class="btn btn-pink" onclick="selectUser('hadley')">
                     👧 HADLEY'S PRACTICE
                 </button>
+                <button class="btn btn-purple" onclick="selectUser('audrey')">
+                    🐱 AUDREY'S PRACTICE
+                </button>
                 <button class="btn btn-orange" onclick="selectUser('guest')">
                     👤 GUEST PRACTICE
                 </button>
@@ -505,6 +508,7 @@
         let userData = JSON.parse(localStorage.getItem('wadeMathUsers')) || {
             ryder: { mult: {}, skip: {} },
             hadley: { mult: {}, skip: {} },
+            audrey: { mult: {}, skip: {} },
             guest: { mult: {}, skip: {} }
         };
 
