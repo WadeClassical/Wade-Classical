@@ -1496,32 +1496,42 @@ function handleKeydown(e) {
 // ══════════════════════════════════════════════
 function selectUser(user) {
     currentUser = user;
-    loadMastery(); // async — handles startSession/showScreen internally
+    loadMastery();
+    startSession();
+    showScreen('screenGame');
+    document.getElementById('statPlayer').textContent = user.toUpperCase();
+    const masteryBtn = document.getElementById('masteryViewBtn');
+    if (masteryBtn) masteryBtn.style.display = user === 'mom' ? 'inline-block' : 'none';
 }
 
 function loadMastery() {
-    db.ref('spelling/' + currentUser).once('value', function(snap) {
-        var saved = snap.val();
-        if (saved) {
-            masteryData = saved;
-        } else {
-            masteryData = { correct: [], wrong: [], untried: [...WORD_LISTS[currentUser]] };
-        }
-        // Add any new words not yet in mastery
-        const allWords = WORD_LISTS[currentUser];
-        const known = [...(masteryData.correct||[]), ...(masteryData.wrong||[]), ...(masteryData.untried||[])];
-        allWords.forEach(w => { if (!known.includes(w)) masteryData.untried.push(w); });
-        saveMastery();
-        startSession();
-        showScreen('screenGame');
-        document.getElementById('statPlayer').textContent = currentUser.toUpperCase();
-        const masteryBtn = document.getElementById('masteryViewBtn');
-        if (masteryBtn) masteryBtn.style.display = currentUser === 'mom' ? 'inline-block' : 'none';
-    });
+    // Load from localStorage instantly so the app is never blocked
+    const saved = localStorage.getItem('wc_spelling_' + currentUser);
+    if (saved) {
+        try { masteryData = JSON.parse(saved); } catch(e) { masteryData = null; }
+    }
+    if (!masteryData || !masteryData.untried) {
+        masteryData = { correct: [], wrong: [], untried: [...(WORD_LISTS[currentUser] || [])] };
+    }
+    // Add any new words not yet in mastery
+    const allWords = WORD_LISTS[currentUser] || [];
+    const known = [...(masteryData.correct||[]), ...(masteryData.wrong||[]), ...(masteryData.untried||[])];
+    allWords.forEach(w => { if (!known.includes(w)) masteryData.untried.push(w); });
+    // Also try to pull from Firebase and merge (non-blocking)
+    try {
+        db.ref('spelling/' + currentUser).once('value', function(snap) {
+            var fbData = snap.val();
+            if (fbData && fbData.untried) {
+                masteryData = fbData;
+                localStorage.setItem('wc_spelling_' + currentUser, JSON.stringify(masteryData));
+            }
+        });
+    } catch(e) {}
 }
 
 function saveMastery() {
-    db.ref('spelling/' + currentUser).set(masteryData);
+    localStorage.setItem('wc_spelling_' + currentUser, JSON.stringify(masteryData));
+    try { db.ref('spelling/' + currentUser).set(masteryData); } catch(e) {}
 }
 
 // ══════════════════════════════════════════════
@@ -1893,17 +1903,17 @@ function renderMomMastery() {
     `;
 
     players.forEach(player => {
-        // Load that player's mastery from Firebase
-        db.ref('spelling/' + player.key).once('value', function(snap) {
-            const data = snap.val() || { correct: [], wrong: [], untried: [] };
+        // Load from localStorage first (instant), fall back to Firebase
+        const localSaved = localStorage.getItem('wc_spelling_' + player.key);
+        let data = localSaved ? JSON.parse(localSaved) : { correct: [], wrong: [], untried: [] };
 
-            // Fill in any missing words
-            const allWords = WORD_LISTS[player.key] || [];
-            const known = [...(data.correct||[]), ...(data.wrong||[]), ...(data.untried||[])];
-            allWords.forEach(w => { if (!known.includes(w)) { data.untried = data.untried || []; data.untried.push(w); } });
+        // Fill in any missing words
+        const allWords = WORD_LISTS[player.key] || [];
+        const known = [...(data.correct||[]), ...(data.wrong||[]), ...(data.untried||[])];
+        allWords.forEach(w => { if (!known.includes(w)) { data.untried = data.untried || []; data.untried.push(w); } });
 
-            const total = (data.correct||[]).length + (data.wrong||[]).length + (data.untried||[]).length;
-            const pct = total ? Math.round(((data.correct||[]).length / total) * 100) : 0;
+        const total = (data.correct||[]).length + (data.wrong||[]).length + (data.untried||[]).length;
+        const pct = total ? Math.round(((data.correct||[]).length / total) * 100) : 0;
 
         const playerBlock = document.createElement('div');
         playerBlock.style.cssText = 'margin-bottom:36px; background:#050510; border:2px solid #1a1a3a; border-radius:4px; padding:20px;';
@@ -1956,7 +1966,6 @@ function renderMomMastery() {
         });
 
         c.appendChild(playerBlock);
-        }); // end Firebase once callback
     }); // end players.forEach
 
     // Back button
