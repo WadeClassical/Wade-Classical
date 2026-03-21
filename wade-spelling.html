@@ -839,6 +839,11 @@
                 <span class="user-name">HADLEY</span>
                 <span class="user-grade">GRADE 1–2</span>
             </button>
+            <button class="user-btn" onclick="selectUser('audrey')">
+                <span class="user-icon">🐱</span>
+                <span class="user-name">AUDREY</span>
+                <span class="user-grade">GRADE K–1</span>
+            </button>
             <button class="user-btn" onclick="selectUser('guest')">
                 <span class="user-icon">👤</span>
                 <span class="user-name">GUEST</span>
@@ -945,7 +950,19 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.js"></script>
 <script>
+firebase.initializeApp({
+    apiKey:"AIzaSyBsjx3JKjCQOMuus07MSoj3o-Vu9eRW6zc",
+    authDomain:"wade-classical.firebaseapp.com",
+    databaseURL:"https://wade-classical-default-rtdb.firebaseio.com",
+    projectId:"wade-classical",
+    storageBucket:"wade-classical.firebasestorage.app",
+    messagingSenderId:"72309085457",
+    appId:"1:72309085457:web:3d8b5a07302248ded6a8b0"
+});
+var db = firebase.database();
 // ══════════════════════════════════════════════
 // WORD IMAGE MAP  (url = Wikimedia Commons; emoji = fallback)
 // ══════════════════════════════════════════════
@@ -1329,6 +1346,23 @@ function handleImgError() {
 // WORD LISTS
 // ══════════════════════════════════════════════
 const WORD_LISTS = {
+    audrey: [
+        // Kindergarten / Grade K-1 — simple 3-letter words, basic sight words
+        'cat','dog','hat','bat','mat','sat','rat','pan','can','man',
+        'van','fan','ran','tan','hen','pen','ten','men','den','bed',
+        'red','fed','led','big','dig','fig','pig','wig','jig','hop',
+        'top','pop','mop','cop','dot','hot','lot','not','pot','got',
+        'bug','rug','mug','jug','hug','tug','bun','fun','run','sun',
+        'gun','cup','pup','cut','but','nut','hut','put','bit','sit',
+        'hit','fit','kit','lip','tip','dip','sip','rip','zip','hip',
+        // Basic sight words
+        'a','I','is','it','in','at','an','as','am','be',
+        'do','go','he','me','my','no','of','on','or','so',
+        'to','up','us','we','by','if','the','and','for','are',
+        'but','not','you','all','can','her','his','how','its','may',
+        'now','old','our','out','say','she','too','use','was','who',
+        'did','get','has','him','let','put','see','set','yes','yet'
+    ],
     hadley: [
         // Dolch/Fry sight words + McGuffey's grade 1-2
         'cat','dog','run','see','the','and','can','go','it','in',
@@ -1462,31 +1496,32 @@ function handleKeydown(e) {
 // ══════════════════════════════════════════════
 function selectUser(user) {
     currentUser = user;
-    loadMastery();
-    startSession();
-    showScreen('screenGame');
-    document.getElementById('statPlayer').textContent = user.toUpperCase();
-    // Show mastery overview button only for mom
-    const masteryBtn = document.getElementById('masteryViewBtn');
-    if (masteryBtn) masteryBtn.style.display = user === 'mom' ? 'inline-block' : 'none';
+    loadMastery(); // async — handles startSession/showScreen internally
 }
 
 function loadMastery() {
-    const saved = localStorage.getItem(`wc_spelling_${currentUser}`);
-    if (saved) {
-        masteryData = JSON.parse(saved);
-    } else {
-        masteryData = { correct: [], wrong: [], untried: [...WORD_LISTS[currentUser]] };
-    }
-    // Add any new words not yet in mastery
-    const allWords = WORD_LISTS[currentUser];
-    const known = [...masteryData.correct, ...masteryData.wrong, ...masteryData.untried];
-    allWords.forEach(w => { if (!known.includes(w)) masteryData.untried.push(w); });
-    saveMastery();
+    db.ref('spelling/' + currentUser).once('value', function(snap) {
+        var saved = snap.val();
+        if (saved) {
+            masteryData = saved;
+        } else {
+            masteryData = { correct: [], wrong: [], untried: [...WORD_LISTS[currentUser]] };
+        }
+        // Add any new words not yet in mastery
+        const allWords = WORD_LISTS[currentUser];
+        const known = [...(masteryData.correct||[]), ...(masteryData.wrong||[]), ...(masteryData.untried||[])];
+        allWords.forEach(w => { if (!known.includes(w)) masteryData.untried.push(w); });
+        saveMastery();
+        startSession();
+        showScreen('screenGame');
+        document.getElementById('statPlayer').textContent = currentUser.toUpperCase();
+        const masteryBtn = document.getElementById('masteryViewBtn');
+        if (masteryBtn) masteryBtn.style.display = currentUser === 'mom' ? 'inline-block' : 'none';
+    });
 }
 
 function saveMastery() {
-    localStorage.setItem(`wc_spelling_${currentUser}`, JSON.stringify(masteryData));
+    db.ref('spelling/' + currentUser).set(masteryData);
 }
 
 // ══════════════════════════════════════════════
@@ -1843,8 +1878,9 @@ function renderMomMastery() {
     const c = document.getElementById('momMasteryContent');
     const players = [
         { key: 'ryder',  icon: '⚔️',  label: 'RYDER'  },
-        { key: 'hadley', icon: '🌷', label: 'HADLEY' },
-        { key: 'mom',    icon: '🦋', label: 'MOM'    },
+        { key: 'hadley', icon: '🌷',  label: 'HADLEY' },
+        { key: 'audrey', icon: '🐱',  label: 'AUDREY' },
+        { key: 'mom',    icon: '🦋',  label: 'MOM'    },
     ];
 
     c.innerHTML = `
@@ -1857,17 +1893,17 @@ function renderMomMastery() {
     `;
 
     players.forEach(player => {
-        // Load that player's mastery from localStorage
-        const saved = localStorage.getItem('wc_spelling_' + player.key);
-        const data = saved ? JSON.parse(saved) : { correct: [], wrong: [], untried: [] };
+        // Load that player's mastery from Firebase
+        db.ref('spelling/' + player.key).once('value', function(snap) {
+            const data = snap.val() || { correct: [], wrong: [], untried: [] };
 
-        // Fill in any missing words
-        const allWords = WORD_LISTS[player.key] || [];
-        const known = [...(data.correct||[]), ...(data.wrong||[]), ...(data.untried||[])];
-        allWords.forEach(w => { if (!known.includes(w)) { data.untried = data.untried || []; data.untried.push(w); } });
+            // Fill in any missing words
+            const allWords = WORD_LISTS[player.key] || [];
+            const known = [...(data.correct||[]), ...(data.wrong||[]), ...(data.untried||[])];
+            allWords.forEach(w => { if (!known.includes(w)) { data.untried = data.untried || []; data.untried.push(w); } });
 
-        const total = (data.correct||[]).length + (data.wrong||[]).length + (data.untried||[]).length;
-        const pct = total ? Math.round(((data.correct||[]).length / total) * 100) : 0;
+            const total = (data.correct||[]).length + (data.wrong||[]).length + (data.untried||[]).length;
+            const pct = total ? Math.round(((data.correct||[]).length / total) * 100) : 0;
 
         const playerBlock = document.createElement('div');
         playerBlock.style.cssText = 'margin-bottom:36px; background:#050510; border:2px solid #1a1a3a; border-radius:4px; padding:20px;';
@@ -1920,7 +1956,8 @@ function renderMomMastery() {
         });
 
         c.appendChild(playerBlock);
-    });
+        }); // end Firebase once callback
+    }); // end players.forEach
 
     // Back button
     const backRow = document.createElement('div');
