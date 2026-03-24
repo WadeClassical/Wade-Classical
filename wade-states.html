@@ -820,6 +820,25 @@ body {
       <div class="progress-grid" id="progress-grid"></div>
     </div>
 
+    <!-- TIME TRACKER -->
+    <div class="progress-section" id="time-tracker-section" style="border-top:1px solid var(--border);">
+      <div class="progress-title" style="margin-bottom:10px;">⏱️ TIME PRACTICED</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div>
+          <div style="font-size:10px;font-weight:700;color:var(--subtext);letter-spacing:1px;margin-bottom:2px;">TODAY</div>
+          <div id="time-today" style="font-family:'Cinzel',serif;font-size:20px;color:var(--gold);">0:00</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:10px;font-weight:700;color:var(--subtext);letter-spacing:1px;margin-bottom:2px;">THIS SESSION</div>
+          <div id="time-session" style="font-family:'Cinzel',serif;font-size:20px;color:var(--text);">0:00</div>
+        </div>
+      </div>
+      <!-- 7-day bar chart -->
+      <div style="font-size:10px;font-weight:700;color:var(--subtext);letter-spacing:1px;margin-bottom:6px;">LAST 7 DAYS</div>
+      <div id="time-week-bars" style="display:flex;gap:4px;align-items:flex-end;height:40px;"></div>
+      <div id="time-week-labels" style="display:flex;gap:4px;margin-top:4px;"></div>
+    </div>
+
     <!-- REGION LEGEND -->
     <div class="legend">
       <div class="legend-item"><div class="legend-dot" style="background:#4a90d9"></div>Northeast</div>
@@ -1028,6 +1047,8 @@ function selectLevel(n) {
   worldQuizQueue = [];
   worldQuizTarget = null;
   wqCorrect = 0; wqWrong = 0; wqStreak = 0;
+
+  startTimeTracking();
 
   document.getElementById('app-header').style.display = 'flex';
   document.getElementById('person-badge').textContent = currentPersonLabel;
@@ -2148,7 +2169,108 @@ function showScreen(id) {
   }
 }
 
+// ══════════════════════════════════════════════
+// TIME TRACKER
+// ══════════════════════════════════════════════
+
+var timeSessionStart = null;   // Date when this session started
+var timeSessionSeconds = 0;    // Seconds accumulated this session
+var timeTickInterval = null;   // setInterval handle
+var timeTodaySeconds = 0;      // Today's total from Firebase + this session
+
+function todayKey() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function startTimeTracking() {
+  if (timeTickInterval) return; // already running
+  timeSessionStart = Date.now();
+  timeSessionSeconds = 0;
+  loadTimeData();
+  timeTickInterval = setInterval(function() {
+    timeSessionSeconds = Math.floor((Date.now() - timeSessionStart) / 1000);
+    updateTimeDisplay();
+    // Save every 30 seconds
+    if (timeSessionSeconds % 30 === 0) saveTimeData();
+  }, 1000);
+}
+
+function stopTimeTracking() {
+  if (timeTickInterval) { clearInterval(timeTickInterval); timeTickInterval = null; }
+  if (timeSessionSeconds > 0) saveTimeData();
+  timeSessionSeconds = 0;
+  timeSessionStart = null;
+}
+
+function loadTimeData() {
+  if (!currentPerson) return;
+  db.ref('time/' + currentPerson).once('value', function(snap) {
+    var data = snap.val() || {};
+    var today = todayKey();
+    timeTodaySeconds = data[today] || 0;
+    updateTimeDisplay();
+    renderWeekBars(data);
+  });
+}
+
+function saveTimeData() {
+  if (!currentPerson || currentPerson === 'guest') return;
+  var today = todayKey();
+  var total = timeTodaySeconds + timeSessionSeconds;
+  db.ref('time/' + currentPerson + '/' + today).set(total);
+}
+
+function updateTimeDisplay() {
+  var sessionTotal = timeTodaySeconds + timeSessionSeconds;
+  document.getElementById('time-today').textContent   = formatTime(sessionTotal);
+  document.getElementById('time-session').textContent = formatTime(timeSessionSeconds);
+}
+
+function formatTime(secs) {
+  var m = Math.floor(secs / 60);
+  var s = secs % 60;
+  return m + ':' + String(s).padStart(2,'0');
+}
+
+function renderWeekBars(data) {
+  var bars  = document.getElementById('time-week-bars');
+  var lbls  = document.getElementById('time-week-labels');
+  if (!bars || !lbls) return;
+  bars.innerHTML = ''; lbls.innerHTML = '';
+
+  var days = [];
+  for (var i = 6; i >= 0; i--) {
+    var d = new Date(); d.setDate(d.getDate() - i);
+    var key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    var dayName = ['Su','Mo','Tu','We','Th','Fr','Sa'][d.getDay()];
+    var secs = data[key] || 0;
+    if (key === todayKey()) secs += timeSessionSeconds; // add live session
+    days.push({ key: key, label: dayName, secs: secs, isToday: i === 0 });
+  }
+
+  var maxSecs = Math.max(1, Math.max.apply(null, days.map(function(d){ return d.secs; })));
+
+  days.forEach(function(day) {
+    var pct = day.secs / maxSecs;
+    var bar = document.createElement('div');
+    bar.style.cssText = 'flex:1;border-radius:3px 3px 0 0;transition:height .3s;min-height:2px;' +
+      'height:' + Math.max(2, Math.round(pct * 38)) + 'px;' +
+      'background:' + (day.isToday ? 'var(--gold)' : 'var(--border2)') + ';' +
+      'title:' + formatTime(day.secs);
+    bar.title = day.label + ': ' + formatTime(day.secs);
+    bars.appendChild(bar);
+
+    var lbl = document.createElement('div');
+    lbl.style.cssText = 'flex:1;text-align:center;font-size:9px;font-weight:700;color:' +
+      (day.isToday ? 'var(--gold)' : 'var(--subtext)') + ';';
+    lbl.textContent = day.label;
+    lbls.appendChild(lbl);
+  });
+}
+
 function goToLevels() {
+  stopTimeTracking();
   // Reset all quiz state
   quizActive = false; quizQueue = []; quizTarget = null;
   worldQuizActive = false; worldQuizQueue = []; worldQuizTarget = null;
@@ -2391,6 +2513,8 @@ function selectContinent(cid) {
   currentContinentId = cid;
   cQuizActive = false; cQuizQueue = []; cQuizTarget = null;
   cqCorrect = 0; cqWrong = 0; cqStreak = 0;
+
+  startTimeTracking();
 
   document.getElementById('app-header').style.display = 'flex';
   document.getElementById('person-badge').textContent = currentPersonLabel;
@@ -2946,6 +3070,7 @@ function startGuidedTour() {
   document.getElementById('person-badge').textContent = currentPersonLabel;
   document.getElementById('level-badge').textContent = '🧭 USA Explorer Tour';
   tourIndex = 0;
+  startTimeTracking();
   showScreen('screen-tour');
   loadTourProgress(function() {
     buildTourMap();
