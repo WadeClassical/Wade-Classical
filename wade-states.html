@@ -212,6 +212,18 @@ body {
 @keyframes correctPop  { 0%{transform:scale(1)} 50%{transform:scale(1.08)} 100%{transform:scale(1)} }
 @keyframes wrongShake  { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.65} }
+@keyframes tourPulse {
+  0%   { fill:#ffffff; stroke:#f0c040; stroke-width:3; filter:drop-shadow(0 0 6px #f0c040) drop-shadow(0 0 12px #f0c040); }
+  50%  { fill:#fef9c3; stroke:#ffffff; stroke-width:4; filter:drop-shadow(0 0 12px #ffffff) drop-shadow(0 0 24px #f0c040); }
+  100% { fill:#ffffff; stroke:#f0c040; stroke-width:3; filter:drop-shadow(0 0 6px #f0c040) drop-shadow(0 0 12px #f0c040); }
+}
+.state-path.tour-active {
+  animation: tourPulse 1.2s ease-in-out infinite !important;
+  fill: #ffffff !important;
+  stroke: #f0c040 !important;
+  stroke-width: 3 !important;
+  cursor: default;
+}
 
 /* Alaska & Hawaii insets */
 .inset-label { font-size:9px; fill:var(--subtext); font-family:'Nunito',sans-serif; }
@@ -378,6 +390,7 @@ body {
 }
 #usa-map.hide-labels .state-label { opacity: 0; }
 #world-map.hide-labels .world-label { opacity: 0; }
+#continent-map.hide-labels .cpath-label { opacity: 0; }
 
 /* State tooltip on map */
 .map-tooltip {
@@ -401,7 +414,7 @@ body {
 <header class="header" id="app-header" style="display:none">
   <div class="header-left">
     <a href="index.html" class="back-btn">← Home</a>
-    <button onclick="showScreen('screen-level')" class="back-btn" style="background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;padding:0;">← Levels</button>
+    <button onclick="goToLevels()" class="back-btn" style="background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;padding:0;">← Levels</button>
     <span class="header-title">🗺 USA Explorer</span>
   </div>
   <div style="display:flex;gap:10px;align-items:center">
@@ -442,6 +455,29 @@ body {
   <div style="text-align:center;padding:40px 20px 30px">
     <div class="level-title">Choose a Level</div>
     <div class="level-sub" id="level-sub-text"></div>
+
+    <!-- Guided Learning Section -->
+    <div style="margin-bottom:10px;margin-top:28px">
+      <div style="display:inline-flex;align-items:center;gap:10px;margin-bottom:20px;padding:6px 20px;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:20px;">
+        <span style="font-size:20px">🧭</span>
+        <span style="font-family:'Cinzel',serif;font-size:13px;color:#4ade80;letter-spacing:2px;text-transform:uppercase;">Guided Learning</span>
+      </div>
+    </div>
+    <div class="level-cards" style="margin-bottom:36px">
+      <div class="level-card" onclick="startGuidedTour()" style="border-color:rgba(74,222,128,0.3);">
+        <div class="level-card-num" style="color:#4ade80">Explorer</div>
+        <div class="level-card-icon">🗺️</div>
+        <div class="level-card-name">USA Tour</div>
+        <div class="level-card-desc">Explore every state region by region — capitals, landmarks & facts</div>
+        <div class="level-card-progress"><div class="level-card-bar" id="bar-tour" style="width:0%;background:linear-gradient(90deg,#22c55e,#4ade80)"></div></div>
+        <div class="level-card-pct" id="pct-tour">0 / 50 explored</div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div style="border-top:1px solid var(--border);margin:0 auto 32px;max-width:700px;position:relative">
+      <span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--bg);padding:0 16px;font-size:11px;color:var(--border2);letter-spacing:2px;font-weight:700;">✦</span>
+    </div>
 
     <!-- USA Section -->
     <div style="margin-bottom:10px;margin-top:28px">
@@ -535,14 +571,193 @@ body {
         <div class="level-card-progress"><div class="level-card-bar" id="bar-5" style="width:0%"></div></div>
         <div class="level-card-pct" id="pct-5">0 / 7 mastered</div>
       </div>
+      <div class="level-card" id="level-card-6" onclick="selectContinent('NA')">
+        <div class="level-card-num">Level 2</div>
+        <div class="level-card-icon">🌎</div>
+        <div class="level-card-name">North America</div>
+        <div class="level-card-desc">Learn the countries of North America</div>
+        <div class="level-card-progress"><div class="level-card-bar" id="bar-c-NA" style="width:0%"></div></div>
+        <div class="level-card-pct" id="pct-c-NA">0 mastered</div>
+      </div>
+      <div class="level-card" id="level-card-7" onclick="selectContinent('SA')">
+        <div class="level-card-num">Level 3</div>
+        <div class="level-card-icon">🌎</div>
+        <div class="level-card-name">South America</div>
+        <div class="level-card-desc">Learn the countries of South America</div>
+        <div class="level-card-progress"><div class="level-card-bar" id="bar-c-SA" style="width:0%"></div></div>
+        <div class="level-card-pct" id="pct-c-SA">0 mastered</div>
+      </div>
+      <div class="level-card" id="level-card-8" onclick="selectContinent('EU')">
+        <div class="level-card-num">Level 4</div>
+        <div class="level-card-icon">🌍</div>
+        <div class="level-card-name">Europe</div>
+        <div class="level-card-desc">Learn the countries of Europe</div>
+        <div class="level-card-progress"><div class="level-card-bar" id="bar-c-EU" style="width:0%"></div></div>
+        <div class="level-card-pct" id="pct-c-EU">0 mastered</div>
+      </div>
+      <div class="level-card" id="level-card-9" onclick="selectContinent('AF')">
+        <div class="level-card-num">Level 5</div>
+        <div class="level-card-icon">🌍</div>
+        <div class="level-card-name">Africa</div>
+        <div class="level-card-desc">Learn the countries of Africa</div>
+        <div class="level-card-progress"><div class="level-card-bar" id="bar-c-AF" style="width:0%"></div></div>
+        <div class="level-card-pct" id="pct-c-AF">0 mastered</div>
+      </div>
+      <div class="level-card" id="level-card-10" onclick="selectContinent('AS')">
+        <div class="level-card-num">Level 6</div>
+        <div class="level-card-icon">🌏</div>
+        <div class="level-card-name">Asia</div>
+        <div class="level-card-desc">Learn the countries of Asia</div>
+        <div class="level-card-progress"><div class="level-card-bar" id="bar-c-AS" style="width:0%"></div></div>
+        <div class="level-card-pct" id="pct-c-AS">0 mastered</div>
+      </div>
+      <div class="level-card" id="level-card-11" onclick="selectContinent('OC')">
+        <div class="level-card-num">Level 7</div>
+        <div class="level-card-icon">🌏</div>
+        <div class="level-card-name">Australia / Oceania</div>
+        <div class="level-card-desc">Learn the countries of Oceania</div>
+        <div class="level-card-progress"><div class="level-card-bar" id="bar-c-OC" style="width:0%"></div></div>
+        <div class="level-card-pct" id="pct-c-OC">0 mastered</div>
+      </div>
+      <div class="level-card" id="level-card-12" onclick="selectContinent('AN')">
+        <div class="level-card-num">Level 8</div>
+        <div class="level-card-icon">🧊</div>
+        <div class="level-card-name">Antarctica</div>
+        <div class="level-card-desc">Explore the frozen continent & Antarctic Treaty</div>
+        <div class="level-card-progress"><div class="level-card-bar" id="bar-c-AN" style="width:0%"></div></div>
+        <div class="level-card-pct" id="pct-c-AN">Study mode</div>
+      </div>
     </div>
 
   </div>
 </div>
 
-<!-- SCREEN: APP -->
-<div class="screen" id="screen-app">
+<!-- SCREEN: CONTINENT COUNTRIES -->
+<div class="screen" id="screen-continent">
+  <div class="map-area">
+    <div class="map-wrap" id="continent-map-wrap" style="max-width:940px;overflow:hidden;position:relative;">
+      <svg id="continent-map" viewBox="0 0 960 560" xmlns="http://www.w3.org/2000/svg" style="cursor:grab;display:block;"></svg>
+      <div class="map-tooltip" id="continent-tooltip"></div>
+      <!-- Zoom controls -->
+      <div style="position:absolute;bottom:12px;right:12px;display:flex;flex-direction:column;gap:4px;z-index:10;">
+        <button onclick="cZoom(1.4)" style="width:30px;height:30px;background:var(--panel3);border:1px solid var(--border2);border-radius:6px;color:var(--gold);font-size:16px;font-weight:700;cursor:pointer;line-height:1;">+</button>
+        <button onclick="cZoom(1/1.4)" style="width:30px;height:30px;background:var(--panel3);border:1px solid var(--border2);border-radius:6px;color:var(--gold);font-size:16px;font-weight:700;cursor:pointer;line-height:1;">−</button>
+        <button onclick="cZoomReset()" style="width:30px;height:30px;background:var(--panel3);border:1px solid var(--border2);border-radius:6px;color:var(--subtext);font-size:10px;font-weight:800;cursor:pointer;line-height:1;">↺</button>
+      </div>
+    </div>
+  </div>
+  <div class="sidebar">
+    <div style="padding:14px 20px 0; border-bottom:2px solid var(--border)">
+      <div style="font-family:'Cinzel',serif;font-size:14px;color:var(--gold);margin-bottom:10px;" id="continent-title">Continent</div>
+      <div class="mode-tabs" style="border:none;margin:0 -20px;padding:0 20px">
+        <button class="mode-tab active" onclick="setContinentMode('study')" id="ctab-study">📖 Study</button>
+        <button class="mode-tab"        onclick="setContinentMode('quiz')"  id="ctab-quiz">🎯 Quiz</button>
+      </div>
+    </div>
 
+    <!-- STUDY -->
+    <div id="cstudy-panel" class="info-panel">
+      <div class="info-empty" id="cstudy-empty">
+        <div style="font-size:28px;margin-bottom:10px" id="cstudy-empty-icon">🌍</div>
+        <div id="cstudy-empty-text">Click a country to learn about it</div>
+      </div>
+      <div id="cstudy-info" style="display:none">
+        <div class="info-state-name" id="cinfo-name"></div>
+        <div class="info-state-abbr" id="cinfo-iso"></div>
+        <div class="info-row"><span class="info-label">Capital</span><span class="info-value" id="cinfo-capital"></span></div>
+        <div class="info-row"><span class="info-label">Mastery</span><div class="mastery-dots" id="cinfo-mastery"></div></div>
+      </div>
+      <!-- Antarctica facts panel -->
+      <div id="cstudy-antarctica" style="display:none;padding:8px 0">
+        <div style="font-size:13px;color:var(--subtext);line-height:1.7;margin-bottom:14px">No sovereign nations — governed by the Antarctic Treaty System since 1959.</div>
+        <div id="antarctica-facts"></div>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div id="cquiz-panel" class="quiz-panel" style="display:none">
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <button id="cqtype-find" onclick="setCQuizType('find')"
+          style="flex:1;padding:7px;border:none;border-radius:8px;font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a2e1a;">
+          🎯 Find Country
+        </button>
+        <button id="cqtype-name" onclick="setCQuizType('name')"
+          style="flex:1;padding:7px;border:1px solid var(--border);border-radius:8px;font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer;background:rgba(0,0,0,.2);color:var(--subtext);">
+          🔍 Name It
+        </button>
+      </div>
+      <div class="quiz-prompt">
+        <div class="quiz-level-badge" id="cquiz-badge"></div>
+        <div class="quiz-question" id="cquiz-question">Press Start to begin!</div>
+        <div class="quiz-hint" id="cquiz-hint"></div>
+      </div>
+      <div class="quiz-feedback" id="cquiz-feedback"></div>
+      <div class="quiz-stats">
+        <div class="quiz-stat"><div class="quiz-stat-n" id="cstat-correct">0</div><div class="quiz-stat-l">Correct</div></div>
+        <div class="quiz-stat"><div class="quiz-stat-n" id="cstat-wrong">0</div><div class="quiz-stat-l">Wrong</div></div>
+        <div class="quiz-stat"><div class="quiz-stat-n" id="cstat-streak">0</div><div class="quiz-stat-l">Streak 🔥</div></div>
+      </div>
+      <button class="quiz-btn quiz-btn-primary" id="cquiz-start-btn" onclick="startCQuiz()">Start Quiz</button>
+      <button class="quiz-btn quiz-btn-secondary" id="cquiz-skip-btn" onclick="cNextQuestion()" style="display:none">Skip</button>
+      <!-- Name-It multiple choice answers -->
+      <div id="cquiz-choices" style="display:none;margin-top:10px;display:flex;flex-direction:column;gap:7px"></div>
+    </div>
+
+    <div class="progress-section">
+      <div class="progress-title">Progress — <span id="cprog-count">0</span> / <span id="cprog-total">0</span> mastered</div>
+      <div class="progress-grid" id="cprog-grid" style="grid-template-columns:repeat(8,1fr)"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: GUIDED TOUR -->
+<div class="screen" id="screen-tour">
+  <div class="map-area">
+    <div class="map-wrap">
+      <svg id="tour-map" viewBox="0 0 975 610" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div id="tour-region-bar" style="width:100%;max-width:780px;margin-top:10px;display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;"></div>
+  </div>
+  <div class="sidebar" style="width:340px;display:flex;flex-direction:column;">
+    <div style="padding:18px 20px 0">
+      <div id="tour-region-badge" style="display:inline-block;padding:3px 14px;border-radius:10px;font-size:11px;font-weight:800;margin-bottom:8px;letter-spacing:.5px;"></div>
+      <div id="tour-region-progress" style="font-size:10px;font-weight:700;color:var(--subtext);letter-spacing:1px;margin-bottom:12px;text-transform:uppercase;"></div>
+      <div id="tour-state-name" style="font-family:'Cinzel',serif;font-size:24px;color:var(--white);margin-bottom:2px;"></div>
+      <div id="tour-state-abbr" style="font-size:11px;font-weight:700;letter-spacing:3px;color:var(--subtext);margin-bottom:16px;"></div>
+    </div>
+    <div style="padding:0 20px;display:flex;flex-direction:column;gap:10px;">
+      <div style="background:rgba(0,0,0,.22);border:1px solid var(--border);border-radius:12px;padding:14px 16px;">
+        <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px;">🏛️ CAPITAL</div>
+        <div id="tour-capital" style="font-size:17px;font-weight:700;color:var(--text);"></div>
+      </div>
+      <div style="background:rgba(0,0,0,.22);border:1px solid var(--border);border-radius:12px;padding:14px 16px;">
+        <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px;">🏔️ FAMOUS LANDMARK</div>
+        <div id="tour-landmark" style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;"></div>
+        <div id="tour-landmark-desc" style="font-size:12px;color:var(--subtext);line-height:1.55;"></div>
+      </div>
+      <div style="background:rgba(0,0,0,.22);border:1px solid var(--border);border-radius:12px;padding:14px 16px;">
+        <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px;">👥 POPULATION</div>
+        <div id="tour-population" style="font-size:17px;font-weight:700;color:var(--text);"></div>
+      </div>
+    </div>
+    <div style="padding:16px 20px;display:flex;gap:10px;align-items:center;border-top:1px solid var(--border);margin-top:16px;">
+      <button onclick="tourPrev()" id="tour-prev-btn"
+        style="flex:1;padding:12px;border:1px solid var(--border);border-radius:10px;background:rgba(0,0,0,.2);color:var(--subtext);font-family:Nunito,sans-serif;font-size:13px;font-weight:800;cursor:pointer;transition:all .15s;">
+        ← Prev
+      </button>
+      <div style="text-align:center;min-width:52px;">
+        <div id="tour-counter" style="font-family:'Cinzel',serif;font-size:15px;color:var(--gold);font-weight:600;"></div>
+        <div style="font-size:9px;color:var(--subtext);letter-spacing:1px;font-weight:700;">OF 50</div>
+      </div>
+      <button onclick="tourNext()" id="tour-next-btn"
+        style="flex:1;padding:12px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a2e1a;font-family:Nunito,sans-serif;font-size:13px;font-weight:800;cursor:pointer;transition:all .15s;">
+        Next →
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-app">
   <!-- MAP -->
   <div class="map-area">
     <div class="map-wrap">
@@ -1928,7 +2143,1011 @@ function buildWorldLegend() {
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
   document.getElementById(id).classList.add('active');
-  if (id !== 'screen-app' && id !== 'screen-world') document.getElementById('app-header').style.display='none';
+  if (id !== 'screen-app' && id !== 'screen-world' && id !== 'screen-continent' && id !== 'screen-tour') {
+    document.getElementById('app-header').style.display='none';
+  }
+}
+
+function goToLevels() {
+  // Reset all quiz state
+  quizActive = false; quizQueue = []; quizTarget = null;
+  worldQuizActive = false; worldQuizQueue = []; worldQuizTarget = null;
+  cQuizActive = false; cQuizQueue = []; cQuizTarget = null;
+  showScreen('screen-level');
+}
+
+// ══════════════════════════════════════════════
+// CONTINENT COUNTRY LEVELS
+// ══════════════════════════════════════════════
+
+var CONTINENT_COUNTRIES = {
+  NA: [
+    {iso:'USA',name:'United States',capital:'Washington D.C.'},
+    {iso:'CAN',name:'Canada',capital:'Ottawa'},
+    {iso:'MEX',name:'Mexico',capital:'Mexico City'},
+    {iso:'GTM',name:'Guatemala',capital:'Guatemala City',dy:-6},
+    {iso:'BLZ',name:'Belize',capital:'Belmopan',dx:14,dy:-8},
+    {iso:'HND',name:'Honduras',capital:'Tegucigalpa',dy:6},
+    {iso:'SLV',name:'El Salvador',capital:'San Salvador',dx:-10,dy:10},
+    {iso:'NIC',name:'Nicaragua',capital:'Managua',dy:4},
+    {iso:'CRI',name:'Costa Rica',capital:'San José',dx:-8,dy:10},
+    {iso:'PAN',name:'Panama',capital:'Panama City',dx:8,dy:12},
+    {iso:'CUB',name:'Cuba',capital:'Havana',dy:-5},
+    {iso:'JAM',name:'Jamaica',capital:'Kingston',dy:8},
+    {iso:'HTI',name:'Haiti',capital:'Port-au-Prince',dx:-10,dy:-6},
+    {iso:'DOM',name:'Dominican Republic',capital:'Santo Domingo',dx:10,dy:6},
+    {iso:'TTO',name:'Trinidad & Tobago',capital:'Port of Spain',dx:16,dy:4},
+    {iso:'BHS',name:'Bahamas',capital:'Nassau',dx:12,dy:-8},
+    {iso:'BRB',name:'Barbados',capital:'Bridgetown',dx:20,dy:0},
+    {iso:'LCA',name:'Saint Lucia',capital:'Castries',dx:22,dy:8},
+    {iso:'VCT',name:'St. Vincent & Grenadines',capital:'Kingstown',dx:28,dy:16},
+    {iso:'GRD',name:'Grenada',capital:"St. George's",dx:22,dy:24},
+    {iso:'ATG',name:'Antigua & Barbuda',capital:"St. John's",dx:28,dy:-8},
+    {iso:'DMA',name:'Dominica',capital:'Roseau',dx:28,dy:0},
+    {iso:'KNA',name:'St. Kitts & Nevis',capital:'Basseterre',dx:28,dy:-18},
+  ],
+  SA: [
+    {iso:'BRA',name:'Brazil',capital:'Brasília'},
+    {iso:'ARG',name:'Argentina',capital:'Buenos Aires'},
+    {iso:'CHL',name:'Chile',capital:'Santiago'},
+    {iso:'COL',name:'Colombia',capital:'Bogotá'},
+    {iso:'VEN',name:'Venezuela',capital:'Caracas'},
+    {iso:'PER',name:'Peru',capital:'Lima'},
+    {iso:'ECU',name:'Ecuador',capital:'Quito'},
+    {iso:'BOL',name:'Bolivia',capital:'Sucre'},
+    {iso:'PRY',name:'Paraguay',capital:'Asunción'},
+    {iso:'URY',name:'Uruguay',capital:'Montevideo'},
+    {iso:'GUY',name:'Guyana',capital:'Georgetown'},
+    {iso:'SUR',name:'Suriname',capital:'Paramaribo'},
+  ],
+  EU: [
+    {iso:'RUS',name:'Russia',capital:'Moscow'},
+    {iso:'DEU',name:'Germany',capital:'Berlin'},
+    {iso:'FRA',name:'France',capital:'Paris'},
+    {iso:'GBR',name:'United Kingdom',capital:'London'},
+    {iso:'ITA',name:'Italy',capital:'Rome'},
+    {iso:'ESP',name:'Spain',capital:'Madrid'},
+    {iso:'POL',name:'Poland',capital:'Warsaw'},
+    {iso:'NLD',name:'Netherlands',capital:'Amsterdam'},
+    {iso:'BEL',name:'Belgium',capital:'Brussels'},
+    {iso:'CHE',name:'Switzerland',capital:'Bern'},
+    {iso:'AUT',name:'Austria',capital:'Vienna'},
+    {iso:'SWE',name:'Sweden',capital:'Stockholm'},
+    {iso:'NOR',name:'Norway',capital:'Oslo'},
+    {iso:'DNK',name:'Denmark',capital:'Copenhagen'},
+    {iso:'FIN',name:'Finland',capital:'Helsinki'},
+    {iso:'PRT',name:'Portugal',capital:'Lisbon'},
+    {iso:'GRC',name:'Greece',capital:'Athens'},
+    {iso:'CZE',name:'Czech Republic',capital:'Prague'},
+    {iso:'ROU',name:'Romania',capital:'Bucharest'},
+    {iso:'HUN',name:'Hungary',capital:'Budapest'},
+    {iso:'SVK',name:'Slovakia',capital:'Bratislava'},
+    {iso:'BGR',name:'Bulgaria',capital:'Sofia'},
+    {iso:'SRB',name:'Serbia',capital:'Belgrade'},
+    {iso:'HRV',name:'Croatia',capital:'Zagreb'},
+    {iso:'BIH',name:'Bosnia & Herzegovina',capital:'Sarajevo'},
+    {iso:'SVN',name:'Slovenia',capital:'Ljubljana'},
+    {iso:'LTU',name:'Lithuania',capital:'Vilnius'},
+    {iso:'LVA',name:'Latvia',capital:'Riga'},
+    {iso:'EST',name:'Estonia',capital:'Tallinn'},
+    {iso:'BLR',name:'Belarus',capital:'Minsk'},
+    {iso:'UKR',name:'Ukraine',capital:'Kyiv'},
+    {iso:'MDA',name:'Moldova',capital:'Chișinău'},
+    {iso:'ALB',name:'Albania',capital:'Tirana'},
+    {iso:'MKD',name:'North Macedonia',capital:'Skopje'},
+    {iso:'MNE',name:'Montenegro',capital:'Podgorica'},
+    {iso:'LUX',name:'Luxembourg',capital:'Luxembourg City'},
+    {iso:'MLT',name:'Malta',capital:'Valletta'},
+    {iso:'ISL',name:'Iceland',capital:'Reykjavik'},
+    {iso:'IRL',name:'Ireland',capital:'Dublin'},
+  ],
+  AF: [
+    {iso:'NGA',name:'Nigeria',capital:'Abuja'},
+    {iso:'ETH',name:'Ethiopia',capital:'Addis Ababa'},
+    {iso:'EGY',name:'Egypt',capital:'Cairo'},
+    {iso:'COD',name:'DR Congo',capital:'Kinshasa'},
+    {iso:'TZA',name:'Tanzania',capital:'Dodoma'},
+    {iso:'ZAF',name:'South Africa',capital:'Pretoria'},
+    {iso:'KEN',name:'Kenya',capital:'Nairobi'},
+    {iso:'UGA',name:'Uganda',capital:'Kampala'},
+    {iso:'DZA',name:'Algeria',capital:'Algiers'},
+    {iso:'SDN',name:'Sudan',capital:'Khartoum'},
+    {iso:'MAR',name:'Morocco',capital:'Rabat'},
+    {iso:'MOZ',name:'Mozambique',capital:'Maputo'},
+    {iso:'GHA',name:'Ghana',capital:'Accra'},
+    {iso:'MDG',name:'Madagascar',capital:'Antananarivo'},
+    {iso:'CMR',name:'Cameroon',capital:'Yaoundé'},
+    {iso:'CIV',name:"Côte d'Ivoire",capital:'Yamoussoukro'},
+    {iso:'NER',name:'Niger',capital:'Niamey'},
+    {iso:'BFA',name:'Burkina Faso',capital:'Ouagadougou'},
+    {iso:'MLI',name:'Mali',capital:'Bamako'},
+    {iso:'MWI',name:'Malawi',capital:'Lilongwe'},
+    {iso:'ZMB',name:'Zambia',capital:'Lusaka'},
+    {iso:'SEN',name:'Senegal',capital:'Dakar'},
+    {iso:'ZWE',name:'Zimbabwe',capital:'Harare'},
+    {iso:'TCD',name:'Chad',capital:"N'Djamena"},
+    {iso:'GIN',name:'Guinea',capital:'Conakry'},
+    {iso:'RWA',name:'Rwanda',capital:'Kigali'},
+    {iso:'BEN',name:'Benin',capital:'Porto-Novo'},
+    {iso:'BDI',name:'Burundi',capital:'Gitega'},
+    {iso:'SOM',name:'Somalia',capital:'Mogadishu'},
+    {iso:'TUN',name:'Tunisia',capital:'Tunis'},
+    {iso:'SSD',name:'South Sudan',capital:'Juba'},
+    {iso:'TGO',name:'Togo',capital:'Lomé'},
+    {iso:'SLE',name:'Sierra Leone',capital:'Freetown'},
+    {iso:'LBY',name:'Libya',capital:'Tripoli'},
+    {iso:'CAF',name:'Central African Republic',capital:'Bangui'},
+    {iso:'ERI',name:'Eritrea',capital:'Asmara'},
+    {iso:'MRT',name:'Mauritania',capital:'Nouakchott'},
+    {iso:'NAM',name:'Namibia',capital:'Windhoek'},
+    {iso:'BWA',name:'Botswana',capital:'Gaborone'},
+    {iso:'GAB',name:'Gabon',capital:'Libreville'},
+    {iso:'LSO',name:'Lesotho',capital:'Maseru'},
+    {iso:'GNB',name:'Guinea-Bissau',capital:'Bissau'},
+    {iso:'GNQ',name:'Equatorial Guinea',capital:'Malabo'},
+    {iso:'SWZ',name:'Eswatini',capital:'Mbabane'},
+    {iso:'DJI',name:'Djibouti',capital:'Djibouti'},
+    {iso:'COG',name:'Republic of Congo',capital:'Brazzaville'},
+    {iso:'GMB',name:'Gambia',capital:'Banjul'},
+    {iso:'AGO',name:'Angola',capital:'Luanda'},
+  ],
+  AS: [
+    {iso:'CHN',name:'China',capital:'Beijing'},
+    {iso:'IND',name:'India',capital:'New Delhi'},
+    {iso:'IDN',name:'Indonesia',capital:'Jakarta'},
+    {iso:'PAK',name:'Pakistan',capital:'Islamabad'},
+    {iso:'BGD',name:'Bangladesh',capital:'Dhaka'},
+    {iso:'JPN',name:'Japan',capital:'Tokyo'},
+    {iso:'PHL',name:'Philippines',capital:'Manila'},
+    {iso:'VNM',name:'Vietnam',capital:'Hanoi'},
+    {iso:'TUR',name:'Turkey',capital:'Ankara'},
+    {iso:'IRN',name:'Iran',capital:'Tehran'},
+    {iso:'THA',name:'Thailand',capital:'Bangkok'},
+    {iso:'MMR',name:'Myanmar',capital:'Naypyidaw'},
+    {iso:'IRQ',name:'Iraq',capital:'Baghdad'},
+    {iso:'AFG',name:'Afghanistan',capital:'Kabul'},
+    {iso:'SAU',name:'Saudi Arabia',capital:'Riyadh'},
+    {iso:'UZB',name:'Uzbekistan',capital:'Tashkent'},
+    {iso:'MYS',name:'Malaysia',capital:'Kuala Lumpur'},
+    {iso:'YEM',name:'Yemen',capital:"Sana'a"},
+    {iso:'NPL',name:'Nepal',capital:'Kathmandu'},
+    {iso:'KOR',name:'South Korea',capital:'Seoul'},
+    {iso:'PRK',name:'North Korea',capital:'Pyongyang'},
+    {iso:'SYR',name:'Syria',capital:'Damascus'},
+    {iso:'KHM',name:'Cambodia',capital:'Phnom Penh'},
+    {iso:'JOR',name:'Jordan',capital:'Amman'},
+    {iso:'AZE',name:'Azerbaijan',capital:'Baku'},
+    {iso:'ARE',name:'UAE',capital:'Abu Dhabi'},
+    {iso:'TJK',name:'Tajikistan',capital:'Dushanbe'},
+    {iso:'ISR',name:'Israel',capital:'Jerusalem'},
+    {iso:'TKM',name:'Turkmenistan',capital:'Ashgabat'},
+    {iso:'SGP',name:'Singapore',capital:'Singapore'},
+    {iso:'OMN',name:'Oman',capital:'Muscat'},
+    {iso:'KWT',name:'Kuwait',capital:'Kuwait City'},
+    {iso:'GEO',name:'Georgia',capital:'Tbilisi'},
+    {iso:'MNG',name:'Mongolia',capital:'Ulaanbaatar'},
+    {iso:'ARM',name:'Armenia',capital:'Yerevan'},
+    {iso:'QAT',name:'Qatar',capital:'Doha'},
+    {iso:'BHR',name:'Bahrain',capital:'Manama'},
+    {iso:'LBN',name:'Lebanon',capital:'Beirut'},
+    {iso:'BTN',name:'Bhutan',capital:'Thimphu'},
+    {iso:'MDV',name:'Maldives',capital:'Malé'},
+    {iso:'BRN',name:'Brunei',capital:'Bandar Seri Begawan'},
+    {iso:'LKA',name:'Sri Lanka',capital:'Sri Jayawardenepura Kotte'},
+    {iso:'KAZ',name:'Kazakhstan',capital:'Astana'},
+    {iso:'KGZ',name:'Kyrgyzstan',capital:'Bishkek'},
+    {iso:'LAO',name:'Laos',capital:'Vientiane'},
+    {iso:'RUS',name:'Russia',capital:'Moscow'},
+  ],
+  OC: [
+    {iso:'AUS',name:'Australia',capital:'Canberra'},
+    {iso:'PNG',name:'Papua New Guinea',capital:'Port Moresby'},
+    {iso:'NZL',name:'New Zealand',capital:'Wellington'},
+    {iso:'FJI',name:'Fiji',capital:'Suva'},
+    {iso:'SLB',name:'Solomon Islands',capital:'Honiara'},
+    {iso:'VUT',name:'Vanuatu',capital:'Port Vila'},
+    {iso:'WSM',name:'Samoa',capital:'Apia'},
+    {iso:'KIR',name:'Kiribati',capital:'South Tarawa'},
+    {iso:'TON',name:'Tonga',capital:"Nuku'alofa"},
+    {iso:'MHL',name:'Marshall Islands',capital:'Majuro'},
+    {iso:'PLW',name:'Palau',capital:'Ngerulmud'},
+    {iso:'NRU',name:'Nauru',capital:'Yaren'},
+    {iso:'TUV',name:'Tuvalu',capital:'Funafuti'},
+  ],
+  AN: []
+};
+
+var ANTARCTICA_FACTS = [
+  { icon:'🧊', title:'Largest Ice Sheet', text:'Antarctica holds 90% of the world\'s fresh water, locked in ice up to 4.8km thick.' },
+  { icon:'🌬️', title:'Coldest Place on Earth', text:'The lowest temperature ever recorded was -89.2°C (-128.6°F) at Vostok Station in 1983.' },
+  { icon:'📜', title:'Antarctic Treaty (1959)', text:'Signed by 12 nations, it designates Antarctica as a scientific preserve with no military activity.' },
+  { icon:'🔬', title:'Scientific Stations', text:'About 70 research stations from 30 countries operate there, with ~5,000 people in summer.' },
+  { icon:'🐧', title:'Wildlife', text:'Home to penguins, seals, and whales — but no native land mammals or reptiles.' },
+  { icon:'⛏️', title:'No Mining Allowed', text:'The 1991 Protocol on Environmental Protection bans all mineral resource activities until 2048.' },
+];
+
+// Projection settings per continent
+var CONTINENT_PROJECTIONS = {
+  NA: { proj:'geoAlbers',    scale:400,  translate:[480,300], rotate:[100,0],  center:[0,45]  },
+  SA: { proj:'geoMercator',  scale:320,  translate:[480,280], rotate:[60,0],   center:[0,-15] },
+  EU: { proj:'geoMercator',  scale:560,  translate:[480,320], rotate:[-15,0],  center:[0,55]  },
+  AF: { proj:'geoMercator',  scale:320,  translate:[480,280], rotate:[-22,0],  center:[0,5]   },
+  AS: { proj:'geoMercator',  scale:220,  translate:[480,280], rotate:[-90,0],  center:[0,35]  },
+  OC: { proj:'geoMercator',  scale:300,  translate:[480,300], rotate:[-150,0], center:[0,-20] },
+  AN: { proj:'geoOrthographic', scale:300, translate:[480,280], rotate:[0,90], center:[0,0]   },
+};
+
+var currentContinentId = null;
+var cQuizActive = false;
+var cQuizType = 'find'; // 'find' or 'name'
+var cQuizTarget = null;
+var cQuizQueue = [];
+var cqCorrect = 0, cqWrong = 0, cqStreak = 0;
+var cGeoPath = null;
+var cCountryMastery = {}; // { 'NA_USA': {streak,correct,wrong}, ... }
+var cSelectedIso = null;
+
+function selectContinent(cid) {
+  currentContinentId = cid;
+  cQuizActive = false; cQuizQueue = []; cQuizTarget = null;
+  cqCorrect = 0; cqWrong = 0; cqStreak = 0;
+
+  document.getElementById('app-header').style.display = 'flex';
+  document.getElementById('person-badge').textContent = currentPersonLabel;
+  var cont = CONTINENTS.find(function(c){ return c.id === cid; });
+  document.getElementById('level-badge').textContent = cont ? cont.name + ' · Countries' : '';
+  document.getElementById('continent-title').textContent = cont ? cont.name : '';
+
+  showScreen('screen-continent');
+  loadCMastery(cid);
+  buildContinentMap(cid);
+  setContinentMode('study');
+  updateCProgress();
+}
+
+function loadCMastery(cid) {
+  if (!currentPerson) return;
+  db.ref('country-mastery/' + currentPerson + '/' + cid).once('value', function(snap) {
+    var data = snap.val() || {};
+    // merge into cCountryMastery with prefix
+    Object.keys(data).forEach(function(iso) {
+      cCountryMastery[cid + '_' + iso] = data[iso];
+    });
+    updateCProgress();
+    applyCColors();
+  });
+}
+
+function saveCMastery(cid, iso) {
+  if (!currentPerson) return;
+  var key = cid + '_' + iso;
+  db.ref('country-mastery/' + currentPerson + '/' + cid + '/' + iso).set(cCountryMastery[key]);
+}
+
+function getCMastery(cid, iso) {
+  return cCountryMastery[cid + '_' + iso] || {streak:0,correct:0,wrong:0};
+}
+
+function updateCProgress() {
+  var cid = currentContinentId;
+  if (!cid) return;
+  var countries = CONTINENT_COUNTRIES[cid] || [];
+  var mastered = countries.filter(function(c){ return getCMastery(cid, c.iso).streak >= 3; }).length;
+  var total = countries.length;
+  var countEl = document.getElementById('cprog-count');
+  var totalEl = document.getElementById('cprog-total');
+  if (countEl) countEl.textContent = mastered;
+  if (totalEl) totalEl.textContent = total;
+
+  // Update level card
+  var bar = document.getElementById('bar-c-' + cid);
+  var pct = document.getElementById('pct-c-' + cid);
+  if (bar && total > 0) bar.style.width = (mastered/total*100) + '%';
+  if (pct && cid !== 'AN') pct.textContent = mastered + ' / ' + total + ' mastered';
+
+  // Progress grid
+  var grid = document.getElementById('cprog-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  countries.forEach(function(c) {
+    var m = getCMastery(cid, c.iso);
+    var dot = document.createElement('div');
+    dot.className = 'prog-dot';
+    dot.setAttribute('data-name', c.name);
+    dot.title = c.name;
+    if (m.streak >= 3)    { dot.classList.add('mastered'); }
+    else if (m.correct >= 2) dot.classList.add('streak2');
+    else if (m.correct >= 1) dot.classList.add('streak1');
+    else if (m.wrong > 0)    dot.classList.add('seen');
+    dot.addEventListener('click', function(){ highlightCCountry(c.iso); });
+    grid.appendChild(dot);
+  });
+}
+
+var cZoomBehavior = null;
+var cZoomG = null; // the <g> that gets transformed
+
+function buildContinentMap(cid) {
+  var svg = d3.select('#continent-map');
+  svg.selectAll('*').remove();
+
+  var cfg = CONTINENT_PROJECTIONS[cid];
+  var projection;
+
+  if (cid === 'AN') {
+    projection = d3.geoOrthographic().scale(cfg.scale).translate(cfg.translate).rotate([0, -90]);
+  } else {
+    projection = d3.geoNaturalEarth1().scale(cfg.scale).translate(cfg.translate)
+      .center(cfg.center).rotate(cfg.rotate);
+  }
+
+  cGeoPath = d3.geoPath().projection(projection);
+
+  // Set up zoom
+  cZoomBehavior = d3.zoom()
+    .scaleExtent([0.5, 12])
+    .on('zoom', function(event) {
+      cZoomG.attr('transform', event.transform);
+    });
+  svg.call(cZoomBehavior);
+  svg.on('dblclick.zoom', null); // disable double-click zoom
+
+  // All map content goes in a group so zoom transforms it
+  cZoomG = svg.append('g').attr('id','czoom-g');
+
+  // Ocean background (fixed, not inside zoom group)
+  svg.insert('rect','g').attr('width',960).attr('height',560).attr('fill','#1a4060');
+
+  // Graticule inside zoom group
+  cZoomG.append('path')
+    .datum(d3.geoGraticule()())
+    .attr('fill','none')
+    .attr('stroke','rgba(240,192,64,0.05)')
+    .attr('stroke-width','0.5')
+    .attr('d', cGeoPath);
+
+  var cont = CONTINENTS.find(function(c){ return c.id === cid; });
+  var contColor = cont ? cont.color : '#888';
+  var countrySet = CONTINENT_COUNTRIES[cid] || [];
+  var isoSet = {};
+  countrySet.forEach(function(c){ isoSet[c.iso] = c; });
+
+  d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json').then(function(world) {
+    var countries = topojson.feature(world, world.objects.countries).features;
+
+    // Draw all countries
+    countries.forEach(function(feature) {
+      var iso = getISO(feature.id);
+      var inContinent = !!isoSet[iso];
+
+      // Handle France split
+      if (iso === 'FRA' && feature.geometry && feature.geometry.type === 'MultiPolygon') {
+        feature.geometry.coordinates.forEach(function(polygonCoords) {
+          var pts = polygonCoords[0];
+          var geoLon = pts.reduce(function(s,p){return s+p[0];},0)/pts.length;
+          var subIso = geoLon < -20 ? 'GUF' : 'FRA';
+          var subInContinent = !!isoSet[subIso];
+          var subFeature = {type:'Feature',geometry:{type:'Polygon',coordinates:polygonCoords}};
+          cZoomG.append('path')
+            .datum(subFeature)
+            .attr('class', subInContinent ? 'cpath country-' + subIso : 'cpath-dim')
+            .attr('id', subInContinent ? 'cpth-' + subIso : null)
+            .attr('d', cGeoPath)
+            .style('fill', subInContinent ? contColor : 'rgba(120,140,100,0.35)')
+            .style('stroke', '#1a2e18').style('stroke-width','0.4')
+            .on('click', subInContinent ? function(){ onCCountryClick(subIso); } : null)
+            .on('mouseenter', subInContinent ? function(e){ showCTooltip(e, isoSet[subIso]); } : null)
+            .on('mouseleave', function(){ document.getElementById('continent-tooltip').classList.remove('show'); })
+            .on('mousemove', function(e){ moveCTooltip(e); });
+        });
+        return;
+      }
+
+      cZoomG.append('path')
+        .datum(feature)
+        .attr('class', inContinent ? 'cpath country-' + iso : 'cpath-dim')
+        .attr('id', inContinent ? 'cpth-' + iso : null)
+        .attr('d', cGeoPath)
+        .style('fill', inContinent ? contColor : 'rgba(120,140,100,0.35)')
+        .style('stroke','#1a2e18').style('stroke-width','0.4')
+        .on('click', inContinent ? function(){ onCCountryClick(iso); } : null)
+        .on('mouseenter', inContinent ? function(e){ showCTooltip(e, isoSet[iso]); } : null)
+        .on('mouseleave', function(){ document.getElementById('continent-tooltip').classList.remove('show'); })
+        .on('mousemove', function(e){ moveCTooltip(e); });
+    });
+
+    // Country labels — full names with manual offsets for crowded areas
+    countrySet.forEach(function(c) {
+      var feature = countries.find(function(f){ return getISO(f.id) === c.iso; });
+      if (!feature) return;
+      var centroid = cGeoPath.centroid(feature);
+      if (!centroid || isNaN(centroid[0])) return;
+
+      var dx = c.dx || 0;
+      var dy = c.dy || 0;
+      var tx = centroid[0] + dx;
+      var ty = centroid[1] + dy;
+
+      // Draw a small leader line if label is offset
+      if (dx !== 0 || dy !== 0) {
+        cZoomG.append('line')
+          .attr('x1', centroid[0]).attr('y1', centroid[1])
+          .attr('x2', tx).attr('y2', ty - 2)
+          .attr('stroke','rgba(0,0,0,0.25)').attr('stroke-width','0.6')
+          .attr('pointer-events','none').attr('class','cpath-label');
+        // Dot at country centroid
+        cZoomG.append('circle')
+          .attr('cx', centroid[0]).attr('cy', centroid[1])
+          .attr('r', 1.2).attr('fill','rgba(0,0,0,0.35)')
+          .attr('pointer-events','none').attr('class','cpath-label');
+      }
+
+      cZoomG.append('text')
+        .attr('x', tx).attr('y', ty)
+        .attr('text-anchor','middle').attr('pointer-events','none')
+        .attr('font-family','Nunito,sans-serif').attr('font-size','7px')
+        .attr('font-weight','800').attr('fill','rgba(0,0,0,0.6)')
+        .attr('stroke','rgba(255,255,255,0.25)').attr('stroke-width','1.5')
+        .attr('paint-order','stroke').attr('class','cpath-label')
+        .text(c.name);
+    });
+
+    applyCColors();
+
+    // Antarctica facts
+    if (cid === 'AN') {
+      document.getElementById('cstudy-empty').style.display = 'none';
+      document.getElementById('cstudy-info').style.display = 'none';
+      var antEl = document.getElementById('cstudy-antarctica');
+      antEl.style.display = 'block';
+      var factsEl = document.getElementById('antarctica-facts');
+      factsEl.innerHTML = '';
+      ANTARCTICA_FACTS.forEach(function(f) {
+        var card = document.createElement('div');
+        card.style.cssText = 'background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;';
+        card.innerHTML = '<div style="font-size:16px;margin-bottom:4px">' + f.icon + ' <span style="font-size:12px;font-weight:800;color:var(--text)">' + f.title + '</span></div><div style="font-size:11px;color:var(--subtext);line-height:1.5">' + f.text + '</div>';
+        factsEl.appendChild(card);
+      });
+    }
+  });
+}
+
+function cZoom(factor) {
+  var svg = d3.select('#continent-map');
+  svg.transition().duration(300).call(cZoomBehavior.scaleBy, factor);
+}
+
+function cZoomReset() {
+  var svg = d3.select('#continent-map');
+  svg.transition().duration(400).call(cZoomBehavior.transform, d3.zoomIdentity);
+}
+
+function applyCColors() {
+  var cid = currentContinentId;
+  if (!cid) return;
+  var cont = CONTINENTS.find(function(c){ return c.id === cid; });
+  var baseColor = cont ? cont.color : '#888';
+  var countries = CONTINENT_COUNTRIES[cid] || [];
+  countries.forEach(function(c) {
+    var m = getCMastery(cid, c.iso);
+    var el = document.getElementById('cpth-' + c.iso);
+    if (!el) return;
+    if (c.iso === cSelectedIso) {
+      el.style.fill = '#fef9c3';
+    } else if (m.streak >= 3) {
+      el.style.fill = '#f0c040';
+    } else if (m.correct > 0) {
+      el.style.fill = d3.color(baseColor).darker(0.4);
+    } else {
+      el.style.fill = baseColor;
+    }
+  });
+}
+
+function highlightCCountry(iso) {
+  cSelectedIso = iso;
+  applyCColors();
+  var cid = currentContinentId;
+  var c = (CONTINENT_COUNTRIES[cid]||[]).find(function(x){ return x.iso === iso; });
+  if (c) showCInfo(c);
+}
+
+function showCInfo(c) {
+  document.getElementById('cstudy-empty').style.display = 'none';
+  document.getElementById('cstudy-info').style.display = 'block';
+  document.getElementById('cinfo-name').textContent = c.name;
+  document.getElementById('cinfo-iso').textContent = c.iso + ' · ' + c.capital;
+  document.getElementById('cinfo-capital').textContent = c.capital;
+  var m = getCMastery(currentContinentId, c.iso);
+  var dots = document.getElementById('cinfo-mastery');
+  dots.innerHTML = '';
+  for (var i=0;i<3;i++){
+    var d=document.createElement('div');
+    d.className='mastery-dot'+(i<m.streak?' filled':'');
+    dots.appendChild(d);
+  }
+}
+
+function onCCountryClick(iso) {
+  if (cQuizActive) { handleCAnswer(iso); return; }
+  highlightCCountry(iso);
+}
+
+function showCTooltip(event, c) {
+  if (cQuizActive && cQuizType === 'find') return;
+  var tt = document.getElementById('continent-tooltip');
+  tt.textContent = c ? c.name : '';
+  tt.classList.add('show');
+  moveCTooltip(event);
+}
+function moveCTooltip(event) {
+  var tt = document.getElementById('continent-tooltip');
+  var wrap = document.getElementById('continent-map-wrap');
+  if (!wrap) return;
+  var rect = wrap.getBoundingClientRect();
+  tt.style.left = (event.clientX - rect.left + 12) + 'px';
+  tt.style.top  = (event.clientY - rect.top  - 30) + 'px';
+}
+
+function setContinentMode(mode) {
+  document.getElementById('ctab-study').classList.toggle('active', mode==='study');
+  document.getElementById('ctab-quiz').classList.toggle('active', mode==='quiz');
+  document.getElementById('cstudy-panel').style.display = mode==='study' ? 'block' : 'none';
+  document.getElementById('cquiz-panel').style.display  = mode==='quiz'  ? 'flex'  : 'none';
+  var mapEl = document.getElementById('continent-map');
+  if (mode === 'study') {
+    cQuizActive = false;
+    cSelectedIso = null;
+    if (mapEl) mapEl.classList.remove('hide-labels');
+    applyCColors();
+    // show Antarctica panel if needed
+    if (currentContinentId === 'AN') {
+      document.getElementById('cstudy-empty').style.display = 'none';
+      document.getElementById('cstudy-antarctica').style.display = 'block';
+    }
+  }
+  if (mode === 'quiz') {
+    if (mapEl) mapEl.classList.add('hide-labels');
+    document.getElementById('cquiz-start-btn').style.display = 'block';
+    document.getElementById('cquiz-skip-btn').style.display  = 'none';
+    document.getElementById('cquiz-feedback').style.display  = 'none';
+    document.getElementById('cquiz-question').textContent    = 'Press Start to begin!';
+    document.getElementById('cquiz-hint').textContent        = '';
+    document.getElementById('cquiz-badge').textContent       = '';
+    document.getElementById('cquiz-choices').style.display   = 'none';
+    updateCQuizStats();
+  }
+}
+
+function setCQuizType(type) {
+  cQuizType = type;
+  var btnF = document.getElementById('cqtype-find');
+  var btnN = document.getElementById('cqtype-name');
+  var activeStyle = 'flex:1;padding:7px;border:none;border-radius:8px;font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a2e1a;';
+  var inactiveStyle = 'flex:1;padding:7px;border:1px solid var(--border);border-radius:8px;font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer;background:rgba(0,0,0,.2);color:var(--subtext);';
+  btnF.style.cssText = type==='find' ? activeStyle : inactiveStyle;
+  btnN.style.cssText = type==='name' ? activeStyle : inactiveStyle;
+  // Reset quiz
+  cQuizActive = false;
+  document.getElementById('cquiz-start-btn').style.display = 'block';
+  document.getElementById('cquiz-skip-btn').style.display  = 'none';
+  document.getElementById('cquiz-feedback').style.display  = 'none';
+  document.getElementById('cquiz-question').textContent    = 'Press Start to begin!';
+  document.getElementById('cquiz-hint').textContent        = '';
+  document.getElementById('cquiz-choices').style.display   = 'none';
+}
+
+function startCQuiz() {
+  cQuizActive = true;
+  cqCorrect = 0; cqWrong = 0; cqStreak = 0;
+  updateCQuizStats();
+  var pool = (CONTINENT_COUNTRIES[currentContinentId] || []).slice();
+  pool.sort(function(a,b){ return getCMastery(currentContinentId,a.iso).streak - getCMastery(currentContinentId,b.iso).streak; });
+  cQuizQueue = pool.concat(pool).concat(pool.slice(0,Math.ceil(pool.length/2)));
+  shuffle(cQuizQueue);
+  document.getElementById('cquiz-start-btn').style.display = 'none';
+  document.getElementById('cquiz-skip-btn').style.display  = 'block';
+  document.getElementById('cquiz-feedback').style.display  = 'none';
+  document.getElementById('continent-tooltip').classList.remove('show');
+  cNextQuestion();
+}
+
+function cNextQuestion() {
+  cSelectedIso = null;
+  applyCColors();
+  document.getElementById('cquiz-feedback').style.display = 'none';
+  if (!cQuizQueue.length) {
+    var pool = (CONTINENT_COUNTRIES[currentContinentId]||[]).slice();
+    shuffle(pool);
+    cQuizQueue = pool.concat(pool);
+  }
+  cQuizTarget = cQuizQueue.shift();
+
+  var cont = CONTINENTS.find(function(c){ return c.id === currentContinentId; });
+  document.getElementById('cquiz-badge').textContent = (cont ? cont.name.toUpperCase() : '') + ' · COUNTRIES';
+
+  if (cQuizType === 'find') {
+    document.getElementById('cquiz-question').textContent = 'Find ' + cQuizTarget.name;
+    document.getElementById('cquiz-hint').textContent     = 'Click the country on the map';
+    document.getElementById('cquiz-choices').style.display = 'none';
+  } else {
+    // Name It — highlight a random country, show 4 choices
+    document.getElementById('cquiz-question').textContent = 'What country is highlighted?';
+    document.getElementById('cquiz-hint').textContent     = 'Pick the correct name below';
+    // Highlight the target
+    cSelectedIso = '__quiz__'; // temp flag
+    var el = document.getElementById('cpth-' + cQuizTarget.iso);
+    if (el) el.style.fill = '#fef9c3';
+    cSelectedIso = null;
+    // Build choices
+    var all = CONTINENT_COUNTRIES[currentContinentId] || [];
+    var wrong = all.filter(function(c){ return c.iso !== cQuizTarget.iso; });
+    shuffle(wrong);
+    var choices = [cQuizTarget].concat(wrong.slice(0,3));
+    shuffle(choices);
+    var choicesEl = document.getElementById('cquiz-choices');
+    choicesEl.style.display = 'flex';
+    choicesEl.innerHTML = '';
+    choices.forEach(function(c) {
+      var btn = document.createElement('button');
+      btn.className = 'quiz-btn quiz-btn-secondary';
+      btn.textContent = c.name;
+      btn.setAttribute('data-iso', c.iso);
+      btn.onclick = function(){ handleCNameAnswer(c.iso); };
+      choicesEl.appendChild(btn);
+    });
+  }
+}
+
+function handleCAnswer(clickedIso) {
+  if (!cQuizTarget || cQuizType !== 'find') return;
+  var correct = clickedIso === cQuizTarget.iso;
+  var clickedC = (CONTINENT_COUNTRIES[currentContinentId]||[]).find(function(c){ return c.iso === clickedIso; });
+
+  var el = document.getElementById('cpth-' + clickedIso);
+  if (el) {
+    el.style.fill = correct ? '#4ade80' : '#f87171';
+    setTimeout(function(){ applyCColors(); }, 1200);
+  }
+  if (!correct) {
+    var correctEl = document.getElementById('cpth-' + cQuizTarget.iso);
+    setTimeout(function(){
+      if (correctEl) correctEl.style.fill = '#fef9c3';
+      setTimeout(function(){ applyCColors(); }, 1500);
+    }, 400);
+  }
+  processCResult(correct, clickedC ? clickedC.name : '?');
+}
+
+function handleCNameAnswer(clickedIso) {
+  if (!cQuizTarget || cQuizType !== 'name') return;
+  var correct = clickedIso === cQuizTarget.iso;
+  document.querySelectorAll('#cquiz-choices button').forEach(function(btn) {
+    btn.disabled = true;
+    var iso = btn.getAttribute('data-iso');
+    if (iso === cQuizTarget.iso) { btn.style.background='rgba(74,222,128,.3)'; btn.style.color='#4ade80'; btn.style.border='1px solid rgba(74,222,128,.5)'; }
+    else if (iso === clickedIso) { btn.style.background='rgba(248,113,113,.3)'; btn.style.color='#f87171'; btn.style.border='1px solid rgba(248,113,113,.5)'; }
+  });
+  var clickedC = (CONTINENT_COUNTRIES[currentContinentId]||[]).find(function(c){ return c.iso === clickedIso; });
+  processCResult(correct, clickedC ? clickedC.name : '?');
+}
+
+function processCResult(correct, clickedName) {
+  var cid = currentContinentId;
+  var key = cid + '_' + cQuizTarget.iso;
+  if (!cCountryMastery[key]) cCountryMastery[key] = {streak:0,correct:0,wrong:0};
+  if (correct) {
+    cCountryMastery[key].streak  = Math.min((cCountryMastery[key].streak||0)+1, 3);
+    cCountryMastery[key].correct = (cCountryMastery[key].correct||0)+1;
+    cqCorrect++; cqStreak++;
+    if (cCountryMastery[key].streak >= 3) showToastMsg('⭐ ' + cQuizTarget.name + ' mastered!');
+  } else {
+    cCountryMastery[key].streak = 0;
+    cCountryMastery[key].wrong  = (cCountryMastery[key].wrong||0)+1;
+    cqWrong++; cqStreak = 0;
+  }
+  saveCMastery(cid, cQuizTarget.iso);
+  updateCQuizStats();
+  updateCProgress();
+
+  var fb = document.getElementById('cquiz-feedback');
+  fb.className = 'quiz-feedback ' + (correct ? 'correct' : 'wrong');
+  fb.textContent = correct
+    ? '✓ Correct! ' + cQuizTarget.name + '!'
+    : '✗ That was ' + clickedName + '. The answer was ' + cQuizTarget.name + '.';
+  fb.style.display = 'block';
+  setTimeout(function(){ if (cQuizActive) cNextQuestion(); }, correct ? 900 : 2200);
+}
+
+function updateCQuizStats() {
+  var ec = document.getElementById('cstat-correct');
+  var ew = document.getElementById('cstat-wrong');
+  var es = document.getElementById('cstat-streak');
+  if (ec) ec.textContent = cqCorrect;
+  if (ew) ew.textContent = cqWrong;
+  if (es) es.textContent = cqStreak;
+}
+
+// ══════════════════════════════════════════════
+// GUIDED TOUR
+// ══════════════════════════════════════════════
+
+var TOUR_DATA = [
+  // NORTHEAST
+  {id:'ME',  name:'Maine',          abbr:'ME', region:'northeast', capital:'Augusta',       pop:'1.4 million',  landmark:'Acadia National Park',        desc:'A stunning coastal park with rocky shores, forests, and the famous Cadillac Mountain.'},
+  {id:'NH',  name:'New Hampshire',  abbr:'NH', region:'northeast', capital:'Concord',       pop:'1.4 million',  landmark:'Mount Washington',            desc:'The highest peak in the Northeast, famous for extreme weather and breathtaking views.'},
+  {id:'VT',  name:'Vermont',        abbr:'VT', region:'northeast', capital:'Montpelier',    pop:'647,000',      landmark:'Stowe Mountain Resort',       desc:'One of New England\'s most beloved ski resorts, surrounded by gorgeous maple forests.'},
+  {id:'MA',  name:'Massachusetts',  abbr:'MA', region:'northeast', capital:'Boston',        pop:'7 million',    landmark:'Freedom Trail',               desc:'A 2.5-mile historic path through Boston connecting 16 sites from the American Revolution.'},
+  {id:'RI',  name:'Rhode Island',   abbr:'RI', region:'northeast', capital:'Providence',    pop:'1.1 million',  landmark:'The Breakers Mansion',        desc:'A spectacular Gilded Age mansion in Newport built by the Vanderbilt family in 1895.'},
+  {id:'CT',  name:'Connecticut',    abbr:'CT', region:'northeast', capital:'Hartford',      pop:'3.6 million',  landmark:'Mark Twain House',            desc:'The Victorian home where Mark Twain wrote "Adventures of Huckleberry Finn" and "Tom Sawyer."'},
+  {id:'NY',  name:'New York',       abbr:'NY', region:'northeast', capital:'Albany',        pop:'19.7 million', landmark:'Niagara Falls',               desc:'One of the world\'s most powerful waterfalls, straddling the border with Canada.'},
+  {id:'PA',  name:'Pennsylvania',   abbr:'PA', region:'northeast', capital:'Harrisburg',    pop:'13 million',   landmark:'Liberty Bell',                desc:'The famous cracked bell in Philadelphia that symbolized freedom during the American Revolution.'},
+  {id:'NJ',  name:'New Jersey',     abbr:'NJ', region:'northeast', capital:'Trenton',       pop:'9.3 million',  landmark:'Cape May',                    desc:'A charming Victorian beach town at the southern tip of New Jersey, one of America\'s oldest seaside resorts.'},
+  {id:'DE',  name:'Delaware',       abbr:'DE', region:'northeast', capital:'Dover',         pop:'1 million',    landmark:'Brandywine Creek State Park', desc:'Beautiful parkland along Brandywine Creek, home to wildflower meadows and stunning fall foliage.'},
+  {id:'MD',  name:'Maryland',       abbr:'MD', region:'northeast', capital:'Annapolis',     pop:'6.2 million',  landmark:'Chesapeake Bay',              desc:'The largest estuary in the US, famous for blue crabs, oysters, and gorgeous sailing.'},
+
+  // SOUTHEAST
+  {id:'VA',  name:'Virginia',       abbr:'VA', region:'southeast', capital:'Richmond',      pop:'8.7 million',  landmark:'Shenandoah National Park',    desc:'A beautiful park in the Blue Ridge Mountains with scenic Skyline Drive and stunning waterfalls.'},
+  {id:'WV',  name:'West Virginia',  abbr:'WV', region:'southeast', capital:'Charleston',    pop:'1.8 million',  landmark:'New River Gorge',             desc:'A stunning river gorge with the longest steel arch bridge in the Western Hemisphere.'},
+  {id:'KY',  name:'Kentucky',       abbr:'KY', region:'southeast', capital:'Frankfort',     pop:'4.5 million',  landmark:'Mammoth Cave',                desc:'The world\'s longest known cave system with over 400 miles of explored passageways.'},
+  {id:'TN',  name:'Tennessee',      abbr:'TN', region:'southeast', capital:'Nashville',     pop:'7 million',    landmark:'Great Smoky Mountains',       desc:'America\'s most visited national park, famous for misty mountain views and diverse wildlife.'},
+  {id:'NC',  name:'North Carolina', abbr:'NC', region:'southeast', capital:'Raleigh',       pop:'10.6 million', landmark:'Cape Hatteras Lighthouse',    desc:'The tallest brick lighthouse in the US, standing 198 feet tall on the Outer Banks.'},
+  {id:'SC',  name:'South Carolina', abbr:'SC', region:'southeast', capital:'Columbia',      pop:'5.3 million',  landmark:'Fort Sumter',                 desc:'The site where the first shots of the Civil War were fired in 1861, now a national monument.'},
+  {id:'GA',  name:'Georgia',        abbr:'GA', region:'southeast', capital:'Atlanta',       pop:'10.9 million', landmark:'Okefenokee Swamp',            desc:'One of the largest intact freshwater ecosystems in North America, home to alligators and rare birds.'},
+  {id:'FL',  name:'Florida',        abbr:'FL', region:'southeast', capital:'Tallahassee',   pop:'22.6 million', landmark:'Everglades National Park',    desc:'A vast subtropical wilderness — the only place on Earth where alligators and crocodiles coexist.'},
+  {id:'AL',  name:'Alabama',        abbr:'AL', region:'southeast', capital:'Montgomery',    pop:'5 million',    landmark:'U.S. Space & Rocket Center', desc:'The world\'s largest space museum, located in Huntsville where NASA develops rockets.'},
+  {id:'MS',  name:'Mississippi',    abbr:'MS', region:'southeast', capital:'Jackson',       pop:'3 million',    landmark:'Natchez Trace Parkway',       desc:'A 444-mile scenic road following an ancient trail used by Native Americans and early settlers.'},
+  {id:'AR',  name:'Arkansas',       abbr:'AR', region:'southeast', capital:'Little Rock',   pop:'3 million',    landmark:'Hot Springs National Park',   desc:'A unique park protecting 47 natural hot springs that have drawn visitors for over 200 years.'},
+  {id:'LA',  name:'Louisiana',      abbr:'LA', region:'southeast', capital:'Baton Rouge',   pop:'4.6 million',  landmark:'French Quarter, New Orleans', desc:'The oldest neighborhood in New Orleans, famous for jazz music, colorful architecture, and Mardi Gras.'},
+
+  // MIDWEST
+  {id:'OH',  name:'Ohio',           abbr:'OH', region:'midwest',   capital:'Columbus',      pop:'11.8 million', landmark:'Rock & Roll Hall of Fame',    desc:'A world-famous museum in Cleveland celebrating the history and legends of rock and roll music.'},
+  {id:'IN',  name:'Indiana',        abbr:'IN', region:'midwest',   capital:'Indianapolis',  pop:'6.8 million',  landmark:'Indianapolis Motor Speedway', desc:'The home of the Indy 500, one of the world\'s most famous car races, held every Memorial Day.'},
+  {id:'IL',  name:'Illinois',       abbr:'IL', region:'midwest',   capital:'Springfield',   pop:'12.5 million', landmark:'Willis Tower',                desc:'One of the tallest buildings in the Western Hemisphere, with a glass ledge 1,353 feet above Chicago.'},
+  {id:'MI',  name:'Michigan',       abbr:'MI', region:'midwest',   capital:'Lansing',       pop:'10.1 million', landmark:'Sleeping Bear Dunes',         desc:'Towering sand dunes along Lake Michigan that rise 400 feet above the water — great for sledding!'},
+  {id:'WI',  name:'Wisconsin',      abbr:'WI', region:'midwest',   capital:'Madison',       pop:'5.9 million',  landmark:'House on the Rock',           desc:'A bizarre and magnificent attraction built on a 60-foot chimney of rock, filled with incredible collections.'},
+  {id:'MN',  name:'Minnesota',      abbr:'MN', region:'midwest',   capital:'Saint Paul',    pop:'5.7 million',  landmark:'Boundary Waters',             desc:'Over a million acres of pristine wilderness with more than 1,000 lakes perfect for canoeing.'},
+  {id:'IA',  name:'Iowa',           abbr:'IA', region:'midwest',   capital:'Des Moines',    pop:'3.2 million',  landmark:'Field of Dreams Movie Site',  desc:'The real Iowa farm where the beloved 1989 baseball movie was filmed, still drawing visitors today.'},
+  {id:'MO',  name:'Missouri',       abbr:'MO', region:'midwest',   capital:'Jefferson City', pop:'6.2 million', landmark:'Gateway Arch',                desc:'A stunning 630-foot stainless steel arch in St. Louis honoring America\'s westward expansion.'},
+  {id:'ND',  name:'North Dakota',   abbr:'ND', region:'midwest',   capital:'Bismarck',      pop:'779,000',      landmark:'Theodore Roosevelt Natl Park',desc:'Rugged badlands wilderness where young Theodore Roosevelt came to grieve and found his love of nature.'},
+  {id:'SD',  name:'South Dakota',   abbr:'SD', region:'midwest',   capital:'Pierre',        pop:'910,000',      landmark:'Mount Rushmore',              desc:'Four US presidents carved into a granite mountain — Washington, Jefferson, Roosevelt, and Lincoln.'},
+  {id:'NE',  name:'Nebraska',       abbr:'NE', region:'midwest',   capital:'Lincoln',       pop:'2 million',    landmark:'Chimney Rock',                desc:'A dramatic 325-foot spire that guided pioneers along the Oregon Trail in the 1800s.'},
+  {id:'KS',  name:'Kansas',         abbr:'KS', region:'midwest',   capital:'Topeka',        pop:'2.9 million',  landmark:'Tallgrass Prairie Natl Preserve', desc:'One of the last remaining tallgrass prairies on Earth, home to bison and stunning wildflowers.'},
+
+  // SOUTHWEST
+  {id:'TX',  name:'Texas',          abbr:'TX', region:'southwest', capital:'Austin',        pop:'30 million',   landmark:'The Alamo',                   desc:'A historic mission in San Antonio where 189 Texans made a heroic stand for independence in 1836.'},
+  {id:'OK',  name:'Oklahoma',       abbr:'OK', region:'southwest', capital:'Oklahoma City',  pop:'4 million',   landmark:'Tallgrass Prairie Preserve',  desc:'Home to one of the largest bison herds in the world, roaming open grasslands.'},
+  {id:'NM',  name:'New Mexico',     abbr:'NM', region:'southwest', capital:'Santa Fe',      pop:'2.1 million',  landmark:'White Sands National Park',   desc:'Vast rolling dunes of pure white gypsum sand — the largest gypsum dunefield in the world.'},
+  {id:'AZ',  name:'Arizona',        abbr:'AZ', region:'southwest', capital:'Phoenix',       pop:'7.4 million',  landmark:'Grand Canyon',                desc:'One of the Seven Natural Wonders of the World — a mile-deep canyon carved by the Colorado River.'},
+
+  // WEST
+  {id:'CO',  name:'Colorado',       abbr:'CO', region:'west',      capital:'Denver',        pop:'5.8 million',  landmark:'Rocky Mountain Natl Park',    desc:'Home to 77 peaks over 13,000 feet, with elk, moose, and some of the best skiing in the world.'},
+  {id:'WY',  name:'Wyoming',        abbr:'WY', region:'west',      capital:'Cheyenne',      pop:'580,000',      landmark:'Yellowstone National Park',   desc:'The world\'s first national park, famous for Old Faithful geyser and amazing wildlife.'},
+  {id:'MT',  name:'Montana',        abbr:'MT', region:'west',      capital:'Helena',        pop:'1.1 million',  landmark:'Glacier National Park',       desc:'Known as the "Crown of the Continent" with stunning glaciers, wildlife, and Going-to-the-Sun Road.'},
+  {id:'ID',  name:'Idaho',          abbr:'ID', region:'west',      capital:'Boise',         pop:'1.9 million',  landmark:'Craters of the Moon',         desc:'A vast lava field that looks like another planet — astronauts even trained here for the Moon landings.'},
+  {id:'UT',  name:'Utah',           abbr:'UT', region:'west',      capital:'Salt Lake City', pop:'3.4 million', landmark:'Zion National Park',          desc:'A stunning canyon carved by the Virgin River, with towering red cliffs and narrow slot canyons.'},
+  {id:'NV',  name:'Nevada',         abbr:'NV', region:'west',      capital:'Carson City',   pop:'3.2 million',  landmark:'Great Basin National Park',   desc:'A remote wilderness with ancient bristlecone pine trees — some over 4,000 years old.'},
+  {id:'CA',  name:'California',     abbr:'CA', region:'west',      capital:'Sacramento',    pop:'38.9 million', landmark:'Yosemite National Park',      desc:'Home to El Capitan and Half Dome — iconic granite walls that draw climbers from around the world.'},
+  {id:'OR',  name:'Oregon',         abbr:'OR', region:'west',      capital:'Salem',         pop:'4.2 million',  landmark:'Crater Lake',                 desc:'The deepest lake in the US, formed inside an ancient volcano with the most brilliant blue water imaginable.'},
+  {id:'WA',  name:'Washington',     abbr:'WA', region:'west',      capital:'Olympia',       pop:'7.8 million',  landmark:'Mount Rainier',               desc:'A massive active volcano with 26 glaciers — the most glaciated peak in the contiguous United States.'},
+
+  // ALASKA & HAWAII
+  {id:'AK',  name:'Alaska',         abbr:'AK', region:'alaska',    capital:'Juneau',        pop:'733,000',      landmark:'Denali',                      desc:'The tallest mountain in North America at 20,310 feet, surrounded by a vast wilderness national park.'},
+  {id:'HI',  name:'Hawaii',         abbr:'HI', region:'hawaii',    capital:'Honolulu',      pop:'1.4 million',  landmark:'Volcanoes National Park',     desc:'An active volcanic landscape where you can watch new land being created as lava flows into the ocean.'},
+];
+
+var tourIndex = 0;
+var tourGeoPath = null;
+var tourFeatureMap = {};
+var tourExplored = {};
+
+function startGuidedTour() {
+  document.getElementById('app-header').style.display = 'flex';
+  document.getElementById('person-badge').textContent = currentPersonLabel;
+  document.getElementById('level-badge').textContent = '🧭 USA Explorer Tour';
+  tourIndex = 0;
+  showScreen('screen-tour');
+  loadTourProgress(function() {
+    buildTourMap();
+  });
+}
+
+function loadTourProgress(callback) {
+  if (!currentPerson) { if (callback) callback(); return; }
+  var local = localStorage.getItem('wade_tour_' + currentPerson);
+  if (local) { try { tourExplored = JSON.parse(local); } catch(e) { tourExplored = {}; } }
+  // Try Firebase but don't block — call callback immediately with local data
+  if (callback) callback();
+  db.ref('tour/' + currentPerson).once('value', function(snap) {
+    var fb = snap.val();
+    if (fb) {
+      tourExplored = fb;
+      localStorage.setItem('wade_tour_' + currentPerson, JSON.stringify(fb));
+      // Map may be built by now — safely refresh colors and progress
+      applyTourColors();
+      updateTourProgress();
+    }
+  });
+}
+
+function saveTourProgress() {
+  if (!currentPerson) return;
+  localStorage.setItem('wade_tour_' + currentPerson, JSON.stringify(tourExplored));
+  try { db.ref('tour/' + currentPerson).set(tourExplored); } catch(e) {}
+}
+
+function buildTourMap() {
+  var svg = d3.select('#tour-map');
+  svg.selectAll('*').remove();
+
+  d3.json('https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json').then(function(us) {
+    var path = d3.geoPath();
+    tourGeoPath = path;
+    var features = topojson.feature(us, us.objects.states).features;
+
+    features.forEach(function(feature) {
+      var fips = String(feature.id).padStart(2,'0');
+      var abbr = FIPS_TO_ABBR[fips];
+      if (abbr) tourFeatureMap[abbr] = feature;
+    });
+
+    // Draw borders
+    svg.append('path')
+      .datum(topojson.mesh(us, us.objects.states, function(a,b){ return a !== b; }))
+      .attr('fill','none').attr('stroke','#1a2e18').attr('stroke-width','0.6')
+      .attr('d', path);
+
+    // Draw each state
+    features.forEach(function(feature) {
+      var fips = String(feature.id).padStart(2,'0');
+      var abbr = FIPS_TO_ABBR[fips];
+      if (!abbr) return;
+      var s = STATES.find(function(st){ return st.id === abbr; });
+      if (!s) return;
+
+      svg.append('path')
+        .datum(feature)
+        .attr('id','tour-state-' + abbr)
+        .attr('class','state-path region-' + s.region)
+        .attr('d', path);
+    });
+
+    // Add labels for each state — shown only after explored
+    features.forEach(function(feature) {
+      var fips = String(feature.id).padStart(2,'0');
+      var abbr = FIPS_TO_ABBR[fips];
+      if (!abbr || abbr === 'AK' || abbr === 'HI') return;
+      var centroid = path.centroid(feature);
+      if (!centroid || isNaN(centroid[0])) return;
+      svg.append('text')
+        .attr('id', 'tour-label-' + abbr)
+        .attr('x', centroid[0])
+        .attr('y', centroid[1] + 4)
+        .attr('text-anchor', 'middle')
+        .attr('pointer-events', 'none')
+        .attr('font-family', 'Nunito, sans-serif')
+        .attr('font-size', '9px')
+        .attr('font-weight', '900')
+        .attr('fill', 'rgba(0,0,0,0.75)')
+        .attr('stroke', 'rgba(255,255,255,0.5)')
+        .attr('stroke-width', '2')
+        .attr('paint-order', 'stroke')
+        .attr('opacity', '0')
+        .text(abbr);
+    });
+
+    applyTourColors();
+    showTourState(tourIndex);
+  });
+}
+
+function applyTourColors() {
+  if (!document.getElementById('tour-state-ME')) return; // map not built yet
+  TOUR_DATA.forEach(function(t) {
+    var el = document.getElementById('tour-state-' + t.id);
+    if (!el) return;
+    var s = STATES.find(function(st){ return st.id === t.id; });
+    var base = 'state-path region-' + (s ? s.region : '');
+    if (t.id === TOUR_DATA[tourIndex].id) {
+      el.setAttribute('class', base + ' tour-active');
+    } else if (tourExplored[t.id]) {
+      el.setAttribute('class', base + ' mastered');
+    } else {
+      el.setAttribute('class', base);
+    }
+    // Show label if explored (or currently active)
+    var labelEl = document.getElementById('tour-label-' + t.id);
+    if (labelEl) {
+      var show = tourExplored[t.id] || t.id === TOUR_DATA[tourIndex].id;
+      labelEl.setAttribute('opacity', show ? '1' : '0');
+      // Use full name for active state, abbr for already-explored
+      labelEl.textContent = t.id === TOUR_DATA[tourIndex].id ? t.abbr : t.abbr;
+    }
+  });
+}
+
+function showTourState(idx) {
+  var t = TOUR_DATA[idx];
+  if (!t) return;
+
+  // Mark as explored
+  tourExplored[t.id] = true;
+  saveTourProgress();
+
+  // Update sidebar
+  var cont = REGION_COLORS[t.region];
+  var badge = document.getElementById('tour-region-badge');
+  badge.textContent = REGION_LABELS[t.region];
+  badge.style.background = (cont||'#888') + '30';
+  badge.style.color = cont||'#888';
+  badge.style.border = '1px solid ' + (cont||'#888') + '60';
+
+  // Region progress
+  var regionStates = TOUR_DATA.filter(function(s){ return s.region === t.region; });
+  var regionIdx = regionStates.findIndex(function(s){ return s.id === t.id; });
+  document.getElementById('tour-region-progress').textContent =
+    'State ' + (regionIdx+1) + ' of ' + regionStates.length + ' in this region';
+
+  document.getElementById('tour-state-name').textContent = t.name;
+  document.getElementById('tour-state-abbr').textContent = t.abbr + ' · ' + t.region.toUpperCase();
+  document.getElementById('tour-capital').textContent = t.capital;
+  document.getElementById('tour-landmark').textContent = t.landmark;
+  document.getElementById('tour-landmark-desc').textContent = t.desc;
+  document.getElementById('tour-population').textContent = t.pop;
+  document.getElementById('tour-counter').textContent = (idx + 1);
+
+  // Prev/Next button state
+  document.getElementById('tour-prev-btn').style.opacity = idx === 0 ? '0.35' : '1';
+  document.getElementById('tour-next-btn').textContent = idx === TOUR_DATA.length - 1 ? 'Finish ✓' : 'Next →';
+
+  applyTourColors();
+  updateTourProgress();
+  updateTourRegionBar();
+}
+
+function tourNext() {
+  if (tourIndex < TOUR_DATA.length - 1) {
+    tourIndex++;
+    showTourState(tourIndex);
+  } else {
+    showToastMsg('🎉 You explored all 50 states!');
+  }
+}
+
+function tourPrev() {
+  if (tourIndex > 0) {
+    tourIndex--;
+    showTourState(tourIndex);
+  }
+}
+
+function updateTourProgress() {
+  var explored = Object.keys(tourExplored).length;
+  var bar = document.getElementById('bar-tour');
+  var pct = document.getElementById('pct-tour');
+  if (bar) bar.style.width = (explored / 50 * 100) + '%';
+  if (pct) pct.textContent = explored + ' / 50 explored';
+}
+
+function updateTourRegionBar() {
+  var bar = document.getElementById('tour-region-bar');
+  if (!bar) return;
+  var regions = ['northeast','southeast','midwest','southwest','west','alaska','hawaii'];
+  bar.innerHTML = '';
+  regions.forEach(function(r) {
+    var states = TOUR_DATA.filter(function(s){ return s.region === r; });
+    var done = states.filter(function(s){ return tourExplored[s.id]; }).length;
+    var chip = document.createElement('div');
+    chip.style.cssText = 'padding:3px 10px;border-radius:8px;font-size:10px;font-weight:800;cursor:pointer;transition:all .15s;background:' +
+      (REGION_COLORS[r]||'#888') + (done === states.length ? 'ff' : '30') + ';color:' +
+      (done === states.length ? '#1a2e1a' : (REGION_COLORS[r]||'#888')) + ';border:1px solid ' + (REGION_COLORS[r]||'#888') + '60;';
+    chip.textContent = REGION_LABELS[r] + ' ' + done + '/' + states.length;
+    chip.onclick = function() {
+      var firstInRegion = TOUR_DATA.findIndex(function(s){ return s.region === r; });
+      if (firstInRegion >= 0) { tourIndex = firstInRegion; showTourState(tourIndex); }
+    };
+    bar.appendChild(chip);
+  });
 }
 
 function showToastMsg(msg) {
