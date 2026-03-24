@@ -503,13 +503,27 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.js"></script>
+    <script>
+        firebase.initializeApp({
+            apiKey:"AIzaSyBsjx3JKjCQOMuus07MSoj3o-Vu9eRW6zc",
+            authDomain:"wade-classical.firebaseapp.com",
+            databaseURL:"https://wade-classical-default-rtdb.firebaseio.com",
+            projectId:"wade-classical",
+            storageBucket:"wade-classical.firebasestorage.app",
+            messagingSenderId:"72309085457",
+            appId:"1:72309085457:web:3d8b5a07302248ded6a8b0"
+        });
+        var db = firebase.database();
+    </script>
     <script>
         let currentUser = null;
         let userData = JSON.parse(localStorage.getItem('wadeMathUsers')) || {
             ryder: { mult: {}, skip: {} },
             hadley: { mult: {}, skip: {} },
             audrey: { mult: {}, skip: {} },
-            guest: { mult: {}, skip: {} }
+            guest:  { mult: {}, skip: {} }
         };
 
         let session = {
@@ -524,17 +538,32 @@
         // NAVIGATION
         function selectUser(user) {
             currentUser = user;
-            
-            // Ensure user data exists
+
+            // Ensure user data exists locally
             if (!userData[user]) {
                 userData[user] = { mult: {}, skip: {} };
-                saveData();
             }
-            
+
             document.getElementById('homeScreen').classList.add('hidden');
             document.getElementById('userDashboard').classList.remove('hidden');
             document.getElementById('userName').textContent = user.toUpperCase() + "'S PRACTICE";
             updateDashboardStats();
+
+            // Pull from Firebase in background and merge (non-blocking)
+            if (user !== 'guest') {
+                try {
+                    db.ref('math/' + user).once('value', function(snap) {
+                        var fbData = snap.val();
+                        if (fbData && (fbData.mult || fbData.skip)) {
+                            // Merge Firebase data in — Firebase wins for any key it has
+                            userData[user].mult = Object.assign({}, userData[user].mult, fbData.mult || {});
+                            userData[user].skip = Object.assign({}, userData[user].skip, fbData.skip || {});
+                            localStorage.setItem('wadeMathUsers', JSON.stringify(userData));
+                            updateDashboardStats();
+                        }
+                    });
+                } catch(e) {}
+            }
         }
 
         function goHome() {
@@ -932,6 +961,11 @@
         // SAVE DATA
         function saveData() {
             localStorage.setItem('wadeMathUsers', JSON.stringify(userData));
+            if (currentUser && currentUser !== 'guest') {
+                try {
+                    db.ref('math/' + currentUser).set(userData[currentUser]);
+                } catch(e) {}
+            }
         }
 
         // Enter key for multiplication
