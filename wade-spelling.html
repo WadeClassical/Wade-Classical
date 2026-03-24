@@ -904,7 +904,7 @@
             <!-- Word image hint -->
             <div id="wordImageBox" style="text-align:center; margin-bottom:14px; min-height:110px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:8px;">
                 <div id="wordImageEmoji" style="font-size:4.5em; line-height:1; filter:drop-shadow(0 0 12px rgba(255,215,0,0.4)); display:none;"></div>
-                <img id="wordImageImg" src="" alt="" style="display:none; max-height:100px; max-width:200px; border-radius:6px; border:2px solid var(--wall-blue); object-fit:cover; box-shadow:0 0 16px rgba(0,255,255,0.2);" onerror="handleImgError()" />
+                <img id="wordImageImg" src="" alt="" style="display:none; max-height:100px; max-width:200px; border-radius:6px; border:2px solid var(--wall-blue); object-fit:cover; box-shadow:0 0 16px rgba(0,255,255,0.2);" />
                 <div id="wordImageLabel" style="font-size:0.38em; color:#555; letter-spacing:0.1em; display:none;">IMAGE HINT</div>
             </div>
 
@@ -1341,6 +1341,11 @@ function handleImgError() {
     emojiEl.textContent = hint?.emoji || '📝';
     emojiEl.style.display = 'block';
 }
+// Wire up onerror after function is defined
+document.addEventListener('DOMContentLoaded', function() {
+    var imgEl = document.getElementById('wordImageImg');
+    if (imgEl) imgEl.onerror = handleImgError;
+});
 
 // ══════════════════════════════════════════════
 // WORD LISTS
@@ -1510,7 +1515,9 @@ function loadMastery() {
     if (saved) {
         try { masteryData = JSON.parse(saved); } catch(e) { masteryData = null; }
     }
-    if (!masteryData || !masteryData.untried) {
+    // Reset if missing or all arrays are empty (corrupted state)
+    const totalWords = ((masteryData?.correct?.length||0) + (masteryData?.wrong?.length||0) + (masteryData?.untried?.length||0));
+    if (!masteryData || !masteryData.untried || totalWords === 0) {
         masteryData = { correct: [], wrong: [], untried: [...(WORD_LISTS[currentUser] || [])] };
     }
     // Add any new words not yet in mastery
@@ -1521,17 +1528,33 @@ function loadMastery() {
     try {
         db.ref('spelling/' + currentUser).once('value', function(snap) {
             var fbData = snap.val();
-            if (fbData && fbData.untried) {
-                masteryData = fbData;
-                localStorage.setItem('wc_spelling_' + currentUser, JSON.stringify(masteryData));
+            if (fbData) {
+                // Firebase stores arrays as objects with numeric keys — convert back
+                var toArr = function(v) { return v ? Object.values(v).filter(x => typeof x === 'string') : []; };
+                var fbMastery = {
+                    correct: toArr(fbData.correct),
+                    wrong:   toArr(fbData.wrong),
+                    untried: toArr(fbData.untried)
+                };
+                if (fbMastery.correct.length + fbMastery.wrong.length + fbMastery.untried.length > 0) {
+                    masteryData = fbMastery;
+                    localStorage.setItem('wc_spelling_' + currentUser, JSON.stringify(masteryData));
+                }
             }
         });
     } catch(e) {}
 }
 
 function saveMastery() {
-    localStorage.setItem('wc_spelling_' + currentUser, JSON.stringify(masteryData));
-    try { db.ref('spelling/' + currentUser).set(masteryData); } catch(e) {}
+    // Ensure all three keys are real arrays before saving
+    const clean = {
+        correct: Array.isArray(masteryData.correct) ? masteryData.correct : [],
+        wrong:   Array.isArray(masteryData.wrong)   ? masteryData.wrong   : [],
+        untried: Array.isArray(masteryData.untried) ? masteryData.untried : []
+    };
+    masteryData = clean;
+    localStorage.setItem('wc_spelling_' + currentUser, JSON.stringify(clean));
+    try { db.ref('spelling/' + currentUser).set(clean); } catch(e) {}
 }
 
 // ══════════════════════════════════════════════
@@ -1543,14 +1566,23 @@ function startSession() {
     currentWordIndex = 0;
     sessionWords = buildSessionWords();
     updateStatsBar();
+    if (!sessionWords || sessionWords.length === 0) {
+        // No words yet — show a friendly message and return to user screen
+        console.warn('No words available for', currentUser);
+        showScreen('screenUser');
+        return;
+    }
     loadWord(sessionWords[0]);
 }
 
 function buildSessionWords() {
     // Priority: wrong first, then untried, then correct
-    let pool = [];
     const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
-    pool = [...shuffle(masteryData.wrong), ...shuffle(masteryData.untried), ...shuffle(masteryData.correct)];
+    let pool = [...shuffle(masteryData.wrong||[]), ...shuffle(masteryData.untried||[]), ...shuffle(masteryData.correct||[])];
+    // Safety: if somehow empty, use the full word list
+    if (pool.length === 0) {
+        pool = shuffle([...(WORD_LISTS[currentUser] || [])]);
+    }
     return pool.slice(0, 10);
 }
 
