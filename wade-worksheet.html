@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hadley's Daily Worksheet</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Caveat:wght@400;600&family=Crimson+Pro:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════
+   GENERATOR SCREEN (on-screen)
+══════════════════════════ */
+:root {
+  --forest: #2d4a2d;
+  --moss:   #4a7a4a;
+  --sage:   #7aaa7a;
+  --fern:   #a8c8a8;
+  --cream:  #faf6ee;
+  --gold:   #c8922a;
+  --rose:   #c87878;
+  --ink:    #1a2a1a;
+  --muted:  #6a7a6a;
+  --shadow: rgba(45,74,45,0.15);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* Generator UI */
+.generator-screen {
+  max-width: 700px; margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.gen-header {
+  text-align: center; margin-bottom: 32px;
+}
+
+.gen-title {
+  font-size: 32px; font-weight: 800; color: var(--forest);
+  margin-bottom: 4px;
+}
+
+.gen-title span { color: var(--moss); }
+
+.gen-subtitle {
+  font-size: 15px; color: var(--muted);
+}
+
+.gen-date {
+  font-size: 13px; color: var(--muted);
+  background: rgba(74,122,74,0.1);
+  border: 1px solid rgba(74,122,74,0.2);
+  display: inline-block; padding: 4px 14px; border-radius: 20px;
+  margin-top: 8px;
+}
+
+/* Settings panel */
+.settings-card {
+  background: white;
+  border: 1px solid rgba(74,122,74,0.2);
+  border-radius: 16px; padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 12px var(--shadow);
+}
+
+.settings-title {
+  font-size: 13px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--moss);
+  margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+}
+
+.settings-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.setting-item {
+  display: flex; flex-direction: column; gap: 6px;
+}
+
+.setting-item label {
+  font-size: 12px; font-weight: 700;
+  color: var(--forest); text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+.setting-item select,
+.setting-item input[type=number] {
+  padding: 8px 12px; border-radius: 8px;
+  border: 1.5px solid rgba(74,122,74,0.25);
+  font-family: 'Nunito', sans-serif; font-size: 14px;
+  color: var(--ink); background: white;
+  outline: none; transition: border-color 0.2s;
+}
+
+.setting-item select:focus,
+.setting-item input:focus { border-color: var(--moss); }
+
+/* Section toggles */
+.section-toggles {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+}
+
+.section-toggle {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border-radius: 8px;
+  border: 1.5px solid rgba(74,122,74,0.2);
+  cursor: pointer; transition: all 0.2s; background: white;
+  font-size: 13px; font-weight: 600; color: var(--muted);
+}
+
+.section-toggle input[type=checkbox] { display: none; }
+
+.section-toggle.checked {
+  background: rgba(74,122,74,0.1);
+  border-color: var(--moss);
+  color: var(--forest);
+}
+
+.section-toggle .toggle-icon { font-size: 18px; }
+
+/* Generate button */
+.gen-btn {
+  width: 100%; padding: 18px;
+  background: linear-gradient(135deg, var(--forest), var(--moss));
+  color: white; border: none; border-radius: 16px;
+  font-family: 'Nunito', sans-serif; font-size: 18px; font-weight: 800;
+  cursor: pointer; transition: all 0.2s;
+  box-shadow: 0 4px 16px var(--shadow);
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+
+.gen-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px var(--shadow); }
+.gen-btn:disabled { opacity: 0.6; cursor: default; transform: none; }
+
+/* Loading */
+.loading-bar {
+  width: 100%; height: 6px; background: rgba(74,122,74,0.15);
+  border-radius: 3px; overflow: hidden; margin-top: 12px; display: none;
+}
+.loading-bar.show { display: block; }
+.loading-fill {
+  height: 100%; width: 0%; background: linear-gradient(90deg, var(--moss), var(--sage));
+  border-radius: 3px; transition: width 0.4s ease;
+  animation: loadPulse 1.5s ease-in-out infinite;
+}
+@keyframes loadPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.loading-msg {
+  text-align: center; font-size: 14px; color: var(--muted);
+  margin-top: 8px; display: none;
+}
+.loading-msg.show { display: block; }
+
+/* ══════════════════════════
+   PRINT STYLESHEET
+══════════════════════════ */
+@media print {
+  .generator-screen, .print-actions, .no-print { display: none !important; }
+  body { background: white; }
+  .worksheet { display: block !important; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+/* ══════════════════════════
+   WORKSHEET (print + screen)
+══════════════════════════ */
+.worksheet {
+  display: none;
+  max-width: 750px; margin: 0 auto;
+  background: white;
+  font-family: 'Nunito', sans-serif;
+}
+
+.worksheet.visible { display: block; }
+
+/* Print actions bar */
+.print-actions {
+  display: flex; gap: 10px; justify-content: center;
+  padding: 16px 24px; background: var(--fern);
+  border-bottom: 2px solid var(--sage);
+}
+
+.print-btn {
+  padding: 10px 24px; border-radius: 10px; border: none;
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+}
+
+.print-btn.primary {
+  background: var(--forest); color: white;
+}
+.print-btn.primary:hover { background: var(--moss); }
+
+.print-btn.secondary {
+  background: white; color: var(--forest);
+  border: 2px solid var(--forest);
+}
+.print-btn.secondary:hover { background: var(--fern); }
+
+/* Worksheet inner */
+.ws-inner {
+  padding: 32px 40px;
+  border: 3px solid #1a2a1a;
+}
+
+/* Worksheet header */
+.ws-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  border-bottom: 2px solid #1a2a1a; padding-bottom: 10px; margin-bottom: 20px;
+}
+
+.ws-title-block h1 {
+  font-size: 22px; font-weight: 800; color: #1a2a1a;
+  font-family: 'Nunito', sans-serif;
+}
+
+.ws-title-block p {
+  font-size: 12px; color: #555; margin-top: 2px;
+}
+
+.ws-name-box {
+  text-align: right; font-size: 13px; color: #333;
+}
+
+.ws-name-line {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+  justify-content: flex-end;
+}
+
+.ws-line {
+  width: 160px; height: 1px; background: #1a2a1a;
+}
+
+/* Woodland border decoration */
+.ws-border-top {
+  font-size: 11px; text-align: center; letter-spacing: 6px;
+  color: #888; margin-bottom: 8px; opacity: 0.6;
+}
+
+/* Section */
+.ws-section {
+  margin-bottom: 22px; page-break-inside: avoid;
+}
+
+.ws-section-header {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 10px;
+}
+
+.ws-section-num {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: #1a2a1a; color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; flex-shrink: 0;
+}
+
+.ws-section-title {
+  font-size: 14px; font-weight: 800; color: #1a2a1a;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+
+.ws-section-icon { font-size: 16px; }
+
+.ws-section-points {
+  margin-left: auto; font-size: 11px; color: #888;
+  border: 1px solid #ccc; padding: 1px 7px; border-radius: 20px;
+}
+
+/* Math section */
+.math-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 14px 20px;
+}
+
+.math-problem {
+  display: flex; flex-direction: column; align-items: center;
+}
+
+.math-equation {
+  font-size: 20px; font-weight: 700; color: #1a2a1a;
+  font-family: 'Nunito', sans-serif; margin-bottom: 4px;
+  text-align: center;
+}
+
+.math-answer-line {
+  width: 60px; height: 1.5px; background: #1a2a1a;
+  margin-top: 4px;
+}
+
+/* Spelling section */
+.spelling-word-row {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 10px;
+}
+
+.spelling-word {
+  font-size: 16px; font-weight: 700; color: #1a2a1a;
+  min-width: 80px; font-family: 'Caveat', cursive; font-size: 20px;
+}
+
+.trace-boxes {
+  display: flex; gap: 3px;
+}
+
+.trace-box {
+  width: 28px; height: 28px; border: 1.5px solid #aaa;
+  border-radius: 3px; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-family: 'Caveat', cursive; color: #ccc;
+}
+
+.write-line {
+  flex: 1; height: 1.5px; background: #ccc; margin-top: 14px;
+  border-bottom: 1.5px solid #aaa;
+}
+
+.write-line-label {
+  font-size: 10px; color: #aaa; align-self: flex-end; margin-bottom: -14px;
+}
+
+/* Reading comprehension */
+.reading-passage {
+  background: #f8f8f8; border-left: 3px solid #1a2a1a;
+  padding: 12px 14px; margin-bottom: 12px;
+  font-size: 14px; line-height: 1.8; color: #222;
+  border-radius: 0 6px 6px 0;
+  font-family: 'Crimson Pro', serif;
+}
+
+.reading-passage .passage-title {
+  font-weight: 700; font-size: 13px; color: #1a2a1a;
+  font-family: 'Nunito', sans-serif; text-transform: uppercase;
+  letter-spacing: 1px; margin-bottom: 6px;
+}
+
+.reading-question {
+  margin-bottom: 14px;
+}
+
+.reading-question p {
+  font-size: 13px; font-weight: 600; color: #1a2a1a; margin-bottom: 4px;
+}
+
+.answer-line {
+  width: 100%; height: 1.5px; background: #ccc; margin: 6px 0;
+  border-bottom: 1.5px solid #aaa;
+}
+
+.answer-line + .answer-line { margin-top: 12px; }
+
+/* Draw & label */
+.draw-box {
+  border: 1.5px solid #aaa; border-radius: 8px;
+  width: 100%; height: 130px;
+  display: flex; align-items: center; justify-content: center;
+  color: #ccc; font-size: 12px;
+}
+
+.draw-labels {
+  display: flex; gap: 16px; margin-top: 8px; flex-wrap: wrap;
+}
+
+.draw-label-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: #555;
+}
+
+.draw-label-line {
+  width: 80px; height: 1px; background: #aaa; border-bottom: 1px solid #aaa;
+}
+
+/* Grammar fill-in-blank */
+.grammar-sentence {
+  font-size: 15px; line-height: 2.2; color: #1a2a1a;
+  margin-bottom: 8px; font-family: 'Crimson Pro', serif;
+}
+
+.blank {
+  display: inline-block;
+  border-bottom: 1.5px solid #1a2a1a;
+  min-width: 90px;
+  margin: 0 4px;
+  vertical-align: bottom;
+}
+
+/* Word bank */
+.word-bank {
+  background: #f0f0f0; border: 1.5px dashed #aaa;
+  border-radius: 6px; padding: 8px 12px;
+  font-size: 13px; color: #555; margin-top: 8px;
+}
+
+.word-bank span { font-weight: 700; }
+
+/* Star rating box */
+.ws-footer {
+  border-top: 1.5px solid #ccc; padding-top: 10px; margin-top: 16px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+.star-box {
+  display: flex; gap: 6px; align-items: center;
+}
+
+.star-box label { font-size: 12px; color: #888; }
+
+.star { font-size: 20px; color: #ddd; }
+
+.ws-score-box {
+  font-size: 12px; color: #888;
+  border: 1.5px solid #ccc; padding: 4px 16px; border-radius: 20px;
+}
+
+/* Worksheet woodland deco */
+.ws-deco {
+  font-size: 10px; letter-spacing: 8px; text-align: center;
+  color: #bbb; margin-top: 8px;
+}
+</style>
+</head>
+<body>
+
+<!-- ══ GENERATOR SCREEN ══ -->
+<div class="generator-screen" id="generator-screen">
+  <div class="gen-header">
+    <h1 class="gen-title">🌿 Hadley's <span>Daily Worksheet</span></h1>
+    <p class="gen-subtitle">Grade 1 · Enchanted Woodland Edition</p>
+    <div class="gen-date" id="gen-date"></div>
+  </div>
+
+  <!-- Settings -->
+  <div class="settings-card">
+    <div class="settings-title">⚙️ Worksheet Settings</div>
+    <div class="settings-grid">
+      <div class="setting-item">
+        <label>Math Level</label>
+        <select id="math-level">
+          <option value="easy">Easy (sums to 10)</option>
+          <option value="medium" selected>Medium (sums to 20)</option>
+          <option value="hard">Challenge (borrowing/carrying)</option>
+        </select>
+      </div>
+      <div class="setting-item">
+        <label>Number of Math Problems</label>
+        <input type="number" id="math-count" value="6" min="3" max="12">
+      </div>
+      <div class="setting-item">
+        <label>Spelling Words</label>
+        <select id="spelling-list">
+          <option value="dolch-pre">Dolch Pre-K words</option>
+          <option value="dolch-k">Dolch Kindergarten words</option>
+          <option value="dolch-1" selected>Dolch Grade 1 words</option>
+          <option value="cvc">CVC word families</option>
+          <option value="sight">Common sight words</option>
+        </select>
+      </div>
+      <div class="setting-item">
+        <label>Number of Spelling Words</label>
+        <input type="number" id="spelling-count" value="5" min="3" max="8">
+      </div>
+      <div class="setting-item">
+        <label>Theme</label>
+        <select id="theme">
+          <option value="woodland" selected>🌿 Enchanted Woodland</option>
+          <option value="animals">🦊 Animals & Nature</option>
+          <option value="seasons">🍂 Seasons</option>
+          <option value="ocean">🌊 Ocean & Water</option>
+          <option value="garden">🌸 Garden & Flowers</option>
+        </select>
+      </div>
+      <div class="setting-item">
+        <label>Reading Level</label>
+        <select id="reading-level">
+          <option value="early">Early (very simple)</option>
+          <option value="grade1" selected>Grade 1</option>
+          <option value="advanced">Advanced Grade 1</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section toggles -->
+  <div class="settings-card">
+    <div class="settings-title">📋 Sections to Include</div>
+    <div class="section-toggles">
+      <label class="section-toggle checked" id="toggle-math">
+        <input type="checkbox" checked onchange="toggleSection(this,'toggle-math')">
+        <span class="toggle-icon">🔢</span> Math
+      </label>
+      <label class="section-toggle checked" id="toggle-spelling">
+        <input type="checkbox" checked onchange="toggleSection(this,'toggle-spelling')">
+        <span class="toggle-icon">✏️</span> Spelling
+      </label>
+      <label class="section-toggle checked" id="toggle-reading">
+        <input type="checkbox" checked onchange="toggleSection(this,'toggle-reading')">
+        <span class="toggle-icon">📖</span> Reading
+      </label>
+      <label class="section-toggle checked" id="toggle-draw">
+        <input type="checkbox" checked onchange="toggleSection(this,'toggle-draw')">
+        <span class="toggle-icon">🎨</span> Draw & Label
+      </label>
+      <label class="section-toggle checked" id="toggle-grammar">
+        <input type="checkbox" checked onchange="toggleSection(this,'toggle-grammar')">
+        <span class="toggle-icon">🌱</span> Grammar
+      </label>
+    </div>
+  </div>
+
+  <button class="gen-btn" id="gen-btn" onclick="generateWorksheet()">
+    🌿 Generate Today's Worksheet
+  </button>
+  <div class="loading-bar" id="loading-bar"><div class="loading-fill" id="loading-fill"></div></div>
+  <div class="loading-msg" id="loading-msg">✨ Creating Hadley's worksheet...</div>
+</div>
+
+<!-- ══ WORKSHEET OUTPUT ══ -->
+<div class="worksheet" id="worksheet">
+  <div class="print-actions no-print">
+    <button class="print-btn primary" onclick="window.print()">🖨️ Print Worksheet</button>
+    <button class="print-btn secondary" onclick="showGenerator()">← Make Another</button>
+  </div>
+  <div class="ws-inner" id="ws-inner"></div>
+</div>
+
+<script>
+// ─── Spelling word banks ──────────────────────────────────────────────────────
+const SPELLING_BANKS = {
+  'dolch-pre': ['a','and','away','big','blue','can','come','down','find','for','funny','go','help','here','i','in','is','it','jump','little','look','make','me','my','not','one','play','red','run','said','see','the','three','to','two','up','we','where','yellow','you'],
+  'dolch-k': ['all','am','are','at','ate','be','black','brown','but','came','did','do','eat','four','get','good','have','he','into','like','must','new','no','now','on','our','out','please','pretty','ran','ride','saw','say','she','so','soon','that','there','they','this','too','under','want','was','well','went','what','white','who','will','with','yes'],
+  'dolch-1': ['after','again','an','any','ask','as','by','could','every','fly','from','give','going','had','has','her','him','his','how','just','know','let','live','may','of','old','once','open','over','put','round','some','stop','take','thank','them','then','think','walk','were','when'],
+  'cvc': ['cat','hat','bat','sat','mat','rat','can','pan','fan','man','tan','van','bed','fed','led','red','big','dig','fig','jig','pig','wig','dot','got','hot','lot','not','pot','rot','top','bug','cup','cut','fun','gun','hug','jug','mud','mug','run','sun','tub','tug'],
+  'sight': ['the','and','is','in','it','of','to','was','that','he','she','they','we','you','for','on','are','but','not','with','have','this','from','at','be','his','her','all','one','do','what','get','like','your','said','go','no','my','can','will','see','come','some','how','its']
+};
+
+const THEMES = {
+  woodland: { name: 'Enchanted Woodland', emoji: '🌿', words: ['forest','rabbit','mushroom','acorn','owl','fox','deer','tree','leaf','stream','fern','berry','nest','bark','moss'] },
+  animals: { name: 'Animals & Nature', emoji: '🦊', words: ['bunny','puppy','kitten','bird','duck','frog','fish','bear','lamb','chick','nest','pond','field','farm','meadow'] },
+  seasons: { name: 'Seasons', emoji: '🍂', words: ['spring','summer','autumn','winter','snow','rain','sun','bloom','leaf','seed','warm','cold','wind','cloud','flower'] },
+  ocean: { name: 'Ocean & Water', emoji: '🌊', words: ['ocean','wave','shell','fish','crab','sand','beach','tide','coral','reef','whale','seal','boat','sail','blue'] },
+  garden: { name: 'Garden & Flowers', emoji: '🌸', words: ['flower','rose','daisy','seed','stem','petal','bee','butterfly','garden','rain','sun','grow','soil','root','bloom'] }
+};
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+function pick(arr, n) { return shuffle(arr).slice(0, n); }
+function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+function toggleSection(checkbox, id) {
+  document.getElementById(id).classList.toggle('checked', checkbox.checked);
+}
+
+function showGenerator() {
+  document.getElementById('generator-screen').style.display = 'block';
+  document.getElementById('worksheet').classList.remove('visible');
+  window.scrollTo(0, 0);
+}
+
+// ─── Date display ─────────────────────────────────────────────────────────────
+document.getElementById('gen-date').textContent = new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+// ─── Math generation ──────────────────────────────────────────────────────────
+function generateMathProblems(level, count) {
+  const problems = [];
+  for (let i = 0; i < count; i++) {
+    let a, b, op, result;
+    if (level === 'easy') {
+      op = Math.random() > 0.4 ? '+' : '-';
+      if (op === '+') { a = rand(1, 9); b = rand(1, 10 - a); }
+      else { a = rand(2, 10); b = rand(1, a - 1); }
+    } else if (level === 'medium') {
+      op = Math.random() > 0.4 ? '+' : '-';
+      if (op === '+') { a = rand(2, 15); b = rand(2, 20 - a); }
+      else { a = rand(5, 20); b = rand(2, a - 1); }
+    } else {
+      op = Math.random() > 0.5 ? '+' : '-';
+      if (op === '+') { a = rand(8, 18); b = rand(3, 20 - a + 5); }
+      else { a = rand(12, 25); b = rand(5, a - 2); }
+    }
+    result = op === '+' ? a + b : a - b;
+    problems.push({ a, b, op, result });
+  }
+  return problems;
+}
+
+// ─── Generate Worksheet via Claude API ───────────────────────────────────────
+async function generateWorksheet() {
+  const btn = document.getElementById('gen-btn');
+  const bar = document.getElementById('loading-bar');
+  const msg = document.getElementById('loading-msg');
+  const fill = document.getElementById('loading-fill');
+
+  // Get settings
+  const mathLevel = document.getElementById('math-level').value;
+  const mathCount = parseInt(document.getElementById('math-count').value);
+  const spellingList = document.getElementById('spelling-list').value;
+  const spellingCount = parseInt(document.getElementById('spelling-count').value);
+  const theme = document.getElementById('theme').value;
+  const readingLevel = document.getElementById('reading-level').value;
+
+  const includeMath = document.querySelector('#toggle-math input').checked;
+  const includeSpelling = document.querySelector('#toggle-spelling input').checked;
+  const includeReading = document.querySelector('#toggle-reading input').checked;
+  const includeDraw = document.querySelector('#toggle-draw input').checked;
+  const includeGrammar = document.querySelector('#toggle-grammar input').checked;
+
+  btn.disabled = true;
+  bar.classList.add('show');
+  msg.classList.add('show');
+  msg.textContent = '✨ Creating Hadley\'s worksheet...';
+
+  // Animate loading bar
+  let progress = 0;
+  const fillInterval = setInterval(() => {
+    progress = Math.min(progress + rand(2,6), 85);
+    fill.style.width = progress + '%';
+  }, 300);
+
+  // Pick spelling words from bank
+  const spellingWords = pick(SPELLING_BANKS[spellingList], spellingCount);
+  const themeData = THEMES[theme];
+
+  // Build prompt for Claude
+  const readingLevelDesc = { early: 'very simple 2–3 sentence story using only 1-2 syllable words', grade1: '4–6 sentence story using grade 1 vocabulary', advanced: '6–8 sentence story with some 2-syllable words and richer vocabulary' }[readingLevel];
+
+  const prompt = `You are creating content for a Grade 1 daily worksheet for a 7-year-old girl named Hadley who loves ${themeData.name.toLowerCase()} themes.
+
+Generate the following JSON exactly — no markdown, no extra text, just the raw JSON object:
+
+{
+  "reading": {
+    "title": "short story title (3-5 words, ${themeData.name} theme)",
+    "passage": "${readingLevelDesc}, ${themeData.name} theme. Make it charming and engaging for a 7-year-old.",
+    "questions": [
+      {"q": "who/what question about the story", "lines": 1},
+      {"q": "what happened question", "lines": 1},
+      {"q": "simple opinion or prediction question (What do YOU think...)", "lines": 2}
+    ]
+  },
+  "draw": {
+    "prompt": "Draw and label: [a specific ${themeData.name} scene — e.g. 'a rabbit in the forest with a mushroom']",
+    "labels": ["label1", "label2", "label3", "label4"]
+  },
+  "grammar": [
+    {
+      "sentence": "A complete sentence with ONE blank, ${themeData.name} theme, using a simple noun/verb/adjective",
+      "blank_type": "noun OR verb OR adjective",
+      "answer": "the correct word that goes in the blank",
+      "word_bank": ["answer", "two_other_words"]
+    },
+    {
+      "sentence": "Another sentence with ONE blank, different grammar focus",
+      "blank_type": "noun OR verb OR adjective",
+      "answer": "the correct word",
+      "word_bank": ["answer", "two_other_words"]
+    },
+    {
+      "sentence": "A third sentence with ONE blank",
+      "blank_type": "noun OR verb OR adjective",
+      "answer": "the correct word",
+      "word_bank": ["answer", "two_other_words"]
+    }
+  ]
+}
+
+Make the blank in grammar sentences represented as ___ (three underscores). Keep all language simple and appropriate for Grade 1. Make it feel magical and fun.`;
+
+  let aiContent = null;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await response.json();
+    const raw = data.content?.[0]?.text || '{}';
+    const clean = raw.replace(/```json|```/g, '').trim();
+    aiContent = JSON.parse(clean);
+  } catch (e) {
+    // Fallback content if API fails
+    aiContent = {
+      reading: {
+        title: 'The Little Acorn',
+        passage: 'A tiny acorn fell from a big oak tree. A squirrel found it in the soft green moss. She put it in her cozy den to save for winter. "This will be a good snack!" said the squirrel. The little acorn felt very happy to have a new home.',
+        questions: [
+          { q: 'Who found the acorn?', lines: 1 },
+          { q: 'Where did the squirrel put the acorn?', lines: 1 },
+          { q: 'What do you think the squirrel will do next?', lines: 2 }
+        ]
+      },
+      draw: {
+        prompt: 'Draw and label: a squirrel in the forest with an acorn and a mushroom',
+        labels: ['squirrel', 'acorn', 'mushroom', 'tree']
+      },
+      grammar: [
+        { sentence: 'The ___ hopped over the log.', blank_type: 'noun', answer: 'rabbit', word_bank: ['rabbit', 'cloud', 'book'] },
+        { sentence: 'The little fox ___ through the forest.', blank_type: 'verb', answer: 'ran', word_bank: ['ran', 'slept', 'ate'] },
+        { sentence: 'The mushroom was very ___.', blank_type: 'adjective', answer: 'red', word_bank: ['red', 'loud', 'heavy'] }
+      ]
+    };
+  }
+
+  clearInterval(fillInterval);
+  fill.style.width = '100%';
+
+  // Generate math
+  const mathProblems = includeMath ? generateMathProblems(mathLevel, mathCount) : [];
+
+  // Render worksheet
+  renderWorksheet({
+    date: new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' }),
+    theme: themeData,
+    sections: { math: includeMath, spelling: includeSpelling, reading: includeReading, draw: includeDraw, grammar: includeGrammar },
+    mathProblems,
+    spellingWords,
+    aiContent
+  });
+
+  btn.disabled = false;
+  bar.classList.remove('show');
+  msg.classList.remove('show');
+  fill.style.width = '0%';
+}
+
+// ─── Render Worksheet HTML ─────────────────────────────────────────────────────
+function renderWorksheet({ date, theme, sections, mathProblems, spellingWords, aiContent }) {
+  let sectionNum = 1;
+  let html = '';
+
+  // Header
+  html += `
+    <div class="ws-border-top">🌿 🍄 🦋 🌿 🍄 🦋 🌿 🍄 🦋 🌿 🍄 🦋 🌿</div>
+    <div class="ws-header">
+      <div class="ws-title-block">
+        <h1>${theme.emoji} Hadley's Daily Worksheet</h1>
+        <p>${date} · Grade 1</p>
+      </div>
+      <div class="ws-name-box">
+        <div class="ws-name-line">
+          <span>Name:</span><div class="ws-line"></div>
+        </div>
+        <div class="ws-name-line">
+          <span>Score:</span><div class="ws-line" style="width:80px"></div>
+        </div>
+      </div>
+    </div>`;
+
+  // ── MATH ──
+  if (sections.math && mathProblems.length > 0) {
+    html += `<div class="ws-section">
+      <div class="ws-section-header">
+        <div class="ws-section-num">${sectionNum++}</div>
+        <span class="ws-section-icon">🔢</span>
+        <div class="ws-section-title">Math Practice</div>
+        <div class="ws-section-points">___ / ${mathProblems.length}</div>
+      </div>
+      <div class="math-grid">`;
+    mathProblems.forEach(p => {
+      html += `<div class="math-problem">
+        <div class="math-equation">${p.a} ${p.op} ${p.b} =</div>
+        <div class="math-answer-line"></div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // ── SPELLING ──
+  if (sections.spelling && spellingWords.length > 0) {
+    html += `<div class="ws-section">
+      <div class="ws-section-header">
+        <div class="ws-section-num">${sectionNum++}</div>
+        <span class="ws-section-icon">✏️</span>
+        <div class="ws-section-title">Spelling Words</div>
+        <div class="ws-section-points">Trace · Write · Write again</div>
+      </div>`;
+    spellingWords.forEach(word => {
+      const letters = word.split('');
+      html += `<div class="spelling-word-row">
+        <div class="spelling-word">${word}</div>
+        <div class="trace-boxes">`;
+      letters.forEach(l => {
+        html += `<div class="trace-box">${l}</div>`;
+      });
+      html += `</div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:8px;margin-left:8px;">
+          <div class="answer-line"></div>
+          <div class="answer-line"></div>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // ── READING COMPREHENSION ──
+  if (sections.reading && aiContent.reading) {
+    const r = aiContent.reading;
+    html += `<div class="ws-section">
+      <div class="ws-section-header">
+        <div class="ws-section-num">${sectionNum++}</div>
+        <span class="ws-section-icon">📖</span>
+        <div class="ws-section-title">Reading Comprehension</div>
+        <div class="ws-section-points">___ / 3</div>
+      </div>
+      <div class="reading-passage">
+        <div class="passage-title">${r.title}</div>
+        ${r.passage}
+      </div>`;
+    r.questions.forEach((q, i) => {
+      html += `<div class="reading-question">
+        <p>${i + 1}. ${q.q}</p>
+        ${Array(q.lines).fill('<div class="answer-line"></div>').join('')}
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // ── DRAW & LABEL ──
+  if (sections.draw && aiContent.draw) {
+    const d = aiContent.draw;
+    html += `<div class="ws-section">
+      <div class="ws-section-header">
+        <div class="ws-section-num">${sectionNum++}</div>
+        <span class="ws-section-icon">🎨</span>
+        <div class="ws-section-title">Draw & Label</div>
+      </div>
+      <p style="font-size:13px;color:#555;margin-bottom:8px;font-style:italic;">${d.prompt}</p>
+      <div class="draw-box">Draw here 🖍️</div>
+      <div class="draw-labels">`;
+    d.labels.forEach(label => {
+      html += `<div class="draw-label-item">
+        <span style="font-size:12px;font-weight:700;color:#444;">${label}:</span>
+        <div class="draw-label-line"></div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // ── GRAMMAR ──
+  if (sections.grammar && aiContent.grammar) {
+    html += `<div class="ws-section">
+      <div class="ws-section-header">
+        <div class="ws-section-num">${sectionNum++}</div>
+        <span class="ws-section-icon">🌱</span>
+        <div class="ws-section-title">Fill in the Blank</div>
+        <div class="ws-section-points">___ / ${aiContent.grammar.length}</div>
+      </div>`;
+    aiContent.grammar.forEach((g, i) => {
+      const sentence = g.sentence.replace(/___/g, '<span class="blank"></span>');
+      const wb = shuffle(g.word_bank);
+      html += `<div class="reading-question">
+        <div class="grammar-sentence">${i + 1}. ${sentence}</div>
+        <div class="word-bank"><span>Word Bank:</span> &nbsp; ${wb.join(' &nbsp;·&nbsp; ')}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Footer
+  html += `
+    <div class="ws-footer">
+      <div class="star-box">
+        <label>How did I do?</label>
+        <span class="star">⭐</span>
+        <span class="star">⭐</span>
+        <span class="star">⭐</span>
+      </div>
+      <div class="ws-score-box">Score: _____ / ${sectionNum - 1} sections</div>
+    </div>
+    <div class="ws-deco">🌿 Wade Classical Homeschool · ${new Date().getFullYear()} 🌿</div>`;
+
+  document.getElementById('ws-inner').innerHTML = html;
+
+  // Show worksheet, hide generator
+  document.getElementById('generator-screen').style.display = 'none';
+  document.getElementById('worksheet').classList.add('visible');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
