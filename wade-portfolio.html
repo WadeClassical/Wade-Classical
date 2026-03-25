@@ -765,8 +765,200 @@
     color: var(--sage);
   }
 
-  /* Responsive */
-  @media (max-width: 640px) {
+  /* ── Lesson Plan Modal ── */
+  .lesson-modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75); z-index: 110;
+    align-items: flex-start; justify-content: center;
+    backdrop-filter: blur(4px);
+    overflow-y: auto; padding: 20px;
+  }
+  .lesson-modal-overlay.open { display: flex; }
+
+  .lesson-modal {
+    background: var(--navy-mid);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 16px; width: 100%; max-width: 680px;
+    padding: 36px; position: relative;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    animation: modalIn 0.2s ease;
+    margin: auto;
+  }
+
+  .lesson-modal-close {
+    position: absolute; top: 16px; right: 20px;
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); font-size: 22px; line-height: 1;
+    transition: color 0.2s;
+  }
+  .lesson-modal-close:hover { color: var(--cream); }
+
+  .lesson-modal h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; margin-bottom: 4px;
+  }
+
+  .lesson-modal .lm-benchmark {
+    font-size: 13px; color: var(--muted); font-style: italic;
+    margin-bottom: 24px; padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  /* Status selector */
+  .lesson-status-row {
+    display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;
+  }
+
+  .status-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+    padding: 7px 14px; border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: transparent; color: var(--muted);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .status-btn.active-status {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.15);
+    color: var(--gold);
+  }
+
+  /* Lesson fields */
+  .lesson-field { margin-bottom: 20px; }
+
+  .lesson-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 8px; display: block;
+  }
+
+  .lesson-textarea {
+    width: 100%; background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 12px 14px;
+    color: var(--cream); font-family: 'Crimson Pro', serif; font-size: 15px;
+    resize: vertical; min-height: 80px; outline: none;
+    transition: border-color 0.2s; line-height: 1.6;
+  }
+  .lesson-textarea:focus { border-color: rgba(201,168,76,0.4); }
+  .lesson-textarea::placeholder { color: var(--muted); }
+
+  .lesson-input {
+    width: 100%; background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 10px 14px;
+    color: var(--cream); font-family: 'Crimson Pro', serif; font-size: 15px;
+    outline: none; transition: border-color 0.2s;
+  }
+  .lesson-input:focus { border-color: rgba(201,168,76,0.4); }
+  .lesson-input::placeholder { color: var(--muted); }
+
+  /* YouTube links */
+  .yt-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+
+  .yt-item {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(255,0,0,0.06);
+    border: 1px solid rgba(255,80,80,0.15);
+    border-radius: 8px; padding: 10px 14px;
+  }
+
+  .yt-item .yt-icon { font-size: 18px; flex-shrink: 0; }
+
+  .yt-item .yt-info { flex: 1; min-width: 0; }
+
+  .yt-item .yt-title {
+    font-size: 13px; color: var(--cream);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .yt-item .yt-url {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .yt-item a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: #ff6060; text-decoration: none;
+    flex-shrink: 0;
+  }
+  .yt-item a:hover { color: #ff9090; }
+
+  .yt-remove {
+    background: none; border: none; color: var(--muted);
+    cursor: pointer; font-size: 16px; flex-shrink: 0;
+    transition: color 0.2s; padding: 0 4px;
+  }
+  .yt-remove:hover { color: var(--rust); }
+
+  .yt-add-row {
+    display: flex; gap: 8px;
+  }
+
+  .yt-add-row input {
+    flex: 1; background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 9px 12px;
+    color: var(--cream); font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; outline: none; transition: border-color 0.2s;
+  }
+  .yt-add-row input:focus { border-color: rgba(255,80,80,0.4); }
+  .yt-add-row input::placeholder { color: var(--muted); }
+
+  .yt-add-btn {
+    background: rgba(255,80,80,0.1);
+    border: 1px solid rgba(255,80,80,0.25);
+    color: #ff6060; border-radius: 8px; padding: 9px 16px;
+    cursor: pointer; font-size: 13px; transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .yt-add-btn:hover { background: rgba(255,80,80,0.2); }
+
+  /* Materials list */
+  .materials-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+
+  .material-item {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 14px; color: var(--cream-dark);
+  }
+  .material-item::before { content: '◆'; color: var(--gold); font-size: 7px; }
+
+  .material-remove {
+    background: none; border: none; color: var(--muted);
+    cursor: pointer; font-size: 14px; padding: 0;
+    transition: color 0.2s; margin-left: auto;
+  }
+  .material-remove:hover { color: var(--rust); }
+
+  .material-add-row { display: flex; gap: 8px; }
+
+  /* Lesson plan indicator pill */
+  .evidence-pill.lesson {
+    background: rgba(122,158,138,0.15);
+    border: 1px solid rgba(122,158,138,0.3);
+    color: var(--sage);
+  }
+
+  .btn-open-lesson {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 1px;
+    color: var(--sage); background: none;
+    border: 1px dashed rgba(122,158,138,0.25);
+    border-radius: 20px; padding: 3px 10px;
+    cursor: pointer; transition: all 0.2s;
+    margin-left: 6px;
+  }
+  .btn-open-lesson:hover {
+    color: var(--sage);
+    border-color: rgba(122,158,138,0.5);
+    background: rgba(122,158,138,0.08);
+  }
+  .btn-open-lesson.has-plan {
+    border-style: solid;
+    background: rgba(122,158,138,0.1);
+  }
+
     .student-cards { grid-template-columns: 1fr; }
     .dashboard-grid { grid-template-columns: 1fr; }
     #home-screen, #portfolio-screen, #dashboard-screen { padding: 20px; }
@@ -796,6 +988,10 @@
       <h2>Ryder ⚔️</h2>
       <p class="student-meta">Classical & adventurous learner</p>
       <div id="ryder-progress-display"></div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.06);">
+        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Learning Apps</p>
+        <a href="wade-ancient-history.html" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:6px 12px;border-radius:4px;background:rgba(200,168,75,0.1);border:1px solid rgba(200,168,75,0.2);color:var(--gold);text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='rgba(200,168,75,0.2)'" onmouseout="this.style.background='rgba(200,168,75,0.1)'">🏛 Ancient History →</a>
+      </div>
     </div>
     <div class="student-card" onclick="openPortfolio('hadley')">
       <span class="grade-badge">Grade 1 · Age 7</span>
@@ -845,7 +1041,21 @@
 <div id="dashboard-screen" class="screen">
   <button class="back-btn" onclick="showScreen('home-screen')">← Home</button>
   <h2 style="font-family:'Playfair Display',serif;font-size:28px;margin-bottom:4px;">Amanda's Dashboard 🌿</h2>
-  <p style="color:var(--muted);font-size:14px;font-style:italic;margin-bottom:0;">2025–2026 School Year Overview</p>
+  <p style="color:var(--muted);font-size:14px;font-style:italic;margin-bottom:24px;">2025–2026 School Year Overview</p>
+
+  <div style="background:rgba(122,158,138,0.07);border:1px solid rgba(122,158,138,0.18);border-radius:12px;padding:20px 24px;margin-bottom:24px;">
+    <p style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--sage);margin-bottom:14px;">Amanda's Tools</p>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;">
+      <a href="wade-portfolio.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:9px 16px;border-radius:6px;background:rgba(122,158,138,0.15);border:1px solid rgba(122,158,138,0.3);color:var(--sage);text-decoration:none;">📋 Portfolio Home</a>
+      <a href="wade-states.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:9px 16px;border-radius:6px;background:rgba(122,158,138,0.15);border:1px solid rgba(122,158,138,0.3);color:var(--sage);text-decoration:none;">🗺 States Explorer</a>
+      <a href="wade-spelling.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:9px 16px;border-radius:6px;background:rgba(122,158,138,0.15);border:1px solid rgba(122,158,138,0.3);color:var(--sage);text-decoration:none;">✏️ Spelling</a>
+      <a href="wade-math-practice.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:9px 16px;border-radius:6px;background:rgba(122,158,138,0.15);border:1px solid rgba(122,158,138,0.3);color:var(--sage);text-decoration:none;">🔢 Math</a>
+      <a href="wade-library.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:9px 16px;border-radius:6px;background:rgba(122,158,138,0.15);border:1px solid rgba(122,158,138,0.3);color:var(--sage);text-decoration:none;">📚 Library</a>
+      <a href="mcguffeys-authentic.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:9px 16px;border-radius:6px;background:rgba(122,158,138,0.15);border:1px solid rgba(122,158,138,0.3);color:var(--sage);text-decoration:none;">📜 McGuffey</a>
+      <a href="wade-ancient-history.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:9px 16px;border-radius:6px;background:rgba(122,158,138,0.15);border:1px solid rgba(122,158,138,0.3);color:var(--sage);text-decoration:none;">🏛 Ancient History</a>
+    </div>
+  </div>
+
   <div class="dashboard-grid" id="dashboard-grid"></div>
 </div>
 
@@ -892,6 +1102,75 @@
 <!-- Toast + Saving indicator -->
 <div class="toast" id="toast"></div>
 <div class="saving-indicator" id="saving-indicator">Saving…</div>
+
+<!-- ── LESSON PLAN MODAL ── -->
+<div class="lesson-modal-overlay" id="lesson-modal">
+  <div class="lesson-modal">
+    <button class="lesson-modal-close" onclick="closeLessonModal()">×</button>
+    <h3>📖 Lesson Plan</h3>
+    <p class="lm-benchmark" id="lm-benchmark-ref"></p>
+
+    <!-- Status -->
+    <div class="lesson-field">
+      <span class="lesson-label">Lesson Status</span>
+      <div class="lesson-status-row">
+        <button class="status-btn" onclick="setLessonStatus('not-planned')">⚪ Not Planned</button>
+        <button class="status-btn" onclick="setLessonStatus('planned')">🟡 Planned</button>
+        <button class="status-btn" onclick="setLessonStatus('taught')">🟢 Taught</button>
+        <button class="status-btn" onclick="setLessonStatus('needs-review')">🔴 Needs Review</button>
+      </div>
+    </div>
+
+    <!-- Overview / Objective -->
+    <div class="lesson-field">
+      <span class="lesson-label">Lesson Objective</span>
+      <textarea class="lesson-textarea" id="lp-objective" rows="2" style="min-height:60px;"
+        placeholder="What will the student understand or be able to do after this lesson?"></textarea>
+    </div>
+
+    <!-- Notes / outline -->
+    <div class="lesson-field">
+      <span class="lesson-label">Lesson Notes & Outline</span>
+      <textarea class="lesson-textarea" id="lp-notes" rows="5"
+        placeholder="How will you teach this? Outline your approach, questions to ask, activities, narration prompts..."></textarea>
+    </div>
+
+    <!-- YouTube links -->
+    <div class="lesson-field">
+      <span class="lesson-label">📺 YouTube Links</span>
+      <div class="yt-list" id="lp-yt-list"></div>
+      <div class="yt-add-row">
+        <input type="url" id="lp-yt-input" placeholder="Paste YouTube URL here…"
+          onkeydown="if(event.key==='Enter'){addYouTubeLink();}">
+        <button class="yt-add-btn" onclick="addYouTubeLink()">+ Add</button>
+      </div>
+    </div>
+
+    <!-- Materials -->
+    <div class="lesson-field">
+      <span class="lesson-label">📦 Materials & Resources</span>
+      <div class="materials-list" id="lp-materials-list"></div>
+      <div class="material-add-row">
+        <input class="lesson-input" type="text" id="lp-material-input"
+          placeholder="e.g. Library book, worksheet, manipulatives…"
+          onkeydown="if(event.key==='Enter'){addMaterial();}">
+        <button class="yt-add-btn" style="background:rgba(201,168,76,0.1);border-color:rgba(201,168,76,0.25);color:var(--gold);" onclick="addMaterial()">+ Add</button>
+      </div>
+    </div>
+
+    <!-- Additional notes -->
+    <div class="lesson-field">
+      <span class="lesson-label">📝 Additional Notes</span>
+      <textarea class="lesson-textarea" id="lp-extra" rows="3"
+        placeholder="Modifications, follow-up ideas, what worked / didn't work…"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeLessonModal()">Cancel</button>
+      <button class="btn-save" onclick="saveLessonPlan()">Save Plan</button>
+    </div>
+  </div>
+</div>
 
 <!-- Firebase -->
 <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.js"></script>
@@ -1156,6 +1435,7 @@ function init() {
         portfolioData[s] = {
           checked: fbData.checked || local.checked || {},
           customs: fbData.customs || local.customs || {},
+          lessonPlans: fbData.lessonPlans || local.lessonPlans || {},
           evidence: local.evidence || {} // keep local evidence (has photos)
         };
         localStorage.setItem('portfolio_' + s, JSON.stringify(portfolioData[s]));
@@ -1299,13 +1579,20 @@ function renderBenchmarks(student) {
         return `<span class="evidence-pill ${ev.type === 'photo' ? 'photo' : 'note'}" onclick="viewEvidence('${key}','${student}')">${icon} ${ev.type === 'photo' ? 'Photo' : 'Note'}</span>`;
       }).join('');
 
+      const lp = (pData.lessonPlans || {})[key] || {};
+      const hasLesson = lp.objective || lp.notes || (lp.videos && lp.videos.length) || (lp.materials && lp.materials.length);
+      const lessonStatusEmoji = { 'planned':'🟡', 'taught':'🟢', 'needs-review':'🔴' }[lp.status] || '';
+
       itemsHtml += `
         <div class="benchmark-item ${checked ? 'done' : ''}" id="item-${key.replace(/:/g,'_')}">
           <div class="benchmark-check ${checked ? 'checked' : ''}" onclick="toggleCheck('${key}','${student}',this)"></div>
           <div class="benchmark-content">
             <p class="benchmark-text">${item}${isCustom ? ' <span style="font-size:10px;color:var(--muted);font-family:JetBrains Mono,monospace;">CUSTOM</span>' : ''}</p>
             <div class="evidence-pills">${pillsHtml}</div>
-            <button class="add-evidence-btn" onclick="openEvidenceModal('${key}','${student}','${item.replace(/'/g,"\\'")}')">+ evidence</button>
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+              <button class="add-evidence-btn" onclick="openEvidenceModal('${key}','${student}','${item.replace(/'/g,"\\'")}')">+ evidence</button>
+              <button class="btn-open-lesson ${hasLesson ? 'has-plan' : ''}" onclick="openLessonModal('${key}','${student}','${item.replace(/'/g,"\\'")}')">📖 ${lessonStatusEmoji} ${hasLesson ? 'lesson plan' : 'plan lesson'}</button>
+            </div>
           </div>
         </div>
       `;
@@ -1782,6 +2069,163 @@ async function runAutoPull() {
   btn.textContent = 'Sync Now';
 }
 
+// ─── Lesson Plan Modal ───────────────────────────────────────────────────────
+let currentLessonKey = null;
+let currentLessonStudent = null;
+let lessonYouTubeLinks = [];
+let lessonMaterials = [];
+
+function openLessonModal(key, student, label) {
+  currentLessonKey = key;
+  currentLessonStudent = student;
+
+  const pData = portfolioData[student];
+  const lp = (pData.lessonPlans || {})[key] || {};
+
+  document.getElementById('lm-benchmark-ref').textContent = label;
+  document.getElementById('lp-objective').value = lp.objective || '';
+  document.getElementById('lp-notes').value = lp.notes || '';
+  document.getElementById('lp-extra').value = lp.extra || '';
+
+  lessonYouTubeLinks = Array.isArray(lp.videos) ? [...lp.videos] : [];
+  lessonMaterials = Array.isArray(lp.materials) ? [...lp.materials] : [];
+
+  // Set status buttons
+  document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active-status'));
+  if (lp.status) {
+    const statusMap = { 'not-planned': 0, 'planned': 1, 'taught': 2, 'needs-review': 3 };
+    const idx = statusMap[lp.status];
+    if (idx !== undefined) document.querySelectorAll('.status-btn')[idx].classList.add('active-status');
+  }
+
+  renderYTList();
+  renderMaterialsList();
+  document.getElementById('lp-yt-input').value = '';
+  document.getElementById('lp-material-input').value = '';
+  document.getElementById('lesson-modal').classList.add('open');
+}
+
+function closeLessonModal() {
+  document.getElementById('lesson-modal').classList.remove('open');
+  currentLessonKey = null;
+  currentLessonStudent = null;
+}
+
+function setLessonStatus(status) {
+  document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active-status'));
+  event.target.classList.add('active-status');
+}
+
+function getLessonStatus() {
+  const active = document.querySelector('.status-btn.active-status');
+  if (!active) return 'not-planned';
+  const map = ['not-planned','planned','taught','needs-review'];
+  return map[Array.from(document.querySelectorAll('.status-btn')).indexOf(active)] || 'not-planned';
+}
+
+function addYouTubeLink() {
+  const input = document.getElementById('lp-yt-input');
+  const url = input.value.trim();
+  if (!url) return;
+
+  // Extract YouTube video ID
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+  const videoId = match ? match[1] : null;
+  const title = videoId ? '' : url; // Will show URL if not YouTube
+
+  lessonYouTubeLinks.push({ url, videoId, title: title || url });
+  input.value = '';
+
+  // Try to fetch title (best effort)
+  if (videoId) {
+    fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`)
+      .then(r => r.json())
+      .then(data => {
+        const idx = lessonYouTubeLinks.findIndex(v => v.videoId === videoId);
+        if (idx >= 0) {
+          lessonYouTubeLinks[idx].title = data.title || url;
+          renderYTList();
+        }
+      }).catch(() => {});
+  }
+
+  renderYTList();
+}
+
+function removeYTLink(idx) {
+  lessonYouTubeLinks.splice(idx, 1);
+  renderYTList();
+}
+
+function renderYTList() {
+  const container = document.getElementById('lp-yt-list');
+  if (!lessonYouTubeLinks.length) {
+    container.innerHTML = '';
+    return;
+  }
+  container.innerHTML = lessonYouTubeLinks.map((v, i) => `
+    <div class="yt-item">
+      <span class="yt-icon">▶️</span>
+      <div class="yt-info">
+        <div class="yt-title">${v.title || v.url}</div>
+        <div class="yt-url">${v.url}</div>
+      </div>
+      <a href="${v.url}" target="_blank" rel="noopener">Open ↗</a>
+      <button class="yt-remove" onclick="removeYTLink(${i})">×</button>
+    </div>
+  `).join('');
+}
+
+function addMaterial() {
+  const input = document.getElementById('lp-material-input');
+  const text = input.value.trim();
+  if (!text) return;
+  lessonMaterials.push(text);
+  input.value = '';
+  renderMaterialsList();
+}
+
+function removeMaterial(idx) {
+  lessonMaterials.splice(idx, 1);
+  renderMaterialsList();
+}
+
+function renderMaterialsList() {
+  const container = document.getElementById('lp-materials-list');
+  if (!lessonMaterials.length) {
+    container.innerHTML = '';
+    return;
+  }
+  container.innerHTML = lessonMaterials.map((m, i) => `
+    <div class="material-item">
+      ${m}
+      <button class="material-remove" onclick="removeMaterial(${i})">×</button>
+    </div>
+  `).join('');
+}
+
+function saveLessonPlan() {
+  const key = currentLessonKey;
+  const student = currentLessonStudent;
+  const pData = portfolioData[student];
+  if (!pData.lessonPlans) pData.lessonPlans = {};
+
+  pData.lessonPlans[key] = {
+    status: getLessonStatus(),
+    objective: document.getElementById('lp-objective').value.trim(),
+    notes: document.getElementById('lp-notes').value.trim(),
+    extra: document.getElementById('lp-extra').value.trim(),
+    videos: lessonYouTubeLinks,
+    materials: lessonMaterials,
+    updated: new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })
+  };
+
+  savePortfolioData(student);
+  renderBenchmarks(student);
+  closeLessonModal();
+  showToast('Lesson plan saved ✓');
+}
+
 // ─── Save ─────────────────────────────────────────────────────────────────────
 function savePortfolioData(student) {
   const pData = portfolioData[student];
@@ -1804,6 +2248,7 @@ function savePortfolioData(student) {
   // Checked state always synced to Firebase
   db.ref('portfolio/' + student + '/checked').set(pData.checked || {}).catch(() => {});
   db.ref('portfolio/' + student + '/customs').set(pData.customs || {}).catch(() => {});
+  db.ref('portfolio/' + student + '/lessonPlans').set(pData.lessonPlans || {}).catch(() => {});
 
   // Save evidence notes (without photo data to Firebase, photos stay in localStorage)
   const evidenceForFirebase = {};
@@ -1840,17 +2285,19 @@ function openDashboard() {
     let overallDone = 0, overallTotal = 0;
 
     bm.subjects.forEach(sub => {
-      let subDone = 0;
-      sub.items.forEach((_, i) => {
-        overallTotal++;
+      let subDone = 0, subTotal = 0;
+      sub.items.forEach((item, i) => {
+        if (item.startsWith('—') && item.endsWith('—')) return; // skip dividers
+        subTotal++;
         if (pData.checked[sub.id + ':' + i]) { subDone++; overallDone++; }
+        overallTotal++;
       });
-      const pct = sub.items.length ? Math.round(subDone/sub.items.length*100) : 0;
+      const pct = subTotal ? Math.round(subDone/subTotal*100) : 0;
       cardHtml += `
         <div class="subject-bar-row">
           <span class="label">${sub.icon} ${sub.label}</span>
           <div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div>
-          <span class="pct">${subDone}/${sub.items.length}</span>
+          <span class="pct">${subDone}/${subTotal}</span>
         </div>
       `;
     });
@@ -1864,9 +2311,41 @@ function openDashboard() {
         <p style="text-align:center;margin-top:12px;">
           <button onclick="openPortfolio('${student}')" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:7px 16px;border-radius:6px;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.25);color:var(--gold);cursor:pointer;">View Portfolio →</button>
         </p>
-      </div>
     `;
 
+    // Ancient History card for Ryder
+    if (student === 'ryder') {
+      const ah = JSON.parse(localStorage.getItem('ancient_mastery_ryder') || '{}');
+      const civs = ['mesopotamia','egypt','greece','rome','china'];
+      const civNames = { mesopotamia:'Mesopotamia', egypt:'Egypt', greece:'Greece', rome:'Rome', china:'China' };
+      const mastered = civs.filter(c => ah[c] && ah[c].passed).length;
+      const studied = civs.filter(c => ah[c] && ah[c].studied).length;
+      cardHtml += `
+        </div>
+        <div class="dash-card" style="border-color:rgba(200,168,75,0.15);">
+          <h3>Ancient History 🏛️</h3>
+          <p class="grade-label">Chronicles of the Ancient World</p>
+          ${civs.map(c => {
+            const m = ah[c] || {};
+            const pct = m.passed ? 100 : m.studied ? 50 : 0;
+            const status = m.passed ? '✓ Mastered' : m.studied ? 'Studied' : 'Not started';
+            return `<div class="subject-bar-row">
+              <span class="label" style="width:110px">${civNames[c]}</span>
+              <div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div>
+              <span class="pct" style="font-size:9px;min-width:60px">${status}</span>
+            </div>`;
+          }).join('')}
+          <div class="overall-circle" style="margin-top:16px;">
+            <span class="big">${mastered}/5</span>
+            <span class="small">MASTERED</span>
+          </div>
+          <p style="text-align:center;margin-top:12px;">
+            <a href="wade-ancient-history.html" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:7px 16px;border-radius:6px;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.25);color:var(--gold);text-decoration:none;display:inline-block;">Open App →</a>
+          </p>
+      `;
+    }
+
+    cardHtml += `</div>`;
     grid.innerHTML += cardHtml;
   });
 
