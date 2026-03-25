@@ -883,9 +883,12 @@ body::after {
 /* ── Player Select ── */
 #player-screen {
   min-height: 100vh;
-  display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   padding: 40px 20px;
+}
+
+#player-screen.active {
+  display: flex; flex-direction: column;
 }
 
 .player-title {
