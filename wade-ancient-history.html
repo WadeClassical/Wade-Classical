@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chronicles of the Ancient World</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=IM+Fell+English:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0d0d0d;
+  --ink-mid: #1a1a2e;
+  --ink-light: #16213e;
+  --paper: #f2ead8;
+  --paper-dark: #e8dcc8;
+  --gold: #c8a84b;
+  --gold-light: #e0c070;
+  --red: #8b1a1a;
+  --brush: rgba(13,13,13,0.06);
+  --muted: #7a7060;
+  --white: #faf6ee;
+
+  /* Civilization accent colors */
+  --egypt: #c8793a;
+  --mesopotamia: #7a5c2e;
+  --greece: #2e5f8a;
+  --rome: #8b1a1a;
+  --china: #6b2d3e;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--ink-mid);
+  color: var(--paper);
+  font-family: 'IM Fell English', Georgia, serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ── Ink wash background ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 10%, rgba(200,168,75,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 85% 90%, rgba(139,26,26,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 100% 100% at 50% 50%, rgba(22,33,62,0.8) 0%, var(--ink-mid) 100%);
+  pointer-events: none;
+}
+
+/* ── Brush stroke texture overlay ── */
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; opacity: 0.6;
+}
+
+/* ── Screens ── */
+.screen { display: none; position: relative; z-index: 1; min-height: 100vh; }
+.screen.active { display: block; }
+
+/* ══════════════════════════════════════════
+   HOME / TIMELINE SCREEN
+══════════════════════════════════════════ */
+#home-screen { padding: 0; }
+
+.home-header {
+  text-align: center;
+  padding: 60px 40px 40px;
+  position: relative;
+}
+
+.home-header::after {
+  content: '';
+  display: block; width: 200px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 20px auto 0;
+}
+
+.home-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 12px;
+}
+
+.home-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(28px, 5vw, 52px);
+  font-weight: 900; color: var(--paper);
+  line-height: 1.1; letter-spacing: 1px;
+  text-shadow: 0 2px 20px rgba(200,168,75,0.2);
+}
+
+.home-title span { color: var(--gold); }
+
+.home-subtitle {
+  font-size: 15px; color: var(--muted);
+  font-style: italic; margin-top: 10px;
+}
+
+/* Scholar info bar */
+.scholar-bar {
+  display: flex; align-items: center; justify-content: center;
+  gap: 20px; padding: 14px 40px;
+  background: rgba(0,0,0,0.2);
+  border-top: 1px solid rgba(200,168,75,0.1);
+  border-bottom: 1px solid rgba(200,168,75,0.1);
+  margin-bottom: 50px;
+  flex-wrap: wrap;
+}
+
+.scholar-name {
+  font-family: 'Cinzel', serif; font-size: 14px;
+  color: var(--gold);
+}
+
+.scholar-stat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--muted);
+  display: flex; align-items: center; gap: 6px;
+}
+
+.scholar-stat span { color: var(--paper); }
+
+/* Timeline */
+.timeline-container {
+  padding: 0 40px 80px;
+  max-width: 1100px; margin: 0 auto;
+  position: relative;
+}
+
+.timeline-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--muted); text-align: center; margin-bottom: 40px;
+}
+
+/* Timeline spine */
+.timeline-spine {
+  position: relative;
+  display: flex; flex-direction: column; gap: 0;
+}
+
+.timeline-spine::before {
+  content: '';
+  position: absolute; left: 50%; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(200,168,75,0.3) 5%,
+    rgba(200,168,75,0.3) 95%,
+    transparent 100%
+  );
+  transform: translateX(-50%);
+}
+
+/* Timeline node */
+.civ-node {
+  display: flex; align-items: center;
+  margin-bottom: 60px; position: relative;
+  cursor: pointer;
+}
+
+.civ-node:nth-child(odd) { flex-direction: row; }
+.civ-node:nth-child(even) { flex-direction: row-reverse; }
+
+.civ-card {
+  width: calc(50% - 60px);
+  background: rgba(13,13,13,0.5);
+  border: 1px solid rgba(200,168,75,0.12);
+  border-radius: 4px;
+  padding: 24px 28px;
+  position: relative;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.civ-node:nth-child(odd) .civ-card { margin-right: auto; }
+.civ-node:nth-child(even) .civ-card { margin-left: auto; }
+
+.civ-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  border-radius: 4px 4px 0 0;
+  background: var(--civ-color, var(--gold));
+  opacity: 0.6;
+}
+
+.civ-card:hover {
+  border-color: rgba(200,168,75,0.35);
+  background: rgba(13,13,13,0.7);
+  transform: translateY(-3px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+
+.civ-card:hover::before { opacity: 1; }
+
+.civ-era {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  margin-bottom: 6px;
+  color: var(--civ-color, var(--gold));
+}
+
+.civ-name {
+  font-family: 'Cinzel', serif;
+  font-size: 22px; font-weight: 700;
+  color: var(--paper); margin-bottom: 6px;
+}
+
+.civ-tagline {
+  font-size: 13px; color: var(--muted);
+  font-style: italic; margin-bottom: 14px;
+  line-height: 1.4;
+}
+
+.civ-status {
+  display: flex; align-items: center; gap: 8px;
+}
+
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.status-dot.mastered { background: var(--gold); border-color: var(--gold); }
+.status-dot.in-progress { background: rgba(200,168,75,0.4); border-color: var(--gold); }
+
+.status-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--muted); letter-spacing: 1px;
+}
+
+.mastery-stars { color: var(--gold); font-size: 12px; }
+
+/* Center node marker */
+.node-marker {
+  position: absolute; left: 50%;
+  transform: translateX(-50%);
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--ink-mid);
+  border: 2px solid rgba(200,168,75,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; z-index: 2;
+  transition: all 0.3s;
+}
+
+.civ-node:hover .node-marker {
+  border-color: var(--gold);
+  box-shadow: 0 0 20px rgba(200,168,75,0.3);
+}
+
+/* connector line from card to marker */
+.civ-connector {
+  position: absolute; top: 50%; height: 1px;
+  background: rgba(200,168,75,0.2);
+  width: calc(50% - 80px);
+  z-index: 1;
+}
+.civ-node:nth-child(odd) .civ-connector { left: calc(50% - 80px - (50% - 80px)); right: 22px; }
+.civ-node:nth-child(even) .civ-connector { right: calc(50% - 80px - (50% - 80px)); left: 22px; }
+
+/* Time date labels on other side */
+.civ-date-side {
+  width: calc(50% - 60px);
+  text-align: center;
+  padding: 0 20px;
+}
+.civ-node:nth-child(odd) .civ-date-side { text-align: left; padding-left: 30px; }
+.civ-node:nth-child(even) .civ-date-side { text-align: right; padding-right: 30px; }
+
+.civ-date-big {
+  font-family: 'Cinzel', serif; font-size: 28px; font-weight: 700;
+  color: rgba(200,168,75,0.25); line-height: 1;
+}
+
+.civ-date-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: rgba(200,168,75,0.2);
+  letter-spacing: 2px; text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* ══════════════════════════════════════════
+   CIVILIZATION SCREEN
+══════════════════════════════════════════ */
+#civ-screen { padding: 0; }
+
+.civ-screen-header {
+  padding: 40px 50px 30px;
+  border-bottom: 1px solid rgba(200,168,75,0.1);
+  position: relative;
+  background: rgba(0,0,0,0.2);
+}
+
+.back-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--muted); background: none; border: none;
+  cursor: pointer; padding: 0; margin-bottom: 20px;
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: color 0.2s;
+}
+.back-btn:hover { color: var(--gold); }
+
+.civ-screen-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(32px, 5vw, 56px); font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 4px 30px rgba(0,0,0,0.5);
+}
+
+.civ-screen-era {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; letter-spacing: 3px; text-transform: uppercase;
+  margin-top: 8px; opacity: 0.7;
+}
+
+.civ-screen-tagline {
+  font-size: 16px; font-style: italic;
+  color: var(--muted); margin-top: 8px;
+}
+
+/* Tab nav */
+.civ-tabs {
+  display: flex; gap: 0;
+  padding: 0 50px;
+  border-bottom: 1px solid rgba(200,168,75,0.1);
+  background: rgba(0,0,0,0.15);
+}
+
+.civ-tab {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  padding: 16px 24px; background: none; border: none;
+  color: var(--muted); cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s; margin-bottom: -1px;
+}
+
+.civ-tab:hover { color: var(--paper); }
+.civ-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* Tab content */
+.civ-content {
+  max-width: 900px; margin: 0 auto;
+  padding: 50px 50px 80px;
+}
+
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* Sections */
+.content-section { margin-bottom: 48px; }
+
+.section-label {
+  font-family: 'Cinzel', serif;
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+
+.section-label::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(200,168,75,0.3), transparent);
+}
+
+.content-body {
+  font-size: 17px; line-height: 1.8;
+  color: var(--paper-dark);
+}
+
+.content-body p { margin-bottom: 16px; }
+
+/* Fact grid */
+.fact-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px; margin-top: 8px;
+}
+
+.fact-card {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(200,168,75,0.1);
+  border-radius: 4px; padding: 16px;
+}
+
+.fact-card .fact-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 4px;
+}
+
+.fact-card .fact-value {
+  font-family: 'Cinzel', serif; font-size: 14px; color: var(--paper);
+}
+
+/* Figure cards */
+.figure-list { display: flex; flex-direction: column; gap: 16px; }
+
+.figure-card {
+  display: flex; gap: 16px;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 4px; padding: 18px;
+}
+
+.figure-icon {
+  font-size: 32px; flex-shrink: 0;
+  width: 50px; text-align: center;
+}
+
+.figure-name {
+  font-family: 'Cinzel', serif; font-size: 16px;
+  color: var(--paper); margin-bottom: 4px;
+}
+
+.figure-role {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 8px;
+}
+
+.figure-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+/* Achievement list */
+.achievement-list { list-style: none; }
+.achievement-list li {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 15px; color: var(--paper-dark);
+  display: flex; gap: 12px; align-items: flex-start;
+  line-height: 1.5;
+}
+.achievement-list li::before {
+  content: '◆';
+  color: var(--gold); font-size: 8px; margin-top: 6px; flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════
+   EXAMINATION SCREEN
+══════════════════════════════════════════ */
+#exam-screen { padding: 0; }
+
+.exam-header {
+  padding: 40px 50px 30px;
+  border-bottom: 1px solid rgba(200,168,75,0.1);
+  background: rgba(0,0,0,0.25);
+  display: flex; align-items: flex-start; justify-content: space-between;
+}
+
+.exam-header-left h2 {
+  font-family: 'Cinzel', serif; font-size: 28px; font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.exam-header-left p {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--muted); letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.exam-progress-ring {
+  width: 60px; height: 60px; position: relative;
+}
+
+.exam-progress-ring svg { transform: rotate(-90deg); }
+.exam-progress-ring .ring-bg { fill: none; stroke: rgba(255,255,255,0.05); stroke-width: 4; }
+.exam-progress-ring .ring-fill {
+  fill: none; stroke: var(--gold); stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 157; stroke-dashoffset: 157;
+  transition: stroke-dashoffset 0.5s ease;
+}
+.exam-progress-ring .ring-text {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cinzel', serif; font-size: 14px; color: var(--gold);
+}
+
+.exam-body {
+  max-width: 700px; margin: 0 auto;
+  padding: 60px 50px;
+}
+
+.question-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 16px;
+}
+
+.question-text {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(18px, 3vw, 26px);
+  font-weight: 600; color: var(--paper);
+  line-height: 1.4; margin-bottom: 8px;
+}
+
+.question-hint {
+  font-size: 13px; color: var(--muted); font-style: italic;
+  margin-bottom: 32px;
+}
+
+/* Answer options (multiple choice) */
+.answer-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+
+.answer-option {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 4px; padding: 16px 20px;
+  cursor: pointer; transition: all 0.2s;
+  font-size: 15px; color: var(--paper-dark);
+}
+
+.answer-option:hover {
+  border-color: rgba(200,168,75,0.3);
+  background: rgba(200,168,75,0.05);
+  color: var(--paper);
+}
+
+.answer-option.selected {
+  border-color: var(--gold);
+  background: rgba(200,168,75,0.1);
+  color: var(--paper);
+}
+
+.answer-option.correct {
+  border-color: #5a9e6a;
+  background: rgba(90,158,106,0.1);
+  color: var(--paper);
+}
+
+.answer-option.wrong {
+  border-color: var(--red);
+  background: rgba(139,26,26,0.15);
+  color: rgba(255,255,255,0.5);
+}
+
+.option-letter {
+  font-family: 'Cinzel', serif; font-size: 12px;
+  color: var(--gold); min-width: 20px;
+}
+
+/* Text answer */
+.text-answer-wrap { margin-bottom: 32px; }
+
+.text-answer {
+  width: 100%;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(200,168,75,0.2);
+  border-radius: 4px; padding: 16px 20px;
+  color: var(--paper); font-family: 'IM Fell English', serif;
+  font-size: 17px; outline: none; resize: none;
+  transition: border-color 0.2s; min-height: 80px;
+}
+
+.text-answer:focus { border-color: rgba(200,168,75,0.5); }
+.text-answer::placeholder { color: var(--muted); font-style: italic; }
+
+.text-answer.correct { border-color: #5a9e6a; background: rgba(90,158,106,0.08); }
+.text-answer.wrong { border-color: var(--red); }
+
+/* Feedback */
+.answer-feedback {
+  padding: 16px 20px; border-radius: 4px;
+  margin-bottom: 24px; font-size: 15px; line-height: 1.6;
+  display: none;
+}
+.answer-feedback.show { display: block; }
+.answer-feedback.correct-fb {
+  background: rgba(90,158,106,0.1);
+  border: 1px solid rgba(90,158,106,0.3);
+  color: #8fd4a0;
+}
+.answer-feedback.wrong-fb {
+  background: rgba(139,26,26,0.1);
+  border: 1px solid rgba(139,26,26,0.3);
+  color: #d4888a;
+}
+
+.exam-actions { display: flex; gap: 12px; }
+
+.btn-submit {
+  font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 2px;
+  padding: 14px 32px; border-radius: 4px;
+  background: rgba(200,168,75,0.15);
+  border: 1px solid rgba(200,168,75,0.4);
+  color: var(--gold); cursor: pointer; transition: all 0.2s;
+}
+.btn-submit:hover { background: rgba(200,168,75,0.25); }
+.btn-submit:disabled { opacity: 0.4; cursor: default; }
+
+.btn-next {
+  font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 2px;
+  padding: 14px 32px; border-radius: 4px;
+  background: var(--gold); border: none;
+  color: var(--ink); cursor: pointer; transition: all 0.2s;
+  display: none;
+}
+.btn-next:hover { background: var(--gold-light); }
+.btn-next.show { display: block; }
+
+/* Results screen */
+.results-panel {
+  text-align: center; padding: 60px 40px;
+}
+
+.results-score {
+  font-family: 'Cinzel', serif;
+  font-size: 72px; font-weight: 900;
+  color: var(--gold); line-height: 1;
+  text-shadow: 0 4px 30px rgba(200,168,75,0.3);
+}
+
+.results-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--muted); margin-top: 8px; margin-bottom: 32px;
+}
+
+.results-rank {
+  font-family: 'Cinzel', serif; font-size: 24px;
+  color: var(--paper); margin-bottom: 8px;
+}
+
+.results-desc { font-size: 15px; color: var(--muted); font-style: italic; }
+
+.results-breakdown {
+  max-width: 500px; margin: 40px auto;
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+.result-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 16px; border-radius: 4px;
+  font-size: 14px; text-align: left;
+}
+
+.result-item.r-correct { background: rgba(90,158,106,0.1); color: #8fd4a0; }
+.result-item.r-wrong { background: rgba(139,26,26,0.1); color: #d4888a; }
+.result-item .r-icon { font-size: 16px; flex-shrink: 0; }
+.result-item .r-q { flex: 1; }
+.result-item .r-ans { font-family: 'JetBrains Mono', monospace; font-size: 11px; opacity: 0.7; }
+
+.results-actions { display: flex; gap: 12px; justify-content: center; margin-top: 32px; }
+
+.btn-retry {
+  font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 2px;
+  padding: 12px 28px; border-radius: 4px;
+  background: transparent; border: 1px solid rgba(200,168,75,0.3);
+  color: var(--gold); cursor: pointer; transition: all 0.2s;
+}
+.btn-retry:hover { background: rgba(200,168,75,0.1); }
+
+.btn-continue {
+  font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 2px;
+  padding: 12px 28px; border-radius: 4px;
+  background: var(--gold); border: none;
+  color: var(--ink); cursor: pointer; transition: all 0.2s;
+}
+.btn-continue:hover { background: var(--gold-light); }
+
+/* Mastery saved notice */
+.mastery-notice {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--gold); background: rgba(200,168,75,0.1);
+  border: 1px solid rgba(200,168,75,0.25);
+  border-radius: 20px; padding: 5px 14px; margin-top: 16px;
+}
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 30px; right: 30px; z-index: 200;
+  background: rgba(13,13,13,0.95);
+  border: 1px solid rgba(200,168,75,0.3);
+  border-radius: 4px; padding: 14px 20px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  color: var(--paper);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  transform: translateY(20px); opacity: 0;
+  transition: all 0.3s ease; pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ── Maps tab ── */
+.map-wrap {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(200,168,75,0.12);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.map-wrap svg {
+  width: 100%; height: auto; display: block;
+}
+
+.map-caption {
+  padding: 14px 18px;
+  font-size: 14px; color: var(--muted); font-style: italic;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  line-height: 1.5;
+}
+
+.map-legend {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  padding: 0 0 20px;
+}
+
+.legend-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.legend-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+
+/* ── Video tab ── */
+.video-card {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(200,168,75,0.12);
+  border-radius: 6px; overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.video-thumb-link {
+  display: block; position: relative;
+  background: #000; text-decoration: none;
+  overflow: hidden;
+}
+
+.video-thumb-bg {
+  width: 100%; aspect-ratio: 16/9;
+  background: linear-gradient(135deg, #0d0d0d 0%, #1a1a2e 100%);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 16px;
+  transition: background 0.2s;
+}
+
+.video-thumb-link:hover .video-thumb-bg {
+  background: linear-gradient(135deg, #1a0a0a 0%, #2e1a1a 100%);
+}
+
+.video-play-btn {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: rgba(200,168,75,0.2);
+  border: 2px solid rgba(200,168,75,0.5);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+
+.video-thumb-link:hover .video-play-btn {
+  background: rgba(200,168,75,0.35);
+  border-color: var(--gold);
+  transform: scale(1.08);
+}
+
+.video-play-btn svg { margin-left: 5px; }
+
+.video-thumb-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold); opacity: 0.8;
+}
+
+.video-thumb-link:hover .video-thumb-label { opacity: 1; }
+
+.video-meta {
+  padding: 18px 20px;
+}
+
+.video-title {
+  font-family: 'Cinzel', serif; font-size: 16px;
+  color: var(--paper); margin-bottom: 6px;
+}
+
+.video-source {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 10px;
+}
+
+.video-desc {
+  font-size: 14px; color: var(--muted); line-height: 1.6;
+}
+
+.video-open-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 14px;
+  font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 1px;
+  padding: 9px 20px; border-radius: 4px;
+  background: rgba(200,168,75,0.12);
+  border: 1px solid rgba(200,168,75,0.3);
+  color: var(--gold); text-decoration: none;
+  transition: all 0.2s; cursor: pointer;
+}
+
+.video-open-btn:hover {
+  background: rgba(200,168,75,0.22);
+  border-color: rgba(200,168,75,0.5);
+}
+
+.video-note {
+  margin-top: 16px;
+  background: rgba(200,168,75,0.07);
+  border: 1px solid rgba(200,168,75,0.15);
+  border-radius: 4px; padding: 12px 16px;
+  font-size: 13px; color: var(--muted); font-style: italic;
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.civ-node { animation: fadeUp 0.5s ease both; }
+.civ-node:nth-child(1) { animation-delay: 0.1s; }
+.civ-node:nth-child(2) { animation-delay: 0.2s; }
+.civ-node:nth-child(3) { animation-delay: 0.3s; }
+.civ-node:nth-child(4) { animation-delay: 0.4s; }
+.civ-node:nth-child(5) { animation-delay: 0.5s; }
+
+/* Responsive */
+@media (max-width: 700px) {
+  .timeline-spine::before { left: 20px; }
+  .civ-node, .civ-node:nth-child(even) { flex-direction: column; align-items: flex-start; padding-left: 50px; }
+  .civ-card, .civ-node:nth-child(odd) .civ-card,
+  .civ-node:nth-child(even) .civ-card { width: 100%; margin: 0; }
+  .node-marker { left: 20px; top: 0; transform: none; }
+  .civ-date-side { display: none; }
+  .civ-connector { display: none; }
+  .civ-content, .exam-body { padding: 30px 20px; }
+  .civ-tabs { padding: 0 20px; overflow-x: auto; }
+  .civ-screen-header, .exam-header { padding: 30px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HOME / TIMELINE ══ -->
+<div id="home-screen" class="screen active">
+  <div class="home-header">
+    <p class="home-eyebrow">Wade Classical · Ryder ⚔️</p>
+    <h1 class="home-title">Chronicles of the<br><span>Ancient World</span></h1>
+    <p class="home-subtitle">3500 BC — 500 AD · Scholar's Journal</p>
+  </div>
+
+  <div class="scholar-bar">
+    <span class="scholar-name">Scholar Ryder</span>
+    <span class="scholar-stat">Civilizations Mastered: <span id="civs-mastered">0</span>/5</span>
+    <span class="scholar-stat">Examinations Passed: <span id="exams-passed">0</span></span>
+    <span class="scholar-stat">Total Score: <span id="total-score">—</span></span>
+  </div>
+
+  <div class="timeline-container">
+    <p class="timeline-label">Scroll the river of time</p>
+    <div class="timeline-spine" id="timeline-spine"></div>
+  </div>
+</div>
+
+<!-- ══ CIVILIZATION ══ -->
+<div id="civ-screen" class="screen">
+  <div class="civ-screen-header">
+    <button class="back-btn" onclick="showScreen('home-screen')">← Timeline</button>
+    <h1 class="civ-screen-title" id="civ-screen-title"></h1>
+    <p class="civ-screen-era" id="civ-screen-era"></p>
+    <p class="civ-screen-tagline" id="civ-screen-tagline"></p>
+  </div>
+
+  <div class="civ-tabs">
+    <button class="civ-tab active" onclick="switchCivTab('overview')">Overview</button>
+    <button class="civ-tab" onclick="switchCivTab('people')">Key Figures</button>
+    <button class="civ-tab" onclick="switchCivTab('achievements')">Achievements</button>
+    <button class="civ-tab" onclick="switchCivTab('life')">Daily Life</button>
+    <button class="civ-tab" onclick="switchCivTab('maps')">🗺 Maps</button>
+    <button class="civ-tab" onclick="switchCivTab('video')">▶ Video</button>
+    <button class="civ-tab" onclick="startExam()">⚔ Examination</button>
+  </div>
+
+  <div class="civ-content">
+    <div class="tab-pane active" id="tab-overview"></div>
+    <div class="tab-pane" id="tab-people"></div>
+    <div class="tab-pane" id="tab-achievements"></div>
+    <div class="tab-pane" id="tab-life"></div>
+    <div class="tab-pane" id="tab-maps"></div>
+    <div class="tab-pane" id="tab-video"></div>
+  </div>
+</div>
+
+<!-- ══ EXAMINATION ══ -->
+<div id="exam-screen" class="screen">
+  <div class="exam-header">
+    <div class="exam-header-left">
+      <button class="back-btn" onclick="exitExam()" style="margin-bottom:10px">← Leave Examination</button>
+      <h2 id="exam-civ-title"></h2>
+      <p>Scholar's Examination</p>
+    </div>
+    <div class="exam-progress-ring">
+      <svg width="60" height="60" viewBox="0 0 60 60">
+        <circle class="ring-bg" cx="30" cy="30" r="25"/>
+        <circle class="ring-fill" id="ring-fill" cx="30" cy="30" r="25"/>
+      </svg>
+      <div class="ring-text" id="ring-text">1/5</div>
+    </div>
+  </div>
+
+  <div class="exam-body" id="exam-body"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase -->
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.js"></script>
+
+<script>
+// ─── Firebase ────────────────────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyBsjx3JKjCQOMuus07MSoj3o-Vu9eRW6zc",
+  databaseURL: "https://wade-classical-default-rtdb.firebaseio.com",
+  projectId: "wade-classical",
+  appId: "1:72309085457:web:3d8b5a07302248ded6a8b0"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ─── Civilization Data ────────────────────────────────────────────────────────
+const CIVS = [
+  {
+    id: 'mesopotamia',
+    name: 'Mesopotamia',
+    color: '#9a7040',
+    emoji: '🏛️',
+    era: 'c. 3500 – 500 BC',
+    dateDisplay: '3500 BC',
+    tagline: 'The Cradle of Civilization — where writing, law, and cities were born',
+    overview: [
+      { label: 'Quick Facts', type: 'facts', items: [
+        { l: 'Location', v: 'Modern Iraq & Syria' },
+        { l: 'River', v: 'Tigris & Euphrates' },
+        { l: 'Major Cities', v: 'Ur, Babylon, Nineveh' },
+        { l: 'Major Empires', v: 'Sumer, Akkad, Babylon, Assyria' },
+        { l: 'Writing System', v: 'Cuneiform' },
+        { l: 'Legacy', v: 'Law, writing, the wheel' }
+      ]},
+      { label: 'The Story', type: 'text', body: `Between two great rivers — the Tigris and Euphrates — the world's first cities rose from the desert. The Sumerians built walled cities, invented writing to keep records, and created complex religious temples called ziggurats that touched the sky.<br><br>Thousands of years later, the Babylonian king Hammurabi wrote down one of history's first law codes — 282 laws carved into a massive stone pillar. His laws covered everything from wages to justice. The famous phrase "an eye for an eye" comes from his code.<br><br>The Assyrians built a fearsome military empire, while later the Persian Empire absorbed the whole region. Mesopotamia passed its gifts — writing, mathematics, the 60-minute hour, and the 7-day week — to every civilization that came after.` }
+    ],
+    people: [
+      { name: 'Hammurabi', role: 'King of Babylon, c. 1792 BC', icon: '👑', desc: 'Created one of the world\'s first written law codes. His 282 laws governed Babylonian society and influenced legal thinking for thousands of years.' },
+      { name: 'Gilgamesh', role: 'King of Uruk (legendary)', icon: '⚔️', desc: 'The subject of the world\'s oldest written epic poem. Part king, part god, he sought immortality after his best friend Enkidu died. His story echoes in every hero\'s journey told since.' },
+      { name: 'Sargon of Akkad', role: 'First Empire Builder, c. 2334 BC', icon: '🗡️', desc: 'Created history\'s first multi-city empire by conquering Sumer. His rise from cup-bearer to conqueror became legendary across the ancient world.' },
+      { name: 'Ashurbanipal', role: 'Assyrian King, c. 668 BC', icon: '📜', desc: 'Built the great Library of Nineveh — one of the ancient world\'s most important collections of clay tablets, including copies of the Epic of Gilgamesh.' }
+    ],
+    achievements: [
+      'Invented cuneiform writing — the world\'s first writing system (3400 BC)',
+      'Built the first true cities, including Ur and Uruk',
+      'Created the world\'s first law code (Hammurabi, c. 1754 BC)',
+      'Invented the wheel and the plow',
+      'Developed a number system based on 60 — giving us 60-second minutes, 60-minute hours',
+      'Built massive ziggurats — stepped temple towers reaching toward the heavens',
+      'Wrote the Epic of Gilgamesh — humanity\'s oldest surviving story',
+      'Established organized trade networks and a money-based economy',
+      'Created a 12-month lunar calendar still reflected in our year'
+    ],
+    life: { label: 'Daily Life in Mesopotamia', type: 'text', body: `Most Mesopotamians were farmers who grew barley and wheat in fields irrigated by canals they dug themselves. Cities were busy, noisy places — merchants haggled in markets, scribes wrote on clay tablets, and priests tended to massive ziggurats that dominated the skyline.<br><br>Children of wealthy families went to schools called edubba (tablet houses), where they learned to write cuneiform by pressing a reed stylus into wet clay. Becoming a scribe was one of the most respected jobs in Mesopotamian society.<br><br>Women in Sumer had more rights than in many later civilizations — they could own property, run businesses, and appear in court. Beer was a staple drink for everyone, including children. Workers were sometimes paid in beer rations instead of silver.<br><br>Mesopotamians believed in hundreds of gods, each controlling different aspects of life — Enlil ruled wind and storms, Ishtar governed love and war, and Marduk became the chief god of Babylon. Priests were among the most powerful people in society.` }
+  },
+  {
+    id: 'egypt',
+    name: 'Ancient Egypt',
+    color: '#c8793a',
+    emoji: '🔺',
+    era: 'c. 3100 – 30 BC',
+    dateDisplay: '3100 BC',
+    tagline: 'Gift of the Nile — the civilization that defied time itself',
+    overview: [
+      { label: 'Quick Facts', type: 'facts', items: [
+        { l: 'Location', v: 'Northeast Africa' },
+        { l: 'River', v: 'The Nile' },
+        { l: 'Capital', v: 'Memphis, then Thebes, then Alexandria' },
+        { l: 'Rulers', v: 'Pharaohs (over 170 of them)' },
+        { l: 'Writing', v: 'Hieroglyphics' },
+        { l: 'Legacy', v: 'Pyramids, mummification, 365-day calendar' }
+      ]},
+      { label: 'The Story', type: 'text', body: `Egypt endured for over 3,000 years — longer than the entire span from ancient Rome to today. Its secret was the Nile River, which flooded every year and left behind rich black soil perfect for farming. While other civilizations crumbled, Egypt kept going.<br><br>The pharaohs were considered living gods, sons of Ra the sun god. They commanded the building of the pyramids — massive tombs meant to ensure their eternal life. The Great Pyramid at Giza, built for Pharaoh Khufu around 2560 BC, was the tallest human structure on Earth for nearly 4,000 years.<br><br>Egyptian priests developed hieroglyphics — a writing system using pictures and symbols — and papyrus paper to write on. Their doctors studied anatomy, their engineers built without modern tools, and their astronomers mapped the stars. The 365-day calendar we still use today was an Egyptian invention.` }
+    ],
+    people: [
+      { name: 'Khufu (Cheops)', role: 'Pharaoh, c. 2589 BC', icon: '🔺', desc: 'Ordered the construction of the Great Pyramid of Giza — one of the Seven Wonders of the Ancient World and still standing today after 4,500 years.' },
+      { name: 'Ramesses II', role: 'Pharaoh, c. 1279 BC', icon: '⚔️', desc: 'Egypt\'s most celebrated pharaoh, who ruled for 66 years and built more monuments than any other ruler. Signed history\'s first known peace treaty after the Battle of Kadesh.' },
+      { name: 'Cleopatra VII', role: 'Queen, 51 – 30 BC', icon: '👑', desc: 'Egypt\'s last pharaoh and one of history\'s most remarkable rulers. Fluent in 9 languages, she allied with both Julius Caesar and Mark Antony before Rome finally absorbed Egypt.' },
+      { name: 'Tutankhamun', role: 'Pharaoh, c. 1332 BC', icon: '🏺', desc: 'The "boy king" who became pharaoh at age 9 and died at 18. He would be forgotten for 3,000 years until Howard Carter discovered his nearly intact tomb in 1922.' },
+      { name: 'Imhotep', role: 'Architect & Physician, c. 2650 BC', icon: '📐', desc: 'Designed the first pyramid (the Step Pyramid at Saqqara) and was considered the father of medicine. One of the few commoners to be deified after death.' }
+    ],
+    achievements: [
+      'Built the pyramids of Giza — the only surviving Ancient Wonder of the World',
+      'Invented papyrus paper and hieroglyphic writing',
+      'Developed a 365-day solar calendar',
+      'Created sophisticated mummification techniques for preserving the dead',
+      'Built massive temples, obelisks, and the Great Sphinx',
+      'Advanced medicine, surgery, and dentistry',
+      'Pioneered large-scale irrigation and flood control of the Nile',
+      'Developed advanced mathematics and geometry',
+      'Established trade networks reaching deep into Africa and across the Mediterranean'
+    ],
+    life: { label: 'Daily Life in Ancient Egypt', type: 'text', body: `Life in Egypt revolved entirely around the Nile. Farmers planted crops after the annual flood receded, leaving behind nutrient-rich soil. Most Egyptians were farmers, living in mud-brick homes that stayed cool in the desert heat.<br><br>Egyptian society was strictly ordered. At the top sat the pharaoh — a living god. Below him were priests, nobles, and scribes (who were highly respected for their literacy). Then came soldiers, craftsmen, and merchants, with farmers and slaves at the base.<br><br>Children played with wooden toys, balls, and pet animals. Education was reserved for boys of wealthy families, who learned reading, writing, and mathematics. Girls learned household management from their mothers.<br><br>Food was surprisingly varied — bread and beer were staples, but Egyptians also ate fish from the Nile, vegetables, fruits, and occasionally meat. They loved board games (including a game called Senet), music, dancing, and wrestling. Fashion was important — both men and women wore kohl eyeliner, wigs, and linen clothing, and they used perfumes made from flowers and resins.` }
+  },
+  {
+    id: 'greece',
+    name: 'Ancient Greece',
+    color: '#2e5f8a',
+    emoji: '🏛',
+    era: 'c. 800 – 146 BC',
+    dateDisplay: '800 BC',
+    tagline: 'The birthplace of democracy, philosophy, and the Olympic Games',
+    overview: [
+      { label: 'Quick Facts', type: 'facts', items: [
+        { l: 'Location', v: 'Southeastern Europe' },
+        { l: 'Structure', v: 'City-states (polis)' },
+        { l: 'Major Cities', v: 'Athens, Sparta, Corinth, Thebes' },
+        { l: 'Language', v: 'Ancient Greek' },
+        { l: 'Writing', v: 'Greek alphabet' },
+        { l: 'Legacy', v: 'Democracy, philosophy, science, Olympics' }
+      ]},
+      { label: 'The Story', type: 'text', body: `Greece was not one unified country but a collection of fiercely independent city-states, each with its own government, army, and identity. Athens and Sparta were rivals — Athens built a democracy and celebrated art and philosophy, while Sparta built the ancient world\'s most disciplined warrior society.<br><br>When the massive Persian Empire invaded Greece in 490 BC, the city-states united to defeat them in legendary battles at Marathon and Thermopylae. This victory gave Athens confidence to enter its Golden Age — a period of extraordinary creativity under the leadership of Pericles.<br><br>Then came Alexander the Great of Macedonia, who in just 13 years conquered an empire stretching from Greece to India, spreading Greek language and culture across the known world. Greek ideas about democracy, philosophy, science, and beauty became the foundation of Western civilization.` }
+    ],
+    people: [
+      { name: 'Socrates', role: 'Philosopher, 470 – 399 BC', icon: '🤔', desc: 'Invented the Socratic method of questioning to pursue truth. Refused to write anything down — everything we know about him comes from his student Plato. Was sentenced to death for "corrupting the youth" with his questions.' },
+      { name: 'Alexander the Great', role: 'King of Macedonia, 356 – 323 BC', icon: '⚔️', desc: 'Conquered the largest empire in ancient history by age 30. Never lost a battle. Spread Greek culture from Egypt to India, founding over 20 cities named Alexandria.' },
+      { name: 'Pericles', role: 'Athenian Statesman, c. 495 – 429 BC', icon: '🏛', desc: 'Led Athens during its Golden Age. Commissioned the Parthenon and transformed Athens into the cultural and intellectual center of the ancient world.' },
+      { name: 'Homer', role: 'Poet, c. 800 BC', icon: '📜', desc: 'Author (or compiler) of the Iliad and the Odyssey — two epic poems about the Trojan War and its aftermath. These stories shaped Greek identity and influenced Western literature for all time.' },
+      { name: 'Aristotle', role: 'Philosopher & Scientist, 384 – 322 BC', icon: '🔬', desc: 'Wrote about everything: biology, physics, politics, ethics, drama, logic. Tutored Alexander the Great. His ideas dominated Western thought for nearly 2,000 years.' }
+    ],
+    achievements: [
+      'Invented democracy — the idea that citizens should govern themselves',
+      'Founded philosophy as a discipline — Socrates, Plato, Aristotle',
+      'Created the Olympic Games (776 BC) — still held every four years',
+      'Built architectural masterpieces including the Parthenon',
+      'Wrote the Iliad, Odyssey, and foundational works of Western literature',
+      'Advanced mathematics: Pythagoras, Euclid\'s geometry, Archimedes',
+      'Developed the foundations of science, medicine (Hippocrates), and astronomy',
+      'Created theater — both tragedy and comedy — as art forms',
+      'Spread Greek culture across three continents through Alexander\'s conquests'
+    ],
+    life: { label: 'Daily Life in Ancient Greece', type: 'text', body: `Life in Greece varied enormously depending on which city-state you lived in. In Athens, free male citizens could participate in the assembly and vote on laws. In Sparta, boys as young as 7 were taken from their families and put into military training called the agoge, where they slept on hard reeds, ate minimal food, and trained to become warriors.<br><br>Athenian boys attended school (girls typically did not), learning reading, writing, mathematics, music, and gymnastics. Education prepared them for citizenship. The gymnasium was both a place to exercise and to debate philosophy — the two were considered equally important.<br><br>Greek religion was vibrant and personal. The 12 Olympian gods each had specific domains: Zeus ruled the sky, Poseidon the sea, Athena wisdom and war strategy, Apollo music and the sun. Greeks prayed at temples, made offerings, and consulted oracles — priests and priestesses who claimed to deliver messages from the gods.<br><br>Food was simple: bread, olives, olive oil, cheese, fish, and wine (mixed with water — drinking unmixed wine was considered barbaric). The symposium — a dinner party for men to eat, drink, and discuss philosophy — was a central institution of Athenian life.` }
+  },
+  {
+    id: 'rome',
+    name: 'Ancient Rome',
+    color: '#8b1a1a',
+    emoji: '🦅',
+    era: 'c. 753 BC – 476 AD',
+    dateDisplay: '753 BC',
+    tagline: 'From seven hills to ruling the known world — the eternal city',
+    overview: [
+      { label: 'Quick Facts', type: 'facts', items: [
+        { l: 'Location', v: 'Italy, then the Mediterranean world' },
+        { l: 'Government', v: 'Kingdom → Republic → Empire' },
+        { l: 'Capital', v: 'Rome' },
+        { l: 'Language', v: 'Latin' },
+        { l: 'Army', v: 'The Roman Legions' },
+        { l: 'Legacy', v: 'Law, roads, language, republic government' }
+      ]},
+      { label: 'The Story', type: 'text', body: `Rome began as a small village on seven hills beside the Tiber River, founded (according to legend) by the twins Romulus and Remus in 753 BC. It grew from a kingdom to a republic — governed by elected senators and consuls — and then, after a century of civil wars, to an empire under Julius Caesar\'s adopted son Augustus.<br><br>At its height, the Roman Empire stretched from Scotland to Mesopotamia — a territory of over 5 million square kilometers governed by a single administration. Roman engineers built roads so straight and durable that many are still used today. Roman law became the foundation of legal systems across Europe and the Americas.<br><br>Rome\'s fall was slow — not a single collapse but centuries of gradual weakening through invasions, economic troubles, and political chaos. The Western Roman Empire officially ended in 476 AD when the last emperor was deposed by a Germanic chieftain. But Rome\'s ideas never fell — they became the blueprint for Western civilization.` }
+    ],
+    people: [
+      { name: 'Julius Caesar', role: 'General & Dictator, 100 – 44 BC', icon: '⚔️', desc: 'Conquered Gaul (France), crossed the Rubicon, became dictator of Rome, and was assassinated on the Ides of March. His name became a title — "Caesar" became "Kaiser" in German and "Czar" in Russian.' },
+      { name: 'Augustus', role: 'First Emperor, 63 BC – 14 AD', icon: '👑', desc: 'Rome\'s first and arguably greatest emperor. Ended a century of civil wars and ushered in the Pax Romana — 200 years of peace and prosperity. Transformed Rome from brick to marble.' },
+      { name: 'Marcus Aurelius', role: 'Emperor & Philosopher, 121 – 180 AD', icon: '📜', desc: 'The philosopher-emperor. Wrote his private thoughts in Meditations — a journal of Stoic philosophy still read and admired today. Ruled wisely through plagues and wars.' },
+      { name: 'Cicero', role: 'Senator & Orator, 106 – 43 BC', icon: '🎭', desc: 'Rome\'s greatest orator and writer. His Latin prose became the model for educated writing for 2,000 years. Fought to defend the Republic against Caesar and paid with his life.' },
+      { name: 'Constantine I', role: 'Emperor, 272 – 337 AD', icon: '✝️', desc: 'First emperor to convert to Christianity, transforming it from a persecuted sect to the official religion of the empire. Founded Constantinople (modern Istanbul) as the new capital of the East.' }
+    ],
+    achievements: [
+      'Built 50,000+ miles of paved roads connecting the empire — many still exist',
+      'Developed Roman law — the foundation of legal systems worldwide',
+      'Invented concrete, allowing massive domes, aqueducts, and the Pantheon',
+      'Created a republic with elected representatives — influencing the US Constitution',
+      'Built aqueducts delivering clean water to cities across the empire',
+      'The Colosseum — an engineering marvel seating 80,000 spectators',
+      'Spread Latin, which evolved into French, Spanish, Italian, Portuguese, and Romanian',
+      'Developed the calendar we still use — the Julian calendar (refined to the Gregorian)',
+      'Spread Christianity throughout the Western world'
+    ],
+    life: { label: 'Daily Life in Ancient Rome', type: 'text', body: `Rome was a city of contrasts. Wealthy patricians lived in grand villas with gardens, mosaic floors, and underfloor heating. Most Romans, however, lived in crowded apartment buildings called insulae — up to 6 stories tall, fire-prone and noisy, without running water.<br><br>The Roman day started early. Shops opened at dawn; the courts and Senate met in the morning. The afternoon was for the baths — elaborate public buildings where Romans bathed, exercised, gossiped, and conducted business. Admission was cheap enough for everyone. The baths were Rome\'s social equalizer.<br><br>Food centered on garum (a fermented fish sauce used like soy sauce), bread, olive oil, wine, and vegetables. Wealthy Romans held elaborate dinner parties (convivium) lasting hours, reclining on couches as slaves brought courses of exotic food. Poor Romans often ate standing at street food counters called thermopolia — fast food restaurants of the ancient world.<br><br>Romans loved spectacle: gladiatorial combat in the Colosseum, chariot racing at the Circus Maximus (which held 250,000 people), and theatrical performances. Roman children played with dolls, toy soldiers, hoops, and pets. Education was valued — wealthy boys had private tutors, often educated Greek slaves.` }
+  },
+  {
+    id: 'china',
+    name: 'Ancient China',
+    color: '#6b2d3e',
+    emoji: '🐉',
+    era: 'c. 2100 – 220 AD',
+    dateDisplay: '2100 BC',
+    tagline: 'The Dragon Throne — where dynasties rose and fell like the Yellow River floods',
+    overview: [
+      { label: 'Quick Facts', type: 'facts', items: [
+        { l: 'Location', v: 'East Asia' },
+        { l: 'Rivers', v: 'Yellow River, Yangtze' },
+        { l: 'Major Dynasties', v: 'Shang, Zhou, Qin, Han' },
+        { l: 'Writing', v: 'Chinese characters (logograms)' },
+        { l: 'Great Achievement', v: 'The Great Wall, Silk Road' },
+        { l: 'Philosophy', v: 'Confucianism, Taoism, Legalism' }
+      ]},
+      { label: 'The Story', type: 'text', body: `While Greece debated democracy and Rome conquered the Mediterranean, an equally magnificent civilization flourished on the other side of the world. China\'s history stretches back to at least 2100 BC, governed by a series of dynasties — ruling families who passed power from parent to child.<br><br>The first emperor to unify all of China was Qin Shi Huang in 221 BC — a ruthless genius who standardized weights, measures, currency, and writing across the empire, and began the Great Wall. He was so obsessed with immortality that he was buried with an army of 8,000 life-sized terracotta soldiers.<br><br>The Han Dynasty that followed (206 BC – 220 AD) is considered China\'s Golden Age — roughly contemporary with Rome at its height. Han China opened the Silk Road, trading silk and porcelain across Central Asia to Rome. Paper, the compass, cast iron, and the wheelbarrow were all invented in China during this era. At its peak, Han China and Rome were the two largest empires on Earth, separated by thousands of miles they barely knew existed.` }
+    ],
+    people: [
+      { name: 'Confucius', role: 'Philosopher, 551 – 479 BC', icon: '📜', desc: 'China\'s most influential thinker. His teachings on respect, family, loyalty, and proper conduct shaped Chinese culture for 2,500 years and spread across East Asia. His sayings are collected in the Analects.' },
+      { name: 'Qin Shi Huang', role: 'First Emperor, 259 – 210 BC', icon: '👑', desc: 'Unified China for the first time. Standardized writing, currency, and measurements. Built the first Great Wall. Was buried with 8,000 terracotta soldiers to guard him in the afterlife. Terrifying and visionary in equal measure.' },
+      { name: 'Emperor Wu of Han', role: 'Han Emperor, 156 – 87 BC', icon: '🐉', desc: 'Expanded the Han Empire to its greatest extent, opened the Silk Road to the West, and made Confucianism the official state philosophy. Sent the first diplomatic missions to Central Asia and the Mediterranean world.' },
+      { name: 'Sun Tzu', role: 'General & Strategist, c. 544 BC', icon: '⚔️', desc: 'Author of The Art of War — 13 chapters on military strategy so brilliant they are still studied by military officers and business leaders worldwide today.' },
+      { name: 'Lady Fu Hao', role: 'Military General & Queen, c. 1200 BC', icon: '🗡️', desc: 'The first female military general in recorded Chinese history. Commanded armies of up to 13,000 soldiers and led over 20 military campaigns. Her tomb, discovered in 1976, revealed extraordinary wealth.' }
+    ],
+    achievements: [
+      'Invented paper (105 AD) — replacing expensive silk and bamboo for writing',
+      'Invented printing techniques, gunpowder, and the compass',
+      'Built the Great Wall — the longest man-made structure in history',
+      'Opened the Silk Road — the first global trade network connecting East and West',
+      'Developed a sophisticated civil service system based on examinations, not birth',
+      'Cast iron production over 1,000 years before Europe',
+      'Created porcelain (china) of unmatched quality',
+      'Advanced astronomical observation — predicting eclipses with accuracy',
+      'Produced The Art of War, the I Ching, and early works of Confucian philosophy'
+    ],
+    life: { label: 'Daily Life in Ancient China', type: 'text', body: `Chinese society was organized around the family above all else. Respect for parents and ancestors — called filial piety — was the central virtue of Confucian teaching. Families made offerings at ancestor shrines, and one\'s duty to family came before almost everything else.<br><br>Most ancient Chinese were farmers, growing rice in the south and millet and wheat in the north. Farming families worked hard and lived simply, but the state depended on them — taxes paid in grain fed the armies and funded the great building projects.<br><br>The scholar-official class was unique to China. Through the civil service examination system (established during the Han), any man — regardless of birth — could potentially rise to high government office by passing rigorous exams on Confucian classics. This created a meritocracy at the top of society unlike anything in Greece or Rome.<br><br>Chinese cuisine was already sophisticated in the Han period — noodles, tofu, and fermented soy products appear in records from this time. Silk was woven into clothing for the wealthy, while ordinary people wore hemp. Bronze work, jade carving, and lacquerware reached extraordinary levels of artistry. The Chinese calendar, dragon festivals, and New Year celebrations trace directly back to this ancient era.` }
+  }
+];
+
+// ─── Examination Questions ────────────────────────────────────────────────────
+const QUESTIONS = {
+  mesopotamia: [
+    { type: 'mc', q: 'Which river valley was Mesopotamia located in?', hint: 'Two rivers, both starting with T or E', options: ['Nile and Congo', 'Tigris and Euphrates', 'Yellow River and Yangtze', 'Indus and Ganges'], answer: 1 },
+    { type: 'text', q: 'What is the name of the Babylonian king who wrote one of the world\'s first law codes?', hint: 'His name starts with H', answer: 'hammurabi', accept: ['hammurabi'] },
+    { type: 'mc', q: 'What was the name of Mesopotamia\'s writing system?', hint: 'Made by pressing a reed into wet clay', options: ['Hieroglyphics', 'Cuneiform', 'Linear B', 'Sanskrit'], answer: 1 },
+    { type: 'text', q: 'What is the name of the world\'s oldest surviving written story, starring a king of Uruk?', hint: 'Epic of ___', answer: 'gilgamesh', accept: ['gilgamesh', 'epic of gilgamesh'] },
+    { type: 'mc', q: 'What did the Sumerians invent that we still use every day?', hint: 'Round, and found on cars', options: ['The compass', 'Paper', 'The wheel', 'Gunpowder'], answer: 2 }
+  ],
+  egypt: [
+    { type: 'mc', q: 'Which river made Egyptian civilization possible?', hint: 'It flows north through Africa', options: ['The Congo', 'The Nile', 'The Tigris', 'The Amazon'], answer: 1 },
+    { type: 'text', q: 'What is the name of the Egyptian writing system using pictures and symbols?', hint: 'Two words: ___glyphics', answer: 'hieroglyphics', accept: ['hieroglyphics', 'hieroglyphs'] },
+    { type: 'mc', q: 'What were Egyptian rulers called?', hint: 'They were considered living gods', options: ['Emperors', 'Pharaohs', 'Sultans', 'Caesars'], answer: 1 },
+    { type: 'text', q: 'The Great Pyramid at Giza was built for which pharaoh?', hint: 'Also called Cheops', answer: 'khufu', accept: ['khufu', 'cheops'] },
+    { type: 'mc', q: 'What invention do we still use that Egypt gave us?', hint: 'You use it to know what month and day it is', options: ['The wheel', 'The compass', 'The 365-day calendar', 'Concrete'], answer: 2 }
+  ],
+  greece: [
+    { type: 'mc', q: 'What system of government did Athens invent?', hint: 'The word means "rule by the people" in Greek', options: ['Monarchy', 'Democracy', 'Dictatorship', 'Theocracy'], answer: 1 },
+    { type: 'text', q: 'Which Macedonian king conquered an empire stretching from Greece to India?', hint: 'His name has "Great" in it', answer: 'alexander', accept: ['alexander', 'alexander the great'] },
+    { type: 'mc', q: 'Which city-state was famous for its fierce warrior soldiers?', hint: 'Boys there were taken from family at age 7 for military training', options: ['Athens', 'Corinth', 'Sparta', 'Thebes'], answer: 2 },
+    { type: 'text', q: 'Name one of the three great Athenian philosophers.', hint: 'Socrates, ___, or Aristotle', answer: 'plato', accept: ['socrates', 'plato', 'aristotle'] },
+    { type: 'mc', q: 'The Olympic Games were first held in ancient Greece. How often are they still held today?', hint: 'Same as in ancient times', options: ['Every year', 'Every two years', 'Every four years', 'Every ten years'], answer: 2 }
+  ],
+  rome: [
+    { type: 'mc', q: 'Rome began as a city on how many hills?', hint: 'The famous phrase is "___ hills of Rome"', options: ['Three', 'Five', 'Seven', 'Twelve'], answer: 2 },
+    { type: 'text', q: 'What did Roman engineers build that connected cities across the empire and many are still used today?', hint: 'Long, straight, paved paths', answer: 'roads', accept: ['roads', 'road'] },
+    { type: 'mc', q: 'Julius Caesar\'s name became a title for rulers. What is the Russian version of "Caesar"?', hint: 'Think: Czar or ___', options: ['Kaiser', 'Czar', 'Sultan', 'Khan'], answer: 1 },
+    { type: 'text', q: 'What language did Romans speak, which later became French, Spanish, and Italian?', hint: 'Still used in science and law today', answer: 'latin', accept: ['latin'] },
+    { type: 'mc', q: 'What engineering material did Romans invent that allowed them to build huge domes and aqueducts?', hint: 'Still used in every building today', options: ['Steel', 'Brick', 'Concrete', 'Marble'], answer: 2 }
+  ],
+  china: [
+    { type: 'mc', q: 'Which Chinese philosopher\'s teachings shaped Chinese culture for 2,500 years?', hint: 'His name starts with C, famous for the Analects', options: ['Sun Tzu', 'Lao Tzu', 'Confucius', 'Mencius'], answer: 2 },
+    { type: 'text', q: 'What did China invent that you are probably reading this on right now?', hint: 'You write on it, invented around 105 AD', answer: 'paper', accept: ['paper'] },
+    { type: 'mc', q: 'What was the great trade route that connected China to Rome called?', hint: 'Named after China\'s most famous export', options: ['The Spice Route', 'The Silk Road', 'The Dragon Path', 'The Jade Highway'], answer: 1 },
+    { type: 'text', q: 'What is the name of the first emperor who unified all of China?', hint: 'He built the first Great Wall and is buried with terracotta soldiers', answer: 'qin shi huang', accept: ['qin', 'qin shi huang', 'qin shi huangdi', 'shihuangdi'] },
+    { type: 'mc', q: 'Ancient China\'s Golden Age dynasty, contemporary with Rome at its height, was called:', hint: 'Same name as the largest ethnic group in China today', options: ['Qin Dynasty', 'Tang Dynasty', 'Han Dynasty', 'Ming Dynasty'], answer: 2 }
+  ]
+};
+
+// ─── Map Data ─────────────────────────────────────────────────────────────────
+const BASE = 'https://wadeclassical.github.io/Wade-Classical/';
+const CIV_MAPS = {
+  mesopotamia: [
+    {
+      caption: 'Ancient Mesopotamia — "The Land Between the Rivers" — showing the Tigris & Euphrates rivers and major cities: Nineveh, Babylon, Ur, Uruk. Modern-day Iraq and Syria. (Wikimedia Commons, CC BY-SA)',
+      wikiFile: 'N-Mesopotamia_and_Syria_english.svg',
+      imgs: [{ src: `${BASE}map-mesopotamia.png`, alt: 'Map of Ancient Mesopotamia' }]
+    }
+  ],
+  egypt: [
+    {
+      caption: 'Ancient Egypt along the Nile — from the Delta in the north to Nubia in the south, showing major cities and sites. (Wikimedia Commons, CC BY-SA — Jeff Dahl)',
+      wikiFile: 'Ancient_Egypt_map-en.svg',
+      imgs: [{ src: `${BASE}map-egypt.png`, alt: 'Map of Ancient Egypt' }]
+    }
+  ],
+  greece: [
+    {
+      caption: 'Ancient Greece during the 5th century BC — city-states, colonies, and surrounding peoples across the Aegean world. (Wikimedia Commons, CC BY-SA)',
+      wikiFile: 'Ancient_Greece_during_5th_c._B.C.-1.0.png',
+      imgs: [{ src: `${BASE}map-greece.png`, alt: 'Map of Ancient Greece' }]
+    }
+  ],
+  rome: [
+    {
+      caption: 'The Roman Empire at its greatest extent under Emperor Trajan, c. 117 AD — from Scotland to Mesopotamia. (Wikimedia Commons, CC BY-SA — Angelus)',
+      wikiFile: 'Map_of_the_Roman_Empire_at_its_height.svg',
+      imgs: [{ src: `${BASE}map-rome.png`, alt: 'Map of the Roman Empire' }]
+    }
+  ],
+  china: [
+    {
+      caption: 'The Han Dynasty at its greatest extent under Emperor Wu, c. 87 BC — contemporary with Rome at its height. (Wikimedia Commons, public domain)',
+      wikiFile: 'Han_Dynasty_Plain_map.PNG',
+      imgs: [{ src: `${BASE}map-china.png`, alt: 'Map of Han Dynasty China' }]
+    }
+  ]
+};
+
+// ─── Video Data ───────────────────────────────────────────────────────────────
+const CIV_VIDEOS = {
+  mesopotamia: [
+    {
+      id: 'sohXPx_XZ6Y',
+      title: 'Mesopotamia: Crash Course World History #3',
+      source: 'Crash Course · John Green · ~12 min',
+      desc: 'John Green covers the rise of the world\'s first cities, Hammurabi\'s law code, the Epic of Gilgamesh, and the empires of Sumer, Babylon, and Assyria. Fast-paced, funny, and packed with real content.'
+    }
+  ],
+  egypt: [
+    {
+      id: 'Z3Wvw6BivVI',
+      title: 'Ancient Egypt: Crash Course World History #4',
+      source: 'Crash Course · John Green · ~12 min',
+      desc: 'Covers the Old, Middle, and New Kingdoms, the pharaohs, pyramids, mummification, hieroglyphics, and why Egypt lasted longer than any other civilization in history. One of the best overviews available for free.'
+    }
+  ],
+  greece: [
+    {
+      id: 'Q39-FHS9a0s',
+      title: 'The Persians & Greeks: Crash Course World History #5',
+      source: 'Crash Course · John Green · ~12 min',
+      desc: 'Compares Greek and Persian civilization, covers the Persian Wars (Marathon, Thermopylae), Athenian democracy, Spartan society, and why Greece\'s Golden Age produced so many ideas still shaping the world today.'
+    }
+  ],
+  rome: [
+    {
+      id: 'NN_PnZCDFZo',
+      title: 'The Roman Empire — Or Republic — Or Which Was It?: Crash Course World History #10',
+      source: 'Crash Course · John Green · ~12 min',
+      desc: 'Covers the transformation from Republic to Empire, Julius Caesar, Augustus, the Pax Romana, Roman engineering, and why Rome\'s legacy — roads, law, language — still shapes the modern world.'
+    }
+  ],
+  china: [
+    {
+      id: 'AIObu4KFkiA',
+      title: '2,000 Years of Chinese History: Crash Course World History #7',
+      source: 'Crash Course · John Green · ~12 min',
+      desc: 'Covers the major dynasties from Shang to Han, Confucius and the Mandate of Heaven, Qin Shi Huang\'s unification, and how China developed a bureaucratic state more sophisticated than anything in the ancient West.'
+    }
+  ]
+};
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let masteryData = {};
+let currentCivId = null;
+let currentActiveCivTab = 'overview';
+let examState = {};
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+function init() {
+  const raw = localStorage.getItem('ancient_mastery_ryder');
+  masteryData = raw ? JSON.parse(raw) : {};
+
+  db.ref('ancient-history/Ryder').once('value', snap => {
+    if (snap.exists()) {
+      masteryData = snap.val();
+      localStorage.setItem('ancient_mastery_ryder', JSON.stringify(masteryData));
+      renderTimeline();
+      updateScholarBar();
+    }
+  });
+
+  renderTimeline();
+  updateScholarBar();
+}
+
+// ─── Screen management ────────────────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ─── Timeline ─────────────────────────────────────────────────────────────────
+function renderTimeline() {
+  const spine = document.getElementById('timeline-spine');
+  spine.innerHTML = '';
+
+  CIVS.forEach((civ, idx) => {
+    const m = masteryData[civ.id] || {};
+    const bestScore = m.bestScore || 0;
+    const passed = m.passed || false;
+    const studied = m.studied || false;
+
+    let statusDot = '';
+    let statusText = 'Not yet explored';
+    if (passed) {
+      statusDot = 'mastered';
+      statusText = `Mastered · ${bestScore}% on examination`;
+    } else if (studied) {
+      statusDot = 'in-progress';
+      statusText = 'Studied · Examination not yet passed';
+    }
+
+    const stars = passed ? '★★★' : studied ? '★★☆' : '★☆☆';
+
+    const node = document.createElement('div');
+    node.className = 'civ-node';
+    node.onclick = () => openCiv(civ.id);
+
+    node.innerHTML = `
+      <div class="civ-card" style="--civ-color: ${civ.color}">
+        <p class="civ-era">${civ.era}</p>
+        <h2 class="civ-name">${civ.emoji} ${civ.name}</h2>
+        <p class="civ-tagline">${civ.tagline}</p>
+        <div class="civ-status">
+          <div class="status-dot ${statusDot}"></div>
+          <span class="status-text">${statusText}</span>
+          <span class="mastery-stars" style="margin-left:auto">${stars}</span>
+        </div>
+      </div>
+      <div class="node-marker">${civ.emoji}</div>
+      <div class="civ-date-side">
+        <div class="civ-date-big">${civ.dateDisplay}</div>
+        <div class="civ-date-label">Founded</div>
+      </div>
+    `;
+
+    spine.appendChild(node);
+  });
+}
+
+function updateScholarBar() {
+  let mastered = 0, passed = 0, totalScore = 0, scoreCount = 0;
+  CIVS.forEach(civ => {
+    const m = masteryData[civ.id] || {};
+    if (m.passed) { mastered++; passed++; }
+    if (m.bestScore) { totalScore += m.bestScore; scoreCount++; }
+  });
+  document.getElementById('civs-mastered').textContent = mastered;
+  document.getElementById('exams-passed').textContent = passed;
+  document.getElementById('total-score').textContent = scoreCount ? Math.round(totalScore/scoreCount) + '% avg' : '—';
+}
+
+// ─── Civilization Screen ──────────────────────────────────────────────────────
+function openCiv(civId) {
+  const civ = CIVS.find(c => c.id === civId);
+  currentCivId = civId;
+
+  document.getElementById('civ-screen-title').textContent = civ.emoji + ' ' + civ.name;
+  document.getElementById('civ-screen-title').style.color = civ.color;
+  document.getElementById('civ-screen-era').textContent = civ.era;
+  document.getElementById('civ-screen-era').style.color = civ.color;
+  document.getElementById('civ-screen-tagline').textContent = civ.tagline;
+
+  // Mark as studied
+  if (!masteryData[civId]) masteryData[civId] = {};
+  masteryData[civId].studied = true;
+  saveMastery();
+
+  renderCivContent(civ);
+  switchCivTab('overview');
+  showScreen('civ-screen');
+}
+
+function renderCivContent(civ) {
+  // Overview
+  let overviewHtml = '';
+  civ.overview.forEach(section => {
+    overviewHtml += `<div class="content-section"><p class="section-label">${section.label}</p>`;
+    if (section.type === 'facts') {
+      overviewHtml += `<div class="fact-grid">`;
+      section.items.forEach(f => {
+        overviewHtml += `<div class="fact-card"><div class="fact-label">${f.l}</div><div class="fact-value">${f.v}</div></div>`;
+      });
+      overviewHtml += `</div>`;
+    } else {
+      overviewHtml += `<div class="content-body"><p>${section.body}</p></div>`;
+    }
+    overviewHtml += `</div>`;
+  });
+  document.getElementById('tab-overview').innerHTML = overviewHtml;
+
+  // People
+  let peopleHtml = `<div class="content-section"><p class="section-label">Key Figures</p><div class="figure-list">`;
+  civ.people.forEach(p => {
+    peopleHtml += `
+      <div class="figure-card">
+        <div class="figure-icon">${p.icon}</div>
+        <div>
+          <div class="figure-name">${p.name}</div>
+          <div class="figure-role" style="color:${civ.color}">${p.role}</div>
+          <div class="figure-desc">${p.desc}</div>
+        </div>
+      </div>`;
+  });
+  peopleHtml += `</div></div>`;
+  document.getElementById('tab-people').innerHTML = peopleHtml;
+
+  // Achievements
+  let achHtml = `<div class="content-section"><p class="section-label">Achievements & Legacy</p><ul class="achievement-list">`;
+  civ.achievements.forEach(a => { achHtml += `<li>${a}</li>`; });
+  achHtml += `</ul></div>`;
+  document.getElementById('tab-achievements').innerHTML = achHtml;
+
+  // Daily life
+  let lifeHtml = `<div class="content-section"><p class="section-label">${civ.life.label}</p><div class="content-body"><p>${civ.life.body}</p></div></div>`;
+  document.getElementById('tab-life').innerHTML = lifeHtml;
+
+  // Maps
+  const mapData = CIV_MAPS[civ.id];
+  let mapsHtml = `<div class="content-section"><p class="section-label">Maps & Geography</p>`;
+  if (mapData) {
+    mapData.forEach(m => {
+      const wikiUrl = `https://en.wikipedia.org/wiki/File:${m.wikiFile}`;
+      const imgSrc = m.imgs[0].src;
+      const imgAlt = m.imgs[0].alt;
+      mapsHtml += `
+        <div class="map-wrap">
+          <div class="map-img-container" id="mapcontainer-${civ.id}">
+            <img
+              src="${imgSrc}"
+              alt="${imgAlt}"
+              style="width:100%;display:block;min-height:200px;background:#0d0d0d;"
+              loading="lazy"
+              onerror="this.parentElement.innerHTML=document.getElementById('mapfallback-${civ.id}').innerHTML"
+            >
+          </div>
+          <template id="mapfallback-${civ.id}">
+            <a href="${wikiUrl}" target="_blank" rel="noopener" style="display:block;text-decoration:none;">
+              <div style="padding:40px 20px;text-align:center;background:rgba(0,0,0,0.3);">
+                <div style="font-size:40px;margin-bottom:12px;">🗺️</div>
+                <div style="font-family:'Cinzel',serif;font-size:15px;color:var(--gold);margin-bottom:8px;">${imgAlt}</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:1px;">VIEW MAP ON WIKIMEDIA ↗</div>
+              </div>
+            </a>
+          </template>
+          <div class="map-caption">
+            ${m.caption}
+            <a href="${wikiUrl}" target="_blank" rel="noopener" style="color:var(--gold);font-style:normal;margin-left:8px;font-size:12px;font-family:'JetBrains Mono',monospace;">View full map ↗</a>
+          </div>
+        </div>`;
+    });
+  }
+  mapsHtml += `</div>`;
+  document.getElementById('tab-maps').innerHTML = mapsHtml;
+
+  // Video
+  const vidData = CIV_VIDEOS[civ.id];
+  let videoHtml = `<div class="content-section"><p class="section-label">Watch & Learn</p>`;
+  if (vidData) {
+    vidData.forEach(v => {
+      const url = `https://www.youtube.com/watch?v=${v.id}`;
+      videoHtml += `
+        <div class="video-card">
+          <a class="video-thumb-link" href="${url}" target="_blank" rel="noopener">
+            <div class="video-thumb-bg">
+              <div class="video-play-btn">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                  <polygon points="10,7 22,14 10,21" fill="#c8a84b"/>
+                </svg>
+              </div>
+              <span class="video-thumb-label">Watch on YouTube ↗</span>
+            </div>
+          </a>
+          <div class="video-meta">
+            <div class="video-source">${v.source}</div>
+            <div class="video-title">${v.title}</div>
+            <div class="video-desc">${v.desc}</div>
+            <a class="video-open-btn" href="${url}" target="_blank" rel="noopener">
+              ▶ Open Video on YouTube ↗
+            </a>
+          </div>
+        </div>`;
+    });
+    videoHtml += `<div class="video-note">📺 Videos open in a new tab on YouTube. Crash Course World History is hosted by John Green — free, engaging, and appropriate for middle school and up.</div>`;
+  }
+  videoHtml += `</div>`;
+  document.getElementById('tab-video').innerHTML = videoHtml;
+}
+
+function switchCivTab(tab) {
+  currentActiveCivTab = tab;
+  document.querySelectorAll('.civ-tab').forEach((t, i) => {
+    const tabs = ['overview','people','achievements','life','maps','video','exam'];
+    t.classList.toggle('active', tabs[i] === tab);
+  });
+  document.querySelectorAll('#civ-screen .tab-pane').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('tab-' + tab);
+  if (el) el.classList.add('active');
+}
+
+// ─── Examination ──────────────────────────────────────────────────────────────
+function startExam() {
+  const civ = CIVS.find(c => c.id === currentCivId);
+  const questions = QUESTIONS[currentCivId];
+
+  examState = {
+    civId: currentCivId,
+    civName: civ.name,
+    civColor: civ.color,
+    questions: [...questions],
+    current: 0,
+    answers: [],
+    correct: 0,
+    submitted: false
+  };
+
+  document.getElementById('exam-civ-title').textContent = civ.emoji + ' ' + civ.name;
+  document.getElementById('exam-civ-title').style.color = civ.color;
+  renderQuestion();
+  showScreen('exam-screen');
+}
+
+function exitExam() {
+  showScreen('civ-screen');
+}
+
+function renderQuestion() {
+  const { questions, current } = examState;
+  const q = questions[current];
+  const total = questions.length;
+
+  // Update progress ring
+  const pct = current / total;
+  const circumference = 157;
+  document.getElementById('ring-fill').style.strokeDashoffset = circumference - (pct * circumference);
+  document.getElementById('ring-text').textContent = `${current+1}/${total}`;
+
+  let html = `
+    <p class="question-num">Question ${current+1} of ${total}</p>
+    <h2 class="question-text">${q.q}</h2>
+    <p class="question-hint">${q.hint}</p>
+  `;
+
+  if (q.type === 'mc') {
+    html += `<div class="answer-options">`;
+    const letters = ['A','B','C','D'];
+    q.options.forEach((opt, i) => {
+      html += `
+        <div class="answer-option" id="opt-${i}" onclick="selectOption(${i})">
+          <span class="option-letter">${letters[i]}</span>
+          ${opt}
+        </div>`;
+    });
+    html += `</div>`;
+  } else {
+    html += `
+      <div class="text-answer-wrap">
+        <textarea class="text-answer" id="text-input"
+          placeholder="Write your answer here…"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitAnswer();}"
+        ></textarea>
+      </div>`;
+  }
+
+  html += `
+    <div class="answer-feedback" id="answer-feedback"></div>
+    <div class="exam-actions">
+      <button class="btn-submit" id="btn-submit" onclick="submitAnswer()">Submit Answer</button>
+      <button class="btn-next ${current < total-1 ? '' : 'show'}" id="btn-next"
+        onclick="${current < total-1 ? 'nextQuestion()' : 'showResults()'}">
+        ${current < total-1 ? 'Next Question →' : 'See Results →'}
+      </button>
+    </div>
+  `;
+
+  document.getElementById('exam-body').innerHTML = html;
+  examState.submitted = false;
+
+  if (q.type === 'text') {
+    setTimeout(() => {
+      const input = document.getElementById('text-input');
+      if (input) input.focus();
+    }, 100);
+  }
+}
+
+let selectedOption = null;
+
+function selectOption(idx) {
+  if (examState.submitted) return;
+  selectedOption = idx;
+  document.querySelectorAll('.answer-option').forEach((el, i) => {
+    el.classList.toggle('selected', i === idx);
+  });
+}
+
+function submitAnswer() {
+  if (examState.submitted) return;
+  const { questions, current } = examState;
+  const q = questions[current];
+  const feedback = document.getElementById('answer-feedback');
+  const btnSubmit = document.getElementById('btn-submit');
+  const btnNext = document.getElementById('btn-next');
+
+  let isCorrect = false;
+  let userAnswer = '';
+
+  if (q.type === 'mc') {
+    if (selectedOption === null) { showToast('Choose an answer first'); return; }
+    isCorrect = selectedOption === q.answer;
+    userAnswer = q.options[selectedOption];
+
+    document.querySelectorAll('.answer-option').forEach((el, i) => {
+      if (i === q.answer) el.classList.add('correct');
+      else if (i === selectedOption && !isCorrect) el.classList.add('wrong');
+    });
+  } else {
+    const input = document.getElementById('text-input');
+    userAnswer = input.value.trim();
+    if (!userAnswer) { showToast('Write your answer first'); return; }
+    const normalized = userAnswer.toLowerCase().trim();
+    isCorrect = q.accept.some(a => normalized.includes(a) || a.includes(normalized));
+    input.classList.add(isCorrect ? 'correct' : 'wrong');
+  }
+
+  examState.submitted = true;
+  examState.answers.push({ q: q.q, correct: isCorrect, userAnswer, rightAnswer: q.type === 'mc' ? q.options[q.answer] : q.accept[0] });
+  if (isCorrect) examState.correct++;
+
+  selectedOption = null;
+
+  feedback.className = `answer-feedback show ${isCorrect ? 'correct-fb' : 'wrong-fb'}`;
+  if (isCorrect) {
+    feedback.textContent = '✓ Correct! Well done, Scholar.';
+  } else {
+    const right = q.type === 'mc' ? q.options[q.answer] : q.accept[0];
+    feedback.textContent = `✗ Not quite. The answer is: ${right}`;
+  }
+
+  btnSubmit.disabled = true;
+  btnNext.classList.add('show');
+}
+
+function nextQuestion() {
+  examState.current++;
+  selectedOption = null;
+  renderQuestion();
+}
+
+function showResults() {
+  const { correct, questions, civId, civName, civColor, answers } = examState;
+  const total = questions.length;
+  const pct = Math.round(correct / total * 100);
+  const passed = pct >= 60;
+
+  // Save mastery
+  if (!masteryData[civId]) masteryData[civId] = {};
+  masteryData[civId].studied = true;
+  if (passed) {
+    masteryData[civId].passed = true;
+    masteryData[civId].bestScore = Math.max(masteryData[civId].bestScore || 0, pct);
+  }
+  masteryData[civId].lastScore = pct;
+  masteryData[civId].lastAttempt = new Date().toLocaleDateString();
+  saveMastery();
+
+  // Rank
+  let rank, rankDesc;
+  if (pct === 100) { rank = 'Master Scholar'; rankDesc = 'Perfect examination. The ancient world holds no secrets from you.'; }
+  else if (pct >= 80) { rank = 'Learned Scholar'; rankDesc = 'An excellent examination. Your knowledge of the ancient world is strong.'; }
+  else if (pct >= 60) { rank = 'Scholar'; rankDesc = 'Examination passed. Continue your studies to deepen your mastery.'; }
+  else { rank = 'Apprentice'; rankDesc = 'Study the texts further before attempting the examination again.'; }
+
+  // Update ring to 100%
+  document.getElementById('ring-fill').style.strokeDashoffset = 0;
+  document.getElementById('ring-text').textContent = pct + '%';
+
+  let breakdownHtml = answers.map(a => `
+    <div class="result-item ${a.correct ? 'r-correct' : 'r-wrong'}">
+      <span class="r-icon">${a.correct ? '✓' : '✗'}</span>
+      <span class="r-q">${a.q}</span>
+      ${!a.correct ? `<span class="r-ans">→ ${a.rightAnswer}</span>` : ''}
+    </div>
+  `).join('');
+
+  document.getElementById('exam-body').innerHTML = `
+    <div class="results-panel">
+      <div class="results-score">${pct}%</div>
+      <p class="results-label">${correct}/${total} correct · ${passed ? 'Passed' : 'Not yet passed'}</p>
+      <div class="results-rank">${rank}</div>
+      <p class="results-desc">${rankDesc}</p>
+      ${passed ? `<div><span class="mastery-notice">⭐ Mastery saved to portfolio</span></div>` : ''}
+      <div class="results-breakdown">${breakdownHtml}</div>
+      <div class="results-actions">
+        <button class="btn-retry" onclick="startExam()">Retake Examination</button>
+        <button class="btn-continue" onclick="showScreen('civ-screen')">Return to ${civName}</button>
+      </div>
+    </div>
+  `;
+}
+
+// ─── Save ─────────────────────────────────────────────────────────────────────
+function saveMastery() {
+  localStorage.setItem('ancient_mastery_ryder', JSON.stringify(masteryData));
+  db.ref('ancient-history/Ryder').set(masteryData).catch(() => {});
+  renderTimeline();
+  updateScholarBar();
+}
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+init();
+</script>
+</body>
+</html>

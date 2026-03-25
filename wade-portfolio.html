@@ -1,0 +1,1888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wade Classical Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f1e35;
+    --navy-mid: #162840;
+    --navy-light: #1e3a54;
+    --cream: #f5f0e8;
+    --cream-dark: #e8e0d0;
+    --gold: #c9a84c;
+    --gold-light: #e0c070;
+    --gold-pale: #f0e0b0;
+    --sage: #7a9e8a;
+    --rust: #c06040;
+    --muted: #8a9eb8;
+    --paper: #faf7f2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--navy);
+    color: var(--cream);
+    font-family: 'Crimson Pro', Georgia, serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Background texture ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(201,168,76,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(122,158,138,0.05) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Header ── */
+  .header {
+    position: relative; z-index: 10;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    padding: 20px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(15,30,53,0.8);
+    backdrop-filter: blur(10px);
+  }
+
+  .header-brand {
+    display: flex; flex-direction: column;
+  }
+
+  .header-brand .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 3px;
+    color: var(--gold); text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .header-brand h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--cream);
+    letter-spacing: 0.5px;
+  }
+
+  .header-year {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--muted);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 6px 14px; border-radius: 20px;
+  }
+
+  /* ── Screens ── */
+  .screen { display: none; position: relative; z-index: 1; }
+  .screen.active { display: block; }
+
+  /* ── Home screen ── */
+  #home-screen {
+    padding: 60px 40px 40px;
+    max-width: 900px; margin: 0 auto;
+  }
+
+  .home-title {
+    text-align: center; margin-bottom: 12px;
+    font-family: 'Playfair Display', serif;
+    font-size: 14px; font-weight: 400;
+    color: var(--gold); letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .home-subtitle {
+    text-align: center; margin-bottom: 50px;
+    font-family: 'Playfair Display', serif;
+    font-size: 36px; font-weight: 600;
+    color: var(--cream);
+    line-height: 1.2;
+  }
+
+  .home-subtitle span {
+    color: var(--gold);
+  }
+
+  .student-cards {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 24px; margin-bottom: 32px;
+  }
+
+  .student-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 12px;
+    padding: 32px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative; overflow: hidden;
+  }
+
+  .student-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  .student-card:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(201,168,76,0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  }
+
+  .student-card:hover::before { opacity: 1; }
+
+  .student-card .grade-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gold); background: rgba(201,168,76,0.12);
+    border: 1px solid rgba(201,168,76,0.25);
+    display: inline-block; padding: 3px 10px; border-radius: 20px;
+    margin-bottom: 14px;
+  }
+
+  .student-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .student-card .student-meta {
+    font-size: 15px; color: var(--muted);
+    font-style: italic; margin-bottom: 20px;
+  }
+
+  .progress-row {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 8px;
+  }
+
+  .progress-bar-bg {
+    flex: 1; height: 5px;
+    background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    transition: width 0.8s ease;
+  }
+
+  .progress-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--gold); min-width: 36px; text-align: right;
+  }
+
+  .progress-label {
+    font-size: 13px; color: var(--muted);
+  }
+
+  .amanda-card {
+    background: rgba(122,158,138,0.08);
+    border: 1px solid rgba(122,158,138,0.2);
+    border-radius: 12px; padding: 20px 32px;
+    cursor: pointer; display: flex; align-items: center;
+    justify-content: space-between;
+    transition: all 0.25s ease;
+  }
+
+  .amanda-card:hover {
+    background: rgba(122,158,138,0.13);
+    border-color: rgba(122,158,138,0.4);
+  }
+
+  .amanda-card .left { display: flex; align-items: center; gap: 14px; }
+  .amanda-card .icon { font-size: 24px; }
+  .amanda-card h3 {
+    font-family: 'Playfair Display', serif; font-size: 18px;
+  }
+  .amanda-card p { font-size: 14px; color: var(--muted); }
+  .amanda-card .arrow { color: var(--sage); font-size: 20px; }
+
+  /* ── Portfolio screen ── */
+  #portfolio-screen { padding: 40px; max-width: 960px; margin: 0 auto; }
+
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--muted); letter-spacing: 1px; text-transform: uppercase;
+    background: none; border: none; cursor: pointer;
+    margin-bottom: 32px;
+    transition: color 0.2s;
+  }
+  .back-btn:hover { color: var(--gold); }
+
+  .portfolio-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 40px; padding-bottom: 28px;
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+  }
+
+  .portfolio-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px; margin-bottom: 4px;
+  }
+
+  .portfolio-header .subtitle {
+    font-size: 15px; color: var(--muted); font-style: italic;
+  }
+
+  .portfolio-stats {
+    display: flex; gap: 20px;
+  }
+
+  .stat-box {
+    text-align: center;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 14px 20px;
+    min-width: 80px;
+  }
+
+  .stat-box .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; color: var(--gold); display: block;
+  }
+
+  .stat-box .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+
+  /* Subject sections */
+  .subject-section {
+    margin-bottom: 28px;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; overflow: hidden;
+  }
+
+  .subject-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 24px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: background 0.2s;
+  }
+
+  .subject-header:hover { background: rgba(255,255,255,0.03); }
+
+  .subject-header .subject-title {
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'Playfair Display', serif; font-size: 18px;
+  }
+
+  .subject-header .subject-icon { font-size: 20px; }
+
+  .subject-header .subject-progress {
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .subject-mini-bar {
+    width: 100px; height: 4px;
+    background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden;
+  }
+
+  .subject-mini-fill {
+    height: 100%; border-radius: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  }
+
+  .subject-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--muted);
+  }
+
+  .chevron {
+    color: var(--muted); transition: transform 0.2s;
+    font-size: 12px;
+  }
+
+  .subject-section.open .chevron { transform: rotate(90deg); }
+
+  .benchmark-list {
+    padding: 8px 0;
+    display: none;
+  }
+
+  .subject-section.open .benchmark-list { display: block; }
+
+  .benchmark-item {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 14px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: background 0.15s;
+    position: relative;
+  }
+
+  .benchmark-item:last-child { border-bottom: none; }
+  .benchmark-item:hover { background: rgba(255,255,255,0.025); }
+
+  .benchmark-check {
+    width: 20px; height: 20px; flex-shrink: 0;
+    border: 1.5px solid rgba(201,168,76,0.35);
+    border-radius: 4px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 2px;
+    transition: all 0.2s;
+    background: transparent;
+  }
+
+  .benchmark-check.checked {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+
+  .benchmark-check.checked::after {
+    content: '✓';
+    font-size: 12px; color: var(--navy); font-weight: 700;
+  }
+
+  .benchmark-content { flex: 1; }
+
+  .benchmark-text {
+    font-size: 15px; color: var(--cream);
+    margin-bottom: 6px; line-height: 1.4;
+  }
+
+  .benchmark-item.done .benchmark-text {
+    color: var(--muted); text-decoration: line-through;
+    text-decoration-color: rgba(201,168,76,0.4);
+  }
+
+  .evidence-pills {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px;
+  }
+
+  .evidence-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; padding: 2px 8px; border-radius: 20px;
+    display: flex; align-items: center; gap: 4px;
+    cursor: pointer; transition: all 0.15s;
+  }
+
+  .evidence-pill.photo {
+    background: rgba(70,130,180,0.15);
+    border: 1px solid rgba(70,130,180,0.3);
+    color: #7ab0d8;
+  }
+
+  .evidence-pill.note {
+    background: rgba(122,158,138,0.15);
+    border: 1px solid rgba(122,158,138,0.3);
+    color: var(--sage);
+  }
+
+  .evidence-pill:hover { opacity: 0.7; }
+
+  .add-evidence-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 1px;
+    color: var(--muted); background: none;
+    border: 1px dashed rgba(255,255,255,0.12);
+    border-radius: 20px; padding: 3px 10px;
+    cursor: pointer; transition: all 0.2s;
+  }
+
+  .add-evidence-btn:hover {
+    color: var(--gold);
+    border-color: rgba(201,168,76,0.3);
+  }
+
+  /* Add custom benchmark */
+  .add-benchmark-row {
+    padding: 12px 24px;
+    display: flex; gap: 10px;
+  }
+
+  .add-benchmark-input {
+    flex: 1; background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px; padding: 8px 12px;
+    color: var(--cream); font-family: 'Crimson Pro', serif; font-size: 14px;
+    outline: none; transition: border-color 0.2s;
+  }
+
+  .add-benchmark-input:focus {
+    border-color: rgba(201,168,76,0.4);
+  }
+
+  .add-benchmark-input::placeholder { color: var(--muted); }
+
+  .add-benchmark-submit {
+    background: rgba(201,168,76,0.15);
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold); border-radius: 6px;
+    padding: 8px 16px; cursor: pointer; font-size: 18px;
+    transition: all 0.2s;
+  }
+
+  .add-benchmark-submit:hover {
+    background: rgba(201,168,76,0.25);
+  }
+
+  /* ── Evidence Modal ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7); z-index: 100;
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--navy-mid);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 16px; width: 90%; max-width: 520px;
+    padding: 32px; position: relative;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+    animation: modalIn 0.2s ease;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-close {
+    position: absolute; top: 16px; right: 20px;
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); font-size: 22px;
+    line-height: 1; transition: color 0.2s;
+  }
+  .modal-close:hover { color: var(--cream); }
+
+  .modal h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; margin-bottom: 6px;
+  }
+
+  .modal .benchmark-ref {
+    font-size: 13px; color: var(--muted); font-style: italic;
+    margin-bottom: 24px; padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .modal-tabs {
+    display: flex; gap: 8px; margin-bottom: 20px;
+  }
+
+  .modal-tab {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 7px 16px; border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: transparent; color: var(--muted);
+    cursor: pointer; transition: all 0.2s;
+  }
+
+  .modal-tab.active {
+    background: rgba(201,168,76,0.15);
+    border-color: rgba(201,168,76,0.35);
+    color: var(--gold);
+  }
+
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  /* Photo upload */
+  .upload-zone {
+    border: 2px dashed rgba(201,168,76,0.2);
+    border-radius: 10px; padding: 32px 20px;
+    text-align: center; cursor: pointer;
+    transition: all 0.2s; position: relative;
+    margin-bottom: 12px;
+  }
+
+  .upload-zone:hover {
+    border-color: rgba(201,168,76,0.4);
+    background: rgba(201,168,76,0.04);
+  }
+
+  .upload-zone input[type=file] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer;
+  }
+
+  .upload-zone .icon { font-size: 32px; margin-bottom: 8px; }
+  .upload-zone p { font-size: 14px; color: var(--muted); }
+
+  .preview-img {
+    width: 100%; max-height: 200px; object-fit: cover;
+    border-radius: 8px; margin-bottom: 12px; display: none;
+  }
+
+  /* Note textarea */
+  .note-textarea {
+    width: 100%; background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 12px 14px;
+    color: var(--cream); font-family: 'Crimson Pro', serif; font-size: 15px;
+    resize: vertical; min-height: 100px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .note-textarea:focus { border-color: rgba(201,168,76,0.4); }
+  .note-textarea::placeholder { color: var(--muted); }
+
+  .modal-actions {
+    display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;
+  }
+
+  .btn-cancel {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 10px 20px; border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: transparent; color: var(--muted);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-cancel:hover { color: var(--cream); }
+
+  .btn-save {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 10px 24px; border-radius: 6px;
+    background: rgba(201,168,76,0.2);
+    border: 1px solid rgba(201,168,76,0.4);
+    color: var(--gold); cursor: pointer; transition: all 0.2s;
+  }
+  .btn-save:hover { background: rgba(201,168,76,0.3); }
+
+  /* Evidence viewer */
+  .evidence-viewer-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .evidence-item-view {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 8px; padding: 14px;
+    position: relative;
+  }
+
+  .evidence-item-view img {
+    width: 100%; max-height: 220px; object-fit: cover;
+    border-radius: 6px; margin-bottom: 8px;
+  }
+
+  .evidence-item-view .ev-note {
+    font-size: 14px; color: var(--cream-dark); line-height: 1.5;
+  }
+
+  .evidence-item-view .ev-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--muted); margin-top: 6px;
+  }
+
+  .ev-delete {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(192,96,64,0.15); border: 1px solid rgba(192,96,64,0.3);
+    color: var(--rust); border-radius: 4px; padding: 3px 8px;
+    font-size: 11px; cursor: pointer; transition: all 0.2s;
+  }
+  .ev-delete:hover { background: rgba(192,96,64,0.3); }
+
+  /* ── Amanda Dashboard ── */
+  #dashboard-screen { padding: 40px; max-width: 900px; margin: 0 auto; }
+
+  .dashboard-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 20px; margin-top: 28px;
+  }
+
+  .dash-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; padding: 24px;
+  }
+
+  .dash-card h3 {
+    font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 4px;
+  }
+
+  .dash-card .grade-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: var(--muted); letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .subject-bar-row {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  }
+
+  .subject-bar-row .label {
+    font-size: 13px; width: 80px; flex-shrink: 0;
+    color: var(--muted);
+  }
+
+  .subject-bar-row .bar-bg {
+    flex: 1; height: 6px;
+    background: rgba(255,255,255,0.07); border-radius: 3px; overflow: hidden;
+  }
+
+  .subject-bar-row .bar-fill {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  }
+
+  .subject-bar-row .pct {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--gold); min-width: 32px; text-align: right;
+  }
+
+  .overall-circle {
+    margin: 16px auto 0;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border: 2px solid rgba(201,168,76,0.3);
+    background: rgba(201,168,76,0.07);
+  }
+
+  .overall-circle .big { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--gold); }
+  .overall-circle .small { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 30px; right: 30px; z-index: 200;
+    background: rgba(30,58,84,0.95);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 10px; padding: 14px 20px;
+    font-size: 14px; color: var(--cream);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    transform: translateY(20px); opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+  }
+
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* Saving indicator */
+  .saving-indicator {
+    position: fixed; top: 20px; right: 20px; z-index: 200;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: var(--muted); background: rgba(15,30,53,0.9);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 5px 12px; border-radius: 20px;
+    opacity: 0; transition: opacity 0.3s;
+    pointer-events: none;
+  }
+
+  .saving-indicator.show { opacity: 1; }
+
+  /* Unit divider inside benchmark list */
+  .unit-divider {
+    padding: 14px 24px 6px;
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  .unit-divider span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gold); white-space: nowrap;
+  }
+
+  .unit-divider::after {
+    content: '';
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, rgba(201,168,76,0.3), transparent);
+  }
+
+  /* Auto-pull panel */
+  .autopull-banner {
+    background: rgba(122,158,138,0.08);
+    border: 1px solid rgba(122,158,138,0.2);
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin-bottom: 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px;
+  }
+
+  .autopull-banner .left {
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .autopull-banner .ap-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--sage);
+  }
+
+  .autopull-banner .ap-desc {
+    font-size: 13px; color: var(--muted);
+  }
+
+  .btn-autopull {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+    padding: 8px 18px; border-radius: 6px;
+    background: rgba(122,158,138,0.15);
+    border: 1px solid rgba(122,158,138,0.35);
+    color: var(--sage); cursor: pointer;
+    transition: all 0.2s; white-space: nowrap;
+  }
+
+  .btn-autopull:hover { background: rgba(122,158,138,0.25); }
+  .btn-autopull:disabled { opacity: 0.5; cursor: default; }
+
+  .autopull-results {
+    margin-bottom: 20px;
+    display: none;
+  }
+
+  .autopull-results.show { display: block; }
+
+  .ap-result-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.025);
+    border-radius: 8px; margin-bottom: 6px;
+    font-size: 13px;
+  }
+
+  .ap-result-item .ap-icon { font-size: 16px; flex-shrink: 0; }
+  .ap-result-item .ap-text { color: var(--cream-dark); line-height: 1.4; }
+  .ap-result-item .ap-source {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .ap-result-item.success .ap-icon::after { content: ' ✓'; }
+
+  /* Auto-evidence pill */
+  .evidence-pill.auto {
+    background: rgba(122,158,138,0.15);
+    border: 1px solid rgba(122,158,138,0.3);
+    color: var(--sage);
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .student-cards { grid-template-columns: 1fr; }
+    .dashboard-grid { grid-template-columns: 1fr; }
+    #home-screen, #portfolio-screen, #dashboard-screen { padding: 20px; }
+    .header { padding: 16px 20px; }
+    .portfolio-header { flex-direction: column; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-brand">
+    <span class="eyebrow">Wade Classical</span>
+    <h1>Portfolio & Benchmarks</h1>
+  </div>
+  <div class="header-year" id="year-display">2025–2026</div>
+</header>
+
+<!-- ── HOME ── -->
+<div id="home-screen" class="screen active">
+  <p class="home-title">Academic Documentation</p>
+  <h2 class="home-subtitle">Select a <span>Student</span></h2>
+
+  <div class="student-cards">
+    <div class="student-card" onclick="openPortfolio('ryder')">
+      <span class="grade-badge">Grade 6 · Age 12</span>
+      <h2>Ryder ⚔️</h2>
+      <p class="student-meta">Classical & adventurous learner</p>
+      <div id="ryder-progress-display"></div>
+    </div>
+    <div class="student-card" onclick="openPortfolio('hadley')">
+      <span class="grade-badge">Grade 1 · Age 7</span>
+      <h2>Hadley 🌷</h2>
+      <p class="student-meta">Enchanted woodland reader</p>
+      <div id="hadley-progress-display"></div>
+    </div>
+  </div>
+
+  <div class="amanda-card" onclick="openDashboard()">
+    <div class="left">
+      <span class="icon">🌿</span>
+      <div>
+        <h3>Amanda's Dashboard</h3>
+        <p>Overview of all student progress</p>
+      </div>
+    </div>
+    <span class="arrow">›</span>
+  </div>
+</div>
+
+<!-- ── PORTFOLIO ── -->
+<div id="portfolio-screen" class="screen">
+  <button class="back-btn" onclick="showScreen('home-screen')">← All Students</button>
+  <div class="portfolio-header">
+    <div>
+      <h2 id="portfolio-name">Ryder</h2>
+      <p class="subtitle" id="portfolio-subtitle">Grade 6 · 2025–2026 School Year</p>
+    </div>
+    <div class="portfolio-stats" id="portfolio-stats"></div>
+  </div>
+  <div class="autopull-banner">
+    <div class="left">
+      <span style="font-size:20px;">⭐</span>
+      <div>
+        <div class="ap-label">Auto-Pull</div>
+        <div class="ap-desc">Sync progress from Spelling, Math, States, Library & McGuffey apps</div>
+      </div>
+    </div>
+    <button class="btn-autopull" id="autopull-btn" onclick="runAutoPull()">Sync Now</button>
+  </div>
+  <div class="autopull-results" id="autopull-results"></div>
+  <div id="benchmark-container"></div>
+</div>
+
+<!-- ── DASHBOARD ── -->
+<div id="dashboard-screen" class="screen">
+  <button class="back-btn" onclick="showScreen('home-screen')">← Home</button>
+  <h2 style="font-family:'Playfair Display',serif;font-size:28px;margin-bottom:4px;">Amanda's Dashboard 🌿</h2>
+  <p style="color:var(--muted);font-size:14px;font-style:italic;margin-bottom:0;">2025–2026 School Year Overview</p>
+  <div class="dashboard-grid" id="dashboard-grid"></div>
+</div>
+
+<!-- ── EVIDENCE MODAL ── -->
+<div class="modal-overlay" id="evidence-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h3>Add Evidence</h3>
+    <p class="benchmark-ref" id="modal-benchmark-ref"></p>
+
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="switchTab('photo')">📸 Photo</button>
+      <button class="modal-tab" onclick="switchTab('note')">📝 Note</button>
+      <button class="modal-tab" onclick="switchTab('view')">👁 View All</button>
+    </div>
+
+    <div class="tab-pane active" id="tab-photo">
+      <div class="upload-zone" id="upload-zone">
+        <input type="file" accept="image/*" onchange="handlePhotoUpload(event)" id="photo-input">
+        <div class="icon">📷</div>
+        <p>Click to upload a photo of work</p>
+      </div>
+      <img id="preview-img" class="preview-img" src="" alt="preview">
+      <textarea class="note-textarea" id="photo-caption" placeholder="Add a caption or description (optional)..." rows="2" style="min-height:60px;"></textarea>
+    </div>
+
+    <div class="tab-pane" id="tab-note">
+      <textarea class="note-textarea" id="note-text" placeholder="Write a note about this achievement...&#10;&#10;e.g. 'Completed McGuffey Lesson 15 with 100% accuracy' or 'Demonstrated understanding through oral narration'"></textarea>
+    </div>
+
+    <div class="tab-pane" id="tab-view">
+      <div class="evidence-viewer-list" id="evidence-viewer-list">
+        <p style="color:var(--muted);font-size:14px;text-align:center;padding:20px 0;">No evidence added yet.</p>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveEvidence()" id="save-ev-btn">Save Evidence</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast + Saving indicator -->
+<div class="toast" id="toast"></div>
+<div class="saving-indicator" id="saving-indicator">Saving…</div>
+
+<!-- Firebase -->
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.js"></script>
+
+<script>
+// ─── Firebase ───────────────────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyBsjx3JKjCQOMuus07MSoj3o-Vu9eRW6zc",
+  databaseURL: "https://wade-classical-default-rtdb.firebaseio.com",
+  projectId: "wade-classical",
+  appId: "1:72309085457:web:3d8b5a07302248ded6a8b0"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ─── Benchmark Data ──────────────────────────────────────────────────────────
+const BENCHMARKS = {
+  ryder: {
+    grade: 6, name: 'Ryder', emoji: '⚔️',
+    subtitle: 'Grade 6 · 2025–2026 School Year',
+    subjects: [
+      { id: 'reading', label: 'Reading', icon: '📚', items: [
+        '— Reading Volume —',
+        'Read 15–20 books at or above grade level',
+        'Maintain a reading log with title, author, and brief response',
+        '— Comprehension & Analysis —',
+        'Identify theme, conflict, and character development',
+        'Analyze author\'s purpose and point of view',
+        'Compare and contrast two texts or characters',
+        'Summarize a book or chapter in own words (oral or written)',
+        '— Classical Reading Skills —',
+        'Narrate back a passage or chapter without notes',
+        'Vocabulary expansion: define unfamiliar words in context',
+        'Discuss a book — form and defend an opinion about it'
+      ]},
+      { id: 'writing', label: 'Writing', icon: '✍️', items: [
+        '— Foundations —',
+        'Copywork: copy a passage neatly and accurately from a model',
+        'Dictation: write a passage from memory after study',
+        'Proper grammar mechanics: capitalization, punctuation, spelling',
+        '— Grammar —',
+        'Identify the 8 parts of speech in sentences',
+        'Identify and write simple, compound, and complex sentences',
+        'Correct run-ons and fragments in own writing',
+        '— Composition —',
+        'Write a clear narration (retell a story or passage in own words)',
+        'Write a structured paragraph with topic sentence and support',
+        'Write a 3–5 paragraph essay with introduction and conclusion',
+        'Complete at least one research or report project',
+        '— Communication —',
+        'Give at least one oral presentation or narration aloud',
+        'Write for a real audience at least once (letter, review, journal)'
+      ]},
+      { id: 'math', label: 'Mathematics', icon: '🔢', items: [
+        '— Arithmetic Mastery —',
+        'Master all multiplication and division facts (1–12)',
+        'Fractions: add, subtract, multiply, and divide',
+        'Decimals and percents: convert, compare, and calculate',
+        '— Pre-Algebra Readiness —',
+        'Understand variables and simple expressions',
+        'Solve one-step equations',
+        'Introduction to ratios and proportional thinking',
+        '— Problem Solving —',
+        'Solve multi-step word problems accurately',
+        'Check and explain work — show reasoning, not just answers'
+      ]},
+      { id: 'history', label: 'History & Geography', icon: '🌍', items: [
+        '— Unit 1: US History Survey —',
+        'Identify major Native American peoples and their ways of life',
+        'Describe European exploration and early colonial settlement',
+        'Explain the causes and key events of the American Revolution',
+        'Narrate or write about at least one Founding Father in depth',
+        'Understand the causes and outcome of the Civil War',
+        'Identify major 20th century events: WWI, WWII, Civil Rights Movement',
+        'Read at least one historical fiction book set in US history',
+        '— Unit 2: Ancient World Glimpses —',
+        'Describe daily life and achievements of ancient Egypt',
+        'Identify key figures and contributions of ancient Greece',
+        'Explain the rise and fall of the Roman Empire (basic overview)',
+        'Locate and describe at least one ancient civilization outside Europe',
+        'Place major ancient civilizations on a timeline',
+        '— US Geography (States App) —',
+        'Master all 50 US states and locations',
+        'Master all 50 state abbreviations',
+        'Master all 50 state capitals',
+        '— World Geography —',
+        'Name and locate all 7 continents and 5 oceans',
+        'Identify at least 30 countries on a world map',
+        'Read and interpret basic maps (scale, compass rose, legend)',
+        '— Geography Skills (Year-Long) —',
+        'Draw or label maps connected to history units being studied',
+        'Maintain a timeline or history notebook throughout the year'
+      ]},
+      { id: 'science', label: 'Science', icon: '🔬', items: [
+        '— Unit 1: Matter & Chemistry —',
+        'Identify the three states of matter and give examples of each',
+        'Understand physical vs. chemical changes',
+        'Name common elements and recognize the periodic table',
+        'Distinguish between mixtures and compounds',
+        'Complete at least 2 chemistry experiments with written observations',
+        '— Unit 2: Forces, Motion & Simple Machines —',
+        'Define force, gravity, friction, and inertia in own words',
+        'Identify and explain the 6 simple machines',
+        'Understand Newton\'s 3 Laws of Motion (narration or written)',
+        'Complete at least 1 physics experiment or demonstration',
+        '— Unit 3: Life Science Survey —',
+        'Describe the basic structure and function of a cell',
+        'Classify living things: kingdoms, basic taxonomy',
+        'Explain photosynthesis and the food chain',
+        'Name and describe the major human body systems (at least 5)',
+        'Complete a nature study or living organism observation',
+        '— Unit 4: Earth & Space —',
+        'Describe the rock cycle and identify rock types',
+        'Explain the water cycle and major weather patterns',
+        'Name and describe the layers of the Earth',
+        'Identify planets of the solar system and basic astronomy facts',
+        '— Scientific Method (Year-Long) —',
+        'Maintain a science notebook with observations and sketches',
+        'Complete at least one full experiment using the scientific method',
+        'Write or narrate conclusions from experiments'
+      ]},
+      { id: 'other', label: 'Other Skills', icon: '⭐', items: [
+        'Foreign language basics',
+        'Life skills (cooking, money, time management)',
+        'Physical education / fitness',
+        'Art or music project'
+      ]}
+    ]
+  },
+  hadley: {
+    grade: 1, name: 'Hadley', emoji: '🌷',
+    subtitle: 'Grade 1 · 2025–2026 School Year',
+    subjects: [
+      { id: 'reading', label: 'Reading', icon: '📖', items: [
+        '— Phonics & Decoding —',
+        'Decode CVC words fluently (cat, hop, sit)',
+        'Read words with consonant blends (bl, cr, st, tr)',
+        'Read words with digraphs (sh, ch, th, wh)',
+        'Read simple long vowel words (cake, bike, note)',
+        'Recognize and read common word families (-at, -in, -og, -ump)',
+        '— Sight Words —',
+        'Read 25 Dolch sight words on sight',
+        'Read 50 Dolch sight words on sight',
+        'Read 100 Dolch sight words on sight',
+        '— Fluency —',
+        'Read simple sentences without finger-pointing',
+        'Read a short book or passage aloud smoothly',
+        'Read aloud with expression and correct phrasing',
+        '— Comprehension —',
+        'Answer who, what, and where questions about a story',
+        'Identify the beginning, middle, and end of a story read independently'
+      ]},
+      { id: 'writing', label: 'Writing', icon: '✏️', items: [
+        '— Handwriting & Formation —',
+        'Write all uppercase letters legibly with correct formation',
+        'Write all lowercase letters legibly with correct formation',
+        'Maintain proper pencil grip and posture while writing',
+        'Leave consistent spaces between words',
+        'Copywork: copy a short sentence or verse neatly and accurately',
+        '— Spelling & Word Work —',
+        'Write own first and last name correctly',
+        'Write own address (street, city, state)',
+        'Spell simple CVC words correctly (cat, hop, sit)',
+        'Use phonetic/invented spelling to write unfamiliar words independently',
+        'Correctly spell at least 20 common sight words from memory',
+        '— Sentence Writing —',
+        'Write a complete sentence with a capital letter and period',
+        'Write a question with a question mark',
+        'Write 2–3 sentences about a topic or picture independently'
+      ]},
+      { id: 'math', label: 'Mathematics', icon: '🔢', items: [
+        '— Number Sense —',
+        'Count to 120 starting from any number',
+        'Count forward and backward from any number within 120',
+        'Compare two numbers using greater than, less than, or equal to',
+        'Understand place value: tens and ones (e.g. 34 = 3 tens + 4 ones)',
+        'Skip count by 2s, 5s, and 10s to 100',
+        '— Operations —',
+        'Add and subtract within 10 fluently from memory',
+        'Add and subtract within 20 using strategies',
+        'Solve simple word problems using addition and subtraction',
+        '— Measurement & Data —',
+        'Tell time to the hour and half-hour on an analog clock',
+        'Identify and count coins: penny, nickel, dime, quarter',
+        'Measure length using non-standard units (paper clips, blocks)',
+        'Measure length using standard units (inches or centimeters)'
+      ]},
+      { id: 'language', label: 'Language & Literature', icon: '🌸', items: [
+        '— McGuffey Reader —',
+        'Complete McGuffey Lessons 1–5 with accuracy',
+        'Complete McGuffey Lessons 6–10 with accuracy',
+        'Complete McGuffey Lessons 11–15 with accuracy',
+        'Read a McGuffey passage aloud fluently without help',
+        '— Oral Language & Literature —',
+        'Listen to a read-aloud and narrate it back immediately after',
+        'Narrate a familiar story from memory without prompting',
+        'Memorize and recite at least one short poem or verse',
+        'Retell a story with a clear beginning, middle, and end',
+        'Ask and answer questions about a book read aloud',
+        '— Grammar Foundations —',
+        'Identify nouns (people, places, things) in sentences',
+        'Identify verbs (action words) in sentences',
+        'Use adjectives to describe a person, place, or thing',
+        'Recognize what makes a complete sentence (capital, period, complete thought)'
+      ]},
+      { id: 'world', label: 'World & Nature', icon: '🌎', items: [
+        '— Living World —',
+        'Sort living vs. non-living things and explain the difference',
+        'Name the basic needs of plants (sun, water, soil, air)',
+        'Observe and draw a plant — label roots, stem, leaves, flower',
+        'Name and describe at least 5 animals and their habitats',
+        'Identify basic animal groups: mammals, birds, fish, insects, reptiles',
+        'Describe how a caterpillar or seed grows and changes over time',
+        '— Earth & Weather —',
+        'Name and describe the 4 seasons and how they change',
+        'Identify and describe different types of weather',
+        'Describe the water cycle in simple terms (rain, clouds, evaporation)',
+        'Observe the sky — describe the sun, moon, and stars',
+        'Identify basic landforms: mountain, hill, valley, river, ocean',
+        '— Geography: Near to Far —',
+        'Know her own address: street, city, state, country',
+        'Point to home state on a US map',
+        'Find the United States on a world map',
+        'Name and locate all 7 continents',
+        'Name all 5 oceans',
+        'Identify at least 5 countries on a world map'
+      ]},
+      { id: 'other', label: 'Other Skills', icon: '⭐', items: [
+        'Physical education / movement',
+        'Art projects — drawing, painting, crafts',
+        'Music appreciation or singing',
+        'Independent play and creativity'
+      ]}
+    ]
+  }
+};
+
+// ─── State ───────────────────────────────────────────────────────────────────
+let currentStudent = null;
+let currentBenchmarkKey = null; // "ryder:reading:2"
+let portfolioData = {};  // { ryder: { checked: {}, evidence: {} }, hadley: {...} }
+let pendingPhotoBase64 = null;
+let activeTab = 'photo';
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+function init() {
+  // Load from localStorage first (instant)
+  ['ryder','hadley'].forEach(s => {
+    const raw = localStorage.getItem('portfolio_' + s);
+    portfolioData[s] = raw ? JSON.parse(raw) : { checked: {}, evidence: {} };
+  });
+  renderHomeProgress();
+
+  // Firebase sync in background
+  ['ryder','hadley'].forEach(s => {
+    db.ref('portfolio/' + s).once('value', snap => {
+      if (snap.exists()) {
+        const fbData = snap.val();
+        // Merge Firebase checked/customs with local evidence (photos stay local)
+        const local = portfolioData[s] || { checked: {}, evidence: {}, customs: {} };
+        portfolioData[s] = {
+          checked: fbData.checked || local.checked || {},
+          customs: fbData.customs || local.customs || {},
+          evidence: local.evidence || {} // keep local evidence (has photos)
+        };
+        localStorage.setItem('portfolio_' + s, JSON.stringify(portfolioData[s]));
+        renderHomeProgress();
+        if (currentStudent === s) {
+          renderBenchmarks(s);
+          renderPortfolioStats(s);
+        }
+      }
+    });
+  });
+}
+
+// ─── Screen management ───────────────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ─── Home progress ────────────────────────────────────────────────────────────
+function renderHomeProgress() {
+  ['ryder','hadley'].forEach(s => {
+    const el = document.getElementById(s + '-progress-display');
+    if (!el) return;
+    const stats = getStats(s);
+    el.innerHTML = `
+      <div class="progress-row">
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" style="width:${stats.pct}%"></div>
+        </div>
+        <span class="progress-pct">${stats.pct}%</span>
+      </div>
+      <p class="progress-label" style="font-size:13px;color:var(--muted)">${stats.done} of ${stats.total} benchmarks complete</p>
+    `;
+  });
+}
+
+function getStats(student) {
+  const data = BENCHMARKS[student];
+  const pData = portfolioData[student] || { checked: {}, evidence: {} };
+  let total = 0, done = 0;
+  data.subjects.forEach(sub => {
+    sub.items.forEach((item, i) => {
+      if (item.startsWith('—') && item.endsWith('—')) return; // divider
+      total++;
+      const key = sub.id + ':' + i;
+      if (pData.checked[key]) done++;
+    });
+  });
+  // Also count custom
+  const customs = pData.customs || {};
+  Object.keys(customs).forEach(subId => {
+    const arr = customs[subId];
+    if (Array.isArray(arr)) arr.forEach((item, i) => {
+      total++;
+      if (pData.checked['custom_' + subId + ':' + i]) done++;
+    });
+  });
+  return { total, done, pct: total ? Math.round(done/total*100) : 0 };
+}
+
+// ─── Portfolio ────────────────────────────────────────────────────────────────
+function openPortfolio(student) {
+  currentStudent = student;
+  const bm = BENCHMARKS[student];
+  document.getElementById('portfolio-name').textContent = bm.name + ' ' + bm.emoji;
+  document.getElementById('portfolio-subtitle').textContent = bm.subtitle;
+  renderBenchmarks(student);
+  renderPortfolioStats(student);
+  showScreen('portfolio-screen');
+}
+
+function renderPortfolioStats(student) {
+  const stats = getStats(student);
+  const evCount = countEvidence(student);
+  const bm = BENCHMARKS[student];
+  document.getElementById('portfolio-stats').innerHTML = `
+    <div class="stat-box"><span class="num">${stats.done}</span><span class="lbl">Done</span></div>
+    <div class="stat-box"><span class="num">${stats.total - stats.done}</span><span class="lbl">Remaining</span></div>
+    <div class="stat-box"><span class="num">${evCount}</span><span class="lbl">Evidence</span></div>
+    <div class="stat-box"><span class="num">Gr. ${bm.grade}</span><span class="lbl">Grade</span></div>
+  `;
+}
+
+function countEvidence(student) {
+  const pData = portfolioData[student] || { checked: {}, evidence: {} };
+  let total = 0;
+  Object.values(pData.evidence || {}).forEach(arr => {
+    if (Array.isArray(arr)) total += arr.length;
+    else if (arr && typeof arr === 'object') total += Object.values(arr).length;
+  });
+  return total;
+}
+
+function renderBenchmarks(student) {
+  const bm = BENCHMARKS[student];
+  const pData = portfolioData[student] || { checked: {}, evidence: {} };
+  const customs = pData.customs || {};
+  const container = document.getElementById('benchmark-container');
+  container.innerHTML = '';
+
+  bm.subjects.forEach(sub => {
+    const allItems = [...sub.items];
+    const customItems = Array.isArray(customs[sub.id]) ? customs[sub.id] : [];
+    const allWithCustom = allItems.concat(customItems);
+
+    let done = 0;
+    let checkableCount = 0;
+    allWithCustom.forEach((item, i) => {
+      if (item.startsWith('—') && item.endsWith('—')) return; // divider, skip
+      checkableCount++;
+      const key = i < allItems.length ? sub.id + ':' + i : 'custom_' + sub.id + ':' + (i - allItems.length);
+      if (pData.checked[key]) done++;
+    });
+    const pct = checkableCount ? Math.round(done/checkableCount*100) : 0;
+
+    const section = document.createElement('div');
+    section.className = 'subject-section';
+    section.id = 'sec-' + sub.id;
+
+    let itemsHtml = '';
+    allWithCustom.forEach((item, i) => {
+      const isCustom = i >= allItems.length;
+
+      // Section divider heading
+      if (!isCustom && item.startsWith('—') && item.endsWith('—')) {
+        const label = item.replace(/^—\s*/, '').replace(/\s*—$/, '');
+        itemsHtml += `<div class="unit-divider"><span>${label}</span></div>`;
+        return;
+      }
+
+      const key = isCustom ? 'custom_' + sub.id + ':' + (i - allItems.length) : sub.id + ':' + i;
+      const checked = pData.checked[key] || false;
+      const evidence = Array.isArray(pData.evidence[key]) ? pData.evidence[key] : [];
+
+      let pillsHtml = evidence.map((ev, ei) => {
+        if (ev.type === 'auto') {
+          return `<span class="evidence-pill auto" onclick="viewEvidence('${key}','${student}')">⭐ ${ev.source || 'Auto'}</span>`;
+        }
+        const icon = ev.type === 'photo' ? '📸' : '📝';
+        return `<span class="evidence-pill ${ev.type === 'photo' ? 'photo' : 'note'}" onclick="viewEvidence('${key}','${student}')">${icon} ${ev.type === 'photo' ? 'Photo' : 'Note'}</span>`;
+      }).join('');
+
+      itemsHtml += `
+        <div class="benchmark-item ${checked ? 'done' : ''}" id="item-${key.replace(/:/g,'_')}">
+          <div class="benchmark-check ${checked ? 'checked' : ''}" onclick="toggleCheck('${key}','${student}',this)"></div>
+          <div class="benchmark-content">
+            <p class="benchmark-text">${item}${isCustom ? ' <span style="font-size:10px;color:var(--muted);font-family:JetBrains Mono,monospace;">CUSTOM</span>' : ''}</p>
+            <div class="evidence-pills">${pillsHtml}</div>
+            <button class="add-evidence-btn" onclick="openEvidenceModal('${key}','${student}','${item.replace(/'/g,"\\'")}')">+ evidence</button>
+          </div>
+        </div>
+      `;
+    });
+
+    section.innerHTML = `
+      <div class="subject-header" onclick="toggleSection('${sub.id}')">
+        <div class="subject-title">
+          <span class="subject-icon">${sub.icon}</span>
+          ${sub.label}
+        </div>
+        <div class="subject-progress">
+          <div class="subject-mini-bar"><div class="subject-mini-fill" style="width:${pct}%"></div></div>
+          <span class="subject-count">${done}/${checkableCount + (Array.isArray(customs[sub.id]) ? customs[sub.id].length : 0)}</span>
+          <span class="chevron">›</span>
+        </div>
+      </div>
+      <div class="benchmark-list">
+        ${itemsHtml}
+        <div class="add-benchmark-row">
+          <input class="add-benchmark-input" type="text" placeholder="Add custom benchmark..." id="custom-input-${sub.id}">
+          <button class="add-benchmark-submit" onclick="addCustom('${sub.id}','${student}')">+</button>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(section);
+  });
+}
+
+function toggleSection(subId) {
+  const sec = document.getElementById('sec-' + subId);
+  sec.classList.toggle('open');
+}
+
+function toggleCheck(key, student, el) {
+  const pData = portfolioData[student];
+  pData.checked[key] = !pData.checked[key];
+  el.classList.toggle('checked', pData.checked[key]);
+  const item = el.closest('.benchmark-item');
+  item.classList.toggle('done', pData.checked[key]);
+  savePortfolioData(student);
+  renderPortfolioStats(student);
+  renderHomeProgress();
+}
+
+function addCustom(subId, student) {
+  const input = document.getElementById('custom-input-' + subId);
+  const text = input.value.trim();
+  if (!text) return;
+  const pData = portfolioData[student];
+  if (!pData.customs) pData.customs = {};
+  if (!pData.customs[subId]) pData.customs[subId] = [];
+  pData.customs[subId].push(text);
+  input.value = '';
+  savePortfolioData(student);
+  renderBenchmarks(student);
+  renderPortfolioStats(student);
+  renderHomeProgress();
+  showToast('Custom benchmark added ✓');
+}
+
+// ─── Evidence Modal ───────────────────────────────────────────────────────────
+function openEvidenceModal(key, student, label) {
+  currentBenchmarkKey = key;
+  currentStudent = student;
+  document.getElementById('modal-benchmark-ref').textContent = label;
+  pendingPhotoBase64 = null;
+  document.getElementById('preview-img').style.display = 'none';
+  document.getElementById('preview-img').src = '';
+  document.getElementById('photo-caption').value = '';
+  document.getElementById('note-text').value = '';
+  document.getElementById('photo-input').value = '';
+  switchTab('photo');
+  document.getElementById('evidence-modal').classList.add('open');
+}
+
+function viewEvidence(key, student) {
+  currentBenchmarkKey = key;
+  currentStudent = student;
+  const pData = portfolioData[student];
+  const bm = BENCHMARKS[student];
+  // Find label
+  let label = key;
+  bm.subjects.forEach(sub => {
+    sub.items.forEach((item, i) => {
+      if (sub.id + ':' + i === key) label = item;
+    });
+  });
+  document.getElementById('modal-benchmark-ref').textContent = label;
+  switchTab('view');
+  document.getElementById('evidence-modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('evidence-modal').classList.remove('open');
+  currentBenchmarkKey = null;
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.modal-tab').forEach((t, i) => {
+    const tabs = ['photo','note','view'];
+    t.classList.toggle('active', tabs[i] === tab);
+  });
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+
+  const saveBtn = document.getElementById('save-ev-btn');
+  saveBtn.style.display = tab === 'view' ? 'none' : '';
+
+  if (tab === 'view') renderEvidenceViewer();
+}
+
+function renderEvidenceViewer() {
+  const key = currentBenchmarkKey;
+  const student = currentStudent;
+  const pData = portfolioData[student];
+  const evidence = Array.isArray(pData.evidence[key]) ? pData.evidence[key] : [];
+  const container = document.getElementById('evidence-viewer-list');
+
+  if (evidence.length === 0) {
+    container.innerHTML = '<p style="color:var(--muted);font-size:14px;text-align:center;padding:20px 0;">No evidence added yet.</p>';
+    return;
+  }
+
+  container.innerHTML = evidence.map((ev, i) => `
+    <div class="evidence-item-view">
+      ${ev.type === 'photo' && ev.data ? `<img src="${ev.data}" alt="evidence">` : ''}
+      ${ev.type === 'auto' ? `<p style="font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--sage);margin-bottom:6px;">⭐ AUTO — ${ev.source || 'Wade Classical'}</p>` : ''}
+      ${ev.note ? `<p class="ev-note">${ev.note}</p>` : ''}
+      <p class="ev-date">${ev.date || ''}</p>
+      <button class="ev-delete" onclick="deleteEvidence(${i})">Remove</button>
+    </div>
+  `).join('');
+}
+
+function deleteEvidence(idx) {
+  const key = currentBenchmarkKey;
+  const student = currentStudent;
+  const pData = portfolioData[student];
+  if (!Array.isArray(pData.evidence[key])) return;
+  pData.evidence[key].splice(idx, 1);
+  savePortfolioData(student);
+  renderEvidenceViewer();
+  renderBenchmarks(student);
+  renderPortfolioStats(student);
+  showToast('Evidence removed');
+}
+
+function handlePhotoUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    pendingPhotoBase64 = ev.target.result;
+    const img = document.getElementById('preview-img');
+    img.src = pendingPhotoBase64;
+    img.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveEvidence() {
+  const key = currentBenchmarkKey;
+  const student = currentStudent;
+  const pData = portfolioData[student];
+  if (!pData.evidence[key]) pData.evidence[key] = [];
+
+  const date = new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+
+  if (activeTab === 'photo') {
+    if (!pendingPhotoBase64 && !document.getElementById('photo-caption').value.trim()) {
+      showToast('Please upload a photo or add a caption');
+      return;
+    }
+    pData.evidence[key].push({
+      type: 'photo',
+      data: pendingPhotoBase64 || null,
+      note: document.getElementById('photo-caption').value.trim(),
+      date
+    });
+  } else if (activeTab === 'note') {
+    const note = document.getElementById('note-text').value.trim();
+    if (!note) { showToast('Please write a note'); return; }
+    pData.evidence[key].push({ type: 'note', note, date });
+  }
+
+  savePortfolioData(student);
+  renderBenchmarks(student);
+  renderPortfolioStats(student);
+  closeModal();
+  showToast('Evidence saved ✓');
+}
+
+// ─── Auto-Pull Engine ────────────────────────────────────────────────────────
+//
+// Firebase paths (from documentation):
+//   math/[student]          → { mult: { "2x3": true, ... }, skip: {...} }
+//   spelling/[student]      → { correct: [...], wrong: [...], untried: [...] }
+//   mcguffey/[student]      → { lesson: N, ... } or { completed: [...] }
+//   states-mastery/[student]→ { level1: {...}, level2: {...}, level3: {...}, level4: {...} }
+//   world-mastery/[student] → { continents: {...} or level data }
+//   library/[student]       → { books: [...] } or object with book entries
+//
+// Mapping: which Firebase data satisfies which benchmark key
+const AUTO_PULL_MAP = {
+  ryder: [
+    {
+      source: 'Math App',
+      fbPath: 'math/Ryder',
+      icon: '🔢',
+      evaluate: (data) => {
+        if (!data) return null;
+        const mult = data.mult || {};
+        const facts = Object.values(mult).filter(Boolean).length;
+        // 144 total multiplication facts (1-12 x 1-12)
+        const pct = Math.round(facts / 144 * 100);
+        if (facts === 0) return null;
+        return {
+          benchmarkKey: 'math:1', // "Master all multiplication and division facts (1–12)"
+          note: `${facts} multiplication facts mastered (${pct}% of 1–12 table) — from Math App`,
+          autoCheck: pct >= 80
+        };
+      }
+    },
+    {
+      source: 'Spelling App',
+      fbPath: 'spelling/Ryder',
+      icon: '📚',
+      evaluate: (data) => {
+        if (!data) return null;
+        const correct = Array.isArray(data.correct) ? data.correct : Object.values(data.correct || {});
+        const count = correct.length;
+        if (count === 0) return null;
+        return {
+          benchmarkKey: 'reading:10', // "Vocabulary expansion: define unfamiliar words in context"
+          note: `${count} spelling words mastered — from Spelling App`,
+          autoCheck: count >= 50
+        };
+      }
+    },
+    {
+      source: 'States App',
+      fbPath: 'states-mastery/Ryder',
+      icon: '🗺️',
+      evaluate: (data) => {
+        if (!data) return null;
+        const l3 = data.level3 || {};
+        const l4 = data.level4 || {};
+        const abbrevDone = Object.values(l3).filter(Boolean).length;
+        const capsDone = Object.values(l4).filter(Boolean).length;
+        if (abbrevDone + capsDone === 0) return null;
+        return {
+          benchmarkKey: 'history:16', // "Master all 50 state capitals"
+          note: `${abbrevDone}/50 abbreviations + ${capsDone}/50 capitals mastered — from States App`,
+          autoCheck: capsDone >= 40
+        };
+      }
+    },
+    {
+      source: 'States App (World)',
+      fbPath: 'world-mastery/Ryder',
+      icon: '🌍',
+      evaluate: (data) => {
+        if (!data) return null;
+        const continents = data.continents || data;
+        const done = Object.values(continents).filter(v => v === true || (v && v.completed)).length;
+        if (done === 0) return null;
+        return {
+          benchmarkKey: 'history:18', // "Name and locate all 7 continents and 5 oceans"
+          note: `${done} continents studied in World Map — from States App`,
+          autoCheck: done >= 5
+        };
+      }
+    },
+    {
+      source: 'Library App',
+      fbPath: 'library/Ava', // Ryder uses the main library; check both
+      icon: '📖',
+      evaluate: (data) => {
+        if (!data) return null;
+        const books = data.books ? (Array.isArray(data.books) ? data.books : Object.values(data.books)) : [];
+        // Also check for ryder-specific path
+        const count = books.length;
+        if (count === 0) return null;
+        return {
+          benchmarkKey: 'reading:1', // "Read 15–20 books at or above grade level"
+          note: `${count} book${count !== 1 ? 's' : ''} logged in Library — from Library App`,
+          autoCheck: count >= 15
+        };
+      }
+    }
+  ],
+  hadley: [
+    {
+      source: 'Math App',
+      fbPath: 'math/Hadley',
+      icon: '🔢',
+      evaluate: (data) => {
+        if (!data) return null;
+        const skip = data.skip || {};
+        const skipDone = Object.values(skip).filter(Boolean).length;
+        if (skipDone === 0) return null;
+        return {
+          benchmarkKey: 'math:5', // "Skip count by 2s, 5s, and 10s to 100"
+          note: `Skip counting practiced in Math App`,
+          autoCheck: skipDone >= 3
+        };
+      }
+    },
+    {
+      source: 'Spelling App',
+      fbPath: 'spelling/Hadley',
+      icon: '📖',
+      evaluate: (data) => {
+        if (!data) return null;
+        const correct = Array.isArray(data.correct) ? data.correct : Object.values(data.correct || {});
+        const count = correct.length;
+        if (count === 0) return null;
+        return {
+          benchmarkKey: 'reading:8', // "Read 50 Dolch sight words on sight"
+          note: `${count} words mastered in Spelling App (Dolch/sight word list)`,
+          autoCheck: count >= 50
+        };
+      }
+    },
+    {
+      source: 'McGuffey App',
+      fbPath: 'mcguffey/Hadley',
+      icon: '📜',
+      evaluate: (data) => {
+        if (!data) return null;
+        const completed = data.completed
+          ? (Array.isArray(data.completed) ? data.completed : Object.values(data.completed))
+          : [];
+        const lessonNum = data.lesson || data.currentLesson || completed.length || 0;
+        if (lessonNum === 0) return null;
+        // Return highest milestone reached — auto-pull engine will check that key
+        // Milestones: lessons 1-5 → key language:1, 6-10 → language:2, 11-15 → language:3
+        let benchmarkKey = 'language:1';
+        let label = 'Lessons 1–5';
+        if (lessonNum >= 10) { benchmarkKey = 'language:2'; label = 'Lessons 1–10'; }
+        if (lessonNum >= 15) { benchmarkKey = 'language:3'; label = 'Lessons 1–15'; }
+        return {
+          benchmarkKey,
+          note: `McGuffey Lesson ${lessonNum} reached — from McGuffey App (${label} milestone)`,
+          autoCheck: true
+        };
+      }
+    },
+    {
+      source: 'States App',
+      fbPath: 'world-mastery/Hadley',
+      icon: '🌎',
+      evaluate: (data) => {
+        if (!data) return null;
+        const continents = data.continents || data;
+        const done = Object.values(continents).filter(v => v === true || (v && v.completed)).length;
+        if (done === 0) return null;
+        return {
+          benchmarkKey: 'world:17', // "Name and locate all 7 continents"
+          note: `${done}/7 continents studied in States App`,
+          autoCheck: done >= 7
+        };
+      }
+    },
+    {
+      source: 'Spelling App (reading)',
+      fbPath: 'spelling/Hadley',
+      icon: '✏️',
+      evaluate: (data) => {
+        if (!data) return null;
+        const correct = Array.isArray(data.correct) ? data.correct : Object.values(data.correct || {});
+        const count = correct.length;
+        if (count === 0) return null;
+        return {
+          benchmarkKey: 'reading:11', // "Read simple sentences without finger-pointing"
+          note: `${count} words decoded successfully in Spelling practice`,
+          autoCheck: count >= 30
+        };
+      }
+    }
+  ]
+};
+
+async function runAutoPull() {
+  const student = currentStudent;
+  if (!student) return;
+
+  const btn = document.getElementById('autopull-btn');
+  btn.disabled = true;
+  btn.textContent = 'Syncing…';
+
+  const resultsEl = document.getElementById('autopull-results');
+  resultsEl.innerHTML = '';
+  resultsEl.classList.remove('show');
+
+  const mappings = AUTO_PULL_MAP[student] || [];
+  const results = [];
+  const date = new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+
+  // Fetch all Firebase paths in parallel
+  const fetchPromises = mappings.map(mapping =>
+    db.ref(mapping.fbPath).once('value')
+      .then(snap => ({ mapping, data: snap.val() }))
+      .catch(() => ({ mapping, data: null }))
+  );
+
+  const fetched = await Promise.all(fetchPromises);
+  const pData = portfolioData[student];
+
+  fetched.forEach(({ mapping, data }) => {
+    const result = mapping.evaluate(data);
+    if (!result) {
+      results.push({ icon: mapping.icon, source: mapping.source, text: 'No data found yet', success: false });
+      return;
+    }
+
+    const { benchmarkKey, note, autoCheck } = result;
+
+    // Add auto evidence if not already present
+    if (!pData.evidence[benchmarkKey]) pData.evidence[benchmarkKey] = [];
+    const alreadyHasAuto = pData.evidence[benchmarkKey].some(e => e.type === 'auto' && e.source === mapping.source);
+
+    if (!alreadyHasAuto) {
+      pData.evidence[benchmarkKey].push({
+        type: 'auto',
+        source: mapping.source,
+        note,
+        date
+      });
+    } else {
+      // Update existing auto entry
+      const idx = pData.evidence[benchmarkKey].findIndex(e => e.type === 'auto' && e.source === mapping.source);
+      if (idx >= 0) {
+        pData.evidence[benchmarkKey][idx].note = note;
+        pData.evidence[benchmarkKey][idx].date = date;
+      }
+    }
+
+    // Auto-check the benchmark if threshold met
+    if (autoCheck && !pData.checked[benchmarkKey]) {
+      pData.checked[benchmarkKey] = true;
+      results.push({ icon: mapping.icon, source: mapping.source, text: `✓ Benchmark checked: ${note}`, success: true });
+    } else if (autoCheck && pData.checked[benchmarkKey]) {
+      results.push({ icon: mapping.icon, source: mapping.source, text: `Already complete: ${note}`, success: true });
+    } else {
+      results.push({ icon: mapping.icon, source: mapping.source, text: `Evidence added (not yet at threshold): ${note}`, success: false });
+    }
+  });
+
+  savePortfolioData(student);
+  renderBenchmarks(student);
+  renderPortfolioStats(student);
+  renderHomeProgress();
+
+  // Show results
+  resultsEl.innerHTML = results.map(r => `
+    <div class="ap-result-item ${r.success ? 'success' : ''}">
+      <span class="ap-icon">${r.icon}</span>
+      <div>
+        <div class="ap-text">${r.text}</div>
+        <div class="ap-source">Source: ${r.source}</div>
+      </div>
+    </div>
+  `).join('');
+  resultsEl.classList.add('show');
+
+  const newChecks = results.filter(r => r.success && r.text.startsWith('✓')).length;
+  showToast(newChecks > 0 ? `${newChecks} benchmark${newChecks>1?'s':''} auto-checked! ✓` : 'Sync complete — evidence updated');
+
+  btn.disabled = false;
+  btn.textContent = 'Sync Now';
+}
+
+// ─── Save ─────────────────────────────────────────────────────────────────────
+function savePortfolioData(student) {
+  const pData = portfolioData[student];
+  localStorage.setItem('portfolio_' + student, JSON.stringify(pData));
+
+  // Show saving indicator
+  const ind = document.getElementById('saving-indicator');
+  ind.classList.add('show');
+
+  // Firebase — but base64 images can be large; save evidence separately
+  // Store checked + customs quickly, then evidence
+  const toSave = {
+    checked: pData.checked || {},
+    customs: pData.customs || {}
+  };
+
+  // Only save evidence if small enough (Firebase limit ~10MB total)
+  // We'll save evidence with photos stripped to keys for the check
+  // Full evidence stored in localStorage only (photos can be large)
+  // Checked state always synced to Firebase
+  db.ref('portfolio/' + student + '/checked').set(pData.checked || {}).catch(() => {});
+  db.ref('portfolio/' + student + '/customs').set(pData.customs || {}).catch(() => {});
+
+  // Save evidence notes (without photo data to Firebase, photos stay in localStorage)
+  const evidenceForFirebase = {};
+  Object.entries(pData.evidence || {}).forEach(([k, arr]) => {
+    if (!Array.isArray(arr)) return;
+    evidenceForFirebase[k] = arr.map(ev => ({
+      type: ev.type,
+      note: ev.note || '',
+      date: ev.date || '',
+      hasPhoto: !!(ev.data)
+      // data intentionally omitted from Firebase — stored in localStorage only
+    }));
+  });
+  db.ref('portfolio/' + student + '/evidenceMeta').set(evidenceForFirebase).catch(() => {});
+
+  setTimeout(() => ind.classList.remove('show'), 1200);
+}
+
+// ─── Dashboard ────────────────────────────────────────────────────────────────
+function openDashboard() {
+  const grid = document.getElementById('dashboard-grid');
+  grid.innerHTML = '';
+
+  ['ryder', 'hadley'].forEach(student => {
+    const bm = BENCHMARKS[student];
+    const pData = portfolioData[student] || { checked: {}, evidence: {} };
+
+    let cardHtml = `
+      <div class="dash-card">
+        <h3>${bm.name} ${bm.emoji}</h3>
+        <p class="grade-label">Grade ${bm.grade}</p>
+    `;
+
+    let overallDone = 0, overallTotal = 0;
+
+    bm.subjects.forEach(sub => {
+      let subDone = 0;
+      sub.items.forEach((_, i) => {
+        overallTotal++;
+        if (pData.checked[sub.id + ':' + i]) { subDone++; overallDone++; }
+      });
+      const pct = sub.items.length ? Math.round(subDone/sub.items.length*100) : 0;
+      cardHtml += `
+        <div class="subject-bar-row">
+          <span class="label">${sub.icon} ${sub.label}</span>
+          <div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div>
+          <span class="pct">${subDone}/${sub.items.length}</span>
+        </div>
+      `;
+    });
+
+    const overallPct = overallTotal ? Math.round(overallDone/overallTotal*100) : 0;
+    cardHtml += `
+        <div class="overall-circle">
+          <span class="big">${overallPct}%</span>
+          <span class="small">OVERALL</span>
+        </div>
+        <p style="text-align:center;margin-top:12px;">
+          <button onclick="openPortfolio('${student}')" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:7px 16px;border-radius:6px;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.25);color:var(--gold);cursor:pointer;">View Portfolio →</button>
+        </p>
+      </div>
+    `;
+
+    grid.innerHTML += cardHtml;
+  });
+
+  showScreen('dashboard-screen');
+}
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ─── Start ────────────────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
