@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hadley's Daily Worksheet</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Caveat:wght@400;600&family=Crimson+Pro:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Caveat:wght@400;600;700&family=Patrick+Hand&family=Crimson+Pro:ital@0;1&display=swap" rel="stylesheet">
 <style>
 /* ══════════════════════════
    GENERATOR SCREEN (on-screen)
@@ -298,23 +298,41 @@ body {
 
 /* Spelling section */
 .spelling-word-row {
-  display: flex; align-items: center; gap: 16px;
-  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 14px;
 }
 
 .spelling-word {
-  font-size: 16px; font-weight: 700; color: #1a2a1a;
-  min-width: 80px; font-family: 'Caveat', cursive; font-size: 20px;
+  min-width: 90px; font-family: 'Patrick Hand', cursive;
+  font-size: 22px; color: #1a2a1a; font-weight: 400;
 }
 
 .trace-boxes {
-  display: flex; gap: 3px;
+  display: flex; gap: 2px;
 }
 
 .trace-box {
-  width: 28px; height: 28px; border: 1.5px solid #aaa;
-  border-radius: 3px; display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-family: 'Caveat', cursive; color: #ccc;
+  width: 36px; height: 40px;
+  border: 1.5px solid #ccc;
+  border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  font-family: 'Patrick Hand', cursive;
+  font-weight: 400;
+  /* Hollow/dotted trace effect */
+  color: transparent;
+  -webkit-text-stroke: 1.5px #c8c8c8;
+  text-stroke: 1.5px #c8c8c8;
+  letter-spacing: 0;
+  line-height: 1;
+  position: relative;
+}
+
+/* Dotted baseline in trace box */
+.trace-box::after {
+  content: '';
+  position: absolute; bottom: 6px; left: 4px; right: 4px;
+  height: 1px; background: #e0e0e0; border-bottom: 1px dashed #ddd;
 }
 
 .write-line {
@@ -795,9 +813,13 @@ function renderWorksheet({ date, theme, sections, mathProblems, spellingWords, a
         html += `<div class="trace-box">${l}</div>`;
       });
       html += `</div>
-        <div style="flex:1;display:flex;flex-direction:column;gap:8px;margin-left:8px;">
-          <div class="answer-line"></div>
-          <div class="answer-line"></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:10px;margin-left:10px;">
+          <div style="border-bottom:1.5px solid #aaa;height:32px;position:relative;">
+            <div style="position:absolute;bottom:8px;left:0;right:0;border-bottom:1px dashed #e0e0e0;"></div>
+          </div>
+          <div style="border-bottom:1.5px solid #aaa;height:32px;position:relative;">
+            <div style="position:absolute;bottom:8px;left:0;right:0;border-bottom:1px dashed #e0e0e0;"></div>
+          </div>
         </div>
       </div>`;
     });
