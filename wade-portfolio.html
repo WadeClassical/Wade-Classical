@@ -7,50 +7,72 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --navy: #0f1e35;
-    --navy-mid: #162840;
-    --navy-light: #1e3a54;
-    --cream: #f5f0e8;
-    --cream-dark: #e8e0d0;
-    --gold: #c9a84c;
-    --gold-light: #e0c070;
-    --gold-pale: #f0e0b0;
-    --sage: #7a9e8a;
-    --rust: #c06040;
-    --muted: #8a9eb8;
-    --paper: #faf7f2;
+    /* ── Pressed Botanicals Palette ── */
+    --bg:          #2a2e1e;       /* deep forest floor */
+    --bg-mid:      #323826;       /* slightly lifted moss */
+    --bg-light:    #3d4530;       /* card surface */
+    --ink:         #1a1e12;       /* deepest ink */
+    --cream:       #f0e8d5;       /* aged parchment */
+    --cream-dark:  #ddd3bc;       /* slightly darker parchment */
+    --gold:        #b8963c;       /* dried herb gold */
+    --gold-light:  #d4b060;       /* warm amber */
+    --gold-pale:   #ece0b8;       /* pale straw */
+    --sage:        #6a9070;       /* pressed leaf sage */
+    --sage-light:  #8aaa88;       /* lighter sage */
+    --rust:        #a05030;       /* dried rose */
+    --muted:       #8a8e72;       /* faded ink */
+    --border:      rgba(184,150,60,0.2);
+    --card-bg:     rgba(255,248,235,0.05);
+    --card-hover:  rgba(255,248,235,0.09);
+
+    /* keep these aliases for legacy references */
+    --navy:        var(--bg);
+    --navy-mid:    var(--bg-mid);
+    --navy-light:  var(--bg-light);
+    --paper:       var(--cream);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    background: var(--navy);
+    background: var(--bg);
     color: var(--cream);
     font-family: 'Crimson Pro', Georgia, serif;
     min-height: 100vh;
     overflow-x: hidden;
   }
 
-  /* ── Background texture ── */
+  /* ── Background texture — aged paper grain + botanical hint ── */
   body::before {
     content: '';
     position: fixed; inset: 0;
     background:
-      radial-gradient(ellipse at 20% 20%, rgba(201,168,76,0.06) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 80%, rgba(122,158,138,0.05) 0%, transparent 50%),
-      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      radial-gradient(ellipse at 15% 10%, rgba(106,144,112,0.12) 0%, transparent 45%),
+      radial-gradient(ellipse at 85% 85%, rgba(184,150,60,0.09) 0%, transparent 45%),
+      radial-gradient(ellipse at 60% 40%, rgba(160,80,48,0.05) 0%, transparent 40%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
     pointer-events: none;
     z-index: 0;
+  }
+
+  /* ── Botanical corner decoration ── */
+  body::after {
+    content: '';
+    position: fixed; top: 0; right: 0;
+    width: 320px; height: 320px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%236a9070' stroke-width='0.8' opacity='0.18'%3E%3Cellipse cx='160' cy='40' rx='30' ry='14' transform='rotate(-40,160,40)'/%3E%3Cellipse cx='140' cy='70' rx='28' ry='12' transform='rotate(-55,140,70)'/%3E%3Cellipse cx='170' cy='80' rx='22' ry='10' transform='rotate(-25,170,80)'/%3E%3Cellipse cx='125' cy='95' rx='26' ry='11' transform='rotate(-65,125,95)'/%3E%3Cellipse cx='155' cy='110' rx='20' ry='9' transform='rotate(-35,155,110)'/%3E%3Cellipse cx='180' cy='50' rx='18' ry='8' transform='rotate(-15,180,50)'/%3E%3Cpath d='M190,10 Q160,50 130,100' stroke-width='1.2'/%3E%3Cpath d='M175,5 Q155,45 135,85' stroke-width='0.8'/%3E%3Cellipse cx='110' cy='120' rx='24' ry='10' transform='rotate(-70,110,120)'/%3E%3Cellipse cx='145' cy='135' rx='18' ry='8' transform='rotate(-45,145,135)'/%3E%3C/g%3E%3C/svg%3E") no-repeat top right;
+    background-size: contain;
+    pointer-events: none; z-index: 0; opacity: 0.7;
   }
 
   /* ── Header ── */
   .header {
     position: relative; z-index: 10;
-    border-bottom: 1px solid rgba(201,168,76,0.2);
+    border-bottom: 1px solid rgba(184,150,60,0.2);
     padding: 20px 40px;
     display: flex; align-items: center; justify-content: space-between;
-    background: rgba(15,30,53,0.8);
-    backdrop-filter: blur(10px);
+    background: rgba(26,30,18,0.85);
+    backdrop-filter: blur(12px);
   }
 
   .header-brand {
@@ -60,7 +82,7 @@
   .header-brand .eyebrow {
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px; letter-spacing: 3px;
-    color: var(--gold); text-transform: uppercase;
+    color: var(--sage-light); text-transform: uppercase;
     margin-bottom: 2px;
   }
 
@@ -74,8 +96,8 @@
   .header-year {
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px; color: var(--muted);
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,248,235,0.06);
+    border: 1px solid rgba(184,150,60,0.18);
     padding: 6px 14px; border-radius: 20px;
   }
 
@@ -115,8 +137,8 @@
   }
 
   .student-card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(201,168,76,0.15);
+    background: var(--card-bg);
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 32px;
     cursor: pointer;
@@ -127,16 +149,16 @@
   .student-card::before {
     content: '';
     position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    background: linear-gradient(90deg, transparent, var(--sage), transparent);
     opacity: 0;
     transition: opacity 0.25s;
   }
 
   .student-card:hover {
-    background: rgba(255,255,255,0.07);
-    border-color: rgba(201,168,76,0.35);
+    background: var(--card-hover);
+    border-color: rgba(184,150,60,0.4);
     transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
   }
 
   .student-card:hover::before { opacity: 1; }
@@ -167,7 +189,7 @@
 
   .progress-bar-bg {
     flex: 1; height: 5px;
-    background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden;
+    background: rgba(255,248,235,0.1); border-radius: 3px; overflow: hidden;
   }
 
   .progress-bar-fill {
@@ -241,8 +263,8 @@
 
   .stat-box {
     text-align: center;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,248,235,0.05);
+    border: 1px solid rgba(255,248,235,0.09);
     border-radius: 10px; padding: 14px 20px;
     min-width: 80px;
   }
@@ -261,8 +283,8 @@
   /* Subject sections */
   .subject-section {
     margin-bottom: 28px;
-    background: rgba(255,255,255,0.025);
-    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,248,235,0.03);
+    border: 1px solid rgba(255,248,235,0.07);
     border-radius: 12px; overflow: hidden;
   }
 
@@ -289,7 +311,7 @@
 
   .subject-mini-bar {
     width: 100px; height: 4px;
-    background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden;
+    background: rgba(255,248,235,0.1); border-radius: 2px; overflow: hidden;
   }
 
   .subject-mini-fill {
@@ -319,13 +341,13 @@
   .benchmark-item {
     display: flex; align-items: flex-start; gap: 14px;
     padding: 14px 24px;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,248,235,0.05);
     transition: background 0.15s;
     position: relative;
   }
 
   .benchmark-item:last-child { border-bottom: none; }
-  .benchmark-item:hover { background: rgba(255,255,255,0.025); }
+  .benchmark-item:hover { background: rgba(255,248,235,0.035); }
 
   .benchmark-check {
     width: 20px; height: 20px; flex-shrink: 0;
@@ -405,15 +427,15 @@
   }
 
   .add-benchmark-input {
-    flex: 1; background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
+    flex: 1; background: rgba(255,248,235,0.05);
+    border: 1px solid rgba(255,248,235,0.1);
     border-radius: 6px; padding: 8px 12px;
     color: var(--cream); font-family: 'Crimson Pro', serif; font-size: 14px;
     outline: none; transition: border-color 0.2s;
   }
 
   .add-benchmark-input:focus {
-    border-color: rgba(201,168,76,0.4);
+    border-color: rgba(184,150,60,0.4);
   }
 
   .add-benchmark-input::placeholder { color: var(--muted); }
@@ -441,11 +463,11 @@
   .modal-overlay.open { display: flex; }
 
   .modal {
-    background: var(--navy-mid);
-    border: 1px solid rgba(201,168,76,0.2);
+    background: var(--bg-mid);
+    border: 1px solid rgba(184,150,60,0.2);
     border-radius: 16px; width: 90%; max-width: 520px;
     padding: 32px; position: relative;
-    box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+    box-shadow: 0 40px 80px rgba(0,0,0,0.4);
     animation: modalIn 0.2s ease;
   }
 
@@ -523,14 +545,14 @@
 
   /* Note textarea */
   .note-textarea {
-    width: 100%; background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
+    width: 100%; background: rgba(255,248,235,0.05);
+    border: 1px solid rgba(255,248,235,0.12);
     border-radius: 8px; padding: 12px 14px;
     color: var(--cream); font-family: 'Crimson Pro', serif; font-size: 15px;
     resize: vertical; min-height: 100px; outline: none;
     transition: border-color 0.2s;
   }
-  .note-textarea:focus { border-color: rgba(201,168,76,0.4); }
+  .note-textarea:focus { border-color: rgba(184,150,60,0.45); }
   .note-textarea::placeholder { color: var(--muted); }
 
   .modal-actions {
@@ -598,8 +620,8 @@
   }
 
   .dash-card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,248,235,0.04);
+    border: 1px solid rgba(255,248,235,0.08);
     border-radius: 12px; padding: 24px;
   }
 
@@ -624,7 +646,7 @@
 
   .subject-bar-row .bar-bg {
     flex: 1; height: 6px;
-    background: rgba(255,255,255,0.07); border-radius: 3px; overflow: hidden;
+    background: rgba(255,248,235,0.08); border-radius: 3px; overflow: hidden;
   }
 
   .subject-bar-row .bar-fill {
@@ -642,21 +664,30 @@
     width: 80px; height: 80px;
     border-radius: 50%;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    border: 2px solid rgba(201,168,76,0.3);
-    background: rgba(201,168,76,0.07);
+    border: 2px solid rgba(184,150,60,0.3);
+    background: rgba(184,150,60,0.08);
   }
 
   .overall-circle .big { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--gold); }
   .overall-circle .small { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); }
 
-  /* Toast */
+  /* Saving indicator */
+  .saving-indicator {
+    position: fixed; top: 20px; right: 20px; z-index: 200;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: var(--muted); background: rgba(42,46,30,0.92);
+    border: 1px solid rgba(255,248,235,0.1);
+    padding: 5px 12px; border-radius: 20px;
+    opacity: 0; transition: opacity 0.3s;
+    pointer-events: none;
+  }
   .toast {
     position: fixed; bottom: 30px; right: 30px; z-index: 200;
-    background: rgba(30,58,84,0.95);
-    border: 1px solid rgba(201,168,76,0.3);
+    background: rgba(42,46,30,0.97);
+    border: 1px solid rgba(184,150,60,0.3);
     border-radius: 10px; padding: 14px 20px;
     font-size: 14px; color: var(--cream);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
     transform: translateY(20px); opacity: 0;
     transition: all 0.3s ease;
     pointer-events: none;
@@ -776,11 +807,11 @@
   .lesson-modal-overlay.open { display: flex; }
 
   .lesson-modal {
-    background: var(--navy-mid);
-    border: 1px solid rgba(201,168,76,0.2);
+    background: var(--bg-mid);
+    border: 1px solid rgba(184,150,60,0.2);
     border-radius: 16px; width: 100%; max-width: 680px;
     padding: 36px; position: relative;
-    box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    box-shadow: 0 40px 80px rgba(0,0,0,0.5);
     animation: modalIn 0.2s ease;
     margin: auto;
   }
