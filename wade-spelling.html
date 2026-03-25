@@ -1932,34 +1932,66 @@ function renderMomMastery() {
             </div>
             <div style="font-size:0.42em; color:#555; letter-spacing:0.12em;">ALL PLAYERS · READ ONLY</div>
         </div>
+        <div style="font-size:0.42em; color:var(--cyan); text-align:center; margin-bottom:16px; letter-spacing:0.1em;">⟳ Loading from cloud...</div>
     `;
 
-    players.forEach(player => {
-        // Load from localStorage first (instant), fall back to Firebase
-        const localSaved = localStorage.getItem('wc_spelling_' + player.key);
-        let data = localSaved ? JSON.parse(localSaved) : { correct: [], wrong: [], untried: [] };
+    const toArr = v => v ? Object.values(v).filter(x => typeof x === 'string') : [];
 
-        // Fill in any missing words
-        const allWords = WORD_LISTS[player.key] || [];
-        const known = [...(data.correct||[]), ...(data.wrong||[]), ...(data.untried||[])];
-        allWords.forEach(w => { if (!known.includes(w)) { data.untried = data.untried || []; data.untried.push(w); } });
+    // Fetch all players from Firebase in parallel
+    const fetches = players.map(player =>
+        db.ref('spelling/' + player.key).once('value')
+            .then(snap => ({ player, fbData: snap.val() }))
+            .catch(() => ({ player, fbData: null }))
+    );
 
-        const total = (data.correct||[]).length + (data.wrong||[]).length + (data.untried||[]).length;
-        const pct = total ? Math.round(((data.correct||[]).length / total) * 100) : 0;
-
-        const playerBlock = document.createElement('div');
-        playerBlock.style.cssText = 'margin-bottom:36px; background:#050510; border:2px solid #1a1a3a; border-radius:4px; padding:20px;';
-
-        playerBlock.innerHTML = `
-            <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px; border-bottom:1px solid #1a1a3a; padding-bottom:12px;">
-                <span style="font-size:1.4em;">${player.icon}</span>
-                <span style="font-size:0.65em; color:var(--yellow); letter-spacing:0.15em;">${player.label}</span>
-                <span style="font-size:0.45em; color:var(--cyan); margin-left:auto;">${pct}% MASTERED</span>
-            </div>
-            <div style="background:#0a0a1a; border-radius:3px; height:6px; margin-bottom:16px; overflow:hidden;">
-                <div style="height:100%; width:${pct}%; background:var(--neon-green); box-shadow:0 0 8px var(--neon-green);"></div>
+    Promise.all(fetches).then(results => {
+        c.innerHTML = `
+            <div style="text-align:center; padding:20px 0 24px;">
+                <div style="font-size:0.7em; color:var(--yellow); text-shadow:0 0 10px var(--yellow); margin-bottom:6px; letter-spacing:0.1em;">
+                    🦋 MOM'S MASTERY VIEW
+                </div>
+                <div style="font-size:0.42em; color:#555; letter-spacing:0.12em;">ALL PLAYERS · READ ONLY</div>
             </div>
         `;
+
+        results.forEach(({ player, fbData }) => {
+            // Build data: merge Firebase (source of truth) with localStorage fallback
+            let data;
+            if (fbData && (fbData.correct || fbData.wrong || fbData.untried)) {
+                data = {
+                    correct: toArr(fbData.correct),
+                    wrong:   toArr(fbData.wrong),
+                    untried: toArr(fbData.untried)
+                };
+                // Also update localStorage so it's cached for next time
+                localStorage.setItem('wc_spelling_' + player.key, JSON.stringify(data));
+            } else {
+                // Fall back to localStorage if Firebase has nothing
+                const localSaved = localStorage.getItem('wc_spelling_' + player.key);
+                data = localSaved ? JSON.parse(localSaved) : { correct: [], wrong: [], untried: [] };
+            }
+
+            // Fill in any missing words from word list
+            const allWords = WORD_LISTS[player.key] || [];
+            const known = [...(data.correct||[]), ...(data.wrong||[]), ...(data.untried||[])];
+            allWords.forEach(w => { if (!known.includes(w)) { data.untried = data.untried || []; data.untried.push(w); } });
+
+            const total = (data.correct||[]).length + (data.wrong||[]).length + (data.untried||[]).length;
+            const pct = total ? Math.round(((data.correct||[]).length / total) * 100) : 0;
+
+            const playerBlock = document.createElement('div');
+            playerBlock.style.cssText = 'margin-bottom:36px; background:#050510; border:2px solid #1a1a3a; border-radius:4px; padding:20px;';
+
+            playerBlock.innerHTML = `
+                <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px; border-bottom:1px solid #1a1a3a; padding-bottom:12px;">
+                    <span style="font-size:1.4em;">${player.icon}</span>
+                    <span style="font-size:0.65em; color:var(--yellow); letter-spacing:0.15em;">${player.label}</span>
+                    <span style="font-size:0.45em; color:var(--cyan); margin-left:auto;">${pct}% MASTERED</span>
+                </div>
+                <div style="background:#0a0a1a; border-radius:3px; height:6px; margin-bottom:16px; overflow:hidden;">
+                    <div style="height:100%; width:${pct}%; background:var(--neon-green); box-shadow:0 0 8px var(--neon-green);"></div>
+                </div>
+            `;
 
         // Three word lists
         const sections = [
@@ -1997,14 +2029,16 @@ function renderMomMastery() {
             playerBlock.appendChild(sec);
         });
 
-        c.appendChild(playerBlock);
-    }); // end players.forEach
+            c.appendChild(playerBlock);
+        }); // end results.forEach
 
-    // Back button
-    const backRow = document.createElement('div');
-    backRow.style.cssText = 'text-align:center; padding:10px 0 30px;';
-    backRow.innerHTML = '<button class="action-btn secondary" onclick="goHome()">◀ BACK</button>';
-    c.appendChild(backRow);
+        // Back button
+        const backRow = document.createElement('div');
+        backRow.style.cssText = 'text-align:center; padding:10px 0 30px;';
+        backRow.innerHTML = '<button class="action-btn secondary" onclick="goHome()">◀ BACK</button>';
+        c.appendChild(backRow);
+
+    }); // end Promise.all
 }
 
 function renderMasteryScreen() {
