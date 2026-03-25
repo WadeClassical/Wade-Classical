@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The American Story — Wade Classical</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=IM+Fell+English:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #1c1610;
+  --bg-mid:   #241e14;
+  --bg-card:  #2c2518;
+  --parch:    #f2e8d0;
+  --parch-dk: #ddd0b0;
+  --ink:      #1a140a;
+  --burgundy: #7a2020;
+  --colonial: #2a4060;
+  --amber:    #c8902a;
+  --amber-lt: #e0b050;
+  --sage:     #5a7a50;
+  --muted:    #8a7a60;
+  --rust:     #9a4020;
+  --border:   rgba(200,144,42,0.2);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--parch);
+  font-family: 'IM Fell English', Georgia, serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Aged paper texture ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse at 20% 15%, rgba(200,144,42,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 85%, rgba(122,32,32,0.07) 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+}
+
+/* ── Eagle watermark ── */
+body::after {
+  content: '';
+  position: fixed; bottom: 0; right: 0;
+  width: 380px; height: 380px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23c8902a' stroke-width='0.6' opacity='0.1'%3E%3Cellipse cx='100' cy='100' rx='80' ry='80'/%3E%3Cellipse cx='100' cy='100' rx='70' ry='70'/%3E%3Cpath d='M100,30 L115,75 L160,75 L125,100 L140,145 L100,120 L60,145 L75,100 L40,75 L85,75 Z'/%3E%3Cpath d='M100,20 Q120,50 100,80 Q80,50 100,20Z'/%3E%3Cpath d='M100,80 Q130,90 140,110 Q120,105 100,115 Q80,105 60,110 Q70,90 100,80Z'/%3E%3C/g%3E%3C/svg%3E") no-repeat center;
+  background-size: contain;
+  pointer-events: none; z-index: 0; opacity: 0.6;
+}
+
+/* ── Screens ── */
+.screen { display: none; position: relative; z-index: 1; min-height: 100vh; }
+.screen.active { display: block; }
+
+/* ══════════════════════════════════
+   PLAYER SELECT
+══════════════════════════════════ */
+#player-screen {
+  min-height: 100vh;
+  align-items: center; justify-content: center;
+  padding: 40px 20px;
+}
+#player-screen.active {
+  display: flex; flex-direction: column;
+}
+
+.player-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--amber); text-align: center; margin-bottom: 10px;
+}
+
+.player-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(26px, 4vw, 44px); font-weight: 900;
+  color: var(--parch); text-align: center; margin-bottom: 6px;
+  line-height: 1.2;
+}
+
+.player-subtitle {
+  font-family: 'IM Fell English', serif;
+  font-size: 15px; font-style: italic;
+  color: var(--muted); text-align: center; margin-bottom: 48px;
+}
+
+.player-cards {
+  display: flex; gap: 20px; flex-wrap: wrap;
+  justify-content: center; max-width: 700px;
+}
+
+.player-card {
+  background: rgba(255,240,200,0.04);
+  border: 1px solid var(--border);
+  border-radius: 6px; padding: 32px 28px;
+  cursor: pointer; transition: all 0.25s ease;
+  text-align: center; min-width: 160px; flex: 1; max-width: 200px;
+  position: relative; overflow: hidden;
+}
+.player-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--player-color, var(--amber)); opacity: 0; transition: opacity 0.25s;
+}
+.player-card:hover {
+  background: rgba(255,240,200,0.08);
+  border-color: rgba(200,144,42,0.4);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+}
+.player-card:hover::before { opacity: 1; }
+.player-emoji { font-size: 44px; margin-bottom: 12px; display: block; }
+.player-name { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; color: var(--parch); margin-bottom: 4px; }
+.player-role { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+.player-stats { margin-top: 12px; font-size: 12px; color: var(--amber); font-family: 'JetBrains Mono', monospace; }
+
+/* ══════════════════════════════════
+   HOME / TIMELINE
+══════════════════════════════════ */
+#home-screen { padding: 0; }
+
+.home-header {
+  text-align: center; padding: 56px 40px 36px;
+  position: relative;
+}
+
+.home-header::after {
+  content: '';
+  display: block; width: 260px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--amber), transparent);
+  margin: 20px auto 0;
+}
+
+.home-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--amber); margin-bottom: 10px;
+}
+
+.home-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(28px, 5vw, 52px); font-weight: 900;
+  color: var(--parch); line-height: 1.15;
+  text-shadow: 0 2px 20px rgba(200,144,42,0.15);
+}
+
+.home-title span { color: var(--amber); }
+
+.home-subtitle {
+  font-size: 16px; font-style: italic;
+  color: var(--muted); margin-top: 8px;
+}
+
+.switch-btn {
+  margin-top: 16px;
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 2px; text-transform: uppercase;
+  background: none; border: 1px solid rgba(200,144,42,0.2);
+  color: var(--muted); padding: 6px 14px; border-radius: 20px;
+  cursor: pointer; transition: all 0.2s;
+}
+.switch-btn:hover { color: var(--amber); border-color: rgba(200,144,42,0.5); }
+
+/* Scholar bar */
+.scholar-bar {
+  display: flex; align-items: center; justify-content: center;
+  gap: 24px; padding: 14px 40px; flex-wrap: wrap;
+  background: rgba(0,0,0,0.2);
+  border-top: 1px solid rgba(200,144,42,0.1);
+  border-bottom: 1px solid rgba(200,144,42,0.1);
+  margin-bottom: 50px;
+}
+
+.scholar-name {
+  font-family: 'Cinzel', serif; font-size: 14px; color: var(--amber);
+}
+
+.scholar-stat {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted);
+}
+.scholar-stat span { color: var(--parch); }
+
+/* Timeline */
+.timeline-container {
+  padding: 0 40px 80px; max-width: 1100px; margin: 0 auto; position: relative;
+}
+
+.timeline-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--muted); text-align: center; margin-bottom: 40px;
+}
+
+.timeline-spine {
+  position: relative; display: flex; flex-direction: column;
+}
+
+.timeline-spine::before {
+  content: '';
+  position: absolute; left: 50%; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(200,144,42,0.3) 5%, rgba(200,144,42,0.3) 95%, transparent);
+  transform: translateX(-50%);
+}
+
+.era-node {
+  display: flex; align-items: center; margin-bottom: 56px;
+  position: relative; cursor: pointer;
+}
+.era-node:nth-child(odd) { flex-direction: row; }
+.era-node:nth-child(even) { flex-direction: row-reverse; }
+
+.era-card {
+  width: calc(50% - 60px);
+  background: rgba(255,240,200,0.04);
+  border: 1px solid rgba(200,144,42,0.12);
+  border-radius: 4px; padding: 22px 26px;
+  position: relative; transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+.era-node:nth-child(odd) .era-card { margin-right: auto; }
+.era-node:nth-child(even) .era-card { margin-left: auto; }
+
+.era-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  border-radius: 4px 4px 0 0;
+  background: var(--era-color, var(--amber)); opacity: 0.5;
+}
+
+.era-card:hover {
+  background: rgba(255,240,200,0.07);
+  border-color: rgba(200,144,42,0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+}
+.era-card:hover::before { opacity: 1; }
+
+.era-period {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--era-color, var(--amber)); margin-bottom: 6px;
+}
+
+.era-name {
+  font-family: 'Cinzel', serif; font-size: 20px; font-weight: 700;
+  color: var(--parch); margin-bottom: 5px;
+}
+
+.era-tagline {
+  font-size: 13px; color: var(--muted); font-style: italic;
+  margin-bottom: 12px; line-height: 1.4;
+}
+
+.era-status {
+  display: flex; align-items: center; gap: 8px;
+}
+
+.status-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.status-dot.mastered { background: var(--amber); border-color: var(--amber); }
+.status-dot.in-progress { background: rgba(200,144,42,0.4); border-color: var(--amber); }
+
+.status-text {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted);
+}
+
+.mastery-stars { color: var(--amber); font-size: 11px; margin-left: auto; }
+
+.node-marker {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  width: 42px; height: 42px; border-radius: 50%;
+  background: var(--bg-mid); border: 2px solid rgba(200,144,42,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; z-index: 2; transition: all 0.3s;
+}
+.era-node:hover .node-marker {
+  border-color: var(--amber);
+  box-shadow: 0 0 20px rgba(200,144,42,0.25);
+}
+
+.era-date-side {
+  width: calc(50% - 60px); text-align: center; padding: 0 20px;
+}
+.era-node:nth-child(odd) .era-date-side { text-align: left; padding-left: 28px; }
+.era-node:nth-child(even) .era-date-side { text-align: right; padding-right: 28px; }
+
+.era-date-big {
+  font-family: 'Cinzel', serif; font-size: 26px; font-weight: 700;
+  color: rgba(200,144,42,0.2); line-height: 1;
+}
+.era-date-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  color: rgba(200,144,42,0.18); letter-spacing: 2px; text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* ══════════════════════════════════
+   ERA SCREEN
+══════════════════════════════════ */
+#era-screen { padding: 0; }
+
+.era-screen-header {
+  padding: 48px 50px 34px; border-bottom: 1px solid rgba(200,144,42,0.1);
+  position: relative; overflow: hidden; min-height: 190px;
+  transition: background 0.6s ease;
+}
+
+.era-screen-header .atmo-bg {
+  position: absolute; inset: 0; z-index: 0;
+}
+
+.era-screen-header .atmo-decor {
+  position: absolute; right: 0; top: 0; bottom: 0;
+  width: 44%; z-index: 0; opacity: 0.13; pointer-events: none;
+  display: flex; align-items: center; justify-content: flex-end;
+}
+
+.era-screen-header .atmo-decor svg { width: 100%; height: 100%; }
+.era-screen-header > *:not(.atmo-bg):not(.atmo-decor) { position: relative; z-index: 1; }
+
+/* Era atmospheric themes */
+.era-theme-native .atmo-bg { background: radial-gradient(ellipse at 20% 0%, rgba(139,90,43,0.3) 0%, transparent 55%), radial-gradient(ellipse at 80% 100%, rgba(80,120,60,0.2) 0%, transparent 55%), linear-gradient(135deg, #0d0800 0%, #120d04 100%); }
+.era-theme-colonies .atmo-bg { background: radial-gradient(ellipse at 15% 0%, rgba(42,64,96,0.35) 0%, transparent 55%), radial-gradient(ellipse at 85% 90%, rgba(160,80,30,0.2) 0%, transparent 55%), linear-gradient(135deg, #030810 0%, #080d18 100%); }
+.era-theme-revolution .atmo-bg { background: radial-gradient(ellipse at 25% 0%, rgba(42,64,96,0.4) 0%, transparent 55%), radial-gradient(ellipse at 80% 85%, rgba(180,30,30,0.2) 0%, transparent 55%), linear-gradient(135deg, #020510 0%, #07080f 100%); }
+.era-theme-founders .atmo-bg { background: radial-gradient(ellipse at 20% 0%, rgba(200,144,42,0.25) 0%, transparent 55%), radial-gradient(ellipse at 85% 90%, rgba(42,64,96,0.2) 0%, transparent 55%), linear-gradient(135deg, #0d0900 0%, #15120a 100%); }
+.era-theme-civilwar .atmo-bg { background: radial-gradient(ellipse at 10% 0%, rgba(80,60,40,0.4) 0%, transparent 55%), radial-gradient(ellipse at 90% 85%, rgba(60,20,20,0.35) 0%, transparent 55%), linear-gradient(135deg, #0a0604 0%, #120906 100%); }
+.era-theme-worldwars .atmo-bg { background: radial-gradient(ellipse at 15% 0%, rgba(40,50,60,0.4) 0%, transparent 55%), radial-gradient(ellipse at 85% 90%, rgba(80,60,30,0.25) 0%, transparent 55%), linear-gradient(135deg, #050608 0%, #0a0b0d 100%); }
+.era-theme-civilrights .atmo-bg { background: radial-gradient(ellipse at 20% 0%, rgba(180,100,20,0.3) 0%, transparent 55%), radial-gradient(ellipse at 85% 90%, rgba(80,40,20,0.25) 0%, transparent 55%), linear-gradient(135deg, #0d0700 0%, #150c04 100%); }
+
+.back-btn {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--muted); background: none; border: none;
+  cursor: pointer; padding: 0; margin-bottom: 22px;
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: color 0.2s;
+}
+.back-btn:hover { color: var(--amber); }
+
+.era-screen-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(30px, 5vw, 54px); font-weight: 900;
+  line-height: 1; text-shadow: 0 4px 30px rgba(0,0,0,0.6);
+}
+
+.era-screen-period {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  letter-spacing: 3px; text-transform: uppercase;
+  margin-top: 8px; opacity: 0.7;
+}
+
+.era-screen-tagline {
+  font-size: 15px; font-style: italic; color: var(--muted);
+  margin-top: 6px; max-width: 480px; line-height: 1.5;
+}
+
+/* Tabs */
+.era-tabs {
+  display: flex; padding: 0 50px;
+  border-bottom: 1px solid rgba(200,144,42,0.1);
+  background: rgba(0,0,0,0.25); backdrop-filter: blur(6px);
+  overflow-x: auto;
+}
+
+.era-tab {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  letter-spacing: 2px; text-transform: uppercase;
+  padding: 15px 22px; background: none; border: none;
+  color: var(--muted); cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s; margin-bottom: -1px; white-space: nowrap;
+}
+.era-tab:hover { color: var(--parch); }
+.era-tab.active { color: var(--amber); border-bottom-color: var(--amber); }
+
+/* Content */
+.era-content { max-width: 900px; margin: 0 auto; padding: 48px 50px 80px; }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+.content-section { margin-bottom: 44px; }
+
+.section-label {
+  font-family: 'Cinzel', serif; font-size: 11px;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--amber); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.section-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(200,144,42,0.3), transparent);
+}
+
+.content-body { font-size: 17px; line-height: 1.85; color: var(--parch-dk); }
+.content-body p { margin-bottom: 16px; }
+
+.fact-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(185px, 1fr)); gap: 12px;
+}
+
+.fact-card {
+  background: rgba(255,240,200,0.04);
+  border: 1px solid rgba(200,144,42,0.1);
+  border-radius: 4px; padding: 14px;
+}
+.fact-card .fact-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px;
+}
+.fact-card .fact-value { font-family: 'Cinzel', serif; font-size: 13px; color: var(--parch); }
+
+.figure-list { display: flex; flex-direction: column; gap: 14px; }
+
+.figure-card {
+  display: flex; gap: 16px;
+  background: rgba(255,240,200,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 4px; padding: 16px;
+}
+.figure-icon { font-size: 30px; flex-shrink: 0; width: 46px; text-align: center; }
+.figure-name { font-family: 'Cinzel', serif; font-size: 15px; color: var(--parch); margin-bottom: 3px; }
+.figure-role { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--amber); margin-bottom: 7px; }
+.figure-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+.achievement-list { list-style: none; }
+.achievement-list li {
+  padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 15px; color: var(--parch-dk);
+  display: flex; gap: 12px; align-items: flex-start; line-height: 1.5;
+}
+.achievement-list li::before { content: '◆'; color: var(--amber); font-size: 8px; margin-top: 5px; flex-shrink: 0; }
+
+/* Map */
+.map-wrap {
+  background: rgba(0,0,0,0.3); border: 1px solid rgba(200,144,42,0.12);
+  border-radius: 4px; overflow: hidden; margin-bottom: 20px;
+}
+.map-wrap img { width: 100%; display: block; background: #111; }
+.map-caption {
+  padding: 12px 16px; font-size: 13px; color: var(--muted);
+  font-style: italic; border-top: 1px solid rgba(255,255,255,0.05); line-height: 1.5;
+}
+
+/* Video */
+.video-card {
+  background: rgba(0,0,0,0.3); border: 1px solid rgba(200,144,42,0.12);
+  border-radius: 4px; overflow: hidden; margin-bottom: 20px;
+}
+.video-thumb-link { display: block; text-decoration: none; }
+.video-thumb-bg {
+  width: 100%; aspect-ratio: 16/9;
+  background: linear-gradient(135deg, #0d0800 0%, #1a1205 100%);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 14px; transition: background 0.2s;
+}
+.video-thumb-link:hover .video-thumb-bg { background: linear-gradient(135deg, #180c00 0%, #251800 100%); }
+.video-play-btn {
+  width: 68px; height: 68px; border-radius: 50%;
+  background: rgba(200,144,42,0.18); border: 2px solid rgba(200,144,42,0.5);
+  display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+}
+.video-thumb-link:hover .video-play-btn { background: rgba(200,144,42,0.32); transform: scale(1.08); }
+.video-play-btn svg { margin-left: 5px; }
+.video-thumb-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--amber); opacity: 0.8;
+}
+.video-meta { padding: 16px 18px; }
+.video-title { font-family: 'Cinzel', serif; font-size: 15px; color: var(--parch); margin-bottom: 5px; }
+.video-source { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--amber); margin-bottom: 8px; }
+.video-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.video-open-btn {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 12px;
+  font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 1px;
+  padding: 8px 18px; border-radius: 4px;
+  background: rgba(200,144,42,0.1); border: 1px solid rgba(200,144,42,0.3);
+  color: var(--amber); text-decoration: none; transition: all 0.2s;
+}
+.video-open-btn:hover { background: rgba(200,144,42,0.2); }
+.video-note {
+  margin-top: 14px; background: rgba(200,144,42,0.06);
+  border: 1px solid rgba(200,144,42,0.14); border-radius: 4px;
+  padding: 10px 14px; font-size: 13px; color: var(--muted); font-style: italic;
+}
+
+/* ══════════════════════════════════
+   EXAMINATION
+══════════════════════════════════ */
+#exam-screen { padding: 0; }
+
+.exam-header {
+  padding: 36px 50px 28px; border-bottom: 1px solid rgba(200,144,42,0.1);
+  background: rgba(0,0,0,0.22); display: flex; align-items: flex-start; justify-content: space-between;
+}
+.exam-header-left h2 { font-family: 'Cinzel', serif; font-size: 26px; font-weight: 700; margin-bottom: 4px; }
+.exam-header-left p { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+
+.exam-progress-ring { width: 58px; height: 58px; position: relative; }
+.exam-progress-ring svg { transform: rotate(-90deg); }
+.ring-bg { fill: none; stroke: rgba(255,255,255,0.05); stroke-width: 4; }
+.ring-fill { fill: none; stroke: var(--amber); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 157; stroke-dashoffset: 157; transition: stroke-dashoffset 0.5s ease; }
+.ring-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', serif; font-size: 13px; color: var(--amber); }
+
+.exam-body { max-width: 700px; margin: 0 auto; padding: 56px 50px; }
+
+.question-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.question-text { font-family: 'Cinzel', serif; font-size: clamp(17px, 3vw, 24px); font-weight: 600; color: var(--parch); line-height: 1.4; margin-bottom: 6px; }
+.question-hint { font-size: 13px; color: var(--muted); font-style: italic; margin-bottom: 30px; }
+
+.answer-options { display: flex; flex-direction: column; gap: 9px; margin-bottom: 28px; }
+.answer-option {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(255,240,200,0.03); border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 4px; padding: 14px 18px; cursor: pointer; transition: all 0.2s;
+  font-size: 15px; color: var(--parch-dk);
+}
+.answer-option:hover { border-color: rgba(200,144,42,0.3); background: rgba(200,144,42,0.05); color: var(--parch); }
+.answer-option.selected { border-color: var(--amber); background: rgba(200,144,42,0.1); color: var(--parch); }
+.answer-option.correct { border-color: #5a9e6a; background: rgba(90,158,106,0.1); }
+.answer-option.wrong { border-color: var(--burgundy); background: rgba(122,32,32,0.15); color: rgba(255,255,255,0.5); }
+.option-letter { font-family: 'Cinzel', serif; font-size: 12px; color: var(--amber); min-width: 20px; }
+
+.text-answer-wrap { margin-bottom: 28px; }
+.text-answer {
+  width: 100%; background: rgba(255,240,200,0.04);
+  border: 1px solid rgba(200,144,42,0.2); border-radius: 4px; padding: 14px 18px;
+  color: var(--parch); font-family: 'IM Fell English', serif; font-size: 17px;
+  outline: none; resize: none; transition: border-color 0.2s; min-height: 80px;
+}
+.text-answer:focus { border-color: rgba(200,144,42,0.5); }
+.text-answer::placeholder { color: var(--muted); font-style: italic; }
+.text-answer.correct { border-color: #5a9e6a; background: rgba(90,158,106,0.08); }
+.text-answer.wrong { border-color: var(--burgundy); }
+
+.answer-feedback { padding: 14px 18px; border-radius: 4px; margin-bottom: 22px; font-size: 15px; line-height: 1.6; display: none; }
+.answer-feedback.show { display: block; }
+.answer-feedback.correct-fb { background: rgba(90,158,106,0.1); border: 1px solid rgba(90,158,106,0.3); color: #8fd4a0; }
+.answer-feedback.wrong-fb { background: rgba(122,32,32,0.1); border: 1px solid rgba(122,32,32,0.3); color: #d4888a; }
+
+.exam-actions { display: flex; gap: 10px; }
+
+.btn-submit {
+  font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 2px;
+  padding: 12px 28px; border-radius: 4px;
+  background: rgba(200,144,42,0.14); border: 1px solid rgba(200,144,42,0.4);
+  color: var(--amber); cursor: pointer; transition: all 0.2s;
+}
+.btn-submit:hover { background: rgba(200,144,42,0.24); }
+.btn-submit:disabled { opacity: 0.4; cursor: default; }
+
+.btn-next {
+  font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 2px;
+  padding: 12px 28px; border-radius: 4px;
+  background: var(--amber); border: none;
+  color: var(--ink); cursor: pointer; transition: all 0.2s; display: none;
+}
+.btn-next:hover { background: var(--amber-lt); }
+.btn-next.show { display: block; }
+
+/* Results */
+.results-panel { text-align: center; padding: 56px 40px; }
+.results-score { font-family: 'Cinzel', serif; font-size: 72px; font-weight: 900; color: var(--amber); line-height: 1; text-shadow: 0 4px 30px rgba(200,144,42,0.3); }
+.results-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-top: 6px; margin-bottom: 28px; }
+.results-rank { font-family: 'Cinzel', serif; font-size: 22px; color: var(--parch); margin-bottom: 6px; }
+.results-desc { font-size: 15px; color: var(--muted); font-style: italic; }
+.mastery-notice { display: inline-flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--amber); background: rgba(200,144,42,0.1); border: 1px solid rgba(200,144,42,0.25); border-radius: 20px; padding: 5px 14px; margin-top: 14px; }
+.results-breakdown { max-width: 500px; margin: 36px auto; display: flex; flex-direction: column; gap: 8px; }
+.result-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 4px; font-size: 14px; text-align: left; }
+.result-item.r-correct { background: rgba(90,158,106,0.1); color: #8fd4a0; }
+.result-item.r-wrong { background: rgba(122,32,32,0.1); color: #d4888a; }
+.result-item .r-icon { font-size: 15px; flex-shrink: 0; }
+.result-item .r-q { flex: 1; }
+.result-item .r-ans { font-family: 'JetBrains Mono', monospace; font-size: 11px; opacity: 0.7; }
+.results-actions { display: flex; gap: 12px; justify-content: center; margin-top: 28px; }
+.btn-retry { font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 2px; padding: 11px 26px; border-radius: 4px; background: transparent; border: 1px solid rgba(200,144,42,0.3); color: var(--amber); cursor: pointer; transition: all 0.2s; }
+.btn-retry:hover { background: rgba(200,144,42,0.1); }
+.btn-continue { font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 2px; padding: 11px 26px; border-radius: 4px; background: var(--amber); border: none; color: var(--ink); cursor: pointer; transition: all 0.2s; }
+.btn-continue:hover { background: var(--amber-lt); }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 28px; right: 28px; z-index: 200;
+  background: rgba(28,22,16,0.96); border: 1px solid rgba(200,144,42,0.3);
+  border-radius: 4px; padding: 13px 18px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--parch);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  transform: translateY(20px); opacity: 0; transition: all 0.3s ease; pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* Animations */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.era-node { animation: fadeUp 0.5s ease both; }
+.era-node:nth-child(1) { animation-delay: 0.08s; }
+.era-node:nth-child(2) { animation-delay: 0.16s; }
+.era-node:nth-child(3) { animation-delay: 0.24s; }
+.era-node:nth-child(4) { animation-delay: 0.32s; }
+.era-node:nth-child(5) { animation-delay: 0.40s; }
+.era-node:nth-child(6) { animation-delay: 0.48s; }
+.era-node:nth-child(7) { animation-delay: 0.56s; }
+
+@media (max-width: 700px) {
+  .timeline-spine::before { left: 20px; }
+  .era-node, .era-node:nth-child(even) { flex-direction: column; align-items: flex-start; padding-left: 50px; }
+  .era-card, .era-node:nth-child(odd) .era-card, .era-node:nth-child(even) .era-card { width: 100%; margin: 0; }
+  .node-marker { left: 20px; top: 0; transform: none; }
+  .era-date-side { display: none; }
+  .era-content, .exam-body { padding: 28px 20px; }
+  .era-tabs { padding: 0 16px; }
+  .era-screen-header, .exam-header { padding: 28px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ PLAYER SELECT ══ -->
+<div id="player-screen" class="screen active">
+  <p class="player-eyebrow">Wade Classical</p>
+  <h1 class="player-title">The American Story</h1>
+  <p class="player-subtitle">From the First Nations to the Civil Rights Movement</p>
+  <div class="player-cards" id="player-cards"></div>
+</div>
+
+<!-- ══ HOME / TIMELINE ══ -->
+<div id="home-screen" class="screen">
+  <div class="home-header">
+    <p class="home-eyebrow" id="home-eyebrow">Wade Classical</p>
+    <h1 class="home-title">The <span>American</span> Story</h1>
+    <p class="home-subtitle">Seven eras that shaped a nation</p>
+    <button class="switch-btn" onclick="showScreen('player-screen')">⇄ Switch Scholar</button>
+  </div>
+
+  <div class="scholar-bar">
+    <span class="scholar-name" id="scholar-name">Scholar</span>
+    <span class="scholar-stat">Eras Mastered: <span id="eras-mastered">0</span>/7</span>
+    <span class="scholar-stat">Examinations Passed: <span id="exams-passed">0</span></span>
+    <span class="scholar-stat">Total Score: <span id="total-score">—</span></span>
+  </div>
+
+  <div class="timeline-container">
+    <p class="timeline-label">Seven chapters of the American story</p>
+    <div class="timeline-spine" id="timeline-spine"></div>
+  </div>
+</div>
+
+<!-- ══ ERA SCREEN ══ -->
+<div id="era-screen" class="screen">
+  <div class="era-screen-header" id="era-screen-header">
+    <button class="back-btn" onclick="showScreen('home-screen')">← Timeline</button>
+    <h1 class="era-screen-title" id="era-screen-title"></h1>
+    <p class="era-screen-period" id="era-screen-period"></p>
+    <p class="era-screen-tagline" id="era-screen-tagline"></p>
+  </div>
+
+  <div class="era-tabs">
+    <button class="era-tab active" onclick="switchEraTab('overview')">Overview</button>
+    <button class="era-tab" onclick="switchEraTab('people')">Key Figures</button>
+    <button class="era-tab" onclick="switchEraTab('achievements')">Legacy</button>
+    <button class="era-tab" onclick="switchEraTab('life')">Daily Life</button>
+    <button class="era-tab" onclick="switchEraTab('maps')">🗺 Maps</button>
+    <button class="era-tab" onclick="switchEraTab('video')">▶ Video</button>
+    <button class="era-tab" onclick="startExam()">⚔ Examination</button>
+  </div>
+
+  <div class="era-content">
+    <div class="tab-pane active" id="tab-overview"></div>
+    <div class="tab-pane" id="tab-people"></div>
+    <div class="tab-pane" id="tab-achievements"></div>
+    <div class="tab-pane" id="tab-life"></div>
+    <div class="tab-pane" id="tab-maps"></div>
+    <div class="tab-pane" id="tab-video"></div>
+  </div>
+</div>
+
+<!-- ══ EXAMINATION ══ -->
+<div id="exam-screen" class="screen">
+  <div class="exam-header">
+    <div class="exam-header-left">
+      <button class="back-btn" onclick="exitExam()" style="margin-bottom:10px">← Leave Examination</button>
+      <h2 id="exam-era-title"></h2>
+      <p>Scholar's Examination</p>
+    </div>
+    <div class="exam-progress-ring">
+      <svg width="58" height="58" viewBox="0 0 58 58">
+        <circle class="ring-bg" cx="29" cy="29" r="24"/>
+        <circle class="ring-fill" id="ring-fill" cx="29" cy="29" r="24"/>
+      </svg>
+      <div class="ring-text" id="ring-text">1/5</div>
+    </div>
+  </div>
+  <div class="exam-body" id="exam-body"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.js"></script>
+<script>
+// ─── Firebase ────────────────────────────────────────────────────────────────
+firebase.initializeApp({
+  apiKey: "AIzaSyBsjx3JKjCQOMuus07MSoj3o-Vu9eRW6zc",
+  databaseURL: "https://wade-classical-default-rtdb.firebaseio.com",
+  projectId: "wade-classical",
+  appId: "1:72309085457:web:3d8b5a07302248ded6a8b0"
+});
+const db = firebase.database();
+
+// ─── Era Data ─────────────────────────────────────────────────────────────────
+const ERAS = [
+  {
+    id: 'native',
+    name: 'Native Peoples',
+    emoji: '🪶',
+    color: '#8b5a2b',
+    period: 'Before 1492',
+    dateDisplay: 'Pre-1492',
+    tagline: 'Thousands of years of civilization before European contact',
+    cssTheme: 'era-theme-native',
+    overview: [
+      { label: 'Quick Facts', type: 'facts', items: [
+        { l: 'Time Period', v: 'Before 1492 AD' },
+        { l: 'Peoples', v: '500+ distinct nations' },
+        { l: 'Regions', v: 'All of North America' },
+        { l: 'Languages', v: '300+ spoken languages' },
+        { l: 'Population', v: 'Est. 5–15 million in N. America' },
+        { l: 'Legacy', v: 'Agriculture, democracy, medicine' }
+      ]},
+      { label: 'The Story', type: 'text', body: `Long before European ships crossed the Atlantic, North America was home to hundreds of distinct nations — each with its own language, government, spiritual life, and way of living on the land. These were not primitive societies waiting to be discovered. They were sophisticated civilizations that had been developing for tens of thousands of years.<br><br>In the Southwest, the Pueblo peoples built multi-story stone cities into cliffsides. On the Great Plains, nations like the Lakota followed vast bison herds with remarkable skill and knowledge. In the Pacific Northwest, nations built enormous cedar longhouses and created complex trade networks stretching thousands of miles. In the Eastern Woodlands, the Haudenosaunee (Iroquois Confederacy) created a sophisticated democratic government that would later influence the framers of the U.S. Constitution.<br><br>The Mississippi River Valley was home to the Mississippian culture, which built Cahokia — a city near present-day St. Louis that at its peak around 1100 AD was larger than London. These peoples farmed corn, beans, and squash (the "Three Sisters"), traded obsidian and copper across thousands of miles, and observed the stars with remarkable precision.` }
+    ],
+    people: [
+      { name: 'Hiawatha', role: 'Haudenosaunee Leader, c. 1450s', icon: '🪶', desc: 'Co-founder of the Haudenosaunee (Iroquois) Confederacy alongside the Great Peacemaker. Helped unite five warring nations into one of the most sophisticated democratic governments the world had seen — centuries before the United States.' },
+      { name: 'Pocahontas (Amonute)', role: 'Powhatan Diplomat, c. 1596–1617', icon: '🌿', desc: 'Daughter of Chief Powhatan, she served as a cultural bridge between the Powhatan Confederacy and the Jamestown settlers. Her real story is far more complex and tragic than the popular legend.' },
+      { name: 'Squanto (Tisquantum)', role: 'Patuxent Diplomat, c. 1585–1622', icon: '🌽', desc: 'Had survived kidnapping to Europe and back. Served as interpreter between the Wampanoag and Plymouth colonists, teaching them to plant corn. His knowledge saved the Plymouth colony from starvation.' },
+      { name: 'The Great Peacemaker', role: 'Haudenosaunee Prophet', icon: '☮️', desc: 'A spiritual leader whose vision of peace and law united the five Haudenosaunee nations. The Great Law of Peace he and Hiawatha established is considered one of the oldest living constitutional democracies.' }
+    ],
+    achievements: [
+      'Developed corn (maize) through selective breeding — one of humanity\'s greatest agricultural achievements',
+      'Built Cahokia, a city larger than contemporary London, c. 1100 AD',
+      'Created the Haudenosaunee Confederacy — a democratic government influencing the U.S. Constitution',
+      'Established vast trade networks stretching from the Gulf of Mexico to the Great Lakes',
+      'Developed sophisticated astronomy, medicine, and ecological knowledge',
+      'Built cliff dwellings and multi-story stone cities (Pueblo peoples)',
+      'Maintained oral histories, stories, and knowledge across thousands of generations',
+      'Cultivated the "Three Sisters" (corn, beans, squash) — the agricultural foundation of the Americas'
+    ],
+    life: { label: 'Daily Life in Native America', type: 'text', body: `Daily life varied enormously across hundreds of nations, but certain patterns appear throughout. Family and community were at the center of everything. Extended families lived and worked together, and decisions were often made by consensus rather than by a single ruler.<br><br>Food came from a combination of farming, hunting, fishing, and gathering — and Native peoples were extraordinarily skilled at reading and working with their specific environments. Coastal peoples became expert fishers and navigators. Plains peoples became expert hunters and horsemen (after horses arrived with Europeans). Southwestern peoples became master irrigators in the desert.<br><br>Spiritual life was woven into daily activity rather than separated into one day a week. The land, animals, plants, and sky were all understood as part of a living relationship that required respect and reciprocity. This was not primitive superstition — it was a sophisticated ecological philosophy that helped maintain environments for thousands of years.<br><br>Art, music, dance, and storytelling were not entertainment separate from "real" life — they were how knowledge, history, identity, and values were passed from one generation to the next. A skilled storyteller was among the most important people in a community.` }
+  },
+  {
+    id: 'colonies',
+    name: 'Exploration & Colonies',
+    emoji: '⚓',
+    color: '#2a4870',
+    period: '1492 – 1763',
+    dateDisplay: '1492',
+    tagline: 'European contact, conquest, and the thirteen colonies',
+    cssTheme: 'era-theme-colonies',
+    overview: [
+      { label: 'Quick Facts', type: 'facts', items: [
+        { l: 'Key Dates', v: '1492–1763' },
+        { l: 'First Contact', v: 'Columbus, 1492' },
+        { l: 'First Colony', v: 'Jamestown, 1607' },
+        { l: 'Plymouth', v: '1620 (Mayflower)' },
+        { l: 'Thirteen Colonies', v: 'Established by 1733' },
+        { l: 'Key Conflict', v: 'French & Indian War' }
+      ]},
+      { label: 'The Story', type: 'text', body: `In 1492, Christopher Columbus — sailing for Spain — landed in the Caribbean. He was not the first European to reach the Americas (Norse explorers had visited centuries earlier), but his voyage opened a permanent connection between the Old World and the New. What followed was the Columbian Exchange: crops, animals, diseases, and people moving between continents in ways that changed both worlds forever.<br><br>The Spanish established vast colonies in Central and South America and the American Southwest. The French built trading posts and forts along the Mississippi and Great Lakes. The English focused on the Eastern seaboard. Between 1607 (Jamestown) and 1733 (Georgia), they established thirteen colonies that developed distinct characters — Puritan New England, Quaker Pennsylvania, plantation Virginia, diverse New York.<br><br>The colonies were not blank slates. They were built on Native lands, often through conflict and treaty. And they were built largely by enslaved Africans, who were brought to the Americas against their will beginning in 1619. By 1750, there were more enslaved people in Virginia than free colonists.<br><br>Tension with Britain grew after the French and Indian War (1754–1763), when Britain tried to tax the colonies to pay for the war. The seeds of revolution were planted.` }
+    ],
+    people: [
+      { name: 'Christopher Columbus', role: 'Explorer, 1492', icon: '⚓', desc: 'Sailing for Spain, his 1492 voyage to the Caribbean permanently connected Europe and the Americas. He never reached the mainland and died believing he had found Asia. His voyages triggered the colonization of the Americas.' },
+      { name: 'John Smith', role: 'Jamestown Leader, 1607', icon: '🗡️', desc: 'Helped the Jamestown colony survive its desperate early years through his leadership and his relationship with the Powhatan Confederacy. His motto: "He who will not work shall not eat."' },
+      { name: 'William Bradford', role: 'Plymouth Governor, 1621', icon: '📜', desc: 'Led the Pilgrims aboard the Mayflower and governed Plymouth Colony for decades. His journal "Of Plymouth Plantation" is one of the earliest and most important accounts of colonial New England.' },
+      { name: 'Benjamin Franklin', role: 'Printer, Scientist, Diplomat', icon: '⚡', desc: 'Perhaps the most versatile American of his era. Founded a newspaper, library, and fire department; proved lightning was electricity; helped negotiate the alliance with France that won the Revolution.' }
+    ],
+    achievements: [
+      'Established thirteen colonies that became the United States of America',
+      'The Mayflower Compact (1620) — an early experiment in self-government',
+      'The Columbian Exchange introduced corn, potatoes, and tomatoes to Europe — transforming the global diet',
+      'Harvard College founded 1636 — America\'s first university',
+      'The Zenger Trial (1735) established the principle of freedom of the press',
+      'The Great Awakening religious revival united colonists across colony lines',
+      'Development of colonial assemblies — citizens governing themselves locally',
+      'The printing press spread ideas and news that would fuel revolutionary thought'
+    ],
+    life: { label: 'Daily Life in Colonial America', type: 'text', body: `Colonial life differed enormously depending on where you were, who you were, and when. A Puritan farmer in Massachusetts Bay Colony in 1650 lived almost nothing like a tobacco planter in Virginia in 1750.<br><br>For most colonists, life was agrarian — tied to the land and the seasons. Families were large and multi-generational. Children worked from an early age. Girls learned spinning, weaving, cooking, and child-rearing. Boys learned farming, trades, and animal husbandry. Formal schooling was inconsistent — New England had the most (Puritans believed everyone needed to read the Bible), the South had the least for poor whites and was illegal for enslaved people.<br><br>The colonial tavern was the center of public life — where news was shared, debates happened, and community gathered. Newspapers were read aloud because not everyone could read privately. Town meetings in New England gave ordinary men a voice in local government, a radical idea at the time.<br><br>For enslaved Africans — who made up a significant portion of the colonial population, especially in the South — daily life was labor, deprivation, and resistance. They maintained cultural traditions, formed communities, and found ways to preserve their dignity under brutal conditions. Their labor built colonial wealth.` }
+  },
+  {
+    id: 'revolution',
+    name: 'American Revolution',
+    emoji: '🔔',
+    color: '#2a4870',
+    period: '1763 – 1783',
+    dateDisplay: '1776',
+    tagline: 'No taxation without representation — the birth of a new nation',
+    cssTheme: 'era-theme-revolution',
+    overview: [
+      { label: 'Quick Facts', type: 'facts', items: [
+        { l: 'Period', v: '1763–1783' },
+        { l: 'Declaration', v: 'July 4, 1776' },
+        { l: 'Commander', v: 'George Washington' },
+        { l: 'Key Battle', v: 'Yorktown, 1781' },
+        { l: 'Ally', v: 'France (from 1778)' },
+        { l: 'Treaty', v: 'Paris, 1783' }
+      ]},
+      { label: 'The Story', type: 'text', body: `After the French and Indian War, Britain was deeply in debt and looked to the colonies to help pay. A series of tax acts — the Stamp Act, the Townshend Acts, the Tea Act — infuriated colonists who had no representation in the British Parliament. "No taxation without representation" became the rallying cry.<br><br>Tensions boiled over into violence. The Boston Massacre (1770), the Boston Tea Party (1773), and finally the battles at Lexington and Concord (April 1775) — "the shot heard round the world" — began open war. The Continental Congress, meeting in Philadelphia, appointed George Washington to command the Continental Army.<br><br>On July 4, 1776, Congress adopted the Declaration of Independence, written primarily by Thomas Jefferson. Its opening words — "We hold these truths to be self-evident, that all men are created equal" — announced a revolutionary idea to the world, even as the men who wrote it enslaved hundreds of people.<br><br>The war lasted eight years. Washington's army survived brutal winters at Valley Forge. The tide turned when France joined as an ally in 1778. The final major battle at Yorktown (1781), where Cornwallis surrendered, effectively ended the fighting. The Treaty of Paris (1783) recognized American independence.` }
+    ],
+    people: [
+      { name: 'George Washington', role: 'Commander-in-Chief, First President', icon: '⚔️', desc: 'Led the Continental Army through eight years of war, holding it together through desperate defeats and brutal winters. His decision to step down from power twice — after the war and after two terms as president — defined American democracy.' },
+      { name: 'Thomas Jefferson', role: 'Author of the Declaration', icon: '📜', desc: 'Wrote the Declaration of Independence at 33. His words about equality and rights echoed through American history — and were held against his own hypocrisy as a lifelong enslaver of over 600 people. One of history\'s most complicated figures.' },
+      { name: 'Paul Revere', role: 'Patriot & Silversmith', icon: '🐴', desc: 'Made his midnight ride on April 18, 1775, to warn that British troops were marching to Lexington and Concord. A skilled silversmith and engraver whose propaganda images (like the Boston Massacre engraving) shaped public opinion.' },
+      { name: 'Phillis Wheatley', role: 'Poet, 1753–1784', icon: '✍️', desc: 'Enslaved from age 7, she became the first African American and first American enslaved person to publish a book of poetry. Washington wrote her a personal letter. Her life embodied the contradiction at the heart of the Revolution.' },
+      { name: 'Marquis de Lafayette', role: 'French General & Ally', icon: '🇫🇷', desc: 'French nobleman who volunteered to fight for American independence at 19. Became one of Washington\'s most trusted generals and was crucial in the Yorktown campaign. Later led early French revolutionary movements.' }
+    ],
+    achievements: [
+      'The Declaration of Independence (1776) — changed how the world thought about rights and government',
+      'First successful colonial revolution against a European empire',
+      'The Articles of Confederation — first attempt at a national government',
+      'The Constitution (1787) — the oldest written national constitution still in use',
+      'The Bill of Rights (1791) — 10 amendments protecting individual freedoms',
+      'Established the peaceful transfer of power as a democratic norm',
+      'Inspired revolutions in France, Haiti, and Latin America',
+      'Valley Forge — Washington held the army together through the brutal winter of 1777–78'
+    ],
+    life: { label: 'Daily Life During the Revolution', type: 'text', body: `The Revolution was not just a political event — it disrupted every aspect of daily life for ordinary Americans. Families were divided: Loyalists (who supported Britain) and Patriots (who supported independence) often lived on the same street, or even in the same family. About one-third of colonists were Loyalists; many fled to Canada or Britain after the war.<br><br>For women, the Revolution brought new responsibilities and, for some, new ideas about their role. "Republican Motherhood" argued that women needed to be educated to raise good citizens. Abigail Adams famously wrote to her husband John to "remember the ladies" when building the new government — a request that was largely ignored.<br><br>Soldiers in the Continental Army endured extraordinary hardship — Valley Forge in the winter of 1777–78 was brutal, with men marching barefoot in snow, starving, freezing. Washington's ability to keep this army together through such conditions was remarkable.<br><br>For enslaved people, the Revolution's promises of liberty were deeply contradictory. Many enslaved people escaped by joining the British (who promised freedom to those who fought for the Crown). About 5,000 Black soldiers fought for the Patriots. After the war, the new nation's failure to address slavery ensured a future reckoning.` }
+  },
+  {
+    id: 'founders',
+    name: 'Founding Fathers',
+    emoji: '📜',
+    color: '#c8902a',
+    period: '1783 – 1820s',
+    dateDisplay: '1787',
+    tagline: 'Building a republic — argument, compromise, and enduring ideas',
+    cssTheme: 'era-theme-founders',
+    overview: [
+      { label: 'Quick Facts', type: 'facts', items: [
+        { l: 'Period', v: '1783–1820s' },
+        { l: 'Constitution', v: 'Ratified 1788' },
+        { l: 'Bill of Rights', v: '1791' },
+        { l: 'First President', v: 'Washington, 1789' },
+        { l: 'Parties Formed', v: 'Federalists vs. Democrats' },
+        { l: 'Key Document', v: 'The Federalist Papers' }
+      ]},
+      { label: 'The Story', type: 'text', body: `Winning the Revolution was the easy part. Building a functioning government that had never existed before was harder. The Articles of Confederation — the first attempt — were too weak. States acted like independent countries. There was no national currency, no way to enforce laws, and Shays' Rebellion (1786) showed the system was failing.<br><br>The Constitutional Convention of 1787 brought delegates from 12 states to Philadelphia. What happened there was a miracle of political argument and compromise. The Great Compromise settled the question of representation (small states vs. large states). The Three-Fifths Compromise — one of history's moral failures — counted enslaved people as 3/5 of a person for representation purposes without giving them rights.<br><br>The Constitution was ratified in 1788. Washington became the first president in 1789 — and every decision he made set a precedent, because no one had done this before. His two terms, his cabinet, his farewell address warning against political parties and foreign entanglements — all shaped the presidency for generations.<br><br>The Founders disagreed fiercely about what America should be. Hamilton wanted a strong central government and industrial economy. Jefferson wanted an agrarian republic of small farmers. Their arguments — conducted in newspapers, pamphlets, and letters — founded two political traditions that still define American debate.` }
+    ],
+    people: [
+      { name: 'James Madison', role: 'Father of the Constitution', icon: '📜', desc: 'The primary architect of the Constitution and co-author of the Federalist Papers. His notes from the Constitutional Convention are our best record of what happened there. Small, quiet, and arguably the most important intellectual force in the Founding.' },
+      { name: 'Alexander Hamilton', role: 'First Secretary of the Treasury', icon: '💰', desc: 'Immigrant from the Caribbean, war hero, lawyer, and financial genius. Created the national banking system, established American credit, and co-wrote the Federalist Papers. Shot and killed by Aaron Burr in a duel in 1804.' },
+      { name: 'John Adams', role: 'Second President', icon: '⚖️', desc: 'Brilliant, prickly, and underappreciated. Defended the British soldiers after the Boston Massacre (because he believed in fair trials). First president to live in the White House. Lost re-election to Jefferson in the first peaceful transfer of power between opposing parties.' },
+      { name: 'Abigail Adams', role: 'Advisor & First Lady', icon: '✍️', desc: 'One of the most politically engaged women of her era. Her letters to John Adams are a primary source for understanding the period. Pushed for women\'s rights and against slavery, often more forcefully than her husband.' },
+      { name: 'Frederick Douglass (born c. 1818)', role: 'Abolitionist & Orator', icon: '🗣️', desc: 'Though born after the Founding era, Douglass grew up in its shadow. His famous 1852 speech "What to the Slave is the Fourth of July?" is the most powerful critique of the Founders\' hypocrisy ever written.' }
+    ],
+    achievements: [
+      'The U.S. Constitution — the oldest written national constitution still in use',
+      'The Bill of Rights — 10 amendments protecting freedom of speech, religion, press, and more',
+      'The Federalist Papers — the greatest explanation of democratic government ever written',
+      'Established judicial review — courts can declare laws unconstitutional (Marbury v. Madison, 1803)',
+      'The Louisiana Purchase (1803) — doubled the size of the United States',
+      'Established the peaceful transfer of presidential power as a democratic norm',
+      'Created a federal banking system and national currency',
+      'The Northwest Ordinance banned slavery in new territories north of the Ohio River'
+    ],
+    life: { label: 'Daily Life in Early America', type: 'text', body: `The early republic was a country of roughly 4 million people, almost all of them farmers living east of the Appalachians. Philadelphia was the largest city with about 44,000 people. Life was local — most people never traveled more than 50 miles from where they were born.<br><br>News traveled slowly — a letter from London took 6–8 weeks. Politics was conducted through newspapers (which were openly partisan), pamphlets, and public speeches. Taverns were debate halls. The Federalist Papers were published as newspaper essays.<br><br>For the small elite class, life was modeled on British aristocracy — fine clothes, formal manners, dinner parties where politics was debated. Washington's Mount Vernon and Jefferson's Monticello were showpiece plantations run by enslaved labor. The contradiction between their ideals and their lives was not lost on everyone at the time.<br><br>Westward migration was already beginning. The Land Ordinance of 1785 surveyed the Northwest Territory (Ohio, Indiana, Illinois) into the township-and-range grid that still defines the American landscape. Families packed wagons and headed over the Appalachians into a wilderness that Native nations had lived in for thousands of years.` }
+  },
+  {
+    id: 'civilwar',
+    name: 'The Civil War',
+    emoji: '⚔️',
+    color: '#5a4030',
+    period: '1820 – 1865',
+    dateDisplay: '1861',
+    tagline: 'A nation divided — slavery, secession, and the price of freedom',
+    cssTheme: 'era-theme-civilwar',
+    overview: [
+      { label: 'Quick Facts', type: 'facts', items: [
+        { l: 'War Years', v: '1861–1865' },
+        { l: 'Dead', v: '620,000–750,000 total' },
+        { l: 'Union Commander', v: 'Ulysses S. Grant' },
+        { l: 'Confederate', v: 'Robert E. Lee' },
+        { l: 'President', v: 'Abraham Lincoln' },
+        { l: 'End of War', v: 'Appomattox, April 1865' }
+      ]},
+      { label: 'The Story', type: 'text', body: `The Civil War did not begin in 1861. It began in 1776, when the Founders chose to protect slavery in order to hold the new nation together. For 80 years, the question they avoided came closer and closer to tearing the country apart.<br><br>By 1860, four million people were enslaved in the American South — the largest system of forced labor in the Western world. The economy of the South was built on it. When Abraham Lincoln was elected president on an anti-slavery-expansion platform, seven Southern states seceded before he was even inaugurated. Four more followed after Fort Sumter was fired upon in April 1861.<br><br>The war lasted four years and killed more Americans than any other conflict in history — estimates range from 620,000 to 750,000 dead. The Battle of Gettysburg alone (July 1–3, 1863) killed 50,000 men in three days. Lincoln's Emancipation Proclamation (January 1, 1863) declared enslaved people in Confederate states free — transforming the war's purpose from preserving the Union to ending slavery.<br><br>About 180,000 Black men served in the Union Army. Lee surrendered to Grant at Appomattox Courthouse on April 9, 1865. Five days later, Lincoln was shot at Ford's Theatre. He died the next morning.` }
+    ],
+    people: [
+      { name: 'Abraham Lincoln', role: '16th President, 1861–1865', icon: '🎩', desc: 'Born in a log cabin, self-educated, prairie lawyer, and the greatest American president. His speeches — the Gettysburg Address, the Second Inaugural — are among the finest in the English language. Assassinated 5 days after the war ended.' },
+      { name: 'Frederick Douglass', role: 'Abolitionist & Author, 1818–1895', icon: '🗣️', desc: 'Escaped from slavery at 20, taught himself to read and write, and became the most powerful voice against slavery in America. His autobiography is one of the greatest books in American literature. Advised Lincoln directly.' },
+      { name: 'Harriet Tubman', role: 'Underground Railroad Conductor', icon: '⭐', desc: 'Escaped slavery and then returned South 13 times to lead approximately 70 enslaved people to freedom. Never lost a passenger. During the Civil War, led a Union Army raid that freed 700 enslaved people. Called "the Moses of her people."' },
+      { name: 'Robert E. Lee', role: 'Confederate General', icon: '⚔️', desc: 'West Point graduate and gifted military commander who resigned from the U.S. Army to lead Virginia\'s forces. Fought brilliantly for a cause he privately doubted. Surrendered at Appomattox with dignity. Later became a symbol of "Lost Cause" mythology.' },
+      { name: 'Sojourner Truth', role: 'Abolitionist & Women\'s Rights Activist', icon: '✊', desc: 'Born into slavery in New York, escaped in 1826. Her 1851 speech "Ain\'t I a Woman?" linked the causes of abolition and women\'s suffrage. Spoke with a directness and power that silenced audiences and changed minds.' }
+    ],
+    achievements: [
+      'The Emancipation Proclamation (1863) — declared enslaved people in Confederate states free',
+      'The 13th Amendment (1865) — abolished slavery throughout the United States',
+      'The 14th Amendment (1868) — granted citizenship and equal protection to all Americans',
+      'The 15th Amendment (1870) — gave Black men the right to vote',
+      'The Gettysburg Address — Lincoln reframed the war as a fight for equality, not just union',
+      'The Underground Railroad — a network that helped thousands escape slavery',
+      'Reconstruction began the (ultimately failed) effort to integrate Black Americans as full citizens',
+      'Ended the Southern plantation system — the largest system of forced labor in Western history'
+    ],
+    life: { label: 'Daily Life During the Civil War Era', type: 'text', body: `For enslaved people, daily life before the war was labor from before dawn until after dark, under threat of violence, with no legal protection, no right to family, education, or movement. Families were regularly separated at auction. The constant resistance — from small acts of sabotage to the Underground Railroad to armed rebellion — is a testament to extraordinary human will.<br><br>For white Southerners, the antebellum era was remembered (falsely) as gracious and elegant. The reality for most white Southerners was hard farming poverty. Only about 25% of white Southern families owned any enslaved people; only a tiny fraction owned large plantations. The wealthy planter class held political power and used poor whites' fear of losing racial status to maintain loyalty.<br><br>Soldiers on both sides were largely young men from farm families who had never traveled far from home. Letters home describe the boredom between battles, the bad food, the disease (which killed more soldiers than combat), the camaraderie, and the horror of battle. The Civil War was the first American war to be extensively photographed — Americans saw the real face of war for the first time.<br><br>For women on the home front — North and South — the war meant managing farms and businesses alone, nursing the wounded, and waiting for letters. Thousands of women on both sides served as nurses; a few disguised themselves as men to fight.` }
+  },
+  {
+    id: 'worldwars',
+    name: 'WWI & WWII',
+    emoji: '🌍',
+    color: '#4a5060',
+    period: '1914 – 1945',
+    dateDisplay: '1917',
+    tagline: 'America enters the world stage — twice',
+    cssTheme: 'era-theme-worldwars',
+    overview: [
+      { label: 'Quick Facts', type: 'facts', items: [
+        { l: 'WWI US Entry', v: '1917' },
+        { l: 'WWI Ended', v: 'November 11, 1918' },
+        { l: 'WWII US Entry', v: 'December 7, 1941' },
+        { l: 'WWII Ended', v: 'September 2, 1945' },
+        { l: 'Total US Dead', v: '~420,000 (WWII)' },
+        { l: 'Key Event', v: 'D-Day, June 6, 1944' }
+      ]},
+      { label: 'The Story', type: 'text', body: `World War I began in Europe in 1914 as an archduke's assassination triggered a web of alliances into catastrophic war. The United States stayed neutral for three years — until German submarines began sinking American ships and the Zimmermann Telegram (Germany secretly proposing a Mexican alliance against America) was exposed. America entered the war in April 1917. The fresh American troops helped break the stalemate, and Germany surrendered in November 1918. The Treaty of Versailles punished Germany so severely that it planted the seeds of the next war.<br><br>The Great Depression (1929–1939) devastated the American economy — unemployment reached 25%. Franklin D. Roosevelt's New Deal programs put people back to work and restored faith in the government. Meanwhile, Adolf Hitler rose to power in Germany, and Japan built an empire in Asia.<br><br>On December 7, 1941, Japan attacked the U.S. naval base at Pearl Harbor, Hawaii. The next day, Congress declared war. America fought on two fronts simultaneously — Europe and the Pacific. D-Day (June 6, 1944) — the Allied invasion of Normandy — was the largest amphibious military operation in history. Germany surrendered in May 1945. Japan surrendered in September 1945 after the United States dropped atomic bombs on Hiroshima and Nagasaki — killing an estimated 130,000–226,000 people. The decision remains one of history's most debated.` }
+    ],
+    people: [
+      { name: 'Franklin D. Roosevelt', role: '32nd President, 1933–1945', icon: '🦽', desc: 'Led America through both the Great Depression and WWII. Struck with polio in 1921, he led the most powerful nation on Earth from a wheelchair — a fact hidden from most Americans at the time. Died in office 83 days into his fourth term.' },
+      { name: 'Dwight D. Eisenhower', role: 'Supreme Allied Commander', icon: '⭐', desc: 'Commanded all Allied forces in Europe. Planned and executed D-Day — the most complex military operation in history. Later became the 34th President. His farewell address warning of the "military-industrial complex" is still quoted today.' },
+      { name: 'Rosie the Riveter', role: 'Symbol of Women Workers', icon: '💪', desc: 'A cultural symbol representing the 6 million American women who entered the workforce during WWII, working in factories, shipyards, and defense plants. Their contributions permanently changed American ideas about women and work.' },
+      { name: 'Tuskegee Airmen', role: 'First Black Military Aviators', icon: '✈️', desc: 'The first African American military pilots in the U.S. Army Air Corps. They flew over 1,500 missions in Europe and were awarded over 150 Distinguished Flying Crosses. Fighting for a country that still segregated them, they broke down barriers.' },
+      { name: 'Harry Truman', role: '33rd President', icon: '☢️', desc: 'Became president upon FDR\'s sudden death and within months made the decision to drop atomic bombs on Japan. Also desegregated the military (1948) and launched the Marshall Plan to rebuild Europe. Plain-spoken and underestimated.' }
+    ],
+    achievements: [
+      'U.S. entry into WWI helped end the deadlock and secure Allied victory (1918)',
+      'The New Deal created Social Security, FDIC, and put millions back to work',
+      'D-Day (June 6, 1944) — the largest amphibious invasion in history turned the tide in Europe',
+      'The Manhattan Project developed the first nuclear weapons — changing warfare forever',
+      'The GI Bill gave returning veterans college education and home loans, creating the middle class',
+      'Women entered the workforce in unprecedented numbers, permanently changing American society',
+      'The United Nations was founded to prevent future world wars',
+      'The Marshall Plan rebuilt Europe and created lasting alliances'
+    ],
+    life: { label: 'Daily Life During the World Wars Era', type: 'text', body: `The 1920s roared — jazz, flappers, speakeasies (Prohibition banned alcohol 1920–1933), and economic boom. Then the Depression hit like a wall. Families lost everything. Men rode freight trains looking for work. Bread lines stretched around blocks. Drought turned the Great Plains into the Dust Bowl, forcing hundreds of thousands of families to migrate west. John Steinbeck's "The Grapes of Wrath" captured this exodus.<br><br>During WWII, the home front mobilized completely. Rationing meant limited access to sugar, meat, gasoline, rubber, and nylon. Victory gardens (backyard vegetable gardens) were planted everywhere. Scrap metal drives collected old pots and pans to make planes. The whole economy shifted to war production — America became, as Roosevelt said, "the arsenal of democracy."<br><br>Japanese American families — 120,000 people, two-thirds of them American citizens — were forced into internment camps after Pearl Harbor. This remains one of America's greatest civil liberties failures. Meanwhile, many Japanese American men served in the U.S. Army — the 442nd Infantry became the most decorated unit in American military history.<br><br>When the soldiers came home, America was transformed. The GI Bill educated a generation and created the suburban middle class. Television arrived. The baby boom began. And the returning Black veterans who had fought for freedom abroad came home to segregation — fueling the Civil Rights Movement.` }
+  },
+  {
+    id: 'civilrights',
+    name: 'Civil Rights Movement',
+    emoji: '✊',
+    color: '#c87020',
+    period: '1945 – 1968',
+    dateDisplay: '1955',
+    tagline: 'The long-promised second American Revolution',
+    cssTheme: 'era-theme-civilrights',
+    overview: [
+      { label: 'Quick Facts', type: 'facts', items: [
+        { l: 'Key Period', v: '1954–1968' },
+        { l: 'Brown v. Board', v: '1954 (school integration)' },
+        { l: 'Montgomery Bus', v: '1955–1956' },
+        { l: 'March on Washington', v: 'August 28, 1963' },
+        { l: 'Civil Rights Act', v: '1964' },
+        { l: 'Voting Rights Act', v: '1965' }
+      ]},
+      { label: 'The Story', type: 'text', body: `The Civil Rights Movement did not begin in 1955. It was the latest chapter of a struggle that began the moment the first enslaved person resisted their enslavement. But the post-WWII era created new conditions: Black veterans returned demanding the rights they had fought for abroad; the Cold War made American racism an international embarrassment; and television brought images of peaceful protesters being attacked with fire hoses and police dogs into living rooms across America.<br><br>The Supreme Court's Brown v. Board of Education (1954) declared school segregation unconstitutional. Rosa Parks's refusal to give up her bus seat (December 1955) launched the Montgomery Bus Boycott, which lasted 381 days and launched a young minister named Martin Luther King Jr. to national prominence.<br><br>The movement used nonviolent resistance — sit-ins at segregated lunch counters, Freedom Rides to integrate interstate buses, marches that faced violent response. The March on Washington (August 28, 1963) drew 250,000 people; King delivered "I Have a Dream" on the steps of the Lincoln Memorial. The Civil Rights Act (1964) banned discrimination based on race, color, religion, or national origin. The Voting Rights Act (1965) protected Black Americans' right to vote.<br><br>King was assassinated on April 4, 1968, in Memphis. He was 39. His death triggered riots in over 100 American cities. The movement he led had transformed American law — but the work it began is unfinished.` }
+    ],
+    people: [
+      { name: 'Martin Luther King Jr.', role: 'Minister & Civil Rights Leader, 1929–1968', icon: '✊', desc: 'The most visible leader of the Civil Rights Movement. His philosophy of nonviolent resistance, drawn from Gandhi and the Gospels, was both a moral and a strategic choice. Nobel Peace Prize 1964. Assassinated at 39.' },
+      { name: 'Rosa Parks', role: 'Activist, 1913–2005', icon: '🚌', desc: 'Her refusal to give up her bus seat was not spontaneous — Parks was a trained activist and NAACP secretary. Her arrest was chosen strategically to launch the boycott. Called "the mother of the Civil Rights Movement."' },
+      { name: 'John Lewis', role: 'Civil Rights Leader & Congressman, 1940–2020', icon: '🌉', desc: 'One of the original Freedom Riders. Led the march across the Edmund Pettus Bridge on "Bloody Sunday" (March 7, 1965) — was beaten severely by state troopers. Later served 33 years in Congress. Called his activism "good trouble."' },
+      { name: 'Thurgood Marshall', role: 'NAACP Lawyer, First Black Supreme Court Justice', icon: '⚖️', desc: 'Argued Brown v. Board of Education before the Supreme Court in 1954 — and won. Appointed to the Supreme Court in 1967, becoming the first Black Justice. His legal strategy dismantled segregation from within the system.' },
+      { name: 'Malcolm X', role: 'Minister & Activist, 1925–1965', icon: '🗣️', desc: 'Offered a different vision from King — Black pride, self-defense, and separation rather than integration. His autobiography is one of the most important books in American literature. Assassinated in 1965, after he had begun to moderate his views.' }
+    ],
+    achievements: [
+      'Brown v. Board of Education (1954) — declared school segregation unconstitutional',
+      'The Montgomery Bus Boycott (1955–56) — proved economic pressure could force change',
+      'The Civil Rights Act of 1964 — banned discrimination in public places and employment',
+      'The Voting Rights Act of 1965 — protected Black Americans\' right to vote',
+      'The 24th Amendment (1964) abolished poll taxes used to disenfranchise Black voters',
+      'The March on Washington drew 250,000 people — the largest demonstration in U.S. history to that point',
+      'The NAACP\'s legal strategy used the courts to dismantle segregation systematically',
+      'The movement inspired subsequent struggles for rights: women, LGBTQ+, disability, Native American'
+    ],
+    life: { label: 'Daily Life During the Civil Rights Era', type: 'text', body: `For Black Americans in the Jim Crow South, daily life was a constant negotiation with a system designed to humiliate and exclude. "Colored" and "white" signs marked water fountains, waiting rooms, restrooms, and entrances. Black Americans could not eat at most restaurants, stay at most hotels, or use most public facilities. Voting was made nearly impossible through poll taxes, literacy tests, and outright violence.<br><br>The movement required extraordinary courage from ordinary people. Sitting at a segregated lunch counter and enduring being screamed at, having food poured on you, and being beaten — while remaining nonviolent — demanded remarkable discipline. The Freedom Riders who rode interstate buses into the Deep South knowing they would be attacked displayed a deliberate, trained bravery.<br><br>Television was the movement's unexpected ally. When viewers across America watched fire hoses and police dogs used against peaceful protesters in Birmingham — including children — it shifted public opinion. Bull Connor, Birmingham's public safety commissioner, did more for the Civil Rights Act by attacking protesters than almost anyone else.<br><br>The era also saw the Great Migration — the movement of 6 million Black Americans from the South to Northern and Western cities between 1910 and 1970. They came seeking economic opportunity and escape from Jim Crow. What they often found was a different form of discrimination — in housing, employment, and education. Northern cities were transformed; so were the migrants.` }
+  }
+];
+
+// ─── Era Atmospheric Themes ───────────────────────────────────────────────────
+const ERA_THEMES = {
+  native: {
+    decor: `<svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMid meet">
+      <!-- Feather -->
+      <path d="M200,50 Q230,100 220,180 Q210,260 200,320" stroke="#8b5a2b" stroke-width="2" fill="none" opacity="0.8"/>
+      <path d="M200,50 Q170,100 175,180 Q185,260 200,320" stroke="#8b5a2b" stroke-width="1.5" fill="none" opacity="0.6"/>
+      <path d="M200,50 Q230,100 220,180 Q210,260 200,320 Q185,260 175,180 Q170,100 200,50Z" fill="#8b5a2b" opacity="0.15"/>
+      <!-- Feather barbs -->
+      <g stroke="#8b5a2b" stroke-width="0.8" opacity="0.4">
+        <line x1="205" y1="80" x2="235" y2="90"/><line x1="205" y1="80" x2="175" y2="90"/>
+        <line x1="210" y1="110" x2="245" y2="122"/><line x1="197" y1="112" x2="162" y2="124"/>
+        <line x1="213" y1="140" x2="248" y2="152"/><line x1="193" y1="143" x2="158" y2="155"/>
+        <line x1="214" y1="170" x2="246" y2="182"/><line x1="190" y1="173" x2="158" y2="185"/>
+        <line x1="212" y1="200" x2="240" y2="212"/><line x1="190" y1="202" x2="162" y2="214"/>
+        <line x1="208" y1="230" x2="232" y2="242"/><line x1="193" y1="232" x2="169" y2="244"/>
+        <line x1="205" y1="258" x2="225" y2="268"/><line x1="196" y1="260" x2="176" y2="270"/>
+      </g>
+      <!-- Tepee -->
+      <polygon points="200,350 150,460 250,460" fill="#8b5a2b" opacity="0.25"/>
+      <line x1="200" y1="350" x2="200" y2="460" stroke="#6b3a1a" stroke-width="1" opacity="0.3"/>
+      <!-- Stars -->
+      <circle cx="80" cy="100" r="2" fill="#c8902a" opacity="0.5"/>
+      <circle cx="300" cy="60" r="1.5" fill="#c8902a" opacity="0.4"/>
+      <circle cx="350" cy="150" r="2" fill="#c8902a" opacity="0.5"/>
+      <circle cx="60" cy="200" r="1.5" fill="#c8902a" opacity="0.3"/>
+      <!-- Moon -->
+      <path d="M340,80 Q365,60 375,85 Q360,72 340,80Z" fill="#c8902a" opacity="0.4"/>
+    </svg>`
+  },
+  colonies: {
+    decor: `<svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMid meet">
+      <!-- Ship -->
+      <g opacity="0.5">
+        <path d="M150,300 Q200,290 250,300 L260,360 L140,360 Z" fill="#2a4070" stroke="#4a6090" stroke-width="1"/>
+        <line x1="200" y1="300" x2="200" y2="180" stroke="#6a4a20" stroke-width="2.5"/>
+        <path d="M200,180 L240,240 L200,250 L160,240 Z" fill="#c8d0d8" opacity="0.6"/>
+        <path d="M200,220 L230,260 L200,265 L170,260 Z" fill="#c8d0d8" opacity="0.5"/>
+        <line x1="200" y1="180" x2="160" y2="200" stroke="#6a4a20" stroke-width="1.5"/>
+        <path d="M160,200 L200,218 L200,180 Z" fill="#c8d0d8" opacity="0.4"/>
+        <!-- Waves -->
+        <path d="M100,360 Q125,350 150,360 Q175,370 200,360 Q225,350 250,360 Q275,370 300,360" stroke="#2a4070" stroke-width="1.5" fill="none" opacity="0.6"/>
+        <path d="M110,375 Q135,365 160,375 Q185,385 210,375 Q235,365 260,375 Q285,385 310,375" stroke="#2a4070" stroke-width="1" fill="none" opacity="0.4"/>
+      </g>
+      <!-- Compass rose -->
+      <g opacity="0.25" fill="#c8902a" transform="translate(60,100)">
+        <polygon points="0,-30 5,-5 0,30 -5,-5"/>
+        <polygon points="-30,0 -5,-5 30,0 -5,5"/>
+        <circle cx="0" cy="0" r="6" fill="none" stroke="#c8902a" stroke-width="1.5"/>
+        <text x="-4" y="-35" font-size="10" font-family="serif">N</text>
+      </g>
+      <!-- Stars -->
+      <circle cx="310" cy="80" r="2" fill="#c8902a" opacity="0.4"/>
+      <circle cx="340" cy="130" r="1.5" fill="#c8902a" opacity="0.3"/>
+      <circle cx="70" cy="50" r="2" fill="#c8902a" opacity="0.5"/>
+    </svg>`
+  },
+  revolution: {
+    decor: `<svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMid meet">
+      <!-- Liberty Bell silhouette -->
+      <g opacity="0.45" fill="#2a4870" stroke="#4a6890" stroke-width="1">
+        <path d="M160,140 Q200,110 240,140 Q260,160 255,220 Q250,280 240,320 L160,320 Q150,280 145,220 Q140,160 160,140Z"/>
+        <rect x="155" y="318" width="90" height="12" rx="2"/>
+        <rect x="145" y="128" width="110" height="14" rx="2"/>
+        <ellipse cx="200" cy="145" rx="30" ry="12"/>
+        <!-- Crack -->
+        <path d="M195,175 Q198,210 202,245 Q205,270 200,295" stroke="#8a6840" stroke-width="2.5" fill="none"/>
+        <!-- Clapper -->
+        <line x1="200" y1="220" x2="200" y2="300" stroke="#3a5870" stroke-width="3"/>
+        <circle cx="200" cy="305" r="8" fill="#3a5870"/>
+      </g>
+      <!-- Stars (13) -->
+      <g fill="#c8902a">
+        <circle cx="50" cy="60" r="2" opacity="0.5"/>
+        <circle cx="80" cy="40" r="2" opacity="0.4"/>
+        <circle cx="110" cy="55" r="2" opacity="0.5"/>
+        <circle cx="290" cy="60" r="2" opacity="0.5"/>
+        <circle cx="320" cy="40" r="2" opacity="0.4"/>
+        <circle cx="350" cy="55" r="2" opacity="0.5"/>
+        <circle cx="60" cy="90" r="1.5" opacity="0.3"/>
+        <circle cx="330" cy="90" r="1.5" opacity="0.3"/>
+        <circle cx="370" cy="100" r="2" opacity="0.4"/>
+        <circle cx="30" cy="110" r="1.5" opacity="0.3"/>
+        <circle cx="180" cy="35" r="2" opacity="0.5"/>
+        <circle cx="210" cy="30" r="1.5" opacity="0.4"/>
+        <circle cx="240" cy="40" r="2" opacity="0.5"/>
+      </g>
+      <!-- Cannon -->
+      <g opacity="0.3">
+        <ellipse cx="330" cy="410" rx="40" ry="12" fill="#3a2810"/>
+        <rect x="295" y="385" width="80" height="20" rx="8" fill="#4a3820"/>
+        <circle cx="295" cy="395" r="14" fill="#3a2810"/>
+        <circle cx="375" cy="395" r="14" fill="#3a2810"/>
+      </g>
+    </svg>`
+  },
+  founders: {
+    decor: `<svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMid meet">
+      <!-- Quill and parchment -->
+      <g opacity="0.45">
+        <!-- Parchment -->
+        <rect x="100" y="150" width="220" height="280" rx="3" fill="#c8a848" opacity="0.15" stroke="#c8a848" stroke-width="1"/>
+        <line x1="120" y1="185" x2="300" y2="185" stroke="#8a6828" stroke-width="0.8" opacity="0.4"/>
+        <line x1="120" y1="200" x2="300" y2="200" stroke="#8a6828" stroke-width="0.8" opacity="0.4"/>
+        <line x1="120" y1="215" x2="280" y2="215" stroke="#8a6828" stroke-width="0.8" opacity="0.4"/>
+        <line x1="120" y1="230" x2="290" y2="230" stroke="#8a6828" stroke-width="0.8" opacity="0.4"/>
+        <line x1="120" y1="245" x2="285" y2="245" stroke="#8a6828" stroke-width="0.8" opacity="0.4"/>
+        <line x1="120" y1="260" x2="295" y2="260" stroke="#8a6828" stroke-width="0.8" opacity="0.4"/>
+        <text x="160" y="172" font-family="serif" font-size="11" fill="#c8a848" opacity="0.5">We the People</text>
+        <!-- Quill -->
+        <path d="M280,80 Q320,60 340,100 Q310,90 280,120 Q260,200 250,300" stroke="#c8c080" stroke-width="1.5" fill="none"/>
+        <path d="M280,80 Q240,100 250,300" stroke="#c8c080" stroke-width="1" fill="none" opacity="0.5"/>
+        <path d="M340,100 Q310,90 280,120 L250,300 Q260,200 280,120 Q310,90 340,100Z" fill="#c8c080" opacity="0.12"/>
+      </g>
+      <!-- Eagle (simple) -->
+      <g opacity="0.2" fill="#c8902a" transform="translate(60,60)">
+        <path d="M40,30 Q50,10 60,30 Q70,10 80,30 Q70,40 60,35 Q50,40 40,30Z"/>
+        <circle cx="60" cy="38" r="8"/>
+        <path d="M52,46 Q60,55 68,46 Q75,65 60,70 Q45,65 52,46Z"/>
+        <path d="M52,46 Q30,40 20,55 Q35,50 52,46Z"/>
+        <path d="M68,46 Q90,40 100,55 Q85,50 68,46Z"/>
+      </g>
+      <!-- Seal ring -->
+      <circle cx="320" cy="380" r="30" fill="none" stroke="#c8902a" stroke-width="1.5" opacity="0.3"/>
+      <circle cx="320" cy="380" r="22" fill="none" stroke="#c8902a" stroke-width="0.8" opacity="0.2"/>
+    </svg>`
+  },
+  civilwar: {
+    decor: `<svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMid meet">
+      <!-- Smoke/haze layers -->
+      <g opacity="0.2">
+        <path d="M0,200 Q100,180 200,200 Q300,220 400,200" stroke="#8a7060" stroke-width="12" fill="none" opacity="0.3"/>
+        <path d="M0,240 Q120,222 240,240 Q320,255 400,235" stroke="#7a6050" stroke-width="8" fill="none" opacity="0.25"/>
+      </g>
+      <!-- Union soldier silhouette -->
+      <g opacity="0.4" fill="#3a3028">
+        <!-- Hat -->
+        <rect x="175" y="100" width="50" height="8" rx="2"/>
+        <rect x="183" y="82" width="34" height="18" rx="2"/>
+        <!-- Head -->
+        <ellipse cx="200" cy="125" rx="16" ry="18"/>
+        <!-- Body -->
+        <rect x="183" y="143" width="34" height="60" rx="3"/>
+        <!-- Arms -->
+        <rect x="160" y="143" width="23" height="8" rx="2"/>
+        <rect x="217" y="143" width="23" height="8" rx="2"/>
+        <!-- Rifle -->
+        <rect x="145" y="100" width="3" height="60" rx="1" fill="#5a4030"/>
+        <rect x="143" y="97" width="7" height="4" rx="1" fill="#4a3020"/>
+        <!-- Legs -->
+        <rect x="185" y="203" width="12" height="50" rx="2"/>
+        <rect x="203" y="203" width="12" height="50" rx="2"/>
+      </g>
+      <!-- Confederate flag (muted, historical) -->
+      <g opacity="0.12" transform="translate(270,60)">
+        <rect width="80" height="50" fill="#8b1a1a"/>
+        <line x1="0" y1="0" x2="80" y2="50" stroke="#c8c8c8" stroke-width="6"/>
+        <line x1="80" y1="0" x2="0" y2="50" stroke="#c8c8c8" stroke-width="6"/>
+        <line x1="0" y1="0" x2="80" y2="50" stroke="#2a4870" stroke-width="3"/>
+        <line x1="80" y1="0" x2="0" y2="50" stroke="#2a4870" stroke-width="3"/>
+      </g>
+      <!-- Stars in night sky -->
+      <circle cx="60" cy="80" r="1.5" fill="#c8c8a0" opacity="0.4"/>
+      <circle cx="100" cy="50" r="2" fill="#c8c8a0" opacity="0.35"/>
+      <circle cx="140" cy="70" r="1.5" fill="#c8c8a0" opacity="0.4"/>
+      <circle cx="330" cy="40" r="2" fill="#c8c8a0" opacity="0.4"/>
+      <circle cx="370" cy="70" r="1.5" fill="#c8c8a0" opacity="0.35"/>
+      <!-- Drum -->
+      <ellipse cx="330" cy="430" rx="35" ry="20" fill="#4a3820" opacity="0.3" stroke="#6a5840" stroke-width="1"/>
+      <rect x="295" y="410" width="70" height="20" fill="#4a3820" opacity="0.25"/>
+      <line x1="295" y1="420" x2="365" y2="420" stroke="#6a5840" stroke-width="0.8" opacity="0.4"/>
+    </svg>`
+  },
+  worldwars: {
+    decor: `<svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMid meet">
+      <!-- Searchlight beams -->
+      <g opacity="0.12">
+        <path d="M50,500 L150,200 L200,200 L100,500Z" fill="#c0c8d0"/>
+        <path d="M300,500 L250,200 L300,200 L350,500Z" fill="#c0c8d0"/>
+      </g>
+      <!-- Plane silhouette (WWII bomber) -->
+      <g opacity="0.35" fill="#4a5060" transform="translate(180,80) rotate(-15)">
+        <!-- Fuselage -->
+        <ellipse cx="0" cy="0" rx="50" ry="10"/>
+        <!-- Wings -->
+        <path d="M-10,-5 L-60,15 L-60,25 L0,10 Z"/>
+        <path d="M10,-5 L60,15 L60,25 L0,10 Z"/>
+        <!-- Tail -->
+        <path d="M-40,-4 L-65,-20 L-65,-10 L-40,4Z"/>
+        <path d="M-40,-4 L-55,20 L-50,22 L-38,4Z"/>
+        <!-- Engines -->
+        <ellipse cx="-30" cy="18" rx="8" ry="5"/>
+        <ellipse cx="30" cy="18" rx="8" ry="5"/>
+      </g>
+      <!-- Stars (military) -->
+      <g fill="#c8902a" opacity="0.3" transform="translate(50,300)">
+        <polygon points="0,-20 5,-7 19,-7 9,2 13,16 0,8 -13,16 -9,2 -19,-7 -5,-7"/>
+      </g>
+      <!-- Dog tags -->
+      <g opacity="0.2" stroke="#a0a8b0" fill="none" stroke-width="1.5">
+        <rect x="320" y="120" width="50" height="32" rx="4"/>
+        <rect x="320" y="160" width="50" height="32" rx="4"/>
+        <line x1="345" y1="118" x2="345" y2="108"/>
+        <circle cx="345" cy="105" r="4" fill="#a0a8b0"/>
+        <line x1="345" y1="155" x2="345" y2="162"/>
+        <line x1="335" y1="128" x2="360" y2="128" stroke-width="0.8"/>
+        <line x1="335" y1="136" x2="355" y2="136" stroke-width="0.8"/>
+        <line x1="335" y1="144" x2="358" y2="144" stroke-width="0.8"/>
+      </g>
+      <!-- V for Victory -->
+      <text x="60" y="200" font-family="serif" font-size="80" fill="#c8902a" opacity="0.08" font-weight="bold">V</text>
+      <!-- Rivets (Rosie) -->
+      <g fill="#a0a8b0" opacity="0.15">
+        <circle cx="280" cy="350" r="4"/>
+        <circle cx="295" cy="358" r="4"/>
+        <circle cx="310" cy="350" r="4"/>
+        <circle cx="295" cy="342" r="4"/>
+        <circle cx="280" cy="370" r="4"/>
+        <circle cx="310" cy="370" r="4"/>
+      </g>
+    </svg>`
+  },
+  civilrights: {
+    decor: `<svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMid meet">
+      <!-- Lincoln Memorial columns (distant) -->
+      <g opacity="0.3" fill="#c8a848">
+        <rect x="100" y="260" width="10" height="120" rx="1"/>
+        <rect x="125" y="260" width="10" height="120" rx="1"/>
+        <rect x="150" y="260" width="10" height="120" rx="1"/>
+        <rect x="175" y="260" width="10" height="120" rx="1"/>
+        <rect x="200" y="260" width="10" height="120" rx="1"/>
+        <rect x="225" y="260" width="10" height="120" rx="1"/>
+        <rect x="250" y="260" width="10" height="120" rx="1"/>
+        <rect x="275" y="260" width="10" height="120" rx="1"/>
+        <rect x="90" y="380" width="210" height="10" rx="1"/>
+        <rect x="85" y="390" width="220" height="8" rx="1"/>
+      </g>
+      <!-- Crowd dots (March on Washington) -->
+      <g opacity="0.15" fill="#c8902a">
+        <circle cx="110" cy="410" r="4"/><circle cx="125" cy="418" r="3"/><circle cx="140" cy="408" r="4"/>
+        <circle cx="155" cy="416" r="3"/><circle cx="170" cy="406" r="4"/><circle cx="185" cy="415" r="3"/>
+        <circle cx="200" cy="407" r="4"/><circle cx="215" cy="418" r="3"/><circle cx="230" cy="408" r="4"/>
+        <circle cx="245" cy="416" r="3"/><circle cx="260" cy="405" r="4"/><circle cx="275" cy="414" r="3"/>
+        <circle cx="290" cy="407" r="3"/><circle cx="305" cy="416" r="4"/>
+        <circle cx="120" cy="430" r="3"/><circle cx="138" cy="428" r="4"/><circle cx="156" cy="432" r="3"/>
+        <circle cx="174" cy="428" r="4"/><circle cx="192" cy="432" r="3"/><circle cx="210" cy="428" r="4"/>
+        <circle cx="228" cy="432" r="3"/><circle cx="246" cy="428" r="4"/><circle cx="264" cy="432" r="3"/>
+        <circle cx="282" cy="428" r="4"/><circle cx="300" cy="430" r="3"/>
+      </g>
+      <!-- Dove -->
+      <g opacity="0.3" fill="#f0e8d0" transform="translate(280,80)">
+        <path d="M0,0 Q20,-20 40,0 Q30,10 20,5 Q10,15 0,0Z"/>
+        <path d="M20,5 Q25,25 15,35 Q10,20 20,5Z"/>
+        <circle cx="35" cy="2" r="5"/>
+      </g>
+      <!-- Rising sun rays -->
+      <g stroke="#c8902a" stroke-width="1" opacity="0.12">
+        <line x1="200" y1="120" x2="200" y2="50"/>
+        <line x1="200" y1="120" x2="250" y2="70"/>
+        <line x1="200" y1="120" x2="150" y2="70"/>
+        <line x1="200" y1="120" x2="270" y2="100"/>
+        <line x1="200" y1="120" x2="130" y2="100"/>
+        <line x1="200" y1="120" x2="280" y2="140"/>
+        <line x1="200" y1="120" x2="120" y2="140"/>
+      </g>
+      <circle cx="200" cy="120" r="25" fill="#c8902a" opacity="0.08"/>
+      <!-- "I Have a Dream" echo -->
+      <text x="80" y="220" font-family="serif" font-size="12" fill="#c8902a" opacity="0.12" font-style="italic">I have a dream...</text>
+    </svg>`
+  }
+};
+
+// ─── Video Data ────────────────────────────────────────────────────────────────
+const ERA_VIDEOS = {
+  native: [{ id: 'oPFaEygFPAk', title: 'Native Americans: Crash Course US History #1', source: 'Crash Course · John Green · ~12 min', desc: 'Covers the diversity of Native American cultures before European contact, the Columbian Exchange, and what European arrival meant for peoples who had lived in the Americas for thousands of years.' }],
+  colonies: [{ id: 'HjXHXLMKpOk', title: 'The Colonists: Crash Course US History #2', source: 'Crash Course · John Green · ~12 min', desc: 'Explores the thirteen colonies — why people came, how they lived, how they governed themselves, and the roots of the tension with Britain that would lead to revolution.' }],
+  revolution: [{ id: '7pL3UbidBZc', title: 'The American Revolution: Crash Course US History #8', source: 'Crash Course · John Green · ~13 min', desc: 'Covers the causes of the Revolution, key battles, the Declaration of Independence, and why a ragtag colonial army defeated the most powerful military in the world.' }],
+  founders: [{ id: 'bO7FQsCcbD8', title: 'The Constitution, the Articles, and Federalism: Crash Course US History #8', source: 'Crash Course · John Green · ~12 min', desc: 'How the Constitution was created, what compromises it required, and why the debates between Federalists and Anti-Federalists still shape American politics today.' }],
+  civilwar: [{ id: 'Hi5pa5MXkFs', title: 'The Civil War Part I: Crash Course US History #20', source: 'Crash Course · John Green · ~14 min', desc: 'The causes of the Civil War, the secession crisis, and the opening years of the most devastating conflict in American history.' }],
+  worldwars: [{ id: 'CqoFvbunHxg', title: 'World War II: Crash Course US History #35', source: 'Crash Course · John Green · ~15 min', desc: 'America\'s entry into WWII, the home front, key battles, and the moral complexities of the decisions that ended the war — including the atomic bomb.' }],
+  civilrights: [{ id: 'Ag8qlsMOEH4', title: 'The Civil Rights Movement: Crash Course US History #39', source: 'Crash Course · John Green · ~14 min', desc: 'The Civil Rights Movement from Brown v. Board through the Voting Rights Act — the strategies, the leaders, the opposition, and the unfinished work.' }]
+};
+
+// ─── Map Data ─────────────────────────────────────────────────────────────────
+const BASE = 'https://wadeclassical.github.io/Wade-Classical/';
+const ERA_MAPS = {
+  native: [{ src: `${BASE}map-native.png`, caption: 'Major Native American cultural regions and peoples before European contact. Each region had distinct ways of living, languages, and governance. (Wikimedia Commons, public domain)', wiki: 'File:Langs_N.Amer_color.png' }],
+  colonies: [{ src: `${BASE}map-colonies.png`, caption: 'The Thirteen Colonies in 1775, on the eve of the Revolution. British, French, and Spanish territorial claims overlapping with Native homelands. (Wikimedia Commons, public domain)', wiki: 'File:Blank_US_Map.svg' }],
+  revolution: [{ src: `${BASE}map-revolution.png`, caption: 'Major battles and campaigns of the American Revolutionary War, 1775–1783. (Wikimedia Commons, public domain)', wiki: '' }],
+  founders: [{ src: `${BASE}map-founders.png`, caption: 'The United States in 1789 — the original thirteen states and the territories acquired after the Revolution. (Wikimedia Commons, public domain)', wiki: '' }],
+  civilwar: [{ src: `${BASE}map-civilwar.png`, caption: 'The Union and Confederate states in 1861, with key battles and campaigns of the Civil War. (Wikimedia Commons, public domain)', wiki: '' }],
+  worldwars: [{ src: `${BASE}map-wwii.png`, caption: 'The major theaters of World War II — European and Pacific. American forces fought on both fronts simultaneously. (Wikimedia Commons, public domain)', wiki: '' }],
+  civilrights: [{ src: `${BASE}map-civilrights.png`, caption: 'Segregation laws by state before the Civil Rights Act, and major cities of the Great Migration. (Wikimedia Commons, public domain)', wiki: '' }]
+};
+
+// ─── Exam Questions ───────────────────────────────────────────────────────────
+const QUESTIONS = {
+  native: [
+    { type: 'mc', q: 'Which Native American confederacy created a democratic government that later influenced the U.S. Constitution?', hint: 'Also called the Iroquois Confederacy', options: ['Cherokee Nation', 'Haudenosaunee Confederacy', 'Powhatan Confederacy', 'Sioux Nation'], answer: 1 },
+    { type: 'text', q: 'What ancient city near present-day St. Louis was, at its peak around 1100 AD, larger than London?', hint: 'Mississippian culture city', answer: 'cahokia', accept: ['cahokia'] },
+    { type: 'mc', q: 'What three crops did Native Americans cultivate together, known as the "Three Sisters"?', hint: 'All vegetables grown in the same mound', options: ['Wheat, oats, barley', 'Corn, beans, squash', 'Tomatoes, potatoes, peppers', 'Rice, millet, sorghum'], answer: 1 },
+    { type: 'text', q: 'What term describes the massive exchange of plants, animals, and diseases between the Old World and the Americas after 1492?', hint: 'Named after the explorer', answer: 'columbian exchange', accept: ['columbian exchange', 'the columbian exchange'] },
+    { type: 'mc', q: 'Approximately how many distinct Native American nations existed in North America before European contact?', hint: 'Far more than most people expect', options: ['Around 10–20', 'Around 50–100', 'More than 500', 'Fewer than 10'], answer: 2 }
+  ],
+  colonies: [
+    { type: 'mc', q: 'What was the first permanent English settlement in America?', hint: 'Named after the English king, in Virginia, 1607', options: ['Plymouth', 'Jamestown', 'Roanoke', 'Salem'], answer: 1 },
+    { type: 'text', q: 'What ship brought the Pilgrims to America in 1620?', hint: 'A type of flower', answer: 'mayflower', accept: ['mayflower', 'the mayflower'] },
+    { type: 'mc', q: 'The phrase "no taxation without representation" referred to what colonial grievance?', hint: 'About the British Parliament', options: ['Colonists paid no taxes at all', 'Colonists were taxed by a Parliament where they had no elected representatives', 'Colonists could not vote in colonial elections', 'Britain refused to let colonists trade'], answer: 1 },
+    { type: 'text', q: 'What year did the first enslaved Africans arrive in Virginia?', hint: 'One year before the Pilgrims landed', answer: '1619', accept: ['1619'] },
+    { type: 'mc', q: 'How many colonies existed before the American Revolution?', hint: 'Count them on two hands — almost', options: ['9', '11', '13', '15'], answer: 2 }
+  ],
+  revolution: [
+    { type: 'mc', q: 'Which document, adopted July 4, 1776, declared American independence?', hint: 'Written primarily by Thomas Jefferson', options: ['The Constitution', 'The Federalist Papers', 'The Declaration of Independence', 'The Articles of Confederation'], answer: 2 },
+    { type: 'text', q: 'Who commanded the Continental Army during the American Revolution?', hint: 'Later became the first President', answer: 'george washington', accept: ['washington', 'george washington'] },
+    { type: 'mc', q: 'What battle is considered the turning point of the Revolutionary War, after which Britain effectively lost?', hint: 'October 1781, in Virginia', options: ['Bunker Hill', 'Saratoga', 'Valley Forge', 'Yorktown'], answer: 3 },
+    { type: 'text', q: 'Which European country became America\'s most important ally in the Revolution, providing troops, money, and naval support?', hint: 'Lafayette was from this country', answer: 'france', accept: ['france'] },
+    { type: 'mc', q: 'Paul Revere\'s midnight ride warned that the British were marching to which two towns?', hint: 'April 18, 1775 — "the shot heard round the world"', options: ['Boston and Concord', 'Lexington and Concord', 'Philadelphia and New York', 'Trenton and Princeton'], answer: 1 }
+  ],
+  founders: [
+    { type: 'mc', q: 'Which document replaced the failed Articles of Confederation as America\'s governing framework?', hint: 'Ratified in 1788, still in use today', options: ['The Declaration of Independence', 'The Federalist Papers', 'The Constitution', 'The Bill of Rights'], answer: 2 },
+    { type: 'text', q: 'What are the first ten amendments to the Constitution called?', hint: 'They protect individual rights', answer: 'bill of rights', accept: ['bill of rights', 'the bill of rights'] },
+    { type: 'mc', q: 'Who is called the "Father of the Constitution" for his role in designing it?', hint: 'Also co-wrote the Federalist Papers', options: ['Alexander Hamilton', 'John Adams', 'Thomas Jefferson', 'James Madison'], answer: 3 },
+    { type: 'text', q: 'What 1803 land purchase, negotiated under Jefferson, roughly doubled the size of the United States?', hint: '___ Purchase', answer: 'louisiana purchase', accept: ['louisiana', 'louisiana purchase', 'the louisiana purchase'] },
+    { type: 'mc', q: 'The Federalist Papers were written to persuade Americans to ratify the Constitution. Who were its primary authors?', hint: 'Three Founders — one was the first President\'s advisor', options: ['Jefferson, Adams, Franklin', 'Hamilton, Madison, Jay', 'Washington, Jefferson, Hamilton', 'Madison, Adams, Monroe'], answer: 1 }
+  ],
+  civilwar: [
+    { type: 'mc', q: 'What was the primary cause of the Civil War?', hint: 'The institution that Southern states were determined to preserve and expand', options: ['Tariffs on imported goods', 'Slavery', 'States wanting their own currency', 'Disagreement about western land ownership'], answer: 1 },
+    { type: 'text', q: 'Lincoln\'s 1863 proclamation that declared enslaved people in Confederate states free was called the ___ Proclamation.', hint: 'The word means "freedom declaration"', answer: 'emancipation', accept: ['emancipation', 'emancipation proclamation', 'the emancipation proclamation'] },
+    { type: 'mc', q: 'Which battle (July 1–3, 1863) is often considered the turning point of the Civil War, killing 50,000 men in three days?', hint: 'Lincoln gave his most famous address there', options: ['Bull Run', 'Antietam', 'Gettysburg', 'Vicksburg'], answer: 2 },
+    { type: 'text', q: 'Who escaped slavery and became the most powerful voice against it — writing an autobiography and advising President Lincoln?', hint: 'His last name means something that keeps ships from moving', answer: 'frederick douglass', accept: ['douglass', 'frederick douglass'] },
+    { type: 'mc', q: 'Where did Confederate General Lee surrender to Union General Grant, effectively ending the Civil War?', hint: 'A courthouse in Virginia, April 9, 1865', options: ['Ford\'s Theatre', 'Gettysburg', 'Richmond', 'Appomattox Courthouse'], answer: 3 }
+  ],
+  worldwars: [
+    { type: 'mc', q: 'What event caused the United States to enter World War II?', hint: 'December 7, 1941 — "a date which will live in infamy"', options: ['The sinking of the Lusitania', 'The Zimmermann Telegram', 'The attack on Pearl Harbor', 'Hitler\'s invasion of France'], answer: 2 },
+    { type: 'text', q: 'What was the code name for the Allied invasion of Normandy, France on June 6, 1944?', hint: 'Two letters and a day', answer: 'd-day', accept: ['d-day', 'd day', 'operation overlord'] },
+    { type: 'mc', q: 'The Great Depression began in what year?', hint: 'Black Thursday — the stock market crashed', options: ['1919', '1925', '1929', '1933'], answer: 2 },
+    { type: 'text', q: 'Franklin Roosevelt\'s series of government programs to fight the Great Depression were called the New ___', hint: 'A type of business agreement', answer: 'deal', accept: ['deal', 'new deal'] },
+    { type: 'mc', q: 'Approximately how many Japanese Americans were forced into internment camps after Pearl Harbor?', hint: 'Two-thirds were American citizens', options: ['10,000', '50,000', '120,000', '500,000'], answer: 2 }
+  ],
+  civilrights: [
+    { type: 'mc', q: 'Which 1954 Supreme Court case declared school segregation unconstitutional?', hint: '___ v. Board of Education', options: ['Plessy v. Ferguson', 'Marbury v. Madison', 'Brown v. Board of Education', 'Roe v. Wade'], answer: 2 },
+    { type: 'text', q: 'Rosa Parks\' 1955 arrest triggered a year-long boycott of what transit system in Montgomery, Alabama?', hint: 'People stopped using public ___', answer: 'bus', accept: ['bus', 'buses', 'bus system', 'montgomery bus boycott'] },
+    { type: 'mc', q: 'Martin Luther King Jr. delivered his "I Have a Dream" speech at what Washington D.C. landmark?', hint: 'Named after the president who freed the enslaved', options: ['The Washington Monument', 'The Lincoln Memorial', 'The Capitol Building', 'The White House'], answer: 1 },
+    { type: 'text', q: 'What 1964 law banned discrimination in public places and employment based on race, color, religion, or national origin?', hint: 'Civil ___ Act', answer: 'civil rights act', accept: ['civil rights act', 'the civil rights act', 'civil rights act of 1964'] },
+    { type: 'mc', q: 'Harriet Tubman made approximately how many trips back into the South to lead enslaved people to freedom?', hint: 'She said she never lost a passenger', options: ['2–3 trips', '5–7 trips', '13 trips', 'Over 30 trips'], answer: 2 }
+  ]
+};
+
+// ─── Players ──────────────────────────────────────────────────────────────────
+const PLAYERS = [
+  { id: 'Ryder',   name: 'Ryder',   emoji: '⚔️',  role: 'Scholar · Grade 6',          color: '#4a7ab8' },
+  { id: 'Amanda',  name: 'Amanda',  emoji: '🌿',  role: 'Scholar · Classical Guide',   color: '#6a9070' },
+  { id: 'Brandee', name: 'Brandee', emoji: '📜',  role: 'Scholar · Guest',             color: '#c8902a' }
+];
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let currentPlayer = null;
+let masteryData = {};
+let currentEraId = null;
+let currentEraTab = 'overview';
+let examState = {};
+let selectedOption = null;
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+function init() { renderPlayerSelect(); }
+
+function renderPlayerSelect() {
+  const c = document.getElementById('player-cards');
+  c.innerHTML = PLAYERS.map(p => {
+    const raw = localStorage.getItem('us_history_' + p.id);
+    const data = raw ? JSON.parse(raw) : {};
+    const mastered = ERAS.filter(e => data[e.id] && data[e.id].passed).length;
+    return `<div class="player-card" onclick="selectPlayer('${p.id}')" style="--player-color:${p.color}">
+      <span class="player-emoji">${p.emoji}</span>
+      <div class="player-name">${p.name}</div>
+      <div class="player-role">${p.role}</div>
+      <div class="player-stats">${mastered > 0 ? mastered + '/7 mastered' : 'Not started'}</div>
+    </div>`;
+  }).join('');
+}
+
+function selectPlayer(id) {
+  currentPlayer = PLAYERS.find(p => p.id === id);
+  document.getElementById('home-eyebrow').textContent = 'Wade Classical · ' + currentPlayer.emoji + ' ' + currentPlayer.name;
+  document.getElementById('scholar-name').textContent = 'Scholar ' + currentPlayer.name;
+  const raw = localStorage.getItem('us_history_' + id);
+  masteryData = raw ? JSON.parse(raw) : {};
+  renderTimeline(); updateScholarBar();
+  db.ref('us-history/' + id).once('value', snap => {
+    if (snap.exists()) {
+      masteryData = snap.val();
+      localStorage.setItem('us_history_' + id, JSON.stringify(masteryData));
+      renderTimeline(); updateScholarBar();
+    }
+  });
+  showScreen('home-screen');
+}
+
+// ─── Screen management ────────────────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+  if (id === 'player-screen') renderPlayerSelect();
+}
+
+// ─── Timeline ─────────────────────────────────────────────────────────────────
+function renderTimeline() {
+  const spine = document.getElementById('timeline-spine');
+  spine.innerHTML = '';
+  ERAS.forEach(era => {
+    const m = masteryData[era.id] || {};
+    const passed = m.passed || false;
+    const studied = m.studied || false;
+    let dotClass = '', statusText = 'Not yet explored';
+    if (passed) { dotClass = 'mastered'; statusText = `Mastered · ${m.bestScore || 0}% on examination`; }
+    else if (studied) { dotClass = 'in-progress'; statusText = 'Studied · Examination not yet passed'; }
+    const stars = passed ? '★★★' : studied ? '★★☆' : '★☆☆';
+
+    const node = document.createElement('div');
+    node.className = 'era-node';
+    node.onclick = () => openEra(era.id);
+    node.innerHTML = `
+      <div class="era-card" style="--era-color:${era.color}">
+        <p class="era-period">${era.period}</p>
+        <h2 class="era-name">${era.emoji} ${era.name}</h2>
+        <p class="era-tagline">${era.tagline}</p>
+        <div class="era-status">
+          <div class="status-dot ${dotClass}"></div>
+          <span class="status-text">${statusText}</span>
+          <span class="mastery-stars" style="margin-left:auto">${stars}</span>
+        </div>
+      </div>
+      <div class="node-marker">${era.emoji}</div>
+      <div class="era-date-side">
+        <div class="era-date-big">${era.dateDisplay}</div>
+        <div class="era-date-label">Key Date</div>
+      </div>`;
+    spine.appendChild(node);
+  });
+}
+
+function updateScholarBar() {
+  let mastered = 0, scoreTotal = 0, scoreCount = 0;
+  ERAS.forEach(e => {
+    const m = masteryData[e.id] || {};
+    if (m.passed) mastered++;
+    if (m.bestScore) { scoreTotal += m.bestScore; scoreCount++; }
+  });
+  document.getElementById('eras-mastered').textContent = mastered;
+  document.getElementById('exams-passed').textContent = mastered;
+  document.getElementById('total-score').textContent = scoreCount ? Math.round(scoreTotal/scoreCount) + '% avg' : '—';
+}
+
+// ─── Era Screen ────────────────────────────────────────────────────────────────
+function openEra(eraId) {
+  const era = ERAS.find(e => e.id === eraId);
+  currentEraId = eraId;
+  const theme = ERA_THEMES[eraId] || {};
+  const header = document.getElementById('era-screen-header');
+  header.className = 'era-screen-header ' + (era.cssTheme || '');
+
+  let decorEl = header.querySelector('.atmo-decor');
+  if (!decorEl) { decorEl = document.createElement('div'); decorEl.className = 'atmo-decor'; header.appendChild(decorEl); }
+  decorEl.innerHTML = theme.decor || '';
+
+  let bgEl = header.querySelector('.atmo-bg');
+  if (!bgEl) { bgEl = document.createElement('div'); bgEl.className = 'atmo-bg'; header.insertBefore(bgEl, header.firstChild); }
+
+  document.getElementById('era-screen-title').textContent = era.emoji + ' ' + era.name;
+  document.getElementById('era-screen-title').style.color = era.color;
+  document.getElementById('era-screen-period').textContent = era.period;
+  document.getElementById('era-screen-period').style.color = era.color;
+  document.getElementById('era-screen-tagline').textContent = era.tagline;
+
+  if (!masteryData[eraId]) masteryData[eraId] = {};
+  if (currentPlayer && !masteryData[eraId].studied) {
+    masteryData[eraId].studied = true;
+    localStorage.setItem('us_history_' + currentPlayer.id, JSON.stringify(masteryData));
+    db.ref('us-history/' + currentPlayer.id).set(masteryData).catch(() => {});
+  }
+
+  renderEraContent(era);
+  switchEraTab('overview');
+  showScreen('era-screen');
+}
+
+function renderEraContent(era) {
+  // Overview
+  let html = '';
+  era.overview.forEach(s => {
+    html += `<div class="content-section"><p class="section-label">${s.label}</p>`;
+    if (s.type === 'facts') {
+      html += `<div class="fact-grid">`;
+      s.items.forEach(f => { html += `<div class="fact-card"><div class="fact-label">${f.l}</div><div class="fact-value">${f.v}</div></div>`; });
+      html += `</div>`;
+    } else { html += `<div class="content-body"><p>${s.body}</p></div>`; }
+    html += `</div>`;
+  });
+  document.getElementById('tab-overview').innerHTML = html;
+
+  // People
+  let ph = `<div class="content-section"><p class="section-label">Key Figures</p><div class="figure-list">`;
+  era.people.forEach(p => {
+    ph += `<div class="figure-card"><div class="figure-icon">${p.icon}</div><div>
+      <div class="figure-name">${p.name}</div>
+      <div class="figure-role" style="color:${era.color}">${p.role}</div>
+      <div class="figure-desc">${p.desc}</div>
+    </div></div>`;
+  });
+  document.getElementById('tab-people').innerHTML = ph + `</div></div>`;
+
+  // Achievements
+  let ah = `<div class="content-section"><p class="section-label">Legacy & Significance</p><ul class="achievement-list">`;
+  era.achievements.forEach(a => { ah += `<li>${a}</li>`; });
+  document.getElementById('tab-achievements').innerHTML = ah + `</ul></div>`;
+
+  // Life
+  const lf = era.life;
+  document.getElementById('tab-life').innerHTML = `<div class="content-section"><p class="section-label">${lf.label}</p><div class="content-body"><p>${lf.body}</p></div></div>`;
+
+  // Maps
+  const mapData = ERA_MAPS[era.id];
+  let mh = `<div class="content-section"><p class="section-label">Maps & Geography</p>`;
+  if (mapData) {
+    mapData.forEach(m => {
+      const wikiUrl = m.wiki ? `https://en.wikipedia.org/wiki/${m.wiki}` : '#';
+      mh += `<div class="map-wrap">
+        <img src="${m.src}" alt="Map of ${era.name}" loading="lazy"
+          onerror="this.parentElement.innerHTML='<a href=\\'${wikiUrl}\\' target=\\'_blank\\' style=\\'display:block;text-decoration:none;\\'><div style=\\'padding:40px;text-align:center;background:rgba(0,0,0,0.3);\\'><div style=\\'font-size:36px;margin-bottom:10px;\\'>🗺️</div><div style=\\'font-family:Cinzel,serif;color:var(--amber);font-size:14px;\\'>View Map ↗</div></div></a>'">
+        <div class="map-caption">${m.caption}${m.wiki ? ` <a href="${wikiUrl}" target="_blank" style="color:var(--amber);font-style:normal;font-size:11px;font-family:JetBrains Mono,monospace;margin-left:8px;">View full map ↗</a>` : ''}</div>
+      </div>`;
+    });
+  }
+  document.getElementById('tab-maps').innerHTML = mh + `</div>`;
+
+  // Video
+  const vidData = ERA_VIDEOS[era.id];
+  let vh = `<div class="content-section"><p class="section-label">Watch & Learn</p>`;
+  if (vidData) {
+    vidData.forEach(v => {
+      const url = `https://www.youtube.com/watch?v=${v.id}`;
+      vh += `<div class="video-card">
+        <a class="video-thumb-link" href="${url}" target="_blank" rel="noopener">
+          <div class="video-thumb-bg">
+            <div class="video-play-btn"><svg width="26" height="26" viewBox="0 0 26 26"><polygon points="9,6 21,13 9,20" fill="#c8902a"/></svg></div>
+            <span class="video-thumb-label">Watch on YouTube ↗</span>
+          </div>
+        </a>
+        <div class="video-meta">
+          <div class="video-source">${v.source}</div>
+          <div class="video-title">${v.title}</div>
+          <div class="video-desc">${v.desc}</div>
+          <a class="video-open-btn" href="${url}" target="_blank" rel="noopener">▶ Open on YouTube ↗</a>
+        </div>
+      </div>`;
+    });
+    vh += `<div class="video-note">📺 Crash Course US History is hosted by John Green — free, engaging, and appropriate for middle school and up.</div>`;
+  }
+  document.getElementById('tab-video').innerHTML = vh + `</div>`;
+}
+
+function switchEraTab(tab) {
+  currentEraTab = tab;
+  const tabs = ['overview','people','achievements','life','maps','video','exam'];
+  document.querySelectorAll('.era-tab').forEach((t, i) => t.classList.toggle('active', tabs[i] === tab));
+  document.querySelectorAll('#era-screen .tab-pane').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('tab-' + tab);
+  if (el) el.classList.add('active');
+}
+
+// ─── Examination ──────────────────────────────────────────────────────────────
+function startExam() {
+  const era = ERAS.find(e => e.id === currentEraId);
+  examState = { eraId: currentEraId, eraName: era.name, eraColor: era.color, questions: [...QUESTIONS[currentEraId]], current: 0, answers: [], correct: 0, submitted: false };
+  document.getElementById('exam-era-title').textContent = era.emoji + ' ' + era.name;
+  document.getElementById('exam-era-title').style.color = era.color;
+  renderQuestion(); showScreen('exam-screen');
+}
+
+function exitExam() { showScreen('era-screen'); }
+
+function renderQuestion() {
+  const { questions, current } = examState;
+  const q = questions[current];
+  const total = questions.length;
+  const circumference = 150;
+  document.getElementById('ring-fill').style.strokeDashoffset = circumference - ((current / total) * circumference);
+  document.getElementById('ring-text').textContent = `${current+1}/${total}`;
+
+  let html = `<p class="question-num">Question ${current+1} of ${total}</p>
+    <h2 class="question-text">${q.q}</h2>
+    <p class="question-hint">${q.hint}</p>`;
+
+  if (q.type === 'mc') {
+    html += `<div class="answer-options">` + q.options.map((opt, i) =>
+      `<div class="answer-option" id="opt-${i}" onclick="selectOption(${i})"><span class="option-letter">${['A','B','C','D'][i]}</span>${opt}</div>`
+    ).join('') + `</div>`;
+  } else {
+    html += `<div class="text-answer-wrap"><textarea class="text-answer" id="text-input" placeholder="Write your answer here…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitAnswer();}"></textarea></div>`;
+  }
+
+  html += `<div class="answer-feedback" id="answer-feedback"></div>
+    <div class="exam-actions">
+      <button class="btn-submit" id="btn-submit" onclick="submitAnswer()">Submit Answer</button>
+      <button class="btn-next ${current < total-1 ? '' : 'show'}" id="btn-next" onclick="${current < total-1 ? 'nextQuestion()' : 'showResults()'}">
+        ${current < total-1 ? 'Next Question →' : 'See Results →'}
+      </button>
+    </div>`;
+
+  document.getElementById('exam-body').innerHTML = html;
+  examState.submitted = false; selectedOption = null;
+  if (q.type === 'text') setTimeout(() => { const el = document.getElementById('text-input'); if(el) el.focus(); }, 100);
+}
+
+function selectOption(idx) {
+  if (examState.submitted) return;
+  selectedOption = idx;
+  document.querySelectorAll('.answer-option').forEach((el, i) => el.classList.toggle('selected', i === idx));
+}
+
+function submitAnswer() {
+  if (examState.submitted) return;
+  const { questions, current } = examState;
+  const q = questions[current];
+  let isCorrect = false, userAnswer = '';
+
+  if (q.type === 'mc') {
+    if (selectedOption === null) { showToast('Choose an answer first'); return; }
+    isCorrect = selectedOption === q.answer;
+    userAnswer = q.options[selectedOption];
+    document.querySelectorAll('.answer-option').forEach((el, i) => {
+      if (i === q.answer) el.classList.add('correct');
+      else if (i === selectedOption && !isCorrect) el.classList.add('wrong');
+    });
+  } else {
+    const input = document.getElementById('text-input');
+    userAnswer = input.value.trim();
+    if (!userAnswer) { showToast('Write your answer first'); return; }
+    const norm = userAnswer.toLowerCase().trim();
+    isCorrect = q.accept.some(a => norm.includes(a) || a.includes(norm));
+    input.classList.add(isCorrect ? 'correct' : 'wrong');
+  }
+
+  examState.submitted = true;
+  examState.answers.push({ q: q.q, correct: isCorrect, userAnswer, rightAnswer: q.type === 'mc' ? q.options[q.answer] : q.accept[0] });
+  if (isCorrect) examState.correct++;
+  selectedOption = null;
+
+  const fb = document.getElementById('answer-feedback');
+  fb.className = `answer-feedback show ${isCorrect ? 'correct-fb' : 'wrong-fb'}`;
+  fb.textContent = isCorrect ? '✓ Correct! Well done, Scholar.' : `✗ Not quite. The answer is: ${q.type === 'mc' ? q.options[q.answer] : q.accept[0]}`;
+  document.getElementById('btn-submit').disabled = true;
+  document.getElementById('btn-next').classList.add('show');
+}
+
+function nextQuestion() { examState.current++; selectedOption = null; renderQuestion(); }
+
+function showResults() {
+  const { correct, questions, eraId, eraName, eraColor, answers } = examState;
+  const total = questions.length;
+  const pct = Math.round(correct / total * 100);
+  const passed = pct >= 60;
+
+  if (!masteryData[eraId]) masteryData[eraId] = {};
+  masteryData[eraId].studied = true;
+  if (passed) { masteryData[eraId].passed = true; masteryData[eraId].bestScore = Math.max(masteryData[eraId].bestScore || 0, pct); }
+  masteryData[eraId].lastScore = pct;
+  masteryData[eraId].lastAttempt = new Date().toLocaleDateString();
+  saveMastery();
+
+  let rank, desc;
+  if (pct === 100) { rank = 'Master Historian'; desc = 'Perfect. The American story holds no mysteries for you.'; }
+  else if (pct >= 80) { rank = 'Learned Scholar'; desc = 'An excellent examination. Your knowledge of American history is strong.'; }
+  else if (pct >= 60) { rank = 'Scholar'; desc = 'Examination passed. Continue your study to deepen your mastery.'; }
+  else { rank = 'Apprentice'; desc = 'Study the texts further before attempting the examination again.'; }
+
+  document.getElementById('ring-fill').style.strokeDashoffset = 0;
+  document.getElementById('ring-text').textContent = pct + '%';
+
+  document.getElementById('exam-body').innerHTML = `
+    <div class="results-panel">
+      <div class="results-score">${pct}%</div>
+      <p class="results-label">${correct}/${total} correct · ${passed ? 'Passed' : 'Not yet passed'}</p>
+      <div class="results-rank">${rank}</div>
+      <p class="results-desc">${desc}</p>
+      ${passed ? '<div><span class="mastery-notice">⭐ Mastery saved</span></div>' : ''}
+      <div class="results-breakdown">
+        ${answers.map(a => `<div class="result-item ${a.correct ? 'r-correct' : 'r-wrong'}">
+          <span class="r-icon">${a.correct ? '✓' : '✗'}</span>
+          <span class="r-q">${a.q}</span>
+          ${!a.correct ? `<span class="r-ans">→ ${a.rightAnswer}</span>` : ''}
+        </div>`).join('')}
+      </div>
+      <div class="results-actions">
+        <button class="btn-retry" onclick="startExam()">Retake Examination</button>
+        <button class="btn-continue" onclick="showScreen('era-screen')">Return to ${eraName}</button>
+      </div>
+    </div>`;
+}
+
+// ─── Save ─────────────────────────────────────────────────────────────────────
+function saveMastery() {
+  if (!currentPlayer) return;
+  localStorage.setItem('us_history_' + currentPlayer.id, JSON.stringify(masteryData));
+  db.ref('us-history/' + currentPlayer.id).set(masteryData).catch(() => {});
+  renderTimeline(); updateScholarBar();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
