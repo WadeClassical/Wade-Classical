@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The House — Amanda's Cleaning Journal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Dancing+Script:wght@400;600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+
+<!-- Firebase -->
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.js"></script>
+
+<style>
+  :root {
+    --cream: #faf6f0;
+    --parchment: #f2ead8;
+    --wisteria-light: #d4b8e0;
+    --wisteria: #9b72b0;
+    --wisteria-deep: #6b4a8a;
+    --sage: #7a9e7e;
+    --sage-light: #b5cdb8;
+    --rose: #c8768a;
+    --rose-light: #e8b4be;
+    --gold: #c4985a;
+    --gold-light: #e8d4aa;
+    --ink: #2a2035;
+    --ink-light: #4a3a55;
+    --mist: #ede6f5;
+    --soft-shadow: rgba(107, 74, 138, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    min-height: 100vh;
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--ink);
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Botanical background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 15% 20%, rgba(180, 150, 210, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 80%, rgba(122, 158, 126, 0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(242, 234, 216, 0.4) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* SVG botanical corner decorations */
+  .corner-botanical {
+    position: fixed;
+    pointer-events: none;
+    opacity: 0.18;
+    z-index: 0;
+  }
+  .corner-botanical.tl { top: 0; left: 0; transform: rotate(0deg); }
+  .corner-botanical.tr { top: 0; right: 0; transform: scaleX(-1); }
+  .corner-botanical.bl { bottom: 0; left: 0; transform: scaleY(-1); }
+  .corner-botanical.br { bottom: 0; right: 0; transform: scale(-1,-1); }
+
+  /* ===== HEADER ===== */
+  .garden-header {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 2.5rem 2rem 1.5rem;
+    background: linear-gradient(180deg, 
+      rgba(180,150,210,0.15) 0%, 
+      rgba(242,234,216,0.0) 100%
+    );
+    border-bottom: 1px solid rgba(155, 114, 176, 0.2);
+  }
+
+  .wisteria-garland {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    opacity: 0.75;
+  }
+
+  .garland-line {
+    height: 1px;
+    width: 80px;
+    background: linear-gradient(90deg, transparent, var(--wisteria-light), transparent);
+  }
+
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--wisteria-deep);
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+  }
+
+  .header-subtitle {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.15rem;
+    color: var(--rose);
+    margin-top: 0.3rem;
+    letter-spacing: 0.05em;
+  }
+
+  .header-date {
+    font-family: 'IM Fell English', serif;
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    margin-top: 0.5rem;
+    opacity: 0.7;
+    letter-spacing: 0.08em;
+  }
+
+  /* ===== TABS ===== */
+  .tabs-container {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(250, 246, 240, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(155, 114, 176, 0.15);
+    padding: 0.75rem 1.5rem 0;
+    display: flex;
+    gap: 0.25rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.5rem 1.2rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--ink-light);
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .tab-btn::after {
+    content: attr(data-count);
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    font-size: 0.6rem;
+    font-family: 'Cormorant Garamond', serif;
+    background: var(--wisteria-light);
+    color: var(--wisteria-deep);
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .tab-btn.has-pending::after { opacity: 1; }
+
+  .tab-btn:hover { color: var(--wisteria-deep); }
+  .tab-btn.active {
+    color: var(--wisteria-deep);
+    border-bottom-color: var(--wisteria);
+    font-weight: 600;
+  }
+
+  .tab-emoji {
+    margin-right: 0.35rem;
+    font-size: 1rem;
+  }
+
+  /* ===== MAIN CONTENT ===== */
+  .main-content {
+    position: relative;
+    z-index: 5;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 1.5rem 1.5rem 5rem;
+  }
+
+  /* ===== PROGRESS SUMMARY ===== */
+  .progress-bar-wrap {
+    background: white;
+    border: 1px solid rgba(155,114,176,0.2);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 2px 12px var(--soft-shadow);
+  }
+
+  .progress-label {
+    font-family: 'IM Fell English', serif;
+    font-size: 0.88rem;
+    color: var(--ink-light);
+    min-width: 120px;
+    font-style: italic;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: var(--mist);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--wisteria-light), var(--wisteria));
+    border-radius: 999px;
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .progress-pct {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--wisteria-deep);
+    min-width: 40px;
+    text-align: right;
+  }
+
+  /* ===== SECTION PANELS ===== */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; animation: fadeUp 0.4s ease; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .section-label {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.25rem;
+    color: var(--sage);
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--sage-light), transparent);
+  }
+
+  /* ===== TASK CARDS ===== */
+  .tasks-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+
+  .task-card {
+    background: white;
+    border: 1px solid rgba(155,114,176,0.15);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 1px 6px var(--soft-shadow);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .task-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--wisteria-light);
+    transition: background 0.3s;
+  }
+
+  .task-card:hover {
+    transform: translateX(2px);
+    box-shadow: 0 3px 14px rgba(107,74,138,0.18);
+    border-color: rgba(155,114,176,0.3);
+  }
+
+  .task-card.done {
+    background: linear-gradient(135deg, rgba(212,184,224,0.1), rgba(181,205,184,0.1));
+    border-color: rgba(155,114,176,0.12);
+  }
+
+  .task-card.done::before { background: var(--sage); }
+
+  .task-card.done .task-name {
+    text-decoration: line-through;
+    color: var(--ink-light);
+    opacity: 0.55;
+  }
+
+  /* Checkbox */
+  .task-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--wisteria-light);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    background: white;
+  }
+
+  .task-card.done .task-check {
+    background: var(--sage);
+    border-color: var(--sage);
+  }
+
+  .task-check svg { display: none; }
+  .task-card.done .task-check svg { display: block; }
+
+  .task-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: var(--ink);
+    flex: 1;
+    line-height: 1.3;
+  }
+
+  .task-room {
+    font-family: 'IM Fell English', serif;
+    font-size: 0.75rem;
+    color: var(--rose);
+    font-style: italic;
+    opacity: 0.8;
+    white-space: nowrap;
+  }
+
+  .task-actions {
+    display: flex;
+    gap: 0.3rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .task-card:hover .task-actions { opacity: 1; }
+
+  .task-action-btn {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--ink-light);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+    padding: 0;
+  }
+
+  .task-action-btn:hover { background: var(--mist); color: var(--rose); }
+
+  /* ===== ADD TASK ===== */
+  .add-task-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .add-task-input {
+    flex: 1;
+    min-width: 160px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--ink);
+    background: white;
+    border: 1px solid rgba(155,114,176,0.25);
+    border-radius: 8px;
+    padding: 0.55rem 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .add-task-input:focus { border-color: var(--wisteria); }
+  .add-task-input::placeholder { color: var(--wisteria-light); font-style: italic; }
+
+  .add-task-select {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    background: white;
+    border: 1px solid rgba(155,114,176,0.25);
+    border-radius: 8px;
+    padding: 0.55rem 0.7rem;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .add-task-btn {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    background: linear-gradient(135deg, var(--wisteria), var(--wisteria-deep));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.55rem 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .add-task-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(107,74,138,0.3);
+  }
+
+  /* ===== RESET SECTION ===== */
+  .reset-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .reset-btn {
+    font-family: 'IM Fell English', serif;
+    font-size: 0.8rem;
+    font-style: italic;
+    color: var(--rose);
+    background: none;
+    border: 1px solid rgba(200, 118, 138, 0.3);
+    border-radius: 20px;
+    padding: 0.3rem 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .reset-btn:hover {
+    background: rgba(200,118,138,0.08);
+    border-color: var(--rose);
+  }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(42, 32, 53, 0.45);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal-box {
+    background: var(--cream);
+    border: 1px solid rgba(155,114,176,0.3);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(42,32,53,0.25);
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  .modal-overlay.open .modal-box { transform: scale(1); }
+
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--wisteria-deep);
+    margin-bottom: 1.25rem;
+  }
+
+  .modal-field {
+    margin-bottom: 0.9rem;
+  }
+
+  .modal-label {
+    font-family: 'IM Fell English', serif;
+    font-size: 0.82rem;
+    font-style: italic;
+    color: var(--ink-light);
+    display: block;
+    margin-bottom: 0.35rem;
+    letter-spacing: 0.05em;
+  }
+
+  .modal-input, .modal-select {
+    width: 100%;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--ink);
+    background: white;
+    border: 1px solid rgba(155,114,176,0.3);
+    border-radius: 8px;
+    padding: 0.55rem 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .modal-input:focus, .modal-select:focus { border-color: var(--wisteria); }
+
+  .modal-btns {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+  }
+
+  .modal-cancel {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    color: var(--ink-light);
+    background: none;
+    border: 1px solid rgba(42,32,53,0.2);
+    border-radius: 8px;
+    padding: 0.5rem 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .modal-cancel:hover { background: var(--mist); }
+
+  .modal-save {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--wisteria), var(--wisteria-deep));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1.3rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .modal-save:hover { box-shadow: 0 4px 12px rgba(107,74,138,0.3); }
+
+  /* ===== FLOATING NAV ===== */
+  .back-btn {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    z-index: 30;
+    font-family: 'IM Fell English', serif;
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--wisteria-deep);
+    background: white;
+    border: 1px solid rgba(155,114,176,0.3);
+    border-radius: 20px;
+    padding: 0.5rem 1.1rem;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 2px 12px var(--soft-shadow);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .back-btn:hover { box-shadow: 0 4px 16px rgba(107,74,138,0.22); transform: translateY(-1px); }
+
+  /* ===== EMPTY STATE ===== */
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--wisteria-light);
+  }
+
+  .empty-state-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+  .empty-state-text { font-family: 'IM Fell English', serif; font-style: italic; font-size: 1rem; }
+
+  /* ===== LAST DONE STAMP ===== */
+  .last-done {
+    font-family: 'IM Fell English', serif;
+    font-size: 0.72rem;
+    color: var(--sage);
+    font-style: italic;
+    margin-left: auto;
+    opacity: 0.75;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 600px) {
+    .header-title { font-size: 1.8rem; }
+    .tabs-container { gap: 0.1rem; padding: 0.5rem 0.5rem 0; }
+    .tab-btn { font-size: 0.78rem; padding: 0.4rem 0.6rem; }
+    .task-room { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Botanical corners SVG -->
+<svg class="corner-botanical tl" width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M10 190 Q30 100 100 10" stroke="#9b72b0" stroke-width="1.5" fill="none"/>
+  <ellipse cx="45" cy="140" rx="18" ry="10" transform="rotate(-40 45 140)" fill="#9b72b0" opacity="0.6"/>
+  <ellipse cx="65" cy="110" rx="15" ry="9" transform="rotate(-35 65 110)" fill="#7a9e7e" opacity="0.5"/>
+  <ellipse cx="82" cy="80" rx="14" ry="8" transform="rotate(-30 82 80)" fill="#9b72b0" opacity="0.4"/>
+  <circle cx="38" cy="152" r="5" fill="#c8768a" opacity="0.5"/>
+  <circle cx="55" cy="128" r="4" fill="#c8768a" opacity="0.4"/>
+  <circle cx="72" cy="100" r="5" fill="#9b72b0" opacity="0.5"/>
+  <circle cx="90" cy="68" r="3" fill="#c8768a" opacity="0.35"/>
+</svg>
+<svg class="corner-botanical tr" width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M10 190 Q30 100 100 10" stroke="#9b72b0" stroke-width="1.5" fill="none"/>
+  <ellipse cx="45" cy="140" rx="18" ry="10" transform="rotate(-40 45 140)" fill="#9b72b0" opacity="0.6"/>
+  <ellipse cx="65" cy="110" rx="15" ry="9" transform="rotate(-35 65 110)" fill="#7a9e7e" opacity="0.5"/>
+  <ellipse cx="82" cy="80" rx="14" ry="8" transform="rotate(-30 82 80)" fill="#9b72b0" opacity="0.4"/>
+  <circle cx="38" cy="152" r="5" fill="#c8768a" opacity="0.5"/>
+  <circle cx="55" cy="128" r="4" fill="#c8768a" opacity="0.4"/>
+  <circle cx="72" cy="100" r="5" fill="#9b72b0" opacity="0.5"/>
+</svg>
+
+<!-- Header -->
+<header class="garden-header">
+  <div class="wisteria-garland">
+    <div class="garland-line"></div>
+    <span style="font-size:1.2rem">🌸</span>
+    <span style="font-size:0.9rem; font-family:'Dancing Script'; color:var(--wisteria); letter-spacing:0.1em">The Garden House</span>
+    <span style="font-size:1.2rem">🌸</span>
+    <div class="garland-line"></div>
+  </div>
+  <h1 class="header-title">Amanda's Cleaning Journal</h1>
+  <div class="header-subtitle">A place for every task, and every task in its place</div>
+  <div class="header-date" id="headerDate"></div>
+</header>
+
+<!-- Tabs -->
+<div class="tabs-container">
+  <button class="tab-btn active" data-tab="daily" onclick="switchTab('daily')">
+    <span class="tab-emoji">🌿</span>Daily
+  </button>
+  <button class="tab-btn" data-tab="weekly" onclick="switchTab('weekly')">
+    <span class="tab-emoji">🌷</span>Weekly
+  </button>
+  <button class="tab-btn" data-tab="monthly" onclick="switchTab('monthly')">
+    <span class="tab-emoji">🌺</span>Monthly
+  </button>
+  <button class="tab-btn" data-tab="quarterly" onclick="switchTab('quarterly')">
+    <span class="tab-emoji">🍂</span>Quarterly
+  </button>
+  <button class="tab-btn" data-tab="yearly" onclick="switchTab('yearly')">
+    <span class="tab-emoji">✨</span>Yearly
+  </button>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+
+  <!-- Progress bar -->
+  <div class="progress-bar-wrap">
+    <span class="progress-label" id="progressLabel">Today's tasks</span>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <span class="progress-pct" id="progressPct">0%</span>
+  </div>
+
+  <!-- Daily Tab -->
+  <div class="tab-panel active" id="panel-daily">
+    <div class="reset-row">
+      <button class="reset-btn" onclick="resetTab('daily')">↺ Reset all daily</button>
+    </div>
+    <div id="tasks-daily"></div>
+    <div class="add-task-row">
+      <input class="add-task-input" id="add-input-daily" placeholder="Add a daily task…" onkeydown="if(event.key==='Enter')addTask('daily')">
+      <select class="add-task-select" id="add-room-daily">
+        <option value="">Room…</option>
+        <option>Kitchen</option><option>Living Room</option><option>Master Bedroom</option>
+        <option>Bathrooms</option><option>Laundry</option><option>Entry</option>
+        <option>Dining Room</option><option>Office</option><option>Whole House</option><option>Outside</option>
+      </select>
+      <button class="add-task-btn" onclick="addTask('daily')">+ Add</button>
+    </div>
+  </div>
+
+  <!-- Weekly Tab -->
+  <div class="tab-panel" id="panel-weekly">
+    <div class="reset-row">
+      <button class="reset-btn" onclick="resetTab('weekly')">↺ Reset all weekly</button>
+    </div>
+    <div id="tasks-weekly"></div>
+    <div class="add-task-row">
+      <input class="add-task-input" id="add-input-weekly" placeholder="Add a weekly task…" onkeydown="if(event.key==='Enter')addTask('weekly')">
+      <select class="add-task-select" id="add-room-weekly">
+        <option value="">Room…</option>
+        <option>Kitchen</option><option>Living Room</option><option>Master Bedroom</option>
+        <option>Bathrooms</option><option>Laundry</option><option>Entry</option>
+        <option>Dining Room</option><option>Office</option><option>Whole House</option><option>Outside</option>
+      </select>
+      <button class="add-task-btn" onclick="addTask('weekly')">+ Add</button>
+    </div>
+  </div>
+
+  <!-- Monthly Tab -->
+  <div class="tab-panel" id="panel-monthly">
+    <div class="reset-row">
+      <button class="reset-btn" onclick="resetTab('monthly')">↺ Reset all monthly</button>
+    </div>
+    <div id="tasks-monthly"></div>
+    <div class="add-task-row">
+      <input class="add-task-input" id="add-input-monthly" placeholder="Add a monthly task…" onkeydown="if(event.key==='Enter')addTask('monthly')">
+      <select class="add-task-select" id="add-room-monthly">
+        <option value="">Room…</option>
+        <option>Kitchen</option><option>Living Room</option><option>Master Bedroom</option>
+        <option>Bathrooms</option><option>Laundry</option><option>Entry</option>
+        <option>Dining Room</option><option>Office</option><option>Whole House</option><option>Outside</option>
+      </select>
+      <button class="add-task-btn" onclick="addTask('monthly')">+ Add</button>
+    </div>
+  </div>
+
+  <!-- Quarterly Tab -->
+  <div class="tab-panel" id="panel-quarterly">
+    <div class="reset-row">
+      <button class="reset-btn" onclick="resetTab('quarterly')">↺ Reset all quarterly</button>
+    </div>
+    <div id="quarter-banner" style="
+      background: linear-gradient(135deg, rgba(180,150,210,0.12), rgba(122,158,126,0.1));
+      border: 1px solid rgba(155,114,176,0.2);
+      border-radius: 10px;
+      padding: 0.75rem 1.1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    ">
+      <span style="font-size:1.3rem">🍂</span>
+      <div>
+        <div style="font-family:'Playfair Display',serif; font-style:italic; font-size:1rem; color:var(--wisteria-deep);" id="quarter-title"></div>
+        <div style="font-family:'IM Fell English',serif; font-style:italic; font-size:0.8rem; color:var(--ink-light); margin-top:0.15rem;" id="quarter-months"></div>
+      </div>
+    </div>
+    <div id="tasks-quarterly"></div>
+    <div class="add-task-row">
+      <input class="add-task-input" id="add-input-quarterly" placeholder="Add a quarterly task…" onkeydown="if(event.key==='Enter')addTask('quarterly')">
+      <select class="add-task-select" id="add-room-quarterly">
+        <option value="">Room…</option>
+        <option>Kitchen</option><option>Living Room</option><option>Master Bedroom</option>
+        <option>Bathrooms</option><option>Laundry</option><option>Entry</option>
+        <option>Dining Room</option><option>Office</option><option>Whole House</option><option>Outside</option>
+      </select>
+      <button class="add-task-btn" onclick="addTask('quarterly')">+ Add</button>
+    </div>
+  </div>
+
+  <!-- Yearly Tab -->
+  <div class="tab-panel" id="panel-yearly">
+    <div class="reset-row">
+      <button class="reset-btn" onclick="resetTab('yearly')">↺ Reset all yearly</button>
+    </div>
+    <div id="tasks-yearly"></div>
+    <div class="add-task-row">
+      <input class="add-task-input" id="add-input-yearly" placeholder="Add a yearly task…" onkeydown="if(event.key==='Enter')addTask('yearly')">
+      <select class="add-task-select" id="add-room-yearly">
+        <option value="">Room…</option>
+        <option>Kitchen</option><option>Living Room</option><option>Master Bedroom</option>
+        <option>Bathrooms</option><option>Laundry</option><option>Entry</option>
+        <option>Dining Room</option><option>Office</option><option>Whole House</option><option>Outside</option>
+      </select>
+      <button class="add-task-btn" onclick="addTask('yearly')">+ Add</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <div class="modal-title">Edit Task</div>
+    <div class="modal-field">
+      <label class="modal-label">Task name</label>
+      <input class="modal-input" id="edit-name" type="text">
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Room</label>
+      <select class="modal-select" id="edit-room">
+        <option value="">None</option>
+        <option>Kitchen</option><option>Living Room</option><option>Master Bedroom</option>
+        <option>Bathrooms</option><option>Laundry</option><option>Entry</option>
+        <option>Dining Room</option><option>Office</option><option>Whole House</option><option>Outside</option>
+      </select>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-save" onclick="saveEdit()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Back Button -->
+<a class="back-btn" href="wade-dashboard.html">← Garden Gate</a>
+
+<script>
+// ===== FIREBASE CONFIG =====
+const firebaseConfig = {
+  apiKey: "AIzaSyBsjx3JKjCQOMuus07MSoj3o-Vu9eRW6zc",
+  databaseURL: "https://wade-classical-default-rtdb.firebaseio.com",
+  projectId: "wade-classical",
+  appId: "1:72309085457:web:3d8b5a07302248ded6a8b0"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ===== DEFAULT TASKS =====
+const DEFAULT_TASKS = {
+  daily: [
+    { name: "Make the beds", room: "Master Bedroom" },
+    { name: "Wipe down kitchen counters", room: "Kitchen" },
+    { name: "Wash dishes / run dishwasher", room: "Kitchen" },
+    { name: "Wipe stovetop", room: "Kitchen" },
+    { name: "Sweep kitchen floor", room: "Kitchen" },
+    { name: "Take out trash if full", room: "Whole House" },
+    { name: "Tidy living room", room: "Living Room" },
+    { name: "Start a load of laundry", room: "Laundry" },
+    { name: "Wipe bathroom sinks", room: "Bathrooms" },
+    { name: "Spot-clean mirror", room: "Bathrooms" },
+    { name: "Pick up clutter / put things away", room: "Whole House" },
+  ],
+  weekly: [
+    { name: "Vacuum all rooms", room: "Whole House" },
+    { name: "Mop hard floors", room: "Whole House" },
+    { name: "Scrub toilets", room: "Bathrooms" },
+    { name: "Clean tubs & showers", room: "Bathrooms" },
+    { name: "Change bed linens", room: "Master Bedroom" },
+    { name: "Wash bath towels", room: "Laundry" },
+    { name: "Wipe kitchen appliances", room: "Kitchen" },
+    { name: "Clean microwave inside", room: "Kitchen" },
+    { name: "Wipe down dining table & chairs", room: "Dining Room" },
+    { name: "Dust furniture & shelves", room: "Whole House" },
+    { name: "Clean mirrors throughout", room: "Whole House" },
+    { name: "Wipe light switches & door handles", room: "Whole House" },
+    { name: "Take out all trash & recycling", room: "Whole House" },
+    { name: "Tidy entry & wipe front door", room: "Entry" },
+  ],
+  monthly: [
+    { name: "Clean inside oven", room: "Kitchen" },
+    { name: "Wipe down refrigerator inside & out", room: "Kitchen" },
+    { name: "Descale coffee maker", room: "Kitchen" },
+    { name: "Wash kitchen trash can", room: "Kitchen" },
+    { name: "Deep clean bathroom grout", room: "Bathrooms" },
+    { name: "Wash shower curtain & liner", room: "Bathrooms" },
+    { name: "Clean baseboards", room: "Whole House" },
+    { name: "Dust ceiling fans", room: "Whole House" },
+    { name: "Wipe window sills", room: "Whole House" },
+    { name: "Clean under furniture", room: "Whole House" },
+    { name: "Wash throw pillows & blankets", room: "Living Room" },
+    { name: "Wipe laundry machines", room: "Laundry" },
+    { name: "Clean dryer lint trap & vent", room: "Laundry" },
+    { name: "Wipe down kids' light switches & frequently touched surfaces", room: "Whole House" },
+  ],
+  quarterly: [
+    { name: "Wash windows inside & out", room: "Whole House" },
+    { name: "Deep clean oven racks", room: "Kitchen" },
+    { name: "Clean behind & under refrigerator", room: "Kitchen" },
+    { name: "Descale & deep clean dishwasher", room: "Kitchen" },
+    { name: "Flip or rotate mattresses", room: "Master Bedroom" },
+    { name: "Wash duvet covers & mattress pads", room: "Master Bedroom" },
+    { name: "Clean grout throughout", room: "Bathrooms" },
+    { name: "Wipe all cabinets inside & out", room: "Whole House" },
+    { name: "Dust & wipe all blinds", room: "Whole House" },
+    { name: "Vacuum furniture & under cushions", room: "Living Room" },
+    { name: "Clean garage / mudroom", room: "Entry" },
+    { name: "Inspect & clean HVAC vents", room: "Whole House" },
+    { name: "Sort & declutter pantry", room: "Kitchen" },
+    { name: "Organize & declutter one area of the house", room: "Whole House" },
+  ],
+  yearly: [
+    { name: "Deep clean all carpets (steam clean)", room: "Whole House" },
+    { name: "Wash curtains & drapes", room: "Whole House" },
+    { name: "Clean light fixtures & lamp shades", room: "Whole House" },
+    { name: "Wash exterior of house / porch", room: "Outside" },
+    { name: "Clean gutters", room: "Outside" },
+    { name: "Service HVAC filter replacement", room: "Whole House" },
+    { name: "Check smoke & CO detectors", room: "Whole House" },
+    { name: "Deep clean whole refrigerator including coils", room: "Kitchen" },
+    { name: "Reorganize closets", room: "Master Bedroom" },
+    { name: "Deep clean garage", room: "Outside" },
+    { name: "Declutter whole house — donate what you no longer need", room: "Whole House" },
+    { name: "Wash all pillows", room: "Master Bedroom" },
+    { name: "Clean under & behind all appliances", room: "Kitchen" },
+  ]
+};
+
+// ===== STATE =====
+let state = { daily: [], weekly: [], monthly: [], quarterly: [], yearly: [] };
+let currentTab = 'daily';
+let editingId = null;
+let editingFreq = null;
+
+// Auto-reset periods (in ms)
+const RESET_PERIODS = {
+  daily: 24 * 60 * 60 * 1000,
+  weekly: 7 * 24 * 60 * 60 * 1000,
+  monthly: 30 * 24 * 60 * 60 * 1000,
+  quarterly: 91 * 24 * 60 * 60 * 1000,
+  yearly: 365 * 24 * 60 * 60 * 1000,
+};
+
+const FREQ_LABELS = {
+  daily: "Today's tasks",
+  weekly: "This week's tasks",
+  monthly: "This month's tasks",
+  quarterly: "This quarter's tasks",
+  yearly: "This year's tasks",
+};
+
+// ===== QUARTER BANNER =====
+function getQuarterInfo() {
+  const month = new Date().getMonth(); // 0-11
+  const QUARTERS = [
+    { name: 'Q1', months: 'January · February · March',   num: 1 },
+    { name: 'Q1', months: 'January · February · March',   num: 1 },
+    { name: 'Q1', months: 'January · February · March',   num: 1 },
+    { name: 'Q2', months: 'April · May · June',            num: 2 },
+    { name: 'Q2', months: 'April · May · June',            num: 2 },
+    { name: 'Q2', months: 'April · May · June',            num: 2 },
+    { name: 'Q3', months: 'July · August · September',     num: 3 },
+    { name: 'Q3', months: 'July · August · September',     num: 3 },
+    { name: 'Q3', months: 'July · August · September',     num: 3 },
+    { name: 'Q4', months: 'October · November · December', num: 4 },
+    { name: 'Q4', months: 'October · November · December', num: 4 },
+    { name: 'Q4', months: 'October · November · December', num: 4 },
+  ];
+  return QUARTERS[month];
+}
+
+function renderQuarterBanner() {
+  const q = getQuarterInfo();
+  const year = new Date().getFullYear();
+  document.getElementById('quarter-title').textContent = `${q.name} ${year} — Quarter ${q.num} of 4`;
+  document.getElementById('quarter-months').textContent = q.months;
+}
+
+// ===== DATE =====
+function formatDate() {
+  const d = new Date();
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  return `${days[d.getDay()]}, the ${d.getDate()}${ordinal(d.getDate())} of ${months[d.getMonth()]}, ${d.getFullYear()}`;
+}
+function ordinal(n) {
+  const s = ['th','st','nd','rd'];
+  const v = n % 100;
+  return s[(v-20)%10]||s[v]||s[0];
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('headerDate').textContent = formatDate();
+  renderQuarterBanner();
+  loadFromStorage();
+  checkAutoResets();
+  renderAll();
+});
+
+// ===== STORAGE =====
+function getKey(freq) { return `cleaning-amanda-${freq}`; }
+function getResetKey(freq) { return `cleaning-amanda-reset-${freq}`; }
+
+function loadFromStorage() {
+  ['daily','weekly','monthly','quarterly','yearly'].forEach(freq => {
+    const saved = localStorage.getItem(getKey(freq));
+    if (saved) {
+      state[freq] = JSON.parse(saved);
+    } else {
+      // First load: use defaults
+      state[freq] = DEFAULT_TASKS[freq].map((t, i) => ({
+        id: `${freq}-default-${i}`,
+        name: t.name,
+        room: t.room,
+        done: false,
+        lastDone: null,
+      }));
+      saveToStorage(freq);
+    }
+  });
+
+  // Also sync from Firebase in background
+  const ref = db.ref('cleaning/amanda');
+  ref.once('value').then(snap => {
+    const val = snap.val();
+    if (!val) {
+      // Push defaults to Firebase
+      ref.set(state);
+      return;
+    }
+    // Merge Firebase into state (Firebase is source of truth for multi-device)
+    ['daily','weekly','monthly','quarterly','yearly'].forEach(freq => {
+      if (val[freq]) {
+        const arr = Array.isArray(val[freq]) ? val[freq] : Object.values(val[freq]);
+        state[freq] = arr.filter(Boolean);
+        saveToStorage(freq);
+      }
+    });
+    renderAll();
+  }).catch(() => {});
+}
+
+function saveToStorage(freq) {
+  localStorage.setItem(getKey(freq), JSON.stringify(state[freq]));
+}
+
+function saveAll() {
+  ['daily','weekly','monthly','quarterly','yearly'].forEach(freq => saveToStorage(freq));
+  // Background Firebase sync
+  db.ref('cleaning/amanda').set(state).catch(() => {});
+}
+
+// ===== AUTO RESET =====
+function checkAutoResets() {
+  const now = Date.now();
+  ['daily','weekly','monthly','quarterly','yearly'].forEach(freq => {
+    const lastReset = parseInt(localStorage.getItem(getResetKey(freq)) || '0');
+    if (now - lastReset > RESET_PERIODS[freq]) {
+      // Auto reset: uncheck all
+      state[freq].forEach(t => {
+        if (t.done) t.lastDone = new Date().toLocaleDateString();
+        t.done = false;
+      });
+      localStorage.setItem(getResetKey(freq), String(now));
+      saveToStorage(freq);
+    }
+  });
+}
+
+// ===== TAB SWITCHING =====
+function switchTab(freq) {
+  currentTab = freq;
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`panel-${freq}`).classList.add('active');
+  document.querySelector(`[data-tab="${freq}"]`).classList.add('active');
+  updateProgress();
+}
+
+// ===== RENDER =====
+function renderAll() {
+  ['daily','weekly','monthly','quarterly','yearly'].forEach(renderTab);
+  updateProgress();
+  updateTabBadges();
+}
+
+function renderTab(freq) {
+  const container = document.getElementById(`tasks-${freq}`);
+  if (!state[freq] || state[freq].length === 0) {
+    container.innerHTML = `<div class="empty-state">
+      <div class="empty-state-icon">🌸</div>
+      <div class="empty-state-text">No tasks yet — add one below</div>
+    </div>`;
+    return;
+  }
+
+  // Group by room
+  const rooms = {};
+  state[freq].forEach(t => {
+    const r = t.room || 'General';
+    if (!rooms[r]) rooms[r] = [];
+    rooms[r].push(t);
+  });
+
+  let html = '';
+  Object.entries(rooms).forEach(([room, tasks]) => {
+    html += `<div class="section-group">
+      <div class="section-label">${room}</div>
+      <div class="tasks-grid">`;
+    tasks.forEach(t => {
+      const doneClass = t.done ? 'done' : '';
+      const lastDoneStr = t.lastDone ? `<span class="last-done">Last done: ${t.lastDone}</span>` : '';
+      html += `<div class="task-card ${doneClass}" data-id="${t.id}" data-freq="${freq}" onclick="toggleTask('${freq}','${t.id}')">
+        <div class="task-check">
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
+            <path d="M1 5L4.5 8.5L11 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="task-name">${escHtml(t.name)}</span>
+        ${lastDoneStr}
+        <span class="task-room">${escHtml(t.room || '')}</span>
+        <div class="task-actions" onclick="event.stopPropagation()">
+          <button class="task-action-btn" title="Edit" onclick="openEdit('${freq}','${t.id}')">✏️</button>
+          <button class="task-action-btn" title="Delete" onclick="deleteTask('${freq}','${t.id}')">🗑️</button>
+        </div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function updateProgress() {
+  const tasks = state[currentTab] || [];
+  const total = tasks.length;
+  const done = tasks.filter(t => t.done).length;
+  const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressLabel').textContent = `${FREQ_LABELS[currentTab]} (${done}/${total})`;
+}
+
+function updateTabBadges() {
+  ['daily','weekly','monthly','quarterly','yearly'].forEach(freq => {
+    const tasks = state[freq] || [];
+    const pending = tasks.filter(t => !t.done).length;
+    const btn = document.querySelector(`[data-tab="${freq}"]`);
+    btn.setAttribute('data-count', pending);
+    btn.classList.toggle('has-pending', pending > 0);
+  });
+}
+
+// ===== TOGGLE =====
+function toggleTask(freq, id) {
+  const task = state[freq].find(t => t.id === id);
+  if (!task) return;
+  task.done = !task.done;
+  if (task.done) task.lastDone = new Date().toLocaleDateString();
+  saveToStorage(freq);
+  db.ref(`cleaning/amanda/${freq}`).set(state[freq]).catch(() => {});
+  renderTab(freq);
+  updateProgress();
+  updateTabBadges();
+}
+
+// ===== ADD =====
+function addTask(freq) {
+  const input = document.getElementById(`add-input-${freq}`);
+  const roomSel = document.getElementById(`add-room-${freq}`);
+  const name = input.value.trim();
+  if (!name) return;
+
+  const task = {
+    id: `${freq}-${Date.now()}`,
+    name,
+    room: roomSel.value || 'General',
+    done: false,
+    lastDone: null,
+  };
+  state[freq].push(task);
+  saveToStorage(freq);
+  db.ref(`cleaning/amanda/${freq}`).set(state[freq]).catch(() => {});
+  input.value = '';
+  roomSel.value = '';
+  renderTab(freq);
+  updateProgress();
+  updateTabBadges();
+}
+
+// ===== DELETE =====
+function deleteTask(freq, id) {
+  state[freq] = state[freq].filter(t => t.id !== id);
+  saveToStorage(freq);
+  db.ref(`cleaning/amanda/${freq}`).set(state[freq]).catch(() => {});
+  renderTab(freq);
+  updateProgress();
+  updateTabBadges();
+}
+
+// ===== EDIT =====
+function openEdit(freq, id) {
+  const task = state[freq].find(t => t.id === id);
+  if (!task) return;
+  editingId = id;
+  editingFreq = freq;
+  document.getElementById('edit-name').value = task.name;
+  document.getElementById('edit-room').value = task.room || '';
+  document.getElementById('editModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('editModal').classList.remove('open');
+  editingId = null;
+  editingFreq = null;
+}
+
+function saveEdit() {
+  if (!editingId || !editingFreq) return;
+  const task = state[editingFreq].find(t => t.id === editingId);
+  if (!task) return;
+  task.name = document.getElementById('edit-name').value.trim() || task.name;
+  task.room = document.getElementById('edit-room').value || 'General';
+  saveToStorage(editingFreq);
+  db.ref(`cleaning/amanda/${editingFreq}`).set(state[editingFreq]).catch(() => {});
+  renderTab(editingFreq);
+  closeModal();
+}
+
+// Close modal on overlay click
+document.getElementById('editModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ===== RESET =====
+function resetTab(freq) {
+  state[freq].forEach(t => {
+    if (t.done) t.lastDone = new Date().toLocaleDateString();
+    t.done = false;
+  });
+  localStorage.setItem(getResetKey(freq), String(Date.now()));
+  saveToStorage(freq);
+  db.ref(`cleaning/amanda/${freq}`).set(state[freq]).catch(() => {});
+  renderTab(freq);
+  updateProgress();
+  updateTabBadges();
+}
+</script>
+</body>
+</html>
