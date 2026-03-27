@@ -623,11 +623,11 @@ async function generateWorksheet() {
   const theme = document.getElementById('theme').value;
   const readingLevel = document.getElementById('reading-level').value;
 
-  const includeMath = document.querySelector('#toggle-math input').checked;
-  const includeSpelling = document.querySelector('#toggle-spelling input').checked;
-  const includeReading = document.querySelector('#toggle-reading input').checked;
-  const includeDraw = document.querySelector('#toggle-draw input').checked;
-  const includeGrammar = document.querySelector('#toggle-grammar input').checked;
+  const includeMath     = document.getElementById('toggle-math').classList.contains('checked');
+  const includeSpelling = document.getElementById('toggle-spelling').classList.contains('checked');
+  const includeReading  = document.getElementById('toggle-reading').classList.contains('checked');
+  const includeDraw     = document.getElementById('toggle-draw').classList.contains('checked');
+  const includeGrammar  = document.getElementById('toggle-grammar').classList.contains('checked');
 
   btn.disabled = true;
   bar.classList.add('show');
