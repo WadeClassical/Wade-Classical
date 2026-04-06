@@ -728,6 +728,8 @@
         .mastery-word.correct { border-color: var(--neon-green); color: var(--neon-green); }
         .mastery-word.wrong { border-color: var(--red); color: var(--red); }
         .mastery-word.untried { border-color: #444; color: #888; }
+        .mastery-word.today { outline: 2px solid var(--yellow); outline-offset: 1px; }
+        .mastery-word.today::after { content: ' ★'; font-size: 0.85em; color: var(--yellow); }
 
         /* ── ACTION BTNS ── */
         .action-btn {
@@ -1550,7 +1552,7 @@ function loadMastery() {
     // Reset if missing or all arrays are empty (corrupted state)
     const totalWords = ((masteryData?.correct?.length||0) + (masteryData?.wrong?.length||0) + (masteryData?.untried?.length||0));
     if (!masteryData || !masteryData.untried || totalWords === 0) {
-        masteryData = { correct: [], wrong: [], untried: [...(WORD_LISTS[currentUser] || [])], hints: {} };
+        masteryData = { correct: [], wrong: [], untried: [...(WORD_LISTS[currentUser] || [])], hints: {}, practicedToday: {} };
     }
     // Add any new words not yet in mastery
     const allWords = WORD_LISTS[currentUser] || [];
@@ -1563,11 +1565,14 @@ function loadMastery() {
             if (fbData) {
                 // Firebase stores arrays as objects with numeric keys — convert back
                 var toArr = function(v) { return v ? Object.values(v).filter(x => typeof x === 'string') : []; };
+                var fbTodayKey = new Date().toISOString().slice(0,10);
+                var fbPracticed = (fbData.practicedToday && typeof fbData.practicedToday === 'object') ? fbData.practicedToday : {};
                 var fbMastery = {
                     correct: toArr(fbData.correct),
                     wrong:   toArr(fbData.wrong),
                     untried: toArr(fbData.untried),
-                    hints:   (fbData.hints && typeof fbData.hints === 'object') ? fbData.hints : {}
+                    hints:   (fbData.hints && typeof fbData.hints === 'object') ? fbData.hints : {},
+                    practicedToday: fbPracticed
                 };
                 if (fbMastery.correct.length + fbMastery.wrong.length + fbMastery.untried.length > 0) {
                     masteryData = fbMastery;
@@ -1580,11 +1585,13 @@ function loadMastery() {
 
 function saveMastery() {
     // Ensure all three keys are real arrays before saving
+    const todayKey = new Date().toISOString().slice(0,10);
     const clean = {
         correct: Array.isArray(masteryData.correct) ? masteryData.correct : [],
         wrong:   Array.isArray(masteryData.wrong)   ? masteryData.wrong   : [],
         untried: Array.isArray(masteryData.untried) ? masteryData.untried : [],
-        hints:   (masteryData.hints && typeof masteryData.hints === 'object') ? masteryData.hints : {}
+        hints:   (masteryData.hints && typeof masteryData.hints === 'object') ? masteryData.hints : {},
+        practicedToday: { [todayKey]: Array.isArray(masteryData.practicedToday?.[todayKey]) ? masteryData.practicedToday[todayKey] : [] }
     };
     masteryData = clean;
     localStorage.setItem('wc_spelling_' + currentUser, JSON.stringify(clean));
@@ -1941,6 +1948,14 @@ function markWordResult(word, correct) {
         masteryData.wrong.push(word);
     }
 
+    // Track that this word was practiced today
+    const todayKey = new Date().toISOString().slice(0,10);
+    if (!masteryData.practicedToday) masteryData.practicedToday = {};
+    if (!Array.isArray(masteryData.practicedToday[todayKey])) masteryData.practicedToday[todayKey] = [];
+    if (!masteryData.practicedToday[todayKey].includes(word)) {
+        masteryData.practicedToday[todayKey].push(word);
+    }
+
     saveMastery();
 }
 
@@ -2000,7 +2015,8 @@ function renderMomMastery() {
                     correct: toArr(fbData.correct),
                     wrong:   toArr(fbData.wrong),
                     untried: toArr(fbData.untried),
-                    hints:   (fbData.hints && typeof fbData.hints === 'object') ? fbData.hints : {}
+                    hints:   (fbData.hints && typeof fbData.hints === 'object') ? fbData.hints : {},
+                    practicedToday: (fbData.practicedToday && typeof fbData.practicedToday === 'object') ? fbData.practicedToday : {}
                 };
                 // Also update localStorage so it's cached for next time
                 localStorage.setItem('wc_spelling_' + player.key, JSON.stringify(data));
@@ -2058,9 +2074,11 @@ function renderMomMastery() {
             } else {
                 const wordDiv = document.createElement('div');
                 wordDiv.className = 'mastery-word-list';
+                const momTodayKey = new Date().toISOString().slice(0,10);
+                const momPracticedSet = new Set((data.practicedToday || {})[momTodayKey] || []);
                 list.forEach(w => {
                     const el = document.createElement('span');
-                    el.className = 'mastery-word ' + s.cls;
+                    el.className = 'mastery-word ' + s.cls + (momPracticedSet.has(w) ? ' today' : '');
                     el.textContent = w;
                     const hintCount = (data.hints || {})[w] || 0;
                     if (hintCount > 0) {
@@ -2101,7 +2119,8 @@ function renderMasteryScreen() {
             </div>
             <div style="font-size:0.5em; color:var(--cyan); margin-bottom:4px;">${currentUser.toUpperCase()}</div>
             <div style="font-size:0.45em; color:#666; margin-bottom:8px;">${pct}% MASTERED · ${masteryData.correct.length} OF ${total} WORDS</div>
-            <div style="font-size:0.42em; color:var(--yellow); margin-bottom:20px;">💡 ${Object.values(masteryData.hints || {}).reduce((a,b)=>a+b,0)} total hints used</div>
+            <div style="font-size:0.42em; color:var(--yellow); margin-bottom:4px;">💡 ${Object.values(masteryData.hints || {}).reduce((a,b)=>a+b,0)} total hints used</div>
+            <div style="font-size:0.42em; color:var(--yellow); margin-bottom:20px; opacity:0.7;">★ = practiced today</div>
             <div style="background:#111; border:1px solid #222; border-radius:3px; height:8px; max-width:300px; margin:0 auto 28px; overflow:hidden;">
                 <div style="height:100%; width:${pct}%; background:var(--neon-green); box-shadow:0 0 8px var(--neon-green); transition:width 0.6s ease;"></div>
             </div>
@@ -2133,9 +2152,11 @@ function renderMasteryScreen() {
         } else {
             const wordDiv = document.createElement('div');
             wordDiv.className = 'mastery-word-list';
+            const todayKey = new Date().toISOString().slice(0,10);
+            const practicedSet = new Set((masteryData.practicedToday || {})[todayKey] || []);
             list.forEach(w => {
                 const el = document.createElement('span');
-                el.className = `mastery-word ${s.cls}`;
+                el.className = `mastery-word ${s.cls}` + (practicedSet.has(w) ? ' today' : '');
                 const hintCount = (masteryData.hints || {})[w] || 0;
                 el.textContent = w;
                 if (hintCount > 0) {
