@@ -1191,6 +1191,164 @@ function generateWorksheet() {
   }, 900);
 }
 
+// ─── Render Worksheet HTML ─────────────────────────────────────────────────────
+function renderWorksheet({ date, theme, sections, mathProblems, spellingWords, aiContent }) {
+  let sectionNum = 1;
+  let html = '';
+
+  // Header
+  html += `
+    <div class="ws-border-top">🌿 🍄 🦋 🌿 🍄 🦋 🌿 🍄 🦋 🌿 🍄 🦋 🌿</div>
+    <div class="ws-header">
+      <div class="ws-title-block">
+        <h1>${theme.emoji} Hadley's Daily Worksheet</h1>
+        <p>${date} · Grade 1</p>
+      </div>
+      <div class="ws-name-box">
+        <div class="ws-name-line">
+          <span>Name:</span><div class="ws-line"></div>
+        </div>
+        <div class="ws-name-line">
+          <span>Score:</span><div class="ws-line" style="width:80px"></div>
+        </div>
+      </div>
+    </div>`;
+
+  // ── MATH ──
+  if (sections.math && mathProblems.length > 0) {
+    html += `<div class="ws-section">
+      <div class="ws-section-header">
+        <div class="ws-section-num">${sectionNum++}</div>
+        <span class="ws-section-icon">🔢</span>
+        <div class="ws-section-title">Math Practice</div>
+        <div class="ws-section-points">___ / ${mathProblems.length}</div>
+      </div>
+      <div class="math-grid">`;
+    mathProblems.forEach(p => {
+      html += `<div class="math-problem">
+        <div class="math-equation">${p.a} ${p.op} ${p.b} =</div>
+        <div class="math-answer-line"></div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // ── SPELLING ──
+  if (sections.spelling && spellingWords.length > 0) {
+    html += `<div class="ws-section">
+      <div class="ws-section-header">
+        <div class="ws-section-num">${sectionNum++}</div>
+        <span class="ws-section-icon">✏️</span>
+        <div class="ws-section-title">Spelling Words</div>
+        <div class="ws-section-points">Trace · Write · Write again</div>
+      </div>`;
+    spellingWords.forEach(word => {
+      const letters = word.split('');
+      html += `<div class="spelling-word-row">
+        <div class="spelling-word">${word}</div>
+        <div class="trace-boxes">`;
+      letters.forEach(l => {
+        html += `<div class="trace-box">${l}</div>`;
+      });
+      html += `</div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:10px;margin-left:10px;">
+          <div style="border-bottom:1.5px solid #aaa;height:32px;position:relative;">
+            <div style="position:absolute;bottom:8px;left:0;right:0;border-bottom:1px dashed #e0e0e0;"></div>
+          </div>
+          <div style="border-bottom:1.5px solid #aaa;height:32px;position:relative;">
+            <div style="position:absolute;bottom:8px;left:0;right:0;border-bottom:1px dashed #e0e0e0;"></div>
+          </div>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // ── READING COMPREHENSION ──
+  if (sections.reading && aiContent.reading) {
+    const r = aiContent.reading;
+    html += `<div class="ws-section">
+      <div class="ws-section-header">
+        <div class="ws-section-num">${sectionNum++}</div>
+        <span class="ws-section-icon">📖</span>
+        <div class="ws-section-title">Reading Comprehension</div>
+        <div class="ws-section-points">___ / 3</div>
+      </div>
+      <div class="reading-passage">
+        <div class="passage-title">${r.title}</div>
+        ${r.passage}
+      </div>`;
+    r.questions.forEach((q, i) => {
+      html += `<div class="reading-question">
+        <p>${i + 1}. ${q.q}</p>
+        ${Array(q.lines).fill('<div class="answer-line"></div>').join('')}
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // ── DRAW & LABEL ──
+  if (sections.draw && aiContent.draw) {
+    const d = aiContent.draw;
+    html += `<div class="ws-section">
+      <div class="ws-section-header">
+        <div class="ws-section-num">${sectionNum++}</div>
+        <span class="ws-section-icon">🎨</span>
+        <div class="ws-section-title">Draw & Label</div>
+      </div>
+      <p style="font-size:13px;color:#555;margin-bottom:8px;font-style:italic;">${d.prompt}</p>
+      <div class="draw-box">Draw here 🖍️</div>
+      <div class="draw-labels">`;
+    d.labels.forEach(label => {
+      html += `<div class="draw-label-item">
+        <span style="font-size:12px;font-weight:700;color:#444;">${label}:</span>
+        <div class="draw-label-line"></div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // ── GRAMMAR ──
+  if (sections.grammar && aiContent.grammar) {
+    html += `<div class="ws-section">
+      <div class="ws-section-header">
+        <div class="ws-section-num">${sectionNum++}</div>
+        <span class="ws-section-icon">🌱</span>
+        <div class="ws-section-title">Fill in the Blank</div>
+        <div class="ws-section-points">___ / ${aiContent.grammar.length}</div>
+      </div>`;
+    aiContent.grammar.forEach((g, i) => {
+      const sentence = g.sentence.replace(/___/g, '<span class="blank"></span>');
+      const wb = shuffle(g.word_bank);
+      html += `<div class="reading-question">
+        <div class="grammar-sentence">${i + 1}. ${sentence}</div>
+        <div class="word-bank"><span>Word Bank:</span> &nbsp; ${wb.join(' &nbsp;·&nbsp; ')}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Footer
+  html += `
+    <div class="ws-footer">
+      <div class="star-box">
+        <label>How did I do?</label>
+        <span class="star">⭐</span>
+        <span class="star">⭐</span>
+        <span class="star">⭐</span>
+      </div>
+      <div class="ws-score-box">Score: _____ / ${sectionNum - 1} sections</div>
+    </div>
+    <div class="ws-deco">🌿 Wade Classical Homeschool · ${new Date().getFullYear()} 🌿</div>`;
+
+  document.getElementById('ws-inner').innerHTML = html;
+
+  // Show worksheet, hide generator
+  document.getElementById('generator-screen').style.display = 'none';
+  document.getElementById('worksheet').classList.add('visible');
+  window.scrollTo(0, 0);
+}
+
 </script>
 </body>
 </html>
