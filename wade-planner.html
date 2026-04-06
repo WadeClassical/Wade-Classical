@@ -1756,6 +1756,16 @@ if (firebaseReady) {
 
 autoReset();
 render();
+
+// Open to specific person if URL param is set e.g. wade-planner.html?person=hadley
+(function() {
+    const params = new URLSearchParams(window.location.search);
+    const person = params.get('person');
+    const validPeople = ['ryder','hadley','mom','house'];
+    if (person && validPeople.includes(person)) {
+        switchPerson(person);
+    }
+})();
 </script>
 </body>
 </html>
