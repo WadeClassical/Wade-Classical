@@ -342,7 +342,9 @@
         }
 
         .edit-mode .task-delete { display: block; }
+        .edit-mode .task-edit  { display: block; }
         .task-delete:hover { color: var(--mom); }
+        .task-edit:hover   { color: var(--sage); }
 
         /* Empty state */
         .empty-state {
@@ -994,6 +996,14 @@ function renderDayView(person, date) {
         });
     });
 
+    // Bind edit
+    container.querySelectorAll('.task-edit').forEach(el => {
+        el.addEventListener('click', function(e) {
+            e.stopPropagation();
+            openEditTask(person, this.dataset.taskid);
+        });
+    });
+
     // Bind delete
     container.querySelectorAll('.task-delete').forEach(el => {
         el.addEventListener('click', function(e) {
@@ -1136,6 +1146,7 @@ function buildTaskItem(task, done, ckey, idx) {
             (task.note ? '<div class="task-note">' + escHtml(task.note) + '</div>' : '') +
         '</div>' +
         (badges ? '<div class="task-badges">' + badges + '</div>' : '') +
+        (editMode ? '<button class="task-edit" data-taskid="' + task.id + '" title="Edit task">✎</button>' : '') +
         (editMode ? '<button class="task-delete" data-taskid="' + task.id + '">✕</button>' : '') +
     '</div>';
 }
@@ -1174,6 +1185,7 @@ function renderWeekView(person) {
                     '<div class="week-check">' + (done ? '✓' : '') + '</div>' +
                     '<span class="week-task-name">' + escHtml(task.name) + '</span>' +
                     (task.momFlag ? '<span class="week-task-mom">🦋</span>' : '') +
+                    (editMode ? '<button class="task-edit" data-taskid="' + task.id + '" style="display:block;" title="Edit task">✎</button>' : '') +
                     (editMode ? '<button class="task-delete" data-taskid="' + task.id + '" style="display:block;">✕</button>' : '') +
                 '</div>';
             });
@@ -1196,6 +1208,14 @@ function renderWeekView(person) {
     container.querySelectorAll('.week-task-row').forEach(el => {
         el.addEventListener('click', function() {
             toggleCheck(this.dataset.person, this.dataset.ckey);
+        });
+    });
+
+    // Bind week edit buttons
+    container.querySelectorAll('.week-task-row .task-edit').forEach(el => {
+        el.addEventListener('click', function(e) {
+            e.stopPropagation();
+            openEditTask(person, this.dataset.taskid);
         });
     });
 
@@ -1416,6 +1436,129 @@ function deleteTask(person, taskId) {
     let tasks = loadTasks(person);
     tasks = tasks.filter(t => t.id !== taskId);
     saveTasks(person, tasks);
+    render();
+}
+
+function openEditTask(person, taskId) {
+    const tasks = loadTasks(person);
+    const task  = tasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    const panel = document.getElementById('edit-panel-' + person);
+    panel.classList.add('show');
+    panel.innerHTML = buildEditTaskForm(person, task);
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    // Restore recur UI state
+    const recurType = task.recurring ? task.recurring.type : 'oneoff';
+    const recurSel  = document.getElementById('edit-recur-' + person);
+    if (recurSel) {
+        recurSel.value = recurType;
+        updateEditRecurUI(person);
+    }
+    // Restore specific days
+    if (task.recurring && task.recurring.type === 'specific' && task.recurring.days) {
+        document.querySelectorAll('#edit-specific-days-' + person + ' .day-check-btn').forEach(btn => {
+            if (task.recurring.days.includes(parseInt(btn.dataset.dow))) btn.classList.add('selected');
+        });
+    }
+    // Restore one-off date
+    if (!task.recurring && task.date) {
+        const dateInput = document.getElementById('edit-date-' + person);
+        if (dateInput) dateInput.value = task.date;
+    }
+}
+
+function buildEditTaskForm(person, task) {
+    const recurType = task.recurring ? task.recurring.type : 'oneoff';
+    const appVal    = task.app || 'None';
+
+    return '<div class="edit-panel-title">Edit task</div>' +
+    '<div class="edit-field"><label class="edit-label">Task Name</label>' +
+        '<input class="edit-input" id="edit-name-' + person + '" value="' + escHtml(task.name) + '" /></div>' +
+    '<div class="edit-field"><label class="edit-label">Note (optional)</label>' +
+        '<input class="edit-input" id="edit-note-' + person + '" value="' + escHtml(task.note || '') + '" placeholder="e.g. Pages 12-14" /></div>' +
+    '<div class="edit-row">' +
+        '<div class="edit-field"><label class="edit-label">Linked App</label>' +
+            '<select class="edit-select" id="edit-app-' + person + '">' +
+                Object.keys(APPS).map(a => '<option value="' + a + '"' + (a === appVal ? ' selected' : '') + '>' + a + '</option>').join('') +
+            '</select></div>' +
+        '<div class="edit-field"><label class="edit-label">Repeats</label>' +
+            '<select class="edit-select" id="edit-recur-' + person + '" onchange="updateEditRecurUI(\'' + person + '\')">' +
+                '<option value="daily"' +    (recurType==='daily'    ?' selected':'') + '>Every Day</option>' +
+                '<option value="weekdays"' + (recurType==='weekdays' ?' selected':'') + '>Weekdays (Mon–Fri)</option>' +
+                '<option value="specific"' + (recurType==='specific' ?' selected':'') + '>Specific Days</option>' +
+                '<option value="weekly"' +   (recurType==='weekly'   ?' selected':'') + '>Once a Week (any day)</option>' +
+                '<option value="oneoff"' +   (recurType==='oneoff'   ?' selected':'') + '>One-Off Date</option>' +
+            '</select></div>' +
+    '</div>' +
+    '<div class="edit-field" id="edit-specific-days-' + person + '" style="display:none">' +
+        '<label class="edit-label">Which Days?</label>' +
+        '<div class="days-checkboxes">' +
+            ['Mon','Tue','Wed','Thu','Fri'].map((d,i) =>
+                '<button type="button" class="day-check-btn" data-dow="' + (i+1) + '" onclick="toggleDayBtn(this)">' + d + '</button>'
+            ).join('') +
+        '</div>' +
+    '</div>' +
+    '<div class="edit-field" id="edit-oneoff-date-' + person + '" style="display:none">' +
+        '<label class="edit-label">Date</label>' +
+        '<input class="edit-input" type="date" id="edit-date-' + person + '" /></div>' +
+    '<div class="edit-checkbox-row">' +
+        '<input type="checkbox" id="edit-mom-' + person + '"' + (task.momFlag ? ' checked' : '') + ' />' +
+        '<label for="edit-mom-' + person + '">🦋 Needs Mom</label>' +
+    '</div>' +
+    '<div class="edit-btn-row">' +
+        '<button class="btn-add" onclick="saveEditTask(\'' + person + '\',\'' + task.id + '\')" >Save Changes</button>' +
+        '<button class="btn-cancel" onclick="closeAddTask(\'' + person + '\')" >Cancel</button>' +
+    '</div>';
+}
+
+function updateEditRecurUI(person) {
+    const val = document.getElementById('edit-recur-' + person).value;
+    document.getElementById('edit-specific-days-' + person).style.display = val === 'specific' ? 'block' : 'none';
+    document.getElementById('edit-oneoff-date-'   + person).style.display = val === 'oneoff'   ? 'block' : 'none';
+}
+
+function saveEditTask(person, taskId) {
+    const name = document.getElementById('edit-name-' + person).value.trim();
+    if (!name) { alert('Please enter a task name.'); return; }
+
+    const note  = document.getElementById('edit-note-'  + person).value.trim();
+    const app   = document.getElementById('edit-app-'   + person).value;
+    const recur = document.getElementById('edit-recur-' + person).value;
+    const momF  = document.getElementById('edit-mom-'   + person).checked;
+
+    let recurObj = { type: recur };
+    if (recur === 'specific') {
+        const days = [...document.querySelectorAll('#edit-specific-days-' + person + ' .day-check-btn.selected')]
+            .map(b => parseInt(b.dataset.dow));
+        if (days.length === 0) { alert('Please select at least one day.'); return; }
+        recurObj.days = days;
+    }
+
+    let date = null;
+    if (recur === 'oneoff') {
+        date = document.getElementById('edit-date-' + person).value;
+        if (!date) { alert('Please select a date.'); return; }
+        recurObj = null;
+    }
+
+    const tasks = loadTasks(person);
+    const idx   = tasks.findIndex(t => t.id === taskId);
+    if (idx === -1) return;
+
+    tasks[idx] = {
+        ...tasks[idx],
+        name,
+        note:      note || null,
+        app:       app !== 'None' ? app : null,
+        momFlag:   momF,
+        recurring: recurObj,
+        date:      date
+    };
+
+    saveTasks(person, tasks);
+    closeAddTask(person);
     render();
 }
 
