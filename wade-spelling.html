@@ -1404,7 +1404,39 @@ const WORD_LISTS = {
         'eloquent','gratitude','reverence','prudence','faithful','industry',
         'character','knowledge','wisdom','liberty','justice','courage','honest',
         'righteous','devoted','earnest','noble','worthy','resolve','endure',
-        'steadfast','grateful','sincere','temperate','generous','humble','patient'
+        'steadfast','grateful','sincere','temperate','generous','humble','patient',
+        // Grade 6-7 challenge words — multi-syllable, tricky patterns, silent letters
+        'acknowledge','achievement','aggressive','apparent','appropriate',
+        'argument','attendance','beginning','boundary','bureaucracy',
+        'calendar','campaign','category','ceiling','cemetery',
+        'colleague','commemorate','commitment','committee','conscience',
+        'conscious','controversial','curiosity','cylinder','definite',
+        'deliberately','desperate','destruction','disappear','discipline',
+        'eligible','embarrass','exaggerate','excellent','existence',
+        'extraordinary','fascinate','February','foreign','government',
+        'guarantee','imaginary','immediately','independent','inevitable',
+        'interrupt','judgment','lieutenant','lightning','maintenance',
+        'mischievous','mysterious','necessary','negotiate','occasion',
+        'opportunity','parallel','particularly','perceive','performance',
+        'permanent','personnel','phenomenon','pneumonia','possess',
+        'prejudice','privilege','procedure','pronunciation','psychiatry',
+        'receive','recommend','rehearsal','relevant','responsibility',
+        'rhyme','rhythm','ridiculous','sacrifice','sophomore',
+        'sufficient','surveillance','suspicious','thoroughly','tournament',
+        'transferred','unanimous','unnecessary','vacuum','Wednesday',
+        // Latin & Greek roots — classical academic vocabulary
+        'ambiguous','benevolent','circumference','commemorate','consequence',
+        'contradict','correspond','equivalent','exonerate','expedition',
+        'extinction','formidable','hypothesis','illuminate','impartial',
+        'inevitable','ingenious','inquisition','legitimate','lieutenant',
+        'magnificent','manuscript','melancholy','metaphor','municipal',
+        'narrative','obsolete','omnivorous','opposition','paramount',
+        'parliament','peninsula','perception','philanthropy','predecessor',
+        'preliminary','presumptuous','privilege','proclamation','propaganda',
+        'protagonist','psychology','reconcile','reformation','renaissance',
+        'reservoir','resistance','revolution','simultaneous','spectacle',
+        'subsequent','substantial','superintendent','supersede','symmetry',
+        'testimony','trajectory','tyranny','unprecedented','vocabulary'
     ],
     mom: [
         // Commonly misspelled by adults
@@ -1518,7 +1550,7 @@ function loadMastery() {
     // Reset if missing or all arrays are empty (corrupted state)
     const totalWords = ((masteryData?.correct?.length||0) + (masteryData?.wrong?.length||0) + (masteryData?.untried?.length||0));
     if (!masteryData || !masteryData.untried || totalWords === 0) {
-        masteryData = { correct: [], wrong: [], untried: [...(WORD_LISTS[currentUser] || [])] };
+        masteryData = { correct: [], wrong: [], untried: [...(WORD_LISTS[currentUser] || [])], hints: {} };
     }
     // Add any new words not yet in mastery
     const allWords = WORD_LISTS[currentUser] || [];
@@ -1534,7 +1566,8 @@ function loadMastery() {
                 var fbMastery = {
                     correct: toArr(fbData.correct),
                     wrong:   toArr(fbData.wrong),
-                    untried: toArr(fbData.untried)
+                    untried: toArr(fbData.untried),
+                    hints:   (fbData.hints && typeof fbData.hints === 'object') ? fbData.hints : {}
                 };
                 if (fbMastery.correct.length + fbMastery.wrong.length + fbMastery.untried.length > 0) {
                     masteryData = fbMastery;
@@ -1550,7 +1583,8 @@ function saveMastery() {
     const clean = {
         correct: Array.isArray(masteryData.correct) ? masteryData.correct : [],
         wrong:   Array.isArray(masteryData.wrong)   ? masteryData.wrong   : [],
-        untried: Array.isArray(masteryData.untried) ? masteryData.untried : []
+        untried: Array.isArray(masteryData.untried) ? masteryData.untried : [],
+        hints:   (masteryData.hints && typeof masteryData.hints === 'object') ? masteryData.hints : {}
     };
     masteryData = clean;
     localStorage.setItem('wc_spelling_' + currentUser, JSON.stringify(clean));
@@ -1800,6 +1834,10 @@ function showHint() {
     if (!wordInProgress) return;
     hintUsed = true;
     document.getElementById('hintBtn').disabled = true;
+    // Track hint usage per word
+    if (!masteryData.hints) masteryData.hints = {};
+    masteryData.hints[currentWord] = (masteryData.hints[currentWord] || 0) + 1;
+    saveMastery();
 
     // The correct letter for the current active blank
     const correctLetter = currentWord[currentLetterIndex].toUpperCase();
@@ -1961,7 +1999,8 @@ function renderMomMastery() {
                 data = {
                     correct: toArr(fbData.correct),
                     wrong:   toArr(fbData.wrong),
-                    untried: toArr(fbData.untried)
+                    untried: toArr(fbData.untried),
+                    hints:   (fbData.hints && typeof fbData.hints === 'object') ? fbData.hints : {}
                 };
                 // Also update localStorage so it's cached for next time
                 localStorage.setItem('wc_spelling_' + player.key, JSON.stringify(data));
@@ -1987,6 +2026,7 @@ function renderMomMastery() {
                     <span style="font-size:1.4em;">${player.icon}</span>
                     <span style="font-size:0.65em; color:var(--yellow); letter-spacing:0.15em;">${player.label}</span>
                     <span style="font-size:0.45em; color:var(--cyan); margin-left:auto;">${pct}% MASTERED</span>
+                    <span style="font-size:0.42em; color:var(--yellow); margin-left:10px;" title="Total hint uses across all words">💡 ${Object.values((data && data.hints) ? data.hints : {}).reduce((a,b)=>a+b,0)} hints</span>
                 </div>
                 <div style="background:#0a0a1a; border-radius:3px; height:6px; margin-bottom:16px; overflow:hidden;">
                     <div style="height:100%; width:${pct}%; background:var(--neon-green); box-shadow:0 0 8px var(--neon-green);"></div>
@@ -2022,6 +2062,14 @@ function renderMomMastery() {
                     const el = document.createElement('span');
                     el.className = 'mastery-word ' + s.cls;
                     el.textContent = w;
+                    const hintCount = (data.hints || {})[w] || 0;
+                    if (hintCount > 0) {
+                        const hintBadge = document.createElement('sup');
+                        hintBadge.style.cssText = 'font-size:0.6em; color:var(--yellow); margin-left:2px; opacity:0.85;';
+                        hintBadge.title = hintCount + ' hint' + (hintCount > 1 ? 's' : '') + ' used';
+                        hintBadge.textContent = '💡' + hintCount;
+                        el.appendChild(hintBadge);
+                    }
                     wordDiv.appendChild(el);
                 });
                 sec.appendChild(wordDiv);
@@ -2052,7 +2100,8 @@ function renderMasteryScreen() {
                 📊 MASTERY REPORT
             </div>
             <div style="font-size:0.5em; color:var(--cyan); margin-bottom:4px;">${currentUser.toUpperCase()}</div>
-            <div style="font-size:0.45em; color:#666; margin-bottom:20px;">${pct}% MASTERED · ${masteryData.correct.length} OF ${total} WORDS</div>
+            <div style="font-size:0.45em; color:#666; margin-bottom:8px;">${pct}% MASTERED · ${masteryData.correct.length} OF ${total} WORDS</div>
+            <div style="font-size:0.42em; color:var(--yellow); margin-bottom:20px;">💡 ${Object.values(masteryData.hints || {}).reduce((a,b)=>a+b,0)} total hints used</div>
             <div style="background:#111; border:1px solid #222; border-radius:3px; height:8px; max-width:300px; margin:0 auto 28px; overflow:hidden;">
                 <div style="height:100%; width:${pct}%; background:var(--neon-green); box-shadow:0 0 8px var(--neon-green); transition:width 0.6s ease;"></div>
             </div>
@@ -2087,7 +2136,15 @@ function renderMasteryScreen() {
             list.forEach(w => {
                 const el = document.createElement('span');
                 el.className = `mastery-word ${s.cls}`;
+                const hintCount = (masteryData.hints || {})[w] || 0;
                 el.textContent = w;
+                if (hintCount > 0) {
+                    const hintBadge = document.createElement('sup');
+                    hintBadge.style.cssText = 'font-size:0.6em; color:var(--yellow); margin-left:2px; opacity:0.85;';
+                    hintBadge.title = hintCount + ' hint' + (hintCount > 1 ? 's' : '') + ' used';
+                    hintBadge.textContent = '💡' + hintCount;
+                    el.appendChild(hintBadge);
+                }
                 wordDiv.appendChild(el);
             });
             section.appendChild(wordDiv);
