@@ -290,7 +290,8 @@
 
         .task-body { flex: 1; min-width: 0; }
         .task-name { font-size: 1.05em; font-weight: 400; color: var(--ink); line-height: 1.3; }
-        .task-note { font-size: 0.8em; color: var(--ink-light); margin-top: 3px; font-style: italic; }
+        .task-note { font-size: 0.8em; color: var(--ink-mid); margin-top: 4px; font-style: italic; display: flex; align-items: flex-start; gap: 4px; }
+        .task-note::before { content: '📝'; font-style: normal; font-size: 0.85em; flex-shrink: 0; margin-top: 1px; }
 
         .task-badges { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
 
@@ -849,7 +850,11 @@ const localCache = {};
 
 function loadTasks(person) {
     const key = 'tasks_' + person;
-    return localCache[key] || JSON.parse(localStorage.getItem('wc_planner_tasks_' + person) || '[]');
+    const raw = localCache[key] || JSON.parse(localStorage.getItem('wc_planner_tasks_' + person) || '[]');
+    // Firebase stores arrays as objects with numeric keys — convert back if needed
+    const arr = Array.isArray(raw) ? raw : Object.values(raw || {});
+    // Ensure note field is always a string or null (Firebase strips null keys)
+    return arr.map(t => ({ ...t, note: t.note || null }));
 }
 
 function saveTasks(person, tasks) {
@@ -1183,7 +1188,10 @@ function renderWeekView(person) {
                 html += '<div class="week-task-row' + (done ? ' done' : '') + '" data-ckey="' + ckey + '" data-person="' + person + '" data-taskid="' + task.id + '" ' + (editMode ? 'draggable="true"' : '') + '>' +
                     (editMode ? '<span class="week-drag-handle">⠿</span>' : '') +
                     '<div class="week-check">' + (done ? '✓' : '') + '</div>' +
-                    '<span class="week-task-name">' + escHtml(task.name) + '</span>' +
+                    '<div style="flex:1;min-width:0;">' +
+                        '<span class="week-task-name">' + escHtml(task.name) + '</span>' +
+                        (task.note ? '<div class="task-note" style="font-size:0.78em;">' + escHtml(task.note) + '</div>' : '') +
+                    '</div>' +
                     (task.momFlag ? '<span class="week-task-mom">🦋</span>' : '') +
                     (editMode ? '<button class="task-edit" data-taskid="' + task.id + '" style="display:block;" title="Edit task">✎</button>' : '') +
                     (editMode ? '<button class="task-delete" data-taskid="' + task.id + '" style="display:block;">✕</button>' : '') +

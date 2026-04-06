@@ -608,20 +608,546 @@ function generateMathProblems(level, count) {
   return problems;
 }
 
-// ─── Generate Worksheet via Claude API ───────────────────────────────────────
-async function generateWorksheet() {
-  const btn = document.getElementById('gen-btn');
-  const bar = document.getElementById('loading-bar');
-  const msg = document.getElementById('loading-msg');
+// ─── Content Banks ───────────────────────────────────────────────────────────
+const CONTENT_BANKS = {
+  woodland: {
+    reading: [
+      { title:'The Lost Acorn', passage:'A little squirrel lost her acorn in the big forest. She looked under every leaf and log. A kind owl watched from a tall oak tree. "I saw it by the stream!" said the owl. The squirrel ran to the stream and found her acorn safe and dry.', questions:[{q:'Who helped the squirrel find her acorn?',lines:1},{q:'Where was the acorn found?',lines:1},{q:'What do you think the squirrel will do with her acorn now?',lines:2}] },
+      { title:'The Rainy Day Den', passage:'It began to rain in the enchanted forest. A little fox ran to find shelter. She found a cozy den under a mossy rock. Inside, two rabbits were already staying dry. "Come in!" said the rabbits. The fox smiled and sat down. They listened to the rain drip on the leaves together.', questions:[{q:'Where did the fox find shelter?',lines:1},{q:'Who was already in the den?',lines:1},{q:'How do you think the fox felt when she was let inside?',lines:2}] },
+      { title:'Mushroom Magic', passage:'Deep in the forest, Pip the mouse found a glowing mushroom. It was bright red with tiny white dots. A wise old fern whispered, "That mushroom only glows when it is happy." Pip sat beside it and sang a soft song. The mushroom glowed even brighter.', questions:[{q:'What did Pip find in the forest?',lines:1},{q:'What made the mushroom glow brighter?',lines:1},{q:'Would you sing to a glowing mushroom? Why?',lines:2}] },
+      { title:'The Owl and the Moon', passage:'Every night a small owl flew up to say hello to the moon. The moon always smiled back. One cloudy night the owl could not see the moon at all. She felt very sad. Then the clouds parted and the moon shone bright. "I was here all along," said the moon softly.', questions:[{q:'What did the owl do every night?',lines:1},{q:'Why could the owl not see the moon one night?',lines:1},{q:'What does this story teach us?',lines:2}] },
+      { title:'Berry Picking Day', passage:'Finn the fox cub went berry picking with his mama. They walked deep into the woods where the best berries grew. Finn ate more berries than he put in his basket. His nose turned bright purple! Mama laughed and kissed his nose. "You are the silliest little fox," she said.', questions:[{q:'What did Finn and his mama go to do?',lines:1},{q:'What happened to Finn\'s nose?',lines:1},{q:'Why do you think Finn ate so many berries?',lines:2}] },
+      { title:'The Sleepy Deer', passage:'A fawn named Clover was very tired. She tried a pile of dry leaves — too crinkly! She tried a mossy log — too lumpy! Then she found a soft patch of green fern. She curled up and fell fast asleep. The forest hummed its quiet song around her.', questions:[{q:'What was the deer\'s name?',lines:1},{q:'Where did Clover finally fall asleep?',lines:1},{q:'What is your favorite place to rest?',lines:2}] },
+      { title:'Nest Builders', passage:'A robin and a wren decided to build nests next to each other. The robin used twigs and mud. The wren used soft grass and feathers. "Your nest is so cozy," said the robin. "Your nest is so strong," said the wren. They helped each other finish and both nests were perfect.', questions:[{q:'What did the robin use to build her nest?',lines:1},{q:'How did the two birds help each other?',lines:1},{q:'What would YOU put in a nest to make it cozy?',lines:2}] },
+      { title:'The Hidden Stream', passage:'Hazel the hedgehog heard a soft trickling sound in the woods. She followed it through the ferns and tall grass. Around a mossy rock she found a tiny stream sparkling in the light. She drank the cool water and splashed her little paws. It was the best day ever.', questions:[{q:'What sound did Hazel hear?',lines:1},{q:'What did Hazel find around the mossy rock?',lines:1},{q:'How do you think Hazel felt when she found the stream?',lines:2}] },
+      { title:'The Fox and the Firefly', passage:'One summer evening a young fox chased a firefly through the dark forest. It led her to a beautiful meadow full of glowing lights. Hundreds of fireflies filled the air. The fox sat down and forgot all about chasing. She just watched until the sky turned pink.', questions:[{q:'What was the fox chasing?',lines:1},{q:'Where did the firefly lead the fox?',lines:1},{q:'Why do you think the fox stopped chasing and just watched?',lines:2}] },
+      { title:'The Leaf Boat', passage:'Rosie the mouse found a large oak leaf by the stream. She pushed it into the water and climbed on. It floated perfectly! She used a twig as a paddle and sailed down the gentle stream. Two frogs cheered from a mossy rock. "A fine vessel!" croaked one frog.', questions:[{q:'What did Rosie use as a boat?',lines:1},{q:'Who cheered for Rosie as she sailed by?',lines:1},{q:'What would you sail in if you were as small as a mouse?',lines:2}] },
+      { title:'Badger Bakes', passage:'On cold mornings Badger liked to bake acorn bread. The whole forest could smell it. One by one the neighbors knocked on his door — first the hedgehog, then the rabbit, then the deer. Badger set out plates for everyone. "There is always enough," he said happily.', questions:[{q:'What did Badger like to bake?',lines:1},{q:'Who came to Badger\'s door?',lines:1},{q:'What does it mean to share what you have?',lines:2}] },
+      { title:'Storm Night', passage:'A big storm blew through the forest one night. The wind bent the tall pines and rain drummed on every leaf. Deep in their dens all the animals stayed warm and dry. In the morning the forest sparkled with raindrops. Every spider web was hung with tiny pearls of water.', questions:[{q:'What happened in the forest during the storm?',lines:1},{q:'What did the forest look like in the morning?',lines:1},{q:'Have you ever seen something beautiful after a storm?',lines:2}] },
+      { title:'Two Rabbits One Burrow', passage:'Two rabbits named Clove and Thistle shared a burrow. Clove was tidy and Thistle was messy. Every day Clove picked up and Thistle made a mess. One rainy week they were stuck inside together. They made a rule: each one tidied their own side. It worked perfectly.', questions:[{q:'Where did Clove and Thistle live?',lines:1},{q:'What rule did they make to get along?',lines:1},{q:'What do you do when you disagree with someone you live with?',lines:2}] },
+      { title:'Little Owl Learns to Fly', passage:'Little Owl sat on her branch and watched her brothers fly. She was scared to jump. Every evening her mother said, "When you are ready." One still warm night Little Owl closed her eyes, spread her wings, and leaped. The air caught her. She flew! She circled the whole forest twice.', questions:[{q:'What was Little Owl afraid to do?',lines:1},{q:'What did her mother say to her each evening?',lines:1},{q:'Can you think of something you were afraid to try but then loved?',lines:2}] },
+      { title:'Firefly Festival', passage:'Every midsummer the forest held a firefly festival. All the animals gathered in the big clearing after dark. The fireflies put on a light show. A little mouse thought she saw them spell HELLO in the sky. She waved back just in case.', questions:[{q:'When was the firefly festival held?',lines:1},{q:'What did the mouse think the fireflies spelled?',lines:1},{q:'What would you want the fireflies to spell for you?',lines:2}] },
+      { title:'The Mapmaker Mouse', passage:'Thistle the mouse made maps of every path in the forest. She drew them on big oak leaves with berry juice. Other animals came to buy them. "How do you know every path?" asked a young rabbit. "I walk them all myself," said Thistle. "You cannot draw a place you have never been."', questions:[{q:'What did Thistle make her maps out of?',lines:1},{q:'How did Thistle learn every path in the forest?',lines:1},{q:'What place would you most like to make a map of?',lines:2}] },
+      { title:'The Smallest Tree', passage:'In a forest of towering giants grew one very small pine tree. It never grew taller than a bush. But animals loved to sit under it because it was just the right size. A wren built her nest in its soft top. It was small but it was perfect.', questions:[{q:'What was different about the small pine tree?',lines:1},{q:'Why did animals love to sit under it?',lines:1},{q:'Can something be small and still be perfect?',lines:2}] },
+      { title:'Fox Cub\'s First Snow', passage:'The snow fell for the first time and Fox Cub did not know what it was. He touched it — cold! He sniffed it — nothing! He licked it — wonderful! He ran back inside. "Mama!" he cried. "The sky is leaving little cold sweet pieces all over the ground!" Mama laughed and laughed.', questions:[{q:'What did Fox Cub do when he first saw the snow?',lines:1},{q:'How did he describe snow to his mama?',lines:1},{q:'What is your favorite thing about snow?',lines:2}] },
+      { title:'The Wise Tortoise', passage:'Old Tortoise lived at the edge of the forest pond. Animals came from all over to ask for advice. "How do you know so much?" asked a young fox. Tortoise smiled slowly. "I move slowly and watch carefully," he said. "Most answers come to those who are patient enough to wait."', questions:[{q:'Where did the Tortoise live?',lines:1},{q:'What was Tortoise\'s secret to being wise?',lines:1},{q:'Can you think of a time when being patient helped you?',lines:2}] },
+      { title:'The Night the Stars Fell', passage:'One August night the animals watched shooting stars fall across the sky. Each one made a wish. The little hedgehog wished for a warmer winter coat. The rabbit wished for sweeter clover. The owl wished for nothing. "I already have everything," she said, looking out at the beautiful forest.', questions:[{q:'What did the animals watch in the sky?',lines:1},{q:'What did the hedgehog wish for?',lines:1},{q:'What would you wish for on a shooting star?',lines:2}] },
+      { title:'The Berry Race', passage:'Every autumn the forest animals held a berry-picking race. The winner got a honey cake. This year a slow old tortoise entered. Everyone laughed. But Tortoise picked steadily all morning without stopping to chat. At noon she tipped a full basket into the judge\'s scales and won.', questions:[{q:'What did the winner of the berry race receive?',lines:1},{q:'How did Tortoise win even though she was slow?',lines:1},{q:'What does this story remind you of?',lines:2}] },
+      { title:'Acorn Soup', passage:'Grandma Squirrel made the best acorn soup in the whole forest. She added dried berries and a sprig of fern and one secret ingredient no one knew. Every animal asked what it was. Grandma smiled and said, "Love." The little ones rolled their eyes. But secretly they believed her.', questions:[{q:'What did Grandma Squirrel make?',lines:1},{q:'What did she say her secret ingredient was?',lines:1},{q:'Do you think love can make food taste better? Why?',lines:2}] },
+      { title:'The Thunderstorm Friends', passage:'When the thunder came three young animals hid under the same big fern — a rabbit, a hedgehog, and a wood mouse. They sat pressed together shivering. When the storm passed they looked at each other. They had never met before. They walked home together and became the best of friends.', questions:[{q:'What were the three animals hiding from?',lines:1},{q:'What happened after the storm?',lines:1},{q:'Have you ever made a new friend in an unexpected way?',lines:2}] },
+      { title:'The Broken Wing', passage:'A small bird fell from its nest during a storm. A girl named Ivy found it in the wet grass. She made it a warm box with a soft cloth and brought it seeds every day. Weeks later the wing healed. She took the bird outside and opened the box. It flew away into the blue sky.', questions:[{q:'How did Ivy find the bird?',lines:1},{q:'What did Ivy do to help the bird heal?',lines:1},{q:'How do you think Ivy felt when the bird flew away?',lines:2}] },
+      { title:'The Winter Sleep', passage:'When the first snow came Bear found his favorite cave and began to sleep. He dreamed of warm honey and running streams. Months passed. Then one morning a warm drip of water hit his nose. He opened one eye. Spring had come at last.', questions:[{q:'Where did Bear sleep during winter?',lines:1},{q:'What woke Bear up in the spring?',lines:1},{q:'If you slept all winter what would you want to dream about?',lines:2}] },
+      { title:'The Morning Fox', passage:'Every morning a red fox sat at the top of the hill and watched the sun rise over the forest. She had done this since she was a cub. The other foxes slept in. But she loved the way the first light turned the treetops gold. It was the best part of her day.', questions:[{q:'What did the fox do every morning?',lines:1},{q:'What did the first light do to the treetops?',lines:1},{q:'Do you have a favorite time of day? What is it?',lines:2}] },
+      { title:'The Ice Pond', passage:'When the pond froze in winter the animals gathered to slide on the ice. Deer skidded on four legs. Rabbit bounced and spun. Even old Badger shuffled out and did a slow circle. Only Otter was truly graceful. She glided in long sweeping curves and everyone stopped to watch.', questions:[{q:'What did the animals do on the frozen pond?',lines:1},{q:'Who was the most graceful skater?',lines:1},{q:'What is your favorite winter activity?',lines:2}] },
+      { title:'Grandpa Badger\'s Garden', passage:'Grandpa Badger grew the best vegetables in the forest. He woke before sunrise every day to water them. His granddaughter Pip asked if she could help. Every morning they worked side by side. By summer Pip knew every plant by name and they cooked a big feast for the whole forest.', questions:[{q:'When did Grandpa Badger wake up each day?',lines:1},{q:'What did Pip learn by the end of summer?',lines:1},{q:'What is something you would like to grow?',lines:2}] },
+      { title:'The Forgotten Path', passage:'An old path through the forest had been forgotten for years. Brambles covered it and tall ferns hid it. A young rabbit named Pip found it by accident. She cleared a little each day. By the end of the week the old path was open again and no one knew where it led.', questions:[{q:'What had happened to the old path?',lines:1},{q:'How did Pip find the path?',lines:1},{q:'Would you want to follow the mystery path? Why?',lines:2}] },
+      { title:'The Stone Soup of the Forest', passage:'A hungry wolf came to the clearing and said he was making stone soup. He put a stone in a pot of water. "It just needs a little carrot," he said. A rabbit brought carrots. "And a few berries." A fox brought berries. Soon everyone had a full bowl of delicious soup.', questions:[{q:'What did the wolf say he was making?',lines:1},{q:'What did the rabbit and fox add to the soup?',lines:1},{q:'What does this story teach about working together?',lines:2}] },
+    ],
+    draw: [
+      { prompt:'Draw and label: a fox den in the forest with a family inside', labels:['fox','den','tree','leaves'] },
+      { prompt:'Draw and label: an owl sitting in an oak tree at night', labels:['owl','tree','moon','stars'] },
+      { prompt:'Draw and label: a squirrel collecting acorns near a stream', labels:['squirrel','acorn','stream','rock'] },
+      { prompt:'Draw and label: a rabbit family in a meadow clearing', labels:['rabbit','flower','grass','burrow'] },
+      { prompt:'Draw and label: a glowing mushroom in the forest at night', labels:['mushroom','fern','firefly','log'] },
+      { prompt:'Draw and label: a deer drinking from a forest stream', labels:['deer','stream','pebble','fern'] },
+      { prompt:'Draw and label: a hedgehog collecting leaves in autumn', labels:['hedgehog','leaf','acorn','path'] },
+      { prompt:'Draw and label: a badger\'s cozy underground home', labels:['badger','tunnel','root','candle'] },
+      { prompt:'Draw and label: fireflies lighting up a forest clearing at night', labels:['firefly','tree','moon','grass'] },
+      { prompt:'Draw and label: two birds building a nest together', labels:['robin','nest','twig','branch'] },
+      { prompt:'Draw and label: a mouse sailing on a leaf boat down a stream', labels:['mouse','leaf','twig','stream'] },
+      { prompt:'Draw and label: a fox cub playing in autumn leaves', labels:['fox','leaf','tree','acorn'] },
+      { prompt:'Draw and label: an otter swimming in a woodland pond', labels:['otter','pond','fish','reed'] },
+      { prompt:'Draw and label: a bear sitting by a honey tree', labels:['bear','tree','honey','bee'] },
+      { prompt:'Draw and label: a frozen forest pond with animals skating', labels:['ice','deer','rabbit','snow'] },
+      { prompt:'Draw and label: a forest path covered in golden leaves', labels:['path','leaf','tree','mushroom'] },
+      { prompt:'Draw and label: a wren\'s nest inside a hollow log', labels:['wren','nest','log','egg'] },
+      { prompt:'Draw and label: a tortoise crossing a mossy stone bridge', labels:['tortoise','bridge','moss','stream'] },
+      { prompt:'Draw and label: a young deer in a sunlit meadow', labels:['deer','flower','grass','sun'] },
+      { prompt:'Draw and label: a chipmunk stuffing acorns in its cheeks', labels:['chipmunk','acorn','log','grass'] },
+      { prompt:'Draw and label: a family of foxes watching a sunset from a hill', labels:['fox','hill','sun','tree'] },
+      { prompt:'Draw and label: a sleeping bear in a cozy winter cave', labels:['bear','cave','snow','icicle'] },
+      { prompt:'Draw and label: a butterfly resting on a forest mushroom', labels:['butterfly','mushroom','leaf','sun'] },
+      { prompt:'Draw and label: a forest stream in spring with flowers on the bank', labels:['stream','flower','frog','pebble'] },
+      { prompt:'Draw and label: an underground burrow with cozy rooms', labels:['rabbit','room','root','candle'] },
+      { prompt:'Draw and label: a woodpecker on a tall pine tree', labels:['woodpecker','pine','branch','bug'] },
+      { prompt:'Draw and label: animals watching shooting stars in a forest clearing', labels:['star','deer','owl','grass'] },
+      { prompt:'Draw and label: a fox walking through fresh morning snow', labels:['fox','snow','track','pine'] },
+      { prompt:'Draw and label: a hidden meadow full of wildflowers', labels:['flower','butterfly','bee','grass'] },
+      { prompt:'Draw and label: a robin feeding worms to baby chicks in a nest', labels:['robin','chick','nest','worm'] },
+      { prompt:'Draw and label: a snail making its way across a mossy rock', labels:['snail','shell','moss','rock'] },
+      { prompt:'Draw and label: a picnic in the forest clearing with woodland animals', labels:['basket','food','rabbit','tree'] },
+      { prompt:'Draw and label: a heron standing in a shallow forest stream', labels:['heron','stream','fish','reed'] },
+      { prompt:'Draw and label: a spider web covered in morning dew drops', labels:['web','dewdrop','branch','leaf'] },
+      { prompt:'Draw and label: a young owl on her first flight over the treetops', labels:['owl','tree','moon','cloud'] },
+      { prompt:'Draw and label: a beaver building a dam in a forest stream', labels:['beaver','dam','log','water'] },
+      { prompt:'Draw and label: a fox and a rabbit sharing a berry bush', labels:['fox','rabbit','berry','bush'] },
+      { prompt:'Draw and label: a forest pond in summer with dragonflies', labels:['pond','dragonfly','lily pad','frog'] },
+      { prompt:'Draw and label: snow falling on a forest at night', labels:['snowflake','pine','owl','moon'] },
+      { prompt:'Draw and label: mushrooms growing in a fairy ring in the forest', labels:['mushroom','ring','grass','butterfly'] },
+      { prompt:'Draw and label: a rabbit hopping over a mossy log in the rain', labels:['rabbit','log','rain','puddle'] },
+      { prompt:'Draw and label: an old oak tree with animals living in different parts', labels:['owl','squirrel','bee','bark'] },
+      { prompt:'Draw and label: a mole popping up through the forest floor', labels:['mole','soil','mushroom','root'] },
+      { prompt:'Draw and label: two squirrels racing up a tree trunk', labels:['squirrel','bark','branch','leaf'] },
+      { prompt:'Draw and label: a fox kit curled up sleeping in a sunbeam', labels:['fox','sunbeam','leaf','log'] },
+      { prompt:'Draw and label: a chipmunk and a bluebird sharing a fence post', labels:['chipmunk','bluebird','fence','berry'] },
+      { prompt:'Draw and label: a forest in all four seasons split into four boxes', labels:['spring','summer','autumn','winter'] },
+      { prompt:'Draw and label: a badger family eating dinner in their burrow', labels:['badger','table','food','lantern'] },
+      { prompt:'Draw and label: a pine cone village with tiny doors and windows', labels:['pine cone','door','window','path'] },
+      { prompt:'Draw and label: a stream with stepping stones and a frog on each one', labels:['frog','stone','stream','leaf'] },
+      { prompt:'Draw and label: a fox cub\'s birthday party in the forest', labels:['cake','balloon','fox','tree'] },
+      { prompt:'Draw and label: an owl\'s library high in a cedar tree', labels:['owl','book','shelf','candle'] },
+      { prompt:'Draw and label: a hedgehog and a tortoise having a race', labels:['hedgehog','tortoise','path','flag'] },
+      { prompt:'Draw and label: autumn harvest festival in the forest', labels:['pumpkin','basket','apple','leaf'] },
+      { prompt:'Draw and label: a mouse making maps on oak leaves', labels:['mouse','leaf','berry ink','path'] },
+      { prompt:'Draw and label: a deer family crossing a wooden bridge', labels:['deer','bridge','stream','fawn'] },
+    ],
+    grammar: [
+      [{sentence:'The ___ hopped over the mossy log.',answer:'rabbit',word_bank:['rabbit','cloud','shoe']},{sentence:'The forest was very ___ and green.',answer:'tall',word_bank:['tall','loud','hot']},{sentence:'The owl ___ from branch to branch.',answer:'flew',word_bank:['flew','swam','baked']}],
+      [{sentence:'A little ___ hid under the fern.',answer:'mouse',word_bank:['mouse','spoon','rock']},{sentence:'The stream felt very ___.',answer:'cold',word_bank:['cold','purple','heavy']},{sentence:'The squirrel ___ her acorn for winter.',answer:'saved',word_bank:['saved','painted','broke']}],
+      [{sentence:'The ___ called out from the oak tree.',answer:'owl',word_bank:['owl','lamp','cake']},{sentence:'The mossy rock was very ___.',answer:'round',word_bank:['round','spicy','loud']},{sentence:'The deer ___ softly through the trees.',answer:'walked',word_bank:['walked','boiled','sang']}],
+      [{sentence:'The fox cub found a ___ berry bush.',answer:'red',word_bank:['red','silly','broken']},{sentence:'The forest was ___ and quiet at night.',answer:'dark',word_bank:['dark','fluffy','short']},{sentence:'The hedgehog ___ into a ball.',answer:'curled',word_bank:['curled','jumped','melted']}],
+      [{sentence:'The ___ sang a sweet song at dawn.',answer:'robin',word_bank:['robin','bucket','snow']},{sentence:'The acorn was very ___ and smooth.',answer:'round',word_bank:['round','spicy','wet']},{sentence:'The fox ___ through the autumn leaves.',answer:'ran',word_bank:['ran','baked','floated']}],
+      [{sentence:'A tiny ___ lived under the old oak.',answer:'mouse',word_bank:['mouse','tower','ship']},{sentence:'The forest path was long and ___.',answer:'winding',word_bank:['winding','purple','heavy']},{sentence:'The bear ___ for berries all morning.',answer:'searched',word_bank:['searched','danced','melted']}],
+      [{sentence:'The ___ splashed in the cool stream.',answer:'otter',word_bank:['otter','pencil','cloud']},{sentence:'The autumn leaves were ___ and gold.',answer:'red',word_bank:['red','heavy','sticky']},{sentence:'Baby Badger ___ her eyes for the first time.',answer:'opened',word_bank:['opened','painted','lost']}],
+      [{sentence:'The old ___ lived at the edge of the pond.',answer:'tortoise',word_bank:['tortoise','hammer','cloud']},{sentence:'The mushroom circle glowed very ___.',answer:'bright',word_bank:['bright','salty','square']},{sentence:'The squirrel ___ up the tallest tree.',answer:'climbed',word_bank:['climbed','baked','swam']}],
+      [{sentence:'A ___ floated on the gentle stream.',answer:'leaf',word_bank:['leaf','brick','clock']},{sentence:'The winter morning was very ___ and still.',answer:'white',word_bank:['white','loud','bumpy']},{sentence:'The fireflies ___ on and off over the pond.',answer:'blinked',word_bank:['blinked','cooked','sank']}],
+      [{sentence:'The ___ built her nest in the tall pine.',answer:'wren',word_bank:['wren','table','storm']},{sentence:'The forest floor felt ___ under her paws.',answer:'soft',word_bank:['soft','spicy','orange']},{sentence:'The young deer ___ through the meadow.',answer:'leaped',word_bank:['leaped','painted','whispered']}],
+    ]
+  },
+
+  animals: {
+    reading: [
+      { title:'The Muddy Puppy', passage:'Biscuit the puppy loved to play outside. One day he found a big muddy puddle. He jumped right in with all four paws! Mud splashed everywhere. When he came inside his owner laughed and gave him a warm bath. Biscuit shook his wet fur and wagged his tail.', questions:[{q:'What did Biscuit find outside?',lines:1},{q:'What happened after Biscuit came inside?',lines:1},{q:'Do you think Biscuit would jump in the puddle again? Why?',lines:2}] },
+      { title:'Duck Family Morning', passage:'Mama Duck led her five ducklings to the pond each morning. The babies had to walk in a line. Little Pip always stopped to look at bugs. One morning Pip fell behind and got lost. He quacked very loudly. Mama Duck heard him and swam right back.', questions:[{q:'How many ducklings did Mama Duck have?',lines:1},{q:'Why did Pip get lost?',lines:1},{q:'What do you think Mama Duck did to keep her ducklings safe after that?',lines:2}] },
+      { title:'The Brave Little Lamb', passage:'A lamb named Button was afraid of the big field. One sunny day a butterfly landed on Button\'s nose. She laughed and ran after it. Before she knew it she was in the middle of the field. She looked around and smiled. It was not so scary after all!', questions:[{q:'What was Button afraid of?',lines:1},{q:'What made Button run into the field?',lines:1},{q:'Have you ever been scared of something that turned out to be okay?',lines:2}] },
+      { title:'Kittens in a Basket', passage:'Three kittens lived in a soft basket by the fire. Their names were Muffin, Biscuit, and Pip. Muffin liked to sleep. Biscuit liked to play. Pip liked to watch the flames. Every night their mama came to tuck them in and purred a soft song.', questions:[{q:'Where did the three kittens live?',lines:1},{q:'What did Pip like to do?',lines:1},{q:'Which kitten is most like you? Why?',lines:2}] },
+      { title:'Frog School', passage:'Every morning the frogs went to school on lily pads. The teacher was a big green frog named Mr. Hop. One day a tiny frog jumped all the way across the pond. Everyone cheered. Mr. Hop gave her a gold star made of sunshine.', questions:[{q:'Where did the frogs go to school?',lines:1},{q:'What did the tiny frog do that was special?',lines:1},{q:'What would you want to learn at frog school?',lines:2}] },
+      { title:'Bear and the Honey Tree', passage:'A young bear found a tree full of honey. He waited until the bees flew off to find flowers. Then he very gently took just a little honey and left plenty for the bees. The bees came back and did not mind at all. They buzzed a friendly hello.', questions:[{q:'What did the bear find in the tree?',lines:1},{q:'What did the bear do before taking the honey?',lines:1},{q:'Was the bear being kind? How do you know?',lines:2}] },
+      { title:'The Lost Kitten', passage:'A small orange kitten followed a butterfly all the way to the end of the road. Then the butterfly flew away and the kitten did not know where she was. She sat down and meowed. A girl heard her from a garden and came running. She carried the kitten home and gave her warm milk.', questions:[{q:'How did the kitten get lost?',lines:1},{q:'Who helped the kitten?',lines:1},{q:'What do you do if you find a lost animal?',lines:2}] },
+      { title:'The Pig Who Loved Mud', passage:'Rosie the pig loved mud more than anything. She rolled in it every morning and splashed in it every afternoon. Her farmer friend always laughed. "You are going to need a bath!" he said. But Rosie did not care. Mud was cool and soft and wonderful.', questions:[{q:'What did Rosie love more than anything?',lines:1},{q:'What did the farmer always say to Rosie?',lines:1},{q:'What is your favorite messy activity?',lines:2}] },
+      { title:'The Tall Giraffe', passage:'Gerald the giraffe was the tallest animal in the savanna. He could reach leaves no one else could. The other animals were jealous at first. But when the low bushes dried up everyone was glad. Gerald pulled down leafy branches for everyone to share.', questions:[{q:'Why was Gerald special?',lines:1},{q:'How did Gerald help the other animals?',lines:1},{q:'What is something special about you that helps others?',lines:2}] },
+      { title:'The Two Horses', passage:'Two horses lived in the same field. One was fast and loved to run. One was slow and loved to graze. They seemed very different. But every evening they stood side by side at the fence and watched the sun set. "We may be different," said the fast horse, "but I like watching sunsets with you."', questions:[{q:'How were the two horses different?',lines:1},{q:'What did they do together every evening?',lines:1},{q:'Can two very different people still be good friends?',lines:2}] },
+      { title:'The Baby Elephant\'s Bath', passage:'Every morning Mama Elephant led her baby to the watering hole. Baby loved to splash with her trunk. She sprayed water everywhere! Mama used her big trunk to shower her baby clean. The baby giggled and ran around her mama\'s huge legs.', questions:[{q:'Where did Mama Elephant take her baby each morning?',lines:1},{q:'What did the baby do with her trunk?',lines:1},{q:'What is your favorite way to cool down on a hot day?',lines:2}] },
+      { title:'The Chicken Who Couldn\'t Cluck', passage:'All the chickens on the farm could cluck loudly — all except little Dot. Dot could only peep softly. The others teased her. But one night a fox crept near. Dot heard it first and peeped so loudly the farmer came running. Dot\'s quiet voice had saved them all.', questions:[{q:'What could Dot only make instead of a cluck?',lines:1},{q:'How did Dot save the other chickens?',lines:1},{q:'What does this story teach about being different?',lines:2}] },
+      { title:'The Very Fluffy Sheep', passage:'Flora the sheep had the fluffiest wool on the whole farm. By springtime she was so fluffy she could barely see over her own wool. When the farmer finally sheared her she felt as light as a cloud. She ran and jumped and kicked her heels. "I had no idea I could move like this!" she bleated.', questions:[{q:'What was special about Flora\'s wool?',lines:1},{q:'How did Flora feel after she was sheared?',lines:1},{q:'Have you ever felt much better after a haircut? Why?',lines:2}] },
+      { title:'The Sleeping Turtle', passage:'When autumn came Turtle found a muddy spot at the bottom of the pond. She tucked in her legs and went to sleep. Ice formed above her. Snow fell. Children skated on the pond. Turtle heard none of it. She slept until the first warm day of spring then swam up yawning widely.', questions:[{q:'Where did Turtle sleep in winter?',lines:1},{q:'What happened while Turtle slept?',lines:1},{q:'If you could sleep all winter what would you do in spring?',lines:2}] },
+      { title:'The Parrot Who Listened', passage:'Most parrots learned to talk by repeating what people said. But Marco the parrot learned to listen. Really listen. When the children were sad he sat quietly nearby. When they were happy he bobbed his green head. The children said Marco was the best listener they knew.', questions:[{q:'How was Marco different from most parrots?',lines:1},{q:'What did Marco do when the children were sad?',lines:1},{q:'Why is being a good listener important?',lines:2}] },
+      { title:'The Clever Crow', passage:'Crow found a tall jar with a little water at the bottom. She could not reach it with her beak. She dropped a pebble in. Then another. Then another. The water rose with each pebble. When it was high enough she drank her fill. The other birds watched with their beaks open.', questions:[{q:'What problem did the crow have?',lines:1},{q:'How did she solve the problem?',lines:1},{q:'What does this story teach about thinking carefully?',lines:2}] },
+      { title:'The Smallest Duckling', passage:'There were eight ducklings in the nest but Pearl was the smallest. She was always last. But Pearl was the first to notice the fox slipping through the reeds. She quacked so loudly the whole family flew to safety. After that no one ever called her small again.', questions:[{q:'How many ducklings were in the nest?',lines:1},{q:'What did Pearl do to save her family?',lines:1},{q:'How did Pearl prove that being small does not matter?',lines:2}] },
+      { title:'Caterpillar\'s Long Wait', passage:'Caterpillar wound herself into a cozy cocoon and waited. Outside the world changed. Flowers bloomed. Rain fell. Children played. Then one warm morning she pushed and stretched and broke free. Where once was a small green caterpillar now was a golden butterfly. She flew away into the sky.', questions:[{q:'What did caterpillar wrap herself in?',lines:1},{q:'What did she become after she broke free?',lines:1},{q:'Why do you think waiting can lead to something wonderful?',lines:2}] },
+      { title:'The Dog Who Dug', passage:'Max the dog dug holes everywhere. The yard was full of them. His owners were not pleased. But one afternoon Max dug in the corner and uncovered an old tin box. Inside were photographs of the family from long ago. Max sat proudly next to the box as if he knew all along.', questions:[{q:'What did Max love to do?',lines:1},{q:'What did Max find in the corner of the garden?',lines:1},{q:'How do you think the family felt when they saw the old photographs?',lines:2}] },
+      { title:'The Piglet\'s First Rain', passage:'Clover the piglet had never seen rain before. She stood in the barnyard with her snout turned up to the sky. Rain drops hit her nose. She snorted in surprise. Then she opened her mouth wide and drank from the sky. Her mama watched from the dry barn and laughed a deep piggy laugh.', questions:[{q:'What had Clover never seen before?',lines:1},{q:'What did Clover do in the rain?',lines:1},{q:'What do you love to do on a rainy day?',lines:2}] },
+      { title:'The Old Horse\'s Last Race', passage:'Copper the old horse had not raced for many years. His legs were stiff and his mane was grey. But on the morning of the farm race he lined up beside the young horses. He did not win. But he finished, breathing hard, eyes bright. The crowd cheered louder for him than anyone.', questions:[{q:'Why had Copper not raced for many years?',lines:1},{q:'How did the crowd react when Copper finished?',lines:1},{q:'Why do you think the crowd cheered loudest for Copper?',lines:2}] },
+      { title:'Goats on the Hill', passage:'Three goats lived on a steep rocky hill. They could climb places no other animal could reach. The smallest goat could climb the highest. One day she reached the very top and found the sweetest clover she had ever tasted. She bleated until the others came up to share it.', questions:[{q:'Where did the three goats live?',lines:1},{q:'What did the smallest goat find at the top?',lines:1},{q:'Why did the smallest goat call the others to share?',lines:2}] },
+      { title:'The Frog and the Rain', passage:'The frogs of the pond celebrated every time it rained. They croaked their loudest songs and leaped the highest leaps. A visiting bird thought they were upset. "You have it backwards," croaked the biggest frog. "Rain fills our pond and grows our food. Rain is our best friend."', questions:[{q:'How did the frogs feel about rain?',lines:1},{q:'Why did the frog say rain was their best friend?',lines:1},{q:'What is something you love that others might not understand?',lines:2}] },
+      { title:'The Napping Cat', passage:'Luna the cat could sleep anywhere. On windowsills. In laundry baskets. On top of the refrigerator. She had seventeen napping spots her family had counted. "Does she ever stay awake?" asked a visiting cousin. Just then Luna opened one yellow eye. Then closed it again.', questions:[{q:'How many napping spots did Luna have?',lines:1},{q:'What did Luna do when the cousin asked if she was awake?',lines:1},{q:'What is the coziest place you like to rest?',lines:2}] },
+      { title:'The Migratory Birds', passage:'Every autumn thousands of birds flew over the valley on their way south. A girl named Wren ran outside every year to watch. The sky turned black with wings. The noise was like rushing water. Her grandmother said the birds had been making this journey for thousands of years.', questions:[{q:'When did the birds fly over the valley?',lines:1},{q:'What did the grandmother tell Wren about the birds?',lines:1},{q:'Have you ever seen something in nature that amazed you?',lines:2}] },
+      { title:'The Calf and the Crow', passage:'A young calf and a crow became unlikely friends. The crow sat on the calf\'s back and ate the flies that bothered her. In return the calf let the crow ride to the far meadow where the best seeds grew. They never spoke the same language but understood each other perfectly.', questions:[{q:'How did the crow help the calf?',lines:1},{q:'How did the calf help the crow?',lines:1},{q:'Can two very different animals help each other? Give an example.',lines:2}] },
+      { title:'Pig\'s Vegetable Garden', passage:'Pepper the pig decided to grow her own vegetables. She dug up a patch of mud and planted carrot seeds and bean seeds and one pumpkin seed. She watered them every day. In autumn she dug up seventeen carrots, twenty-two beans, and one enormous pumpkin.', questions:[{q:'What did Pepper plant in her garden?',lines:1},{q:'How did she take care of her garden?',lines:1},{q:'What vegetable would you most like to grow?',lines:2}] },
+      { title:'The Rabbit Marathon', passage:'Every spring the rabbits ran a race three times around the big pond. A rabbit named Clover trained every single morning. On race day her paws barely seemed to touch the ground. She won by a whole field length. Then she helped the slowest rabbit cross the finish line.', questions:[{q:'What did the rabbits do every spring?',lines:1},{q:'What did Clover do to prepare for the race?',lines:1},{q:'Why did Clover help the slowest rabbit at the end?',lines:2}] },
+      { title:'The Butterfly Who Couldn\'t Fly', passage:'A butterfly hatched with one wing smaller than the other. She walked everywhere on her six delicate legs and saw the world from the ground — dewdrops on grass blades, ant highways, the undersides of flowers. By the time her wing grew strong she was not sure she wanted to fly.', questions:[{q:'What was different about the butterfly\'s wings?',lines:1},{q:'What did the butterfly see from the ground?',lines:1},{q:'Is there a good side to going slowly? What might you notice?',lines:2}] },
+    ],
+    draw: [
+      { prompt:'Draw and label: a duck family swimming on a pond', labels:['mama duck','duckling','lily pad','water'] },
+      { prompt:'Draw and label: a puppy playing in the backyard', labels:['puppy','ball','fence','flower'] },
+      { prompt:'Draw and label: a kitten sleeping in a cozy basket', labels:['kitten','basket','blanket','yarn'] },
+      { prompt:'Draw and label: a frog sitting on a lily pad in the sun', labels:['frog','lily pad','pond','sun'] },
+      { prompt:'Draw and label: a baby elephant splashing at a watering hole', labels:['elephant','water','mud','tree'] },
+      { prompt:'Draw and label: a fluffy sheep in a green field', labels:['sheep','wool','fence','grass'] },
+      { prompt:'Draw and label: a horse running through a meadow', labels:['horse','mane','grass','sky'] },
+      { prompt:'Draw and label: a golden retriever playing fetch', labels:['dog','stick','grass','sun'] },
+      { prompt:'Draw and label: a crow dropping pebbles into a jar', labels:['crow','jar','pebble','water'] },
+      { prompt:'Draw and label: a turtle sleeping under a frozen pond', labels:['turtle','ice','fish','mud'] },
+      { prompt:'Draw and label: a giraffe eating leaves from a tall tree', labels:['giraffe','tree','leaf','sky'] },
+      { prompt:'Draw and label: three goats climbing a rocky hill', labels:['goat','rock','hill','flower'] },
+      { prompt:'Draw and label: a parrot sitting on a perch listening', labels:['parrot','perch','feather','window'] },
+      { prompt:'Draw and label: a caterpillar in a cocoon on a branch', labels:['cocoon','branch','leaf','butterfly'] },
+      { prompt:'Draw and label: a pig happily rolling in mud', labels:['pig','mud','barn','flower'] },
+      { prompt:'Draw and label: a rabbit crossing a finish line in a race', labels:['rabbit','flag','path','crowd'] },
+      { prompt:'Draw and label: a baby calf and a crow as friends in a field', labels:['calf','crow','grass','fence'] },
+      { prompt:'Draw and label: a cat with seventeen napping spots around the house', labels:['cat','sofa','window','basket'] },
+      { prompt:'Draw and label: birds flying in a V shape over a valley', labels:['bird','sky','valley','cloud'] },
+      { prompt:'Draw and label: a lamb running through a field of flowers', labels:['lamb','flower','field','butterfly'] },
+      { prompt:'Draw and label: a clever dog finding a buried treasure box', labels:['dog','box','dirt','garden'] },
+      { prompt:'Draw and label: penguins waddling across the ice', labels:['penguin','ice','snow','sea'] },
+      { prompt:'Draw and label: an old horse at the finish line being cheered', labels:['horse','crowd','flag','trophy'] },
+      { prompt:'Draw and label: a piglet opening its mouth to catch rain', labels:['piglet','rain','barn','cloud'] },
+      { prompt:'Draw and label: frogs celebrating in the rain', labels:['frog','rain','pond','lily pad'] },
+      { prompt:'Draw and label: a butterfly emerging from a cocoon', labels:['butterfly','cocoon','branch','sun'] },
+      { prompt:'Draw and label: a bear cub learning to climb a tree', labels:['cub','tree','bark','mama bear'] },
+      { prompt:'Draw and label: a hen with her baby chicks in a barnyard', labels:['hen','chick','barn','seed'] },
+      { prompt:'Draw and label: a duckling learning to swim for the first time', labels:['duckling','pond','reed','water'] },
+      { prompt:'Draw and label: a dog waiting by the door for children to come home', labels:['dog','door','window','mat'] },
+      { prompt:'Draw and label: a spider spinning a web between two flowers', labels:['spider','web','flower','dewdrop'] },
+      { prompt:'Draw and label: a fox teaching her cubs to hunt in a field', labels:['fox','cub','grass','mouse'] },
+      { prompt:'Draw and label: two horses watching the sunset over a fence', labels:['horse','sunset','fence','field'] },
+      { prompt:'Draw and label: a baby bird learning to fly from a nest', labels:['bird','nest','branch','sky'] },
+      { prompt:'Draw and label: a cow standing in a cornfield looking happy', labels:['cow','corn','field','fence'] },
+      { prompt:'Draw and label: a pig\'s garden with vegetables growing', labels:['pig','carrot','pumpkin','soil'] },
+      { prompt:'Draw and label: a goat standing at the very top of a rocky mountain', labels:['goat','rock','sky','flower'] },
+      { prompt:'Draw and label: a kitten chasing a ball of yarn across the floor', labels:['kitten','yarn','floor','chair'] },
+      { prompt:'Draw and label: a frog catching a fly with its tongue', labels:['frog','fly','tongue','lily pad'] },
+      { prompt:'Draw and label: a sheepdog herding sheep into a pen', labels:['dog','sheep','pen','farmer'] },
+      { prompt:'Draw and label: a turtle slowly crossing a sunny garden path', labels:['turtle','path','flower','sun'] },
+      { prompt:'Draw and label: a crow family in a tall nest at the top of a tree', labels:['crow','nest','tree','egg'] },
+      { prompt:'Draw and label: a lamb\'s first steps in a spring meadow', labels:['lamb','meadow','mama sheep','flower'] },
+      { prompt:'Draw and label: a duck splashing in a puddle after the rain', labels:['duck','puddle','rain','feather'] },
+      { prompt:'Draw and label: a bear family having a picnic by a river', labels:['bear','river','fish','basket'] },
+      { prompt:'Draw and label: a puppy and a kitten napping together in a sunbeam', labels:['puppy','kitten','sunbeam','blanket'] },
+      { prompt:'Draw and label: a parrot learning to say its first word', labels:['parrot','child','perch','window'] },
+      { prompt:'Draw and label: a hen tucking her chicks under her wings at night', labels:['hen','chick','moon','barn'] },
+      { prompt:'Draw and label: a rabbit hopping through a vegetable garden', labels:['rabbit','carrot','fence','lettuce'] },
+      { prompt:'Draw and label: a baby elephant playing with a ball of hay', labels:['elephant','hay','trunk','field'] },
+      { prompt:'Draw and label: an owl swooping down over a moonlit field', labels:['owl','moon','field','wing'] },
+      { prompt:'Draw and label: a dog and a cat sharing a food bowl', labels:['dog','cat','bowl','food'] },
+      { prompt:'Draw and label: three ducklings following each other in a line', labels:['duckling','pond','reed','footprint'] },
+      { prompt:'Draw and label: a baby chick hatching from an egg', labels:['chick','egg','shell','nest'] },
+      { prompt:'Draw and label: a horse and a crow side by side at a fence', labels:['horse','crow','fence','sky'] },
+      { prompt:'Draw and label: a frog jumping between lily pads at night', labels:['frog','lily pad','moon','firefly'] },
+    ],
+    grammar: [
+      [{sentence:'The ___ quacked all the way to the pond.',answer:'duck',word_bank:['duck','pillow','clock']},{sentence:'The puppy\'s tail was very ___.',answer:'fluffy',word_bank:['fluffy','cold','square']},{sentence:'The kitten ___ up onto the soft chair.',answer:'jumped',word_bank:['jumped','cooked','flew']}],
+      [{sentence:'The little ___ slept in the warm barn.',answer:'lamb',word_bank:['lamb','pencil','storm']},{sentence:'The pond water was very ___ and still.',answer:'calm',word_bank:['calm','loud','spicy']},{sentence:'The frog ___ onto the big lily pad.',answer:'hopped',word_bank:['hopped','melted','drew']}],
+      [{sentence:'The baby ___ stayed close to its mama.',answer:'calf',word_bank:['calf','table','storm']},{sentence:'The bird\'s nest was very ___.',answer:'soft',word_bank:['soft','purple','heavy']},{sentence:'The duckling ___ into the cool water.',answer:'splashed',word_bank:['splashed','baked','whispered']}],
+      [{sentence:'She found a ___ shell on the beach.',answer:'pink',word_bank:['pink','heavy','broken']},{sentence:'The horse ran very ___ across the field.',answer:'fast',word_bank:['fast','sticky','round']},{sentence:'The crow ___ pebbles into the jar.',answer:'dropped',word_bank:['dropped','baked','swam']}],
+      [{sentence:'The little ___ broke out of her cocoon.',answer:'butterfly',word_bank:['butterfly','spoon','cloud']},{sentence:'The fluffy sheep felt very ___ after her haircut.',answer:'light',word_bank:['light','spicy','bumpy']},{sentence:'The old horse ___ across the finish line.',answer:'walked',word_bank:['walked','melted','flew']}],
+      [{sentence:'The ___ rolled happily in the cool mud.',answer:'pig',word_bank:['pig','pencil','blanket']},{sentence:'The giraffe\'s neck was very ___ and tall.',answer:'long',word_bank:['long','purple','square']},{sentence:'The parrot ___ on its perch and listened.',answer:'sat',word_bank:['sat','cooked','swam']}],
+      [{sentence:'A tiny ___ hatched from the warm egg.',answer:'chick',word_bank:['chick','tower','river']},{sentence:'The puppy\'s paws were very ___ and wet.',answer:'muddy',word_bank:['muddy','square','loud']},{sentence:'The clever crow ___ the problem herself.',answer:'solved',word_bank:['solved','painted','lost']}],
+      [{sentence:'The ___ swam in circles in the pond.',answer:'turtle',word_bank:['turtle','hammer','storm']},{sentence:'The baby elephant felt very ___ and happy.',answer:'cool',word_bank:['cool','square','salty']},{sentence:'The rabbit ___ across the finish line first.',answer:'hopped',word_bank:['hopped','baked','swam']}],
+      [{sentence:'The big ___ ate leaves from the tall tree.',answer:'giraffe',word_bank:['giraffe','clock','bread']},{sentence:'The kitten\'s fur was very ___ and soft.',answer:'warm',word_bank:['warm','spicy','heavy']},{sentence:'The ducklings ___ after their mama in a line.',answer:'walked',word_bank:['walked','melted','drew']}],
+      [{sentence:'Three little ___ climbed to the top of the hill.',answer:'goats',word_bank:['goats','plates','clouds']},{sentence:'The clover at the top tasted very ___.',answer:'sweet',word_bank:['sweet','loud','bumpy']},{sentence:'The old dog ___ by the door every afternoon.',answer:'waited',word_bank:['waited','painted','swam']}],
+    ]
+  },
+
+  seasons: {
+    reading: [
+      { title:'The First Snow', passage:'Lily woke up and looked out her window. Everything was white! Snow had fallen all night long. She put on her boots and her big red coat. Outside snowflakes landed on her nose. She caught one on her tongue. It tasted like cold water and winter magic.', questions:[{q:'What did Lily see when she looked out her window?',lines:1},{q:'What did the snowflake taste like?',lines:1},{q:'What is your favorite thing to do in the snow?',lines:2}] },
+      { title:'Apple Picking Fall', passage:'Every autumn the Rivera family went to pick apples. The trees were full of red and yellow fruit. Little Marco could not reach the highest ones. His papa lifted him up on his shoulders. Marco picked the biggest apple he could find. They made a warm pie when they got home.', questions:[{q:'What did the Rivera family do every autumn?',lines:1},{q:'How did Marco reach the high apples?',lines:1},{q:'What would you make with apples you picked?',lines:2}] },
+      { title:'Spring Puddles', passage:'After the long winter spring arrived at last. The snow melted into shining puddles. A girl named Bea put on her yellow boots and ran outside. She jumped in every puddle she could find. Her dog Max jumped in too. By the time they got home they were both very wet and very happy.', questions:[{q:'What happened to the snow when spring came?',lines:1},{q:'What did Bea and Max do outside?',lines:1},{q:'Why were they happy even though they were wet?',lines:2}] },
+      { title:'Summer Fireflies', passage:'On warm summer nights fireflies lit up the backyard. They blinked on and off like tiny stars. Rosa and her brother caught some in a jar. They watched them glow for a little while. Then Rosa said, "Let\'s let them go." They opened the jar and the fireflies danced back into the dark sky.', questions:[{q:'When did the fireflies come out?',lines:1},{q:'What did Rosa and her brother do with the fireflies?',lines:1},{q:'Why do you think Rosa wanted to let the fireflies go?',lines:2}] },
+      { title:'The Leaf Pile', passage:'Dad raked the leaves into a very tall pile. It took a whole hour. The leaves were red and orange and gold. Before Dad could bag them the kids ran and jumped right in. Leaves flew everywhere. Dad laughed and started raking all over again.', questions:[{q:'What color were the leaves?',lines:1},{q:'What did the kids do to the leaf pile?',lines:1},{q:'How do you think Dad felt? Was he upset?',lines:2}] },
+      { title:'The Snowman\'s Secret', passage:'The children built a snowman in the front yard. They gave him a carrot nose and a scarf. That night it got very cold and the snowman\'s smile seemed to grow bigger. In the morning the children were sure he had moved closer to the house. Their papa just winked and said nothing.', questions:[{q:'What did the children give the snowman?',lines:1},{q:'What did the children think happened to the snowman overnight?',lines:1},{q:'Why do you think papa winked and said nothing?',lines:2}] },
+      { title:'The Last Day of Summer', passage:'On the last day of summer Mia and her best friend sat on the dock and dangled their feet in the cool lake. They had spent the whole summer swimming and fishing and chasing fireflies. "I don\'t want it to end," said Mia. Her friend smiled. "That\'s how you know it was a good summer."', questions:[{q:'What did Mia and her friend do all summer?',lines:1},{q:'What did Mia say she didn\'t want?',lines:1},{q:'What was your favorite thing about last summer?',lines:2}] },
+      { title:'First Day of Spring', passage:'On the first warm day of spring a girl ran outside in bare feet for the first time since autumn. The grass was cold and wet and wonderful. She found the first crocus pushing up through the dark soil. She sat beside it for a long time. It was proof that warm days were really coming back.', questions:[{q:'What did the girl do on the first warm spring day?',lines:1},{q:'What did she find pushing through the soil?',lines:1},{q:'What is your favorite sign that spring has arrived?',lines:2}] },
+      { title:'The Ice Storm', passage:'One winter night an ice storm coated every branch and blade of grass with a thin layer of crystal ice. In the morning the whole world sparkled. Every tree was a chandelier. The children walked outside slowly so they would not slip. "It looks like a fairy world," said the smallest child.', questions:[{q:'What did the ice storm do to the branches and grass?',lines:1},{q:'How did the world look the next morning?',lines:1},{q:'Have you ever seen the world look magical after a storm?',lines:2}] },
+      { title:'Planting Day', passage:'Every spring Grandma and her grandchildren planted seeds in the garden. Each child got their own row. They pressed the seeds deep into the dark soil and covered them gently. "Now we wait," said Grandma. Three weeks later every row had tiny green shoots reaching toward the sun.', questions:[{q:'What did Grandma and her grandchildren do every spring?',lines:1},{q:'What happened three weeks after they planted?',lines:1},{q:'What would you like to plant in your own row?',lines:2}] },
+      { title:'The Autumn Moon', passage:'Every autumn the moon seemed bigger and more orange than at any other time of year. A boy named Cal watched it rise over the hills from his porch every night in October. His grandpa said it was called the harvest moon and that farmers used its light to work late into the night.', questions:[{q:'What did Cal do every night in October?',lines:1},{q:'What did grandpa say the moon was called?',lines:1},{q:'What is your favorite thing to look at in the night sky?',lines:2}] },
+      { title:'The Great Snowball Fight', passage:'After the big snowstorm the whole neighborhood had a snowball fight. Teams were made and forts were built in twenty minutes. Snowballs flew through the air. The smallest kid on the block threw the best snowballs and hit more targets than anyone. By noon everyone was laughing and soaking wet.', questions:[{q:'What did the neighborhood do after the snowstorm?',lines:1},{q:'Who threw the best snowballs?',lines:1},{q:'Have you ever been in a snowball fight? What was it like?',lines:2}] },
+      { title:'The Summer Storm', passage:'A big summer thunderstorm rolled in just as the family was finishing their picnic. They grabbed the basket and ran for the porch. Rain poured down in sheets. Lightning flashed over the hills. They all sat on the porch swing and watched. It was one of the best parts of the whole summer.', questions:[{q:'What were the family doing when the storm came?',lines:1},{q:'Where did they go to stay dry?',lines:1},{q:'Why do you think watching the storm together was special?',lines:2}] },
+      { title:'Mud Season', passage:'Between winter and spring there was a season the children called Mud Season. Every path turned to thick brown mud. Every boot got stuck at least once a day. Mama put towels by the back door. The children loved it. Even Mama secretly loved the smell of spring mud after a long cold winter.', questions:[{q:'When was Mud Season?',lines:1},{q:'What did Mama put by the back door?',lines:1},{q:'Why do you think even Mama secretly loved Mud Season?',lines:2}] },
+      { title:'The Longest Day', passage:'On the first day of summer the sun stayed up later than any other day of the year. The children played outside until nine o\'clock at night and it was still light. They ate dinner on the back porch. Fireflies came out. Bats swooped overhead. It felt like the day would never end and they hoped it wouldn\'t.', questions:[{q:'What was special about the first day of summer?',lines:1},{q:'What did the family do outside?',lines:1},{q:'What would you do with a day that never ended?',lines:2}] },
+      { title:'The Pumpkin Patch', passage:'Every October the family drove to the pumpkin patch on the edge of town. There were hundreds of pumpkins of every size and shape. Little Rosa always chose the lopsided ones that no one else wanted. She said they had more character. Her pumpkin won first prize at the Halloween contest three years in a row.', questions:[{q:'When did the family go to the pumpkin patch?',lines:1},{q:'What kind of pumpkins did Rosa always choose?',lines:1},{q:'Why do you think the lopsided pumpkins kept winning?',lines:2}] },
+      { title:'Sledding Hill', passage:'There was one hill in town that everyone called The Best Hill. On the first snow of winter children appeared from every direction pulling sleds. They flew down fast and trudged back up slowly all morning long. The fastest sled belonged to an old grandfather who said he had been sledding that hill for sixty years.', questions:[{q:'What was special about The Best Hill?',lines:1},{q:'Whose sled was the fastest?',lines:1},{q:'What is your favorite snow day activity?',lines:2}] },
+      { title:'The Robin\'s Return', passage:'Every year the first robin of spring arrived on the same weekend in March. The family kept a journal of the date going back fifteen years. When the children heard the robin\'s song they ran outside to find it. There it was — a fat red-breasted robin singing from the top of the maple tree.', questions:[{q:'When did the first robin of spring usually arrive?',lines:1},{q:'What did the family keep in their journal?',lines:1},{q:'What bird or animal do you notice that tells you spring is here?',lines:2}] },
+      { title:'Summer Lemonade', passage:'On the hottest days of summer Junie set up a lemonade stand at the end of the driveway. She squeezed every lemon herself. Her little brother stirred in the sugar and added ice. By afternoon the jar was always empty. She gave the last glass to the mail carrier for free. He said it was the best lemonade he had ever had.', questions:[{q:'What did Junie do on hot summer days?',lines:1},{q:'Who got the last glass of lemonade?',lines:1},{q:'What is your favorite cold drink on a hot day?',lines:2}] },
+      { title:'The Frozen Windowpane', passage:'On the coldest winter morning the girl found her bedroom window completely covered in frost. The frost had made beautiful patterns — tiny trees and feathers and lace. She pressed her warm hand against the glass and watched the frost melt in the shape of her palm. She did it again on every window in the house.', questions:[{q:'What did the girl find on her window on a cold morning?',lines:1},{q:'What did she do with her warm hand?',lines:1},{q:'Have you ever seen frost on a window? What did it look like?',lines:2}] },
+      { title:'The Spring Concert', passage:'Every spring the birds began their dawn chorus. At first it was just one or two. Then by April the mornings were filled with dozens of different songs. A girl named Wren set her alarm for five in the morning to hear the whole thing. She lay in bed with the window open and thought it was the finest concert in the world.', questions:[{q:'What happened every spring at dawn?',lines:1},{q:'What did Wren do to hear the whole chorus?',lines:1},{q:'What sound do you love waking up to?',lines:2}] },
+      { title:'Autumn Apples', passage:'The old apple tree in the backyard gave fruit every October. The apples were small and tart and the best for pies. The children shook the lowest branches until apples rained down. They filled three baskets. Grandma made four pies and stored applesauce in jars for the whole winter.', questions:[{q:'When did the old apple tree give fruit?',lines:1},{q:'What did Grandma make with the apples?',lines:1},{q:'What is your favorite thing to make from fruit?',lines:2}] },
+      { title:'The Last Warm Day', passage:'In late October came the last warm day before winter. Everyone knew it was the last one even though the forecast said nothing special. The children played outside until dark. Papa grilled on the back porch. Mama sat in the last of the sunshine. No one wanted to go inside. Winter could wait one more hour.', questions:[{q:'When did the last warm day come?',lines:1},{q:'What did the family do to enjoy the day?',lines:1},{q:'Why do you think no one wanted to go inside?',lines:2}] },
+      { title:'Snowflake Study', passage:'A boy named Eli caught snowflakes on a piece of dark paper and studied them with a magnifying glass. No two were the same. Some had six perfect arms. Some looked like tiny stars. Some were so small he could barely see them at all. He spent an entire snowy afternoon making a drawing of every one he found.', questions:[{q:'What did Eli use to study the snowflakes?',lines:1},{q:'What did Eli notice about the snowflakes?',lines:1},{q:'Why do you think no two snowflakes are exactly the same?',lines:2}] },
+      { title:'The Summer Reading Tree', passage:'Every summer a girl named June read books under the big oak tree in her backyard. She kept a list of every book she finished. By the end of August the list had twenty-three books on it. Her teacher saw the list in September and said it was the most impressive thing she had ever seen. June just shrugged and said it had been a good tree.', questions:[{q:'Where did June read her books every summer?',lines:1},{q:'How many books did June finish?',lines:1},{q:'What is your favorite book you have read?',lines:2}] },
+      { title:'The Kite Day', passage:'On the windiest day of spring Papa took the children to the big open field to fly kites. The kites shot straight up into the blue sky. One kite tangled in a tree but they got it back with a long stick. By afternoon they were experts. The kite strings hummed and the whole family lay on their backs watching the colors dance overhead.', questions:[{q:'When did Papa take the children to fly kites?',lines:1},{q:'What happened to one of the kites?',lines:1},{q:'Have you ever flown a kite? What was it like?',lines:2}] },
+      { title:'First Frost', passage:'On the first frosty morning of autumn every blade of grass was tipped with white. The garden had to be covered with cloth to protect it. The pumpkins on the porch were fine. The cat sat in the window and watched the white world and decided not to go out. The family drank hot cocoa and watched the yard sparkle.', questions:[{q:'What happened to the grass on the first frosty morning?',lines:1},{q:'What did the family do to enjoy the cold morning?',lines:1},{q:'What is your favorite hot drink on a cold day?',lines:2}] },
+      { title:'The Autumn Walk', passage:'Every Sunday in October the family took a long walk through the woods to see the autumn colors. Mama named every tree by its leaves. Papa carried a basket for any interesting things they found. The children raced ahead and came back with acorns and mushrooms and striped rocks. It was the best day of every week.', questions:[{q:'What did the family do every Sunday in October?',lines:1},{q:'What did the children bring back in the basket?',lines:1},{q:'What is something interesting you have found on a walk?',lines:2}] },
+    ],
+    draw: [
+      { prompt:'Draw and label: children playing in a big pile of autumn leaves', labels:['leaves','rake','tree','child'] },
+      { prompt:'Draw and label: a snowy winter yard with a snowman', labels:['snowman','snow','scarf','carrot'] },
+      { prompt:'Draw and label: a spring garden with flowers and rain', labels:['flower','rain','sun','mud'] },
+      { prompt:'Draw and label: a summer backyard with fireflies at night', labels:['firefly','grass','jar','moon'] },
+      { prompt:'Draw and label: a girl in yellow boots jumping in puddles', labels:['boots','puddle','rain','cloud'] },
+      { prompt:'Draw and label: a family picking apples from a tree', labels:['apple','tree','basket','ladder'] },
+      { prompt:'Draw and label: children sledding down a snowy hill', labels:['sled','hill','snow','scarf'] },
+      { prompt:'Draw and label: a pumpkin patch in autumn', labels:['pumpkin','vine','leaf','cart'] },
+      { prompt:'Draw and label: a frozen pond with skaters in winter', labels:['ice','skater','scarf','pond'] },
+      { prompt:'Draw and label: a summer picnic in a sunny meadow', labels:['blanket','basket','flower','sun'] },
+      { prompt:'Draw and label: the first robin of spring on a maple tree', labels:['robin','tree','bud','sky'] },
+      { prompt:'Draw and label: a thunderstorm over a summer field', labels:['lightning','cloud','rain','field'] },
+      { prompt:'Draw and label: a winter windowpane covered in frost', labels:['frost','window','snowflake','hand'] },
+      { prompt:'Draw and label: a girl flying a kite on a spring day', labels:['kite','string','cloud','wind'] },
+      { prompt:'Draw and label: a hot summer lemonade stand', labels:['lemonade','cup','jar','lemons'] },
+      { prompt:'Draw and label: first spring flowers coming up through the snow', labels:['crocus','snow','soil','sun'] },
+      { prompt:'Draw and label: a full harvest moon over autumn hills', labels:['moon','hill','tree','field'] },
+      { prompt:'Draw and label: a snowy forest path with animal footprints', labels:['snow','footprint','tree','sky'] },
+      { prompt:'Draw and label: a girl reading under a big oak tree in summer', labels:['girl','book','tree','grass'] },
+      { prompt:'Draw and label: children catching snowflakes on their tongues', labels:['child','snowflake','coat','mittens'] },
+      { prompt:'Draw and label: an autumn harvest table with fruits and vegetables', labels:['apple','pumpkin','corn','basket'] },
+      { prompt:'Draw and label: spring seeds being planted in a garden row', labels:['seed','soil','hand','watering can'] },
+      { prompt:'Draw and label: a snowball fight between two teams', labels:['snowball','fort','snow','child'] },
+      { prompt:'Draw and label: summer fireflies in a glass jar at night', labels:['jar','firefly','hand','grass'] },
+      { prompt:'Draw and label: a family watching lightning from a porch', labels:['lightning','porch','family','rain'] },
+      { prompt:'Draw and label: autumn leaves in red orange yellow and brown', labels:['leaf','branch','red','gold'] },
+      { prompt:'Draw and label: a boy with a magnifying glass studying a snowflake', labels:['boy','snowflake','magnifying glass','paper'] },
+      { prompt:'Draw and label: a summer garden with bees and butterflies', labels:['flower','bee','butterfly','sun'] },
+      { prompt:'Draw and label: a winter morning with frost on the grass', labels:['frost','grass','boot','cloud'] },
+      { prompt:'Draw and label: spring birds singing in a tree at dawn', labels:['bird','branch','sun','flower'] },
+      { prompt:'Draw and label: a family drinking hot cocoa watching the snow fall', labels:['cocoa','mug','window','snow'] },
+      { prompt:'Draw and label: a summer swimming hole with a rope swing', labels:['rope','water','tree','child'] },
+      { prompt:'Draw and label: children catching leaves as they fall from a tree', labels:['leaf','child','tree','sky'] },
+      { prompt:'Draw and label: a garden covered with cloth before the first frost', labels:['garden','cloth','frost','pumpkin'] },
+      { prompt:'Draw and label: a spring creek with melted snow rushing through', labels:['creek','snow','rock','tree'] },
+      { prompt:'Draw and label: a sunset over an autumn hillside', labels:['sun','hill','tree','cloud'] },
+      { prompt:'Draw and label: a summer garden with a vegetable harvest', labels:['tomato','cucumber','basket','soil'] },
+      { prompt:'Draw and label: a child\'s first time seeing snow', labels:['child','snow','coat','wonder'] },
+      { prompt:'Draw and label: a spring butterfly hatching in a backyard', labels:['butterfly','cocoon','flower','sun'] },
+      { prompt:'Draw and label: an ice storm coating every tree branch in crystal', labels:['ice','branch','sparkle','path'] },
+      { prompt:'Draw and label: a family raking leaves on a windy autumn day', labels:['rake','leaf','wind','pile'] },
+      { prompt:'Draw and label: children making snow angels in fresh snow', labels:['child','snow angel','snow','mittens'] },
+      { prompt:'Draw and label: a summer evening barbecue on the back porch', labels:['grill','porch','family','firefly'] },
+      { prompt:'Draw and label: the first warm day of spring with children outside', labels:['child','sun','grass','mud'] },
+      { prompt:'Draw and label: a winter bird feeder in the snow', labels:['feeder','bird','snow','seed'] },
+      { prompt:'Draw and label: a spring rainstorm with a rainbow afterward', labels:['rainbow','rain','cloud','flower'] },
+      { prompt:'Draw and label: children counting stars on a summer night', labels:['star','child','blanket','moon'] },
+      { prompt:'Draw and label: a cozy autumn kitchen with pies cooling on the windowsill', labels:['pie','window','steam','apple'] },
+      { prompt:'Draw and label: a winter sunrise over a snowy field', labels:['sun','snow','field','tree'] },
+      { prompt:'Draw and label: the last warm autumn afternoon before winter', labels:['child','leaf','sun','porch'] },
+      { prompt:'Draw and label: a girl pressing autumn leaves in a book', labels:['leaf','book','girl','table'] },
+      { prompt:'Draw and label: a spring vegetable garden just starting to sprout', labels:['sprout','soil','rain','sun'] },
+      { prompt:'Draw and label: a summer night with crickets and a big moon', labels:['moon','cricket','grass','firefly'] },
+      { prompt:'Draw and label: children building a snowfort together', labels:['snow','fort','child','shovel'] },
+      { prompt:'Draw and label: an autumn forest trail covered in leaves', labels:['path','leaf','tree','boot'] },
+      { prompt:'Draw and label: a warm spring day with kites in the sky', labels:['kite','cloud','wind','child'] },
+    ],
+    grammar: [
+      [{sentence:'The snow was very ___ and cold.',answer:'white',word_bank:['white','bumpy','loud']},{sentence:'The children ___ in the big leaf pile.',answer:'jumped',word_bank:['jumped','cooked','floated']},{sentence:'A tiny ___ bloomed in the spring garden.',answer:'flower',word_bank:['flower','hammer','river']}],
+      [{sentence:'The autumn ___ turned red and orange.',answer:'leaves',word_bank:['leaves','pillows','stones']},{sentence:'The winter morning felt very ___.',answer:'cold',word_bank:['cold','silly','purple']},{sentence:'The firefly ___ on and off in the dark.',answer:'blinked',word_bank:['blinked','baked','swam']}],
+      [{sentence:'The summer sun felt very ___ on her face.',answer:'warm',word_bank:['warm','square','noisy']},{sentence:'She ___ her red boots before going outside.',answer:'put on',word_bank:['put on','painted','lost']},{sentence:'The ___ fell softly from the grey sky.',answer:'snow',word_bank:['snow','music','toast']}],
+      [{sentence:'The ___ was cold and sparkling in the morning.',answer:'frost',word_bank:['frost','cloud','shoe']},{sentence:'The autumn apples were very ___ and tart.',answer:'small',word_bank:['small','purple','loud']},{sentence:'The children ___ down the snowy hill on their sleds.',answer:'raced',word_bank:['raced','painted','swam']}],
+      [{sentence:'The first ___ of spring sang in the maple tree.',answer:'robin',word_bank:['robin','bucket','storm']},{sentence:'The kite flew very ___ in the wind.',answer:'high',word_bank:['high','sticky','wet']},{sentence:'The spring puddles ___ in the warm sun.',answer:'sparkled',word_bank:['sparkled','baked','flew']}],
+      [{sentence:'The ___ turned the whole yard white overnight.',answer:'snow',word_bank:['snow','pillow','fence']},{sentence:'The summer evening was very ___ and still.',answer:'warm',word_bank:['warm','purple','square']},{sentence:'The children ___ snowflakes on their tongues.',answer:'caught',word_bank:['caught','baked','drew']}],
+      [{sentence:'The big orange ___ sat on the porch all October.',answer:'pumpkin',word_bank:['pumpkin','hammer','cloud']},{sentence:'The winter wind felt very ___ on her cheeks.',answer:'cold',word_bank:['cold','salty','bumpy']},{sentence:'The family ___ hot cocoa by the window.',answer:'drank',word_bank:['drank','painted','lost']}],
+      [{sentence:'The ___ seeds were pressed deep into the dark soil.',answer:'spring',word_bank:['spring','funny','sharp']},{sentence:'The autumn walk felt very ___ and peaceful.',answer:'quiet',word_bank:['quiet','spicy','heavy']},{sentence:'The snowflakes ___ slowly down from the sky.',answer:'drifted',word_bank:['drifted','baked','swam']}],
+      [{sentence:'The summer ___ sang all night long.',answer:'crickets',word_bank:['crickets','spoons','clouds']},{sentence:'The frozen pond felt very ___ under her boots.',answer:'slippery',word_bank:['slippery','purple','loud']},{sentence:'The girl ___ seeds in her spring garden.',answer:'planted',word_bank:['planted','melted','flew']}],
+      [{sentence:'The ___ colors were red orange and gold.',answer:'autumn',word_bank:['autumn','bumpy','square']},{sentence:'The summer lemonade was very ___ and cold.',answer:'sweet',word_bank:['sweet','heavy','loud']},{sentence:'The robin ___ a beautiful song at dawn.',answer:'sang',word_bank:['sang','cooked','drew']}],
+    ]
+  },
+
+  ocean: {
+    reading: [
+      { title:'The Little Crab', passage:'A small crab named Sandy lived under a rock by the sea. Every day she came out to look for food. One day the tide came in fast and Sandy could not get back to her rock. A big wave set her down in a tide pool. She found a new home with five new friends.', questions:[{q:'Where did Sandy live?',lines:1},{q:'What happened when the tide came in fast?',lines:1},{q:'Was Sandy\'s new home better or worse? What do you think?',lines:2}] },
+      { title:'Whale Song', passage:'Deep in the blue ocean a baby whale learned to sing. Her song was low and long and beautiful. The other whales swam from far away to listen. Even the fish stopped to hear. When she finished the whole ocean was quiet for a moment. Then everyone splashed and cheered.', questions:[{q:'What did the baby whale learn to do?',lines:1},{q:'Who came to listen to the whale\'s song?',lines:1},{q:'How does music make you feel?',lines:2}] },
+      { title:'Seashell Morning', passage:'Every morning Mia walked along the beach looking for shells. She had found pink ones and speckled ones and striped ones. One morning she found a shell so big she could hear the ocean inside it. She held it to her ear and smiled. "The sea is talking to me," she told her grandma.', questions:[{q:'What did Mia do every morning?',lines:1},{q:'What was special about the big shell she found?',lines:1},{q:'What do you think the ocean was saying to Mia?',lines:2}] },
+      { title:'The Helpful Seal', passage:'A fishing boat got lost in the fog near the rocks. The sailors were scared. Suddenly a seal popped up beside the boat. She barked and swam in circles. The sailors followed her. She led them safely around the rocks and back to the harbor. The sailors tossed her a fish.', questions:[{q:'Why were the sailors scared?',lines:1},{q:'How did the seal help the boat?',lines:1},{q:'Why do you think the seal helped the sailors?',lines:2}] },
+      { title:'Coral Reef Colors', passage:'Under the warm blue water lived the most colorful fish in the world. They darted between pink and purple coral. A small yellow fish named Sunny liked to count all the colors she could see. She counted sixteen before she lost track. "This is the most beautiful place," she thought.', questions:[{q:'Where did Sunny live?',lines:1},{q:'What did Sunny like to do?',lines:1},{q:'What is the most colorful place you have ever seen?',lines:2}] },
+      { title:'The Turtle\'s Long Journey', passage:'Every year the mother sea turtle swam hundreds of miles to lay her eggs on the same beach where she was born. She dragged herself up the sand in the dark and dug a deep hole. She laid her eggs and covered them with sand. Then she turned and swam back to the open sea.', questions:[{q:'What did the sea turtle do every year?',lines:1},{q:'What did she do after laying her eggs?',lines:1},{q:'Why do you think she came back to the same beach every year?',lines:2}] },
+      { title:'The Lighthouse Keeper', passage:'Every evening the old lighthouse keeper climbed two hundred steps to light the great lamp. Ships far out at sea could see the light blinking. It kept them safe from the rocks. One stormy night a captain wrote in his log: "The lighthouse light saved our ship tonight. God bless whoever keeps it burning."', questions:[{q:'What did the lighthouse keeper do every evening?',lines:1},{q:'What did the lighthouse light do for ships?',lines:1},{q:'Would you like to be a lighthouse keeper? Why?',lines:2}] },
+      { title:'The Hermit Crab\'s New Shell', passage:'A hermit crab had grown too big for his shell. He had been looking for a new one for three days. Every shell he tried was either too small or too big or too pointy. Then he found a perfect pearly spiral shell beside a tide pool. He slipped in and it fit exactly right. He did a happy sideways dance.', questions:[{q:'Why did the hermit crab need a new shell?',lines:1},{q:'What was special about the shell he finally found?',lines:1},{q:'Have you ever found something that fit just right?',lines:2}] },
+      { title:'The Dolphin Race', passage:'A pod of dolphins decided to race the fishing boat back to the harbor. They leaped and spun alongside the bow, showing off. The fisherman laughed and steered a little faster. The dolphins sped up too. They stayed ahead all the way. When the boat reached the dock the dolphins leaped once more as if taking a bow.', questions:[{q:'What did the dolphins decide to do?',lines:1},{q:'What did the dolphins do when the boat reached the dock?',lines:1},{q:'Why do you think dolphins like to play alongside boats?',lines:2}] },
+      { title:'The Message in a Bottle', passage:'A girl named Iris wrote a letter, rolled it up, and put it in a glass bottle. She sealed it tight and threw it into the ocean from the pier. She wondered where it would go. Seven months later a boy on an island far away found the bottle in the sand. He wrote back and they became pen pals for ten years.', questions:[{q:'What did Iris put in the bottle?',lines:1},{q:'Who found the bottle?',lines:1},{q:'If you put a message in a bottle what would you write?',lines:2}] },
+      { title:'The Tide Pool World', passage:'At low tide a whole world appeared in the rocks by the sea. Star fish clung to the walls. Tiny crabs scurried under rocks. Sea anemones waved their orange arms. A girl crouched down and watched for an hour without moving. It was like a whole city, she thought, that only appeared twice a day.', questions:[{q:'What appeared in the rocks at low tide?',lines:1},{q:'What did the girl think the tide pool was like?',lines:1},{q:'What creature in the tide pool would you most want to see?',lines:2}] },
+      { title:'Sand Castle Day', passage:'Every summer the beach held a sand castle contest. Teams of children built their castles from morning to afternoon. Rosie\'s team built a castle with five towers and a real moat that filled with sea water. When the tide came in it washed all the castles away. "That\'s the best part," said Rosie.', questions:[{q:'What did the beach hold every summer?',lines:1},{q:'What happened to all the castles when the tide came in?',lines:1},{q:'Why do you think Rosie said that was the best part?',lines:2}] },
+      { title:'The Shark Who Was Afraid of Fish', passage:'Gerald the shark had a secret. He was afraid of small fish. Not big fish. Just the tiny silver ones that swam in enormous shoals. He did not know why. One day a shoal swam right toward him. He closed his eyes and held very still. The shoal parted around him like a curtain and was gone. He opened his eyes. He was fine.', questions:[{q:'What was Gerald\'s secret fear?',lines:1},{q:'What did Gerald do when the shoal swam at him?',lines:1},{q:'Have you ever been afraid of something small?',lines:2}] },
+      { title:'The Pelican\'s Catch', passage:'Old Pete the pelican had caught fish in the same bay for thirty years. Young pelicans came to watch how he did it. He soared high, spotted a flash of silver below, and plunge-dived straight down. Splash! He came up with three fish in his pouch. The young pelicans tried all day. Pete had caught thirty.', questions:[{q:'How long had Pete been catching fish in the bay?',lines:1},{q:'How did Pete catch fish?',lines:1},{q:'What does this story teach about practice?',lines:2}] },
+      { title:'The Octopus Artist', passage:'An octopus named Ocho lived in a cave on the ocean floor. She collected colorful pebbles and shells and arranged them into beautiful patterns outside her cave. Other sea creatures came to look. A passing diver took photographs. Later a museum put them on display. The caption read: Unknown Artist. Ocho would have smiled if she could.', questions:[{q:'Where did Ocho live?',lines:1},{q:'What did Ocho make outside her cave?',lines:1},{q:'What would you make if you had eight arms?',lines:2}] },
+      { title:'Starfish Morning', passage:'Every morning at low tide hundreds of starfish appeared on the rocks. A boy named Sam made it his job to carry any starfish left in the sun back to the water. It took him an hour each morning. His sister said, "There are too many to save." Sam picked up one more and said, "It matters to this one."', questions:[{q:'What did Sam do every morning?',lines:1},{q:'What did his sister say?',lines:1},{q:'What do you think Sam\'s actions show about kindness?',lines:2}] },
+      { title:'The Storm at Sea', passage:'A fierce storm rose up while the fishing boats were out. The sky turned dark green. Waves crashed over the bows. Every boat turned for home. The smallest boat had the hardest time. But its captain was the most experienced sailor in the fleet. She brought her crew home safely while the storm roared around them.', questions:[{q:'What happened while the fishing boats were out?',lines:1},{q:'Which boat had the hardest time?',lines:1},{q:'Why do you think experience helped the captain?',lines:2}] },
+      { title:'The Mermaid\'s Garden', passage:'Deep below the waves grew a garden that no one on land had ever seen. It had kelp trees and flower-shaped coral and fish of every color drifting through the leaves. A mermaid tended it every day, pulling weeds and feeding the fish. She thought sometimes of people on the shore. Did they know how beautiful the world was below?', questions:[{q:'Where was the mermaid\'s garden?',lines:1},{q:'What did the mermaid do in her garden each day?',lines:1},{q:'What do you imagine it looks like on the ocean floor?',lines:2}] },
+      { title:'The Crab Who Walked Straight', passage:'All crabs walk sideways. Everyone knows that. Except Calvin. Calvin always walked straight forward. The other crabs laughed at him. But Calvin could walk faster than any of them and got to the best food first. After a while the other crabs tried walking straight too. It was harder than it looked.', questions:[{q:'How did Calvin walk differently from other crabs?',lines:1},{q:'What advantage did Calvin\'s way of walking give him?',lines:1},{q:'What does this story teach about doing things differently?',lines:2}] },
+      { title:'The Sea Glass Collection', passage:'After every storm Willa walked the beach to collect sea glass. The ocean had tumbled the broken glass until it was smooth and frosted and beautiful. She had every color — green white brown and rare blue. She kept them in a jar by her window where the morning light turned them into jewels. The most beautiful things, she thought, are the ones the sea has shaped.', questions:[{q:'When did Willa walk the beach?',lines:1},{q:'How had the ocean changed the broken glass?',lines:1},{q:'What does Willa\'s collection tell you about her?',lines:2}] },
+      { title:'The Whale and the Little Boat', passage:'A whale surfaced right beside a small rowboat. The little girl inside froze. The whale\'s eye was as big as a dinner plate. It looked at her calmly. She looked back. For thirty seconds they just looked at each other. Then the whale slipped below the surface and was gone. The girl could not speak for a whole minute.', questions:[{q:'What surfaced beside the little boat?',lines:1},{q:'What did the girl and the whale do?',lines:1},{q:'How do you think you would feel in that moment?',lines:2}] },
+      { title:'The Sailor\'s Map', passage:'An old sailor kept a map of every reef and rock and shoal in the harbor. He had made it himself over forty years. When he was too old to sail he gave the map to a young fisherman. "This map," he said, "has saved my life a dozen times. May it save yours too." The young fisherman framed it on his wall.', questions:[{q:'What did the old sailor keep?',lines:1},{q:'What did the sailor do with the map when he was old?',lines:1},{q:'What is something you know well that you could teach someone else?',lines:2}] },
+      { title:'First Swim', passage:'It was the first day warm enough to swim in the ocean. A boy named Marcus stood at the edge of the waves. The water was still cold from winter. He ran in before he could think about it. The cold took his breath away. But then he was used to it. He swam out past the break and floated on his back looking up at the blue sky.', questions:[{q:'Why was Marcus hesitant to go in the water?',lines:1},{q:'What did he do when he ran in?',lines:1},{q:'Have you ever done something brave by not thinking about it?',lines:2}] },
+      { title:'The Surfing Pelican', passage:'A pelican named Gus discovered he could ride the waves. He spread his wings and let the wave carry him toward shore. Other pelicans stopped flying to watch. Some tried it too. By afternoon the whole flock was surfing. A family on the beach took video. "Has anyone ever seen pelicans surf before?" asked the dad. Nobody had.', questions:[{q:'What did Gus discover he could do?',lines:1},{q:'What did the other pelicans do when they saw Gus?',lines:1},{q:'What is something fun you discovered by accident?',lines:2}] },
+      { title:'The Lost Fishing Net', passage:'A fisherman\'s net broke free in a storm and tangled on the reef. A group of divers spent three days carefully cutting it free so the fish and coral would not be hurt. When they were done the reef was clear. Fish that had been hiding came back out. The divers felt very tired and very proud.', questions:[{q:'What happened to the fishing net in the storm?',lines:1},{q:'How did the divers help the reef?',lines:1},{q:'Why do you think the divers felt proud?',lines:2}] },
+      { title:'The Glowing Sea', passage:'Some nights the ocean near the shore glowed bright blue. Tiny living things in the water made the light. When the waves broke they left trails of glowing foam. Children ran into the surf and came out with glowing drops on their arms. "Are we magic?" asked a small boy. "A little bit," said his mama.', questions:[{q:'Why did the ocean glow blue?',lines:1},{q:'What happened when the children ran into the surf?',lines:1},{q:'What would you think if you saw a glowing sea?',lines:2}] },
+      { title:'The Brave Lighthouse Girl', passage:'The lighthouse keeper was sick and someone had to light the lamp. His daughter Rosa was only ten years old. She climbed all two hundred steps alone in the dark carrying the oil lamp. She lit the great light at the top just as a storm rolled in. Ships saw the light and steered to safety. No one was lost that night.', questions:[{q:'Why did Rosa have to light the lamp?',lines:1},{q:'How did Rosa help the ships?',lines:1},{q:'What would you do if you had to do something very scary but very important?',lines:2}] },
+      { title:'The Crab Race', passage:'Every summer the children on the island held crab races on the beach. They drew a big circle in the sand and put their crabs in the middle. First crab to cross the edge of the circle won. The crabs never cooperated. They went every direction except out of the circle. It took a very long time and everyone laughed the entire time.', questions:[{q:'How did the children race crabs?',lines:1},{q:'Why did the race take a very long time?',lines:1},{q:'What was the funniest part of the crab race?',lines:2}] },
+    ],
+    draw: [
+      { prompt:'Draw and label: a beach with shells waves and a crab', labels:['crab','shell','wave','sand'] },
+      { prompt:'Draw and label: a colorful coral reef with fish', labels:['fish','coral','bubble','seaweed'] },
+      { prompt:'Draw and label: a whale swimming in the deep ocean', labels:['whale','wave','fish','sun'] },
+      { prompt:'Draw and label: a tide pool with sea creatures', labels:['crab','starfish','rock','water'] },
+      { prompt:'Draw and label: a lighthouse on rocky cliffs at night', labels:['lighthouse','rock','wave','light'] },
+      { prompt:'Draw and label: a hermit crab trying on a new shell', labels:['hermit crab','shell','sand','rock'] },
+      { prompt:'Draw and label: dolphins leaping beside a fishing boat', labels:['dolphin','boat','wave','splash'] },
+      { prompt:'Draw and label: a girl finding a message in a bottle on the beach', labels:['bottle','letter','sand','wave'] },
+      { prompt:'Draw and label: sea turtles swimming in clear blue water', labels:['turtle','water','coral','bubble'] },
+      { prompt:'Draw and label: a sand castle with towers and a moat', labels:['tower','moat','flag','sand'] },
+      { prompt:'Draw and label: an octopus in her cave on the ocean floor', labels:['octopus','cave','pebble','shell'] },
+      { prompt:'Draw and label: a pelican diving for fish in the ocean', labels:['pelican','fish','wave','sky'] },
+      { prompt:'Draw and label: a boy returning starfish to the sea', labels:['boy','starfish','rock','wave'] },
+      { prompt:'Draw and label: a deep-sea world with glowing fish', labels:['fish','light','coral','dark water'] },
+      { prompt:'Draw and label: a family collecting sea glass on a beach', labels:['sea glass','jar','wave','sand'] },
+      { prompt:'Draw and label: a shark swimming through a shoal of silver fish', labels:['shark','fish','bubble','coral'] },
+      { prompt:'Draw and label: a girl in a rowboat next to a whale', labels:['girl','boat','whale','ocean'] },
+      { prompt:'Draw and label: a seagull standing on a pier post', labels:['seagull','pier','water','fish'] },
+      { prompt:'Draw and label: an underwater garden with kelp and colorful coral', labels:['kelp','coral','fish','sand'] },
+      { prompt:'Draw and label: a crab race on the beach', labels:['crab','circle','child','sand'] },
+      { prompt:'Draw and label: a mermaid tending her underwater garden', labels:['mermaid','coral','fish','kelp'] },
+      { prompt:'Draw and label: a child floating on their back in the ocean', labels:['child','wave','sky','cloud'] },
+      { prompt:'Draw and label: an old sailor reading a map at his desk', labels:['sailor','map','lamp','window'] },
+      { prompt:'Draw and label: pelicans surfing on a wave', labels:['pelican','wave','beach','sun'] },
+      { prompt:'Draw and label: a glowing blue ocean at night', labels:['wave','glow','sky','moon'] },
+      { prompt:'Draw and label: divers cleaning a reef from a fishing net', labels:['diver','net','coral','fish'] },
+      { prompt:'Draw and label: a fisherman pulling in nets full of fish', labels:['fisherman','net','fish','boat'] },
+      { prompt:'Draw and label: a child building a sandcastle at sunset', labels:['child','castle','sun','wave'] },
+      { prompt:'Draw and label: a whale breaching out of the water', labels:['whale','splash','sky','ocean'] },
+      { prompt:'Draw and label: a starfish and sea anemone in a tide pool', labels:['starfish','anemone','pool','rock'] },
+      { prompt:'Draw and label: a crab walking along the ocean floor', labels:['crab','sand','shell','bubble'] },
+      { prompt:'Draw and label: a boy swimming in the ocean on a sunny day', labels:['boy','wave','sun','goggles'] },
+      { prompt:'Draw and label: a fishing village with boats in the harbor', labels:['boat','harbor','house','net'] },
+      { prompt:'Draw and label: a sea storm with big waves and a lighthouse', labels:['wave','storm','lighthouse','boat'] },
+      { prompt:'Draw and label: dolphins jumping through the air', labels:['dolphin','splash','sky','sun'] },
+      { prompt:'Draw and label: a child wearing snorkel gear looking at fish', labels:['child','goggles','fish','coral'] },
+      { prompt:'Draw and label: a crab hiding under a rock at low tide', labels:['crab','rock','sand','tide pool'] },
+      { prompt:'Draw and label: the ocean floor with a sunken treasure chest', labels:['chest','treasure','fish','sand'] },
+      { prompt:'Draw and label: a seashell collection laid out on a towel', labels:['shell','towel','sand','bucket'] },
+      { prompt:'Draw and label: a child holding a very large conch shell to her ear', labels:['child','shell','beach','wave'] },
+      { prompt:'Draw and label: an orca whale and her calf swimming together', labels:['orca','calf','wave','ocean'] },
+      { prompt:'Draw and label: a tide coming in over a beach at sunset', labels:['tide','sand','sunset','wave'] },
+      { prompt:'Draw and label: a sea cave with glowing water inside', labels:['cave','water','light','rock'] },
+      { prompt:'Draw and label: a jellyfish floating near the surface', labels:['jellyfish','bubble','light','water'] },
+      { prompt:'Draw and label: children playing in the waves at the beach', labels:['child','wave','sand','sun'] },
+      { prompt:'Draw and label: a puffin sitting on a rocky cliff over the ocean', labels:['puffin','cliff','ocean','sky'] },
+      { prompt:'Draw and label: a crab meeting a starfish for the first time', labels:['crab','starfish','rock','water'] },
+      { prompt:'Draw and label: a lighthouse keeper climbing steps inside the lighthouse', labels:['keeper','stairs','lamp','window'] },
+      { prompt:'Draw and label: a sea turtle nest with eggs in the sand', labels:['turtle','egg','sand','moon'] },
+      { prompt:'Draw and label: fish swimming through an underwater arch of coral', labels:['fish','arch','coral','bubble'] },
+      { prompt:'Draw and label: a child writing a message to put in a bottle', labels:['child','paper','bottle','desk'] },
+      { prompt:'Draw and label: a whale watching boat with excited passengers', labels:['whale','boat','person','binoculars'] },
+      { prompt:'Draw and label: a harbor seal sleeping on a warm dock', labels:['seal','dock','sun','water'] },
+      { prompt:'Draw and label: a sea glass jar on a sunny windowsill', labels:['jar','glass','window','light'] },
+      { prompt:'Draw and label: a pelican pouch full of fish', labels:['pelican','fish','pouch','wave'] },
+    ],
+    grammar: [
+      [{sentence:'The little ___ hid under the wet rock.',answer:'crab',word_bank:['crab','clock','bread']},{sentence:'The ocean waves were very ___.',answer:'big',word_bank:['big','purple','dry']},{sentence:'The fish ___ through the coral reef.',answer:'swam',word_bank:['swam','baked','drew']}],
+      [{sentence:'She found a ___ shell on the beach.',answer:'pink',word_bank:['pink','heavy','broken']},{sentence:'The whale\'s song was very ___.',answer:'beautiful',word_bank:['beautiful','spicy','bumpy']},{sentence:'The seal ___ and barked at the boat.',answer:'splashed',word_bank:['splashed','slept','melted']}],
+      [{sentence:'The ___ darted between the pink coral.',answer:'fish',word_bank:['fish','pencil','blanket']},{sentence:'The tide pool water was very ___ and clear.',answer:'cold',word_bank:['cold','orange','square']},{sentence:'Mia ___ along the beach every morning.',answer:'walked',word_bank:['walked','cooked','floated']}],
+      [{sentence:'The lighthouse light helped ships stay ___.',answer:'safe',word_bank:['safe','purple','fluffy']},{sentence:'The hermit crab\'s new shell fit just ___.',answer:'right',word_bank:['right','sticky','loud']},{sentence:'The dolphins ___ beside the fishing boat.',answer:'leaped',word_bank:['leaped','baked','sang']}],
+      [{sentence:'The ___ swam hundreds of miles to the beach.',answer:'turtle',word_bank:['turtle','hammer','clock']},{sentence:'The sand castle had five ___ towers.',answer:'tall',word_bank:['tall','sticky','purple']},{sentence:'The girl ___ the starfish back to the sea.',answer:'carried',word_bank:['carried','painted','lost']}],
+      [{sentence:'The ___ changed colors to hide from danger.',answer:'octopus',word_bank:['octopus','spoon','cloud']},{sentence:'The beach at sunset looked very ___ and golden.',answer:'warm',word_bank:['warm','square','noisy']},{sentence:'The boy ___ his name in the wet sand.',answer:'wrote',word_bank:['wrote','cooked','swam']}],
+      [{sentence:'The ___ dove deep to catch a shiny fish.',answer:'pelican',word_bank:['pelican','bucket','storm']},{sentence:'The ocean floor was very ___ and dark.',answer:'deep',word_bank:['deep','salty','bumpy']},{sentence:'The crab ___ sideways across the wet sand.',answer:'scurried',word_bank:['scurried','baked','flew']}],
+      [{sentence:'The ___ glowed blue in the dark water.',answer:'sea',word_bank:['sea','pillow','fence']},{sentence:'The sea glass was ___ and smooth.',answer:'frosted',word_bank:['frosted','loud','heavy']},{sentence:'Rosa ___ the lighthouse lamp to help the ships.',answer:'lit',word_bank:['lit','baked','drew']}],
+      [{sentence:'The ___ floated gently near the surface.',answer:'jellyfish',word_bank:['jellyfish','hammer','toast']},{sentence:'The harbor was very ___ and calm.',answer:'still',word_bank:['still','spicy','purple']},{sentence:'The fisherman\'s boat ___ through the storm.',answer:'sailed',word_bank:['sailed','melted','whispered']}],
+      [{sentence:'The ___ made a beautiful pattern on the ocean floor.',answer:'octopus',word_bank:['octopus','clock','bread']},{sentence:'The whale\'s eye was as ___ as a dinner plate.',answer:'big',word_bank:['big','loud','sticky']},{sentence:'The sea turtle ___ her eggs in the warm sand.',answer:'buried',word_bank:['buried','painted','swam']}],
+    ]
+  },
+
+  garden: {
+    reading: [
+      { title:'The Sleepy Seed', passage:'A tiny seed was planted in the dark soft soil. It slept all through the cold days. Then warm rain came and the sun shone bright. The seed woke up! It pushed a tiny green shoot up toward the light. Day by day it grew taller. One morning a yellow flower opened its petals for the very first time.', questions:[{q:'Where was the tiny seed planted?',lines:1},{q:'What made the seed wake up and start to grow?',lines:1},{q:'How do you think the flower felt when it opened for the first time?',lines:2}] },
+      { title:'Bella the Bumblebee', passage:'Bella the bumblebee visited every flower in the garden. She collected sweet nectar in her tiny legs. The roses gave her red pollen. The daisies gave her yellow pollen. By afternoon her legs were so full she could barely fly. She buzzed slowly home to the hive and made the sweetest honey.', questions:[{q:'What did Bella collect from the flowers?',lines:1},{q:'Why could Bella barely fly in the afternoon?',lines:1},{q:'What do you think the honey tasted like?',lines:2}] },
+      { title:'The Butterfly Garden', passage:'Grandma had a special garden full of flowers that butterflies loved. Every summer blue and orange butterflies came to visit. A girl named June sat very still on the garden bench. She held out her finger. A blue butterfly landed right on it! She held her breath. It stayed for a whole minute before flying away.', questions:[{q:'Why did butterflies come to Grandma\'s garden?',lines:1},{q:'What did June do to get the butterfly to land on her?',lines:1},{q:'How would you feel if a butterfly landed on your finger?',lines:2}] },
+      { title:'The Garden Contest', passage:'Every summer the neighbors had a garden contest. Old Mr. Lee grew the tallest sunflowers on the street. But this year a girl named Rosa had been watering her garden every single day. Her roses were the biggest anyone had ever seen. Mr. Lee smiled and said, "You beat me fair and square, young one."', questions:[{q:'What did Mr. Lee grow every year?',lines:1},{q:'What did Rosa do to win the contest?',lines:1},{q:'What does this story teach about hard work?',lines:2}] },
+      { title:'Rain on the Roses', passage:'After three hot dry weeks rain finally fell on the garden. The roses lifted their heads. The daisies drank deeply. Even the little snail came out from under his leaf. The girl who tended the garden ran outside in her boots. She watched every drop fall on every petal. "Thank you, rain," she whispered.', questions:[{q:'What had the weather been like before the rain?',lines:1},{q:'What did the little snail do when the rain came?',lines:1},{q:'Why do you think the girl thanked the rain?',lines:2}] },
+      { title:'The Worm\'s Work', passage:'Under the garden a thousand worms were at work. They tunneled through the soil making it soft. They ate dead leaves and turned them into food for the plants. A boy named Eli watched a worm wiggle between his fingers. "You are doing more work than anyone can see," he told it. The worm did not reply but kept working.', questions:[{q:'What were the worms doing under the garden?',lines:1},{q:'What did Eli say to the worm?',lines:1},{q:'Can you think of someone who works hard in ways you don\'t usually notice?',lines:2}] },
+      { title:'The Tomato Race', passage:'Every summer Grandpa grew tomatoes on one side of the fence and the boy next door grew tomatoes on his side. Each counted their tomatoes every Sunday. By August they had grown so many that they traded jars of sauce across the fence each week. "We both won," said Grandpa.', questions:[{q:'What did Grandpa and his neighbor grow?',lines:1},{q:'What did they trade across the fence?',lines:1},{q:'What does it mean to say "we both won"?',lines:2}] },
+      { title:'The Sunflower Surprise', passage:'A girl planted one sunflower seed by the back fence in spring. By midsummer it had grown taller than the fence — taller than the shed — taller than her papa! It had a face as wide as a dinner plate and hundreds of seeds in the middle. Birds came from all over the neighborhood to eat from it.', questions:[{q:'When did the girl plant the sunflower seed?',lines:1},{q:'How tall did the sunflower grow?',lines:1},{q:'What would you do with a sunflower as tall as a house?',lines:2}] },
+      { title:'The Herb Garden', passage:'Mama grew herbs in small pots on the kitchen windowsill. Basil and mint and rosemary. The whole kitchen smelled wonderful. When she cooked she pinched a leaf and added it to the pot. Her daughter helped water the pots each morning. One day she snipped her first herb herself and added it to the soup. It tasted perfect.', questions:[{q:'Where did Mama grow her herbs?',lines:1},{q:'What did the daughter do to help?',lines:1},{q:'What is your favorite smell from the kitchen?',lines:2}] },
+      { title:'The Gardener\'s Gloves', passage:'Nana\'s old garden gloves were brown with years of soil. They hung by the back door every evening. Her granddaughter wore them once — they swallowed her small hands completely. She helped Nana plant bulbs all afternoon. When they were done Nana said, "Someday these gloves will fit you." The granddaughter hoped so.', questions:[{q:'What were Nana\'s gloves like?',lines:1},{q:'What did Nana and her granddaughter plant?',lines:1},{q:'What is something of a grown-up\'s you hope to do someday?',lines:2}] },
+      { title:'The Strawberry Patch', passage:'Behind the old stone wall was a strawberry patch that the family had tended for thirty years. Every June the children went out early in the morning before the birds to pick the reddest berries. They ate half and brought half inside. Mama made jam that she gave to everyone on the street as a gift.', questions:[{q:'Where was the strawberry patch?',lines:1},{q:'What did Mama make with the strawberries?',lines:1},{q:'Why did the children go out early before the birds?',lines:2}] },
+      { title:'The Garden After Rain', passage:'After a big summer rainstorm the garden was a new place. Every leaf had a drop of water on its tip. The air smelled like earth and green. Worms came up from the soil. The tomatoes looked bigger than they had yesterday. The sunflowers turned their faces to the returning sun. Everything looked grateful.', questions:[{q:'What did every leaf have after the rain?',lines:1},{q:'What did the sunflowers do when the sun came back?',lines:1},{q:'What is your favorite thing about a garden after rain?',lines:2}] },
+      { title:'The Pea Tunnel', passage:'Papa built a tunnel of poles and netting for the pea vines to climb. By June the tunnel was covered in green leaves and white flowers. The children could walk through it as if it were a secret passageway. When the peas were ready they picked and ate them right off the vine. Nothing tasted better.', questions:[{q:'What did Papa build for the pea vines?',lines:1},{q:'What did the children do when the peas were ready?',lines:1},{q:'Have you ever eaten a vegetable straight from the garden?',lines:2}] },
+      { title:'The Garden at Night', passage:'Most people never saw the garden at night. But some things only happened after dark. Moths came to drink from the white flowers. Toads hopped out to hunt. A family of hedgehogs trotted across the grass. The garden was just as busy at night as it was in the day — only different workers were on the job.', questions:[{q:'What came to the white flowers at night?',lines:1},{q:'What came out to hunt at night?',lines:1},{q:'What do you think happens in your backyard at night?',lines:2}] },
+      { title:'The Last Tomato', passage:'At the end of summer there was one tomato left on the vine. It was small and a little lopsided. Everyone had forgotten about it. A girl found it one October morning, still red, still warm from the thin autumn sun. She ate it right there in the garden. It tasted like the whole summer.', questions:[{q:'When did the girl find the last tomato?',lines:1},{q:'How did the tomato taste?',lines:1},{q:'Have you ever eaten something that tasted like a memory?',lines:2}] },
+      { title:'The Bees Move In', passage:'One spring morning a swarm of bees moved into the hive box that the family had set up in the corner of the garden two years ago. They had almost given up on it. The girl watched from the window as thousands of bees found their new home. That summer the apple tree made more apples than ever before.', questions:[{q:'What moved into the hive box?',lines:1},{q:'What happened to the apple tree that summer?',lines:1},{q:'Why do you think bees help the apple tree make more apples?',lines:2}] },
+      { title:'The Forgotten Bulb', passage:'In autumn the family planted tulip bulbs in every flower bed. One got missed and rolled under the garden bench. In spring all the tulips bloomed but there was one extra — pushing up through the gravel under the bench in the most unexpected spot. It was the brightest red of all.', questions:[{q:'What did the family plant in autumn?',lines:1},{q:'Where did the forgotten bulb grow?',lines:1},{q:'What does this story tell you about flowers?',lines:2}] },
+      { title:'Garden Helpers', passage:'The best garden had helpers it could not live without. Bees carried pollen from flower to flower. Worms loosened the soil. Ladybugs ate the bugs that hurt the plants. The gardener thanked each of them in her heart every morning when she walked the rows. A garden, she believed, was really a community.', questions:[{q:'What did the bees do to help the garden?',lines:1},{q:'What did the ladybugs do?',lines:1},{q:'Who are the helpers in your family or class community?',lines:2}] },
+      { title:'The Mint That Took Over', passage:'Mama planted one small pot of mint. By summer it had spread over three flower beds, through the fence, and into the lawn. "I only planted one plant!" said Mama. Papa laughed. The children loved it. They picked leaves and put them in their water glasses. The whole garden smelled of mint all summer long.', questions:[{q:'What did Mama plant?',lines:1},{q:'What happened to the mint by summer?',lines:1},{q:'Have you ever seen a plant grow faster than expected?',lines:2}] },
+      { title:'The Compost Pile', passage:'At the back of the garden was a big compost pile. Every day the family added vegetable scraps and old leaves. By spring it had turned into the richest darkest soil. The gardener spread it over every bed. Every plant that year grew bigger and stronger than the year before. "We fed the garden," she said, "and the garden fed us."', questions:[{q:'What did the family add to the compost pile?',lines:1},{q:'What did the compost pile turn into?',lines:1},{q:'What do you think "the garden fed us" means?',lines:2}] },
+      { title:'The Sunflower Seed Trade', passage:'A girl grew sunflowers and dried their seeds every autumn. She sorted them into small paper envelopes. She traded them with neighbors for tomato seeds and bean seeds and flower seeds she had never grown before. By the third year her garden had plants from twelve different neighbors. Every garden in the street was connected.', questions:[{q:'What did the girl do with her sunflower seeds?',lines:1},{q:'How many neighbors\' plants did she have by the third year?',lines:1},{q:'Why is it good to share things with your neighbors?',lines:2}] },
+      { title:'The Very Old Rose Bush', passage:'The rose bush at the corner of the garden had been there for sixty years. It had been planted by a great-grandmother no one had ever met. Every June it bloomed deep red. The family looked at it and thought of her. They did not know her face but they knew she had loved roses. That felt like enough.', questions:[{q:'How long had the rose bush been in the garden?',lines:1},{q:'What did the family think about when the rose bloomed?',lines:1},{q:'What is something in your home or garden that has a long history?',lines:2}] },
+      { title:'The Garden Journal', passage:'A girl kept a journal of her garden every year. She pressed flowers in it and wrote the date each one bloomed. She drew pictures of bugs she found. By the time she was ten the journal had six volumes. Her teacher said it was the most interesting book she had ever read. The girl already knew that.', questions:[{q:'What did the girl keep in her journal?',lines:1},{q:'How many volumes did the journal have when she was ten?',lines:1},{q:'What would you put in a nature journal?',lines:2}] },
+      { title:'The Frog in the Garden', passage:'A frog moved into the garden pond in early spring. All summer he sat on the lily pad and watched the garden grow. He ate every mosquito he could catch. The gardener was delighted. She left a stepping stone just for him beside the pond. He sat on it most mornings like a king surveying his kingdom.', questions:[{q:'Where did the frog live in the garden?',lines:1},{q:'What did the frog eat?',lines:1},{q:'Why was the gardener happy to have the frog?',lines:2}] },
+      { title:'The Best Pumpkin', passage:'Every child in the family grew one pumpkin plant each year. They watered them and measured them every Sunday. In October they cut them and lined them up on the porch steps from smallest to biggest. This year the smallest child grew the biggest pumpkin. She had talked to it every single day.', questions:[{q:'What did the children grow every year?',lines:1},{q:'What did the smallest child do to grow the biggest pumpkin?',lines:1},{q:'Do you think talking to plants helps them grow?',lines:2}] },
+      { title:'The Lavender Row', passage:'A long row of lavender grew along the sunny path. In summer it buzzed with bees all day long. The girl liked to brush her hand along the tops and smell her palm afterwards. The smell made her think of her grandmother\'s kitchen where lavender had always dried in bunches from the ceiling.', questions:[{q:'What grew along the sunny path?',lines:1},{q:'What did the girl do with the lavender?',lines:1},{q:'Is there a smell that makes you think of someone you love?',lines:2}] },
+      { title:'Night Blooming Flowers', passage:'Most flowers open in the daytime. But some of Grandma\'s garden flowers only opened at night. The moon flowers opened just after sunset, big and white and luminous. The evening primrose opened in the afternoon and stayed open all night. Grandma liked to sit on the porch in the dark and smell them. "Night flowers," she said, "are for people who actually pay attention."', questions:[{q:'When did the moon flowers open?',lines:1},{q:'What did Grandma do in the evenings?',lines:1},{q:'What does "people who actually pay attention" mean?',lines:2}] },
+    ],
+    draw: [
+      { prompt:'Draw and label: a garden with flowers a bee and a butterfly', labels:['flower','bee','butterfly','stem'] },
+      { prompt:'Draw and label: a sunflower garden on a sunny day', labels:['sunflower','sun','leaf','soil'] },
+      { prompt:'Draw and label: a girl watering her garden with a can', labels:['girl','watering can','flower','rainbow'] },
+      { prompt:'Draw and label: a rosebush with a snail and raindrops', labels:['rose','snail','raindrop','leaf'] },
+      { prompt:'Draw and label: a garden vegetable patch with tomatoes and carrots', labels:['tomato','carrot','soil','fence'] },
+      { prompt:'Draw and label: a bumblebee collecting pollen from flowers', labels:['bee','pollen','flower','hive'] },
+      { prompt:'Draw and label: a butterfly landing on a child\'s finger in a garden', labels:['butterfly','finger','flower','leaf'] },
+      { prompt:'Draw and label: a strawberry patch behind an old stone wall', labels:['strawberry','wall','leaf','sun'] },
+      { prompt:'Draw and label: herbs growing in pots on a kitchen windowsill', labels:['pot','mint','basil','window'] },
+      { prompt:'Draw and label: a compost pile beside a vegetable garden', labels:['compost','vegetable','worm','soil'] },
+      { prompt:'Draw and label: a pea vine climbing up a wooden pole', labels:['pea','vine','pole','leaf'] },
+      { prompt:'Draw and label: a garden at night with moths and toads', labels:['moth','toad','flower','moon'] },
+      { prompt:'Draw and label: a frog sitting on a lily pad in a garden pond', labels:['frog','lily pad','pond','flower'] },
+      { prompt:'Draw and label: a sunflower taller than a fence post', labels:['sunflower','fence','seed','leaf'] },
+      { prompt:'Draw and label: tulips blooming in a spring flower bed', labels:['tulip','soil','rain','sun'] },
+      { prompt:'Draw and label: a child planting seeds in the garden with grandma', labels:['child','grandma','seed','soil'] },
+      { prompt:'Draw and label: a very old rose bush covered in red blooms', labels:['rose','thorn','stem','wall'] },
+      { prompt:'Draw and label: worms working in the garden soil', labels:['worm','soil','root','leaf'] },
+      { prompt:'Draw and label: a row of lavender with bees buzzing over it', labels:['lavender','bee','path','sun'] },
+      { prompt:'Draw and label: a garden in full bloom after the rain', labels:['flower','raindrop','leaf','sun'] },
+      { prompt:'Draw and label: a beehive in the corner of a flower garden', labels:['hive','bee','flower','tree'] },
+      { prompt:'Draw and label: pumpkins lined up on porch steps by size', labels:['pumpkin','steps','porch','leaf'] },
+      { prompt:'Draw and label: a girl pressing flowers in a garden journal', labels:['flower','journal','pencil','leaf'] },
+      { prompt:'Draw and label: a mint plant spreading across three flower beds', labels:['mint','flower bed','leaf','fence'] },
+      { prompt:'Draw and label: tomatoes ripening on the vine in late summer', labels:['tomato','vine','leaf','sun'] },
+      { prompt:'Draw and label: a garden tool shed with shovels and pots', labels:['shed','shovel','pot','seed bag'] },
+      { prompt:'Draw and label: a spring garden with bulbs just sprouting', labels:['bulb','sprout','soil','rain'] },
+      { prompt:'Draw and label: a butterfly floating between two flower beds', labels:['butterfly','flower','path','sun'] },
+      { prompt:'Draw and label: a ladybug on a rose leaf', labels:['ladybug','rose','leaf','stem'] },
+      { prompt:'Draw and label: a garden fence covered in climbing flowers', labels:['fence','flower','vine','bee'] },
+      { prompt:'Draw and label: children trading seed packets over a garden fence', labels:['child','seed','fence','flower'] },
+      { prompt:'Draw and label: a sunflower seed drying on a plate in autumn', labels:['sunflower','seed','plate','leaf'] },
+      { prompt:'Draw and label: grandma\'s old garden gloves hanging by the door', labels:['glove','door','hook','mud'] },
+      { prompt:'Draw and label: night-blooming white flowers in the moonlight', labels:['moon flower','moon','dark sky','leaf'] },
+      { prompt:'Draw and label: a snail leaving a silver trail across a leaf', labels:['snail','shell','leaf','trail'] },
+      { prompt:'Draw and label: tomatoes and cucumbers in a basket after harvest', labels:['tomato','cucumber','basket','garden'] },
+      { prompt:'Draw and label: a child eating a sun-warmed strawberry in the garden', labels:['child','strawberry','leaf','sun'] },
+      { prompt:'Draw and label: a tall sunflower with birds eating its seeds', labels:['sunflower','bird','seed','sky'] },
+      { prompt:'Draw and label: a garden path lined with lavender on both sides', labels:['path','lavender','bee','stone'] },
+      { prompt:'Draw and label: carrots being pulled out of the ground', labels:['carrot','soil','hand','basket'] },
+      { prompt:'Draw and label: a bee going from flower to flower collecting pollen', labels:['bee','flower','pollen','leaf'] },
+      { prompt:'Draw and label: a garden in four seasons divided into four boxes', labels:['spring','summer','autumn','winter'] },
+      { prompt:'Draw and label: a pumpkin patch in late October', labels:['pumpkin','vine','leaf','scarecrow'] },
+      { prompt:'Draw and label: worms and bugs under a garden stone', labels:['worm','bug','stone','soil'] },
+      { prompt:'Draw and label: a rose with a dewdrop on every petal', labels:['rose','dewdrop','petal','stem'] },
+      { prompt:'Draw and label: a garden gate opening into a flower-filled yard', labels:['gate','flower','path','fence'] },
+      { prompt:'Draw and label: a child making jam with strawberries from the garden', labels:['child','strawberry','pot','jar'] },
+      { prompt:'Draw and label: an apple tree in full bloom in spring', labels:['apple tree','blossom','bee','sky'] },
+      { prompt:'Draw and label: a spider web in a garden covered in morning dew', labels:['web','dew','flower','grass'] },
+      { prompt:'Draw and label: a child eating a tomato right off the vine', labels:['child','tomato','vine','leaf'] },
+      { prompt:'Draw and label: a winter garden with the first snowdrops coming up', labels:['snowdrop','snow','soil','sun'] },
+      { prompt:'Draw and label: a whole garden buzzing with bees on a summer afternoon', labels:['bee','flower','hive','sun'] },
+      { prompt:'Draw and label: sunflowers turning to face the morning sun', labels:['sunflower','sun','leaf','field'] },
+      { prompt:'Draw and label: a child finding a ladybug in the grass', labels:['child','ladybug','grass','leaf'] },
+      { prompt:'Draw and label: herbs bundled and drying in a sunny window', labels:['herb','string','window','sun'] },
+    ],
+    grammar: [
+      [{sentence:'The bright ___ opened in the warm sun.',answer:'flower',word_bank:['flower','window','clock']},{sentence:'The garden smelled very ___ after the rain.',answer:'sweet',word_bank:['sweet','heavy','square']},{sentence:'The bee ___ from flower to flower.',answer:'flew',word_bank:['flew','cooked','sank']}],
+      [{sentence:'She ___ her garden every morning.',answer:'watered',word_bank:['watered','painted','broke']},{sentence:'The rose petals were very ___ and soft.',answer:'smooth',word_bank:['smooth','loud','blue']},{sentence:'A tiny ___ crawled across the leaf.',answer:'snail',word_bank:['snail','spoon','cloud']}],
+      [{sentence:'The sunflower grew very ___ in the summer.',answer:'tall',word_bank:['tall','wet','silly']},{sentence:'The butterfly landed on a ___ daisy.',answer:'yellow',word_bank:['yellow','sticky','heavy']},{sentence:'The seeds ___ after the spring rain.',answer:'sprouted',word_bank:['sprouted','painted','flew']}],
+      [{sentence:'The ___ made sweet honey from the flowers.',answer:'bees',word_bank:['bees','pillows','stones']},{sentence:'The garden soil was very ___ and dark.',answer:'rich',word_bank:['rich','purple','noisy']},{sentence:'Grandma ___ the old rose bush every June.',answer:'tended',word_bank:['tended','cooked','lost']}],
+      [{sentence:'The ___ dug tunnels through the garden soil.',answer:'worms',word_bank:['worms','clocks','pillows']},{sentence:'The strawberries were very ___ and red.',answer:'ripe',word_bank:['ripe','square','loud']},{sentence:'The girl ___ her seeds in small paper packets.',answer:'saved',word_bank:['saved','painted','broke']}],
+      [{sentence:'A little ___ hopped onto the lily pad.',answer:'frog',word_bank:['frog','bucket','shoe']},{sentence:'The herb garden smelled very ___ and fresh.',answer:'lovely',word_bank:['lovely','bumpy','square']},{sentence:'The pumpkin ___ bigger every single week.',answer:'grew',word_bank:['grew','baked','swam']}],
+      [{sentence:'The ___ row buzzed with bees all day.',answer:'lavender',word_bank:['lavender','hammer','cloud']},{sentence:'The tomato felt very ___ and round.',answer:'smooth',word_bank:['smooth','salty','loud']},{sentence:'The worm ___ through the dark soft soil.',answer:'tunneled',word_bank:['tunneled','painted','flew']}],
+      [{sentence:'The ___ opened its petals at sunrise.',answer:'flower',word_bank:['flower','tower','storm']},{sentence:'The spring garden smelled very ___ and green.',answer:'fresh',word_bank:['fresh','purple','heavy']},{sentence:'Mama ___ herbs from the ceiling to dry.',answer:'hung',word_bank:['hung','baked','swam']}],
+      [{sentence:'The ___ carried pollen on its fuzzy legs.',answer:'bee',word_bank:['bee','pencil','blanket']},{sentence:'The rose bush was very ___ and old.',answer:'gnarled',word_bank:['gnarled','spicy','orange']},{sentence:'The girl ___ her garden journal every day.',answer:'wrote in',word_bank:['wrote in','cooked','melted']}],
+      [{sentence:'The ___ spread across three flower beds.',answer:'mint',word_bank:['mint','table','ship']},{sentence:'The freshly dug soil was very ___ and dark.',answer:'rich',word_bank:['rich','spicy','bumpy']},{sentence:'The sunflower ___ its face toward the sun.',answer:'turned',word_bank:['turned','baked','whispered']}],
+    ]
+  }
+};
+
+// ─── Pick content from banks ──────────────────────────────────────────────────
+function getContent(theme) {
+  const bank = CONTENT_BANKS[theme] || CONTENT_BANKS.woodland;
+  return {
+    reading: pick(bank.reading, 1)[0],
+    draw:    pick(bank.draw, 1)[0],
+    grammar: pick(bank.grammar, 1)[0].map(g => ({ ...g, word_bank: shuffle([...g.word_bank]) }))
+  };
+}
+
+// ─── Generate Worksheet ───────────────────────────────────────────────────────
+function generateWorksheet() {
+  const btn  = document.getElementById('gen-btn');
+  const bar  = document.getElementById('loading-bar');
+  const msg  = document.getElementById('loading-msg');
   const fill = document.getElementById('loading-fill');
 
-  // Get settings
-  const mathLevel = document.getElementById('math-level').value;
-  const mathCount = parseInt(document.getElementById('math-count').value);
-  const spellingList = document.getElementById('spelling-list').value;
+  const mathLevel     = document.getElementById('math-level').value;
+  const mathCount     = parseInt(document.getElementById('math-count').value);
+  const spellingList  = document.getElementById('spelling-list').value;
   const spellingCount = parseInt(document.getElementById('spelling-count').value);
-  const theme = document.getElementById('theme').value;
-  const readingLevel = document.getElementById('reading-level').value;
+  const theme         = document.getElementById('theme').value;
 
   const includeMath     = document.getElementById('toggle-math').classList.contains('checked');
   const includeSpelling = document.getElementById('toggle-spelling').classList.contains('checked');
@@ -634,286 +1160,37 @@ async function generateWorksheet() {
   msg.classList.add('show');
   msg.textContent = '✨ Creating Hadley\'s worksheet...';
 
-  // Animate loading bar
   let progress = 0;
   const fillInterval = setInterval(() => {
-    progress = Math.min(progress + rand(2,6), 85);
+    progress = Math.min(progress + rand(8, 15), 95);
     fill.style.width = progress + '%';
-  }, 300);
+  }, 120);
 
-  // Pick spelling words from bank
-  const spellingWords = pick(SPELLING_BANKS[spellingList], spellingCount);
-  const themeData = THEMES[theme];
+  setTimeout(() => {
+    clearInterval(fillInterval);
+    fill.style.width = '100%';
 
-  // Build prompt for Claude
-  const readingLevelDesc = { early: 'very simple 2–3 sentence story using only 1-2 syllable words', grade1: '4–6 sentence story using grade 1 vocabulary', advanced: '6–8 sentence story with some 2-syllable words and richer vocabulary' }[readingLevel];
+    const spellingWords = pick(SPELLING_BANKS[spellingList], spellingCount);
+    const themeData     = THEMES[theme];
+    const aiContent     = getContent(theme);
+    const mathProblems  = includeMath ? generateMathProblems(mathLevel, mathCount) : [];
 
-  const prompt = `You are creating content for a Grade 1 daily worksheet for a 7-year-old girl named Hadley who loves ${themeData.name.toLowerCase()} themes.
+    renderWorksheet({
+      date: new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' }),
+      theme: themeData,
+      sections: { math: includeMath, spelling: includeSpelling, reading: includeReading, draw: includeDraw, grammar: includeGrammar },
+      mathProblems,
+      spellingWords,
+      aiContent
+    });
 
-Generate the following JSON exactly — no markdown, no extra text, just the raw JSON object:
-
-{
-  "reading": {
-    "title": "short story title (3-5 words, ${themeData.name} theme)",
-    "passage": "${readingLevelDesc}, ${themeData.name} theme. Make it charming and engaging for a 7-year-old.",
-    "questions": [
-      {"q": "who/what question about the story", "lines": 1},
-      {"q": "what happened question", "lines": 1},
-      {"q": "simple opinion or prediction question (What do YOU think...)", "lines": 2}
-    ]
-  },
-  "draw": {
-    "prompt": "Draw and label: [a specific ${themeData.name} scene — e.g. 'a rabbit in the forest with a mushroom']",
-    "labels": ["label1", "label2", "label3", "label4"]
-  },
-  "grammar": [
-    {
-      "sentence": "A complete sentence with ONE blank, ${themeData.name} theme, using a simple noun/verb/adjective",
-      "blank_type": "noun OR verb OR adjective",
-      "answer": "the correct word that goes in the blank",
-      "word_bank": ["answer", "two_other_words"]
-    },
-    {
-      "sentence": "Another sentence with ONE blank, different grammar focus",
-      "blank_type": "noun OR verb OR adjective",
-      "answer": "the correct word",
-      "word_bank": ["answer", "two_other_words"]
-    },
-    {
-      "sentence": "A third sentence with ONE blank",
-      "blank_type": "noun OR verb OR adjective",
-      "answer": "the correct word",
-      "word_bank": ["answer", "two_other_words"]
-    }
-  ]
+    btn.disabled = false;
+    bar.classList.remove('show');
+    msg.classList.remove('show');
+    fill.style.width = '0%';
+  }, 900);
 }
 
-Make the blank in grammar sentences represented as ___ (three underscores). Keep all language simple and appropriate for Grade 1. Make it feel magical and fun.`;
-
-  let aiContent = null;
-
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-
-    const data = await response.json();
-    const raw = data.content?.[0]?.text || '{}';
-    const clean = raw.replace(/```json|```/g, '').trim();
-    aiContent = JSON.parse(clean);
-  } catch (e) {
-    // Fallback content if API fails
-    aiContent = {
-      reading: {
-        title: 'The Little Acorn',
-        passage: 'A tiny acorn fell from a big oak tree. A squirrel found it in the soft green moss. She put it in her cozy den to save for winter. "This will be a good snack!" said the squirrel. The little acorn felt very happy to have a new home.',
-        questions: [
-          { q: 'Who found the acorn?', lines: 1 },
-          { q: 'Where did the squirrel put the acorn?', lines: 1 },
-          { q: 'What do you think the squirrel will do next?', lines: 2 }
-        ]
-      },
-      draw: {
-        prompt: 'Draw and label: a squirrel in the forest with an acorn and a mushroom',
-        labels: ['squirrel', 'acorn', 'mushroom', 'tree']
-      },
-      grammar: [
-        { sentence: 'The ___ hopped over the log.', blank_type: 'noun', answer: 'rabbit', word_bank: ['rabbit', 'cloud', 'book'] },
-        { sentence: 'The little fox ___ through the forest.', blank_type: 'verb', answer: 'ran', word_bank: ['ran', 'slept', 'ate'] },
-        { sentence: 'The mushroom was very ___.', blank_type: 'adjective', answer: 'red', word_bank: ['red', 'loud', 'heavy'] }
-      ]
-    };
-  }
-
-  clearInterval(fillInterval);
-  fill.style.width = '100%';
-
-  // Generate math
-  const mathProblems = includeMath ? generateMathProblems(mathLevel, mathCount) : [];
-
-  // Render worksheet
-  renderWorksheet({
-    date: new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' }),
-    theme: themeData,
-    sections: { math: includeMath, spelling: includeSpelling, reading: includeReading, draw: includeDraw, grammar: includeGrammar },
-    mathProblems,
-    spellingWords,
-    aiContent
-  });
-
-  btn.disabled = false;
-  bar.classList.remove('show');
-  msg.classList.remove('show');
-  fill.style.width = '0%';
-}
-
-// ─── Render Worksheet HTML ─────────────────────────────────────────────────────
-function renderWorksheet({ date, theme, sections, mathProblems, spellingWords, aiContent }) {
-  let sectionNum = 1;
-  let html = '';
-
-  // Header
-  html += `
-    <div class="ws-border-top">🌿 🍄 🦋 🌿 🍄 🦋 🌿 🍄 🦋 🌿 🍄 🦋 🌿</div>
-    <div class="ws-header">
-      <div class="ws-title-block">
-        <h1>${theme.emoji} Hadley's Daily Worksheet</h1>
-        <p>${date} · Grade 1</p>
-      </div>
-      <div class="ws-name-box">
-        <div class="ws-name-line">
-          <span>Name:</span><div class="ws-line"></div>
-        </div>
-        <div class="ws-name-line">
-          <span>Score:</span><div class="ws-line" style="width:80px"></div>
-        </div>
-      </div>
-    </div>`;
-
-  // ── MATH ──
-  if (sections.math && mathProblems.length > 0) {
-    html += `<div class="ws-section">
-      <div class="ws-section-header">
-        <div class="ws-section-num">${sectionNum++}</div>
-        <span class="ws-section-icon">🔢</span>
-        <div class="ws-section-title">Math Practice</div>
-        <div class="ws-section-points">___ / ${mathProblems.length}</div>
-      </div>
-      <div class="math-grid">`;
-    mathProblems.forEach(p => {
-      html += `<div class="math-problem">
-        <div class="math-equation">${p.a} ${p.op} ${p.b} =</div>
-        <div class="math-answer-line"></div>
-      </div>`;
-    });
-    html += `</div></div>`;
-  }
-
-  // ── SPELLING ──
-  if (sections.spelling && spellingWords.length > 0) {
-    html += `<div class="ws-section">
-      <div class="ws-section-header">
-        <div class="ws-section-num">${sectionNum++}</div>
-        <span class="ws-section-icon">✏️</span>
-        <div class="ws-section-title">Spelling Words</div>
-        <div class="ws-section-points">Trace · Write · Write again</div>
-      </div>`;
-    spellingWords.forEach(word => {
-      const letters = word.split('');
-      html += `<div class="spelling-word-row">
-        <div class="spelling-word">${word}</div>
-        <div class="trace-boxes">`;
-      letters.forEach(l => {
-        html += `<div class="trace-box">${l}</div>`;
-      });
-      html += `</div>
-        <div style="flex:1;display:flex;flex-direction:column;gap:10px;margin-left:10px;">
-          <div style="border-bottom:1.5px solid #aaa;height:32px;position:relative;">
-            <div style="position:absolute;bottom:8px;left:0;right:0;border-bottom:1px dashed #e0e0e0;"></div>
-          </div>
-          <div style="border-bottom:1.5px solid #aaa;height:32px;position:relative;">
-            <div style="position:absolute;bottom:8px;left:0;right:0;border-bottom:1px dashed #e0e0e0;"></div>
-          </div>
-        </div>
-      </div>`;
-    });
-    html += `</div>`;
-  }
-
-  // ── READING COMPREHENSION ──
-  if (sections.reading && aiContent.reading) {
-    const r = aiContent.reading;
-    html += `<div class="ws-section">
-      <div class="ws-section-header">
-        <div class="ws-section-num">${sectionNum++}</div>
-        <span class="ws-section-icon">📖</span>
-        <div class="ws-section-title">Reading Comprehension</div>
-        <div class="ws-section-points">___ / 3</div>
-      </div>
-      <div class="reading-passage">
-        <div class="passage-title">${r.title}</div>
-        ${r.passage}
-      </div>`;
-    r.questions.forEach((q, i) => {
-      html += `<div class="reading-question">
-        <p>${i + 1}. ${q.q}</p>
-        ${Array(q.lines).fill('<div class="answer-line"></div>').join('')}
-      </div>`;
-    });
-    html += `</div>`;
-  }
-
-  // ── DRAW & LABEL ──
-  if (sections.draw && aiContent.draw) {
-    const d = aiContent.draw;
-    html += `<div class="ws-section">
-      <div class="ws-section-header">
-        <div class="ws-section-num">${sectionNum++}</div>
-        <span class="ws-section-icon">🎨</span>
-        <div class="ws-section-title">Draw & Label</div>
-      </div>
-      <p style="font-size:13px;color:#555;margin-bottom:8px;font-style:italic;">${d.prompt}</p>
-      <div class="draw-box">Draw here 🖍️</div>
-      <div class="draw-labels">`;
-    d.labels.forEach(label => {
-      html += `<div class="draw-label-item">
-        <span style="font-size:12px;font-weight:700;color:#444;">${label}:</span>
-        <div class="draw-label-line"></div>
-      </div>`;
-    });
-    html += `</div></div>`;
-  }
-
-  // ── GRAMMAR ──
-  if (sections.grammar && aiContent.grammar) {
-    html += `<div class="ws-section">
-      <div class="ws-section-header">
-        <div class="ws-section-num">${sectionNum++}</div>
-        <span class="ws-section-icon">🌱</span>
-        <div class="ws-section-title">Fill in the Blank</div>
-        <div class="ws-section-points">___ / ${aiContent.grammar.length}</div>
-      </div>`;
-    aiContent.grammar.forEach((g, i) => {
-      const sentence = g.sentence.replace(/___/g, '<span class="blank"></span>');
-      const wb = shuffle(g.word_bank);
-      html += `<div class="reading-question">
-        <div class="grammar-sentence">${i + 1}. ${sentence}</div>
-        <div class="word-bank"><span>Word Bank:</span> &nbsp; ${wb.join(' &nbsp;·&nbsp; ')}</div>
-      </div>`;
-    });
-    html += `</div>`;
-  }
-
-  // Footer
-  html += `
-    <div class="ws-footer">
-      <div class="star-box">
-        <label>How did I do?</label>
-        <span class="star">⭐</span>
-        <span class="star">⭐</span>
-        <span class="star">⭐</span>
-      </div>
-      <div class="ws-score-box">Score: _____ / ${sectionNum - 1} sections</div>
-    </div>
-    <div class="ws-deco">🌿 Wade Classical Homeschool · ${new Date().getFullYear()} 🌿</div>`;
-
-  document.getElementById('ws-inner').innerHTML = html;
-
-  // Show worksheet, hide generator
-  document.getElementById('generator-screen').style.display = 'none';
-  document.getElementById('worksheet').classList.add('visible');
-  window.scrollTo(0, 0);
-}
 </script>
 </body>
 </html>
