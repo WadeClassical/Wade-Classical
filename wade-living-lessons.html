@@ -1226,6 +1226,8 @@ async function assignActivityToPlanner(activityId, who, date) {
   tasks.push(newTask);
   await set(ref(db, `planner/tasks/${who}`), tasks);
   showToast(`Added to ${who}'s planner for ${date} ✓`);
+  // Refresh today card if we just assigned to the current user for today
+  if (who === currentUser && date === getTodayStr()) renderTodayAssigned();
 }
 
 async function checkTodayAssignment(date) {
@@ -1242,7 +1244,7 @@ async function checkTodayAssignment(date) {
       return;
     }
     const task = livingTasks[0];
-    const actId = task.activityId;
+    const actId = task.livingLessonId || task.activityId;
     const act = _activities[actId] || {};
     const doneKey = `ll_today_done_${currentUser}_${date}`;
     const alreadyDone = localStorage.getItem(doneKey);
