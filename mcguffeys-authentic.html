@@ -3,422 +3,573 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>McGuffey's First Reader - Authentic Edition</title>
+    <title>McGuffey's Readers - Authentic Edition</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=IM+Fell+English:ital@0;1&family=Fredoka+One&display=swap');
+
+        * { margin:0; padding:0; box-sizing:border-box; }
 
         body {
-            font-family: 'Georgia', 'Palatino', serif;
-            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            font-family: 'Lora', Georgia, serif;
             min-height: 100vh;
-            padding: 20px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: flex-start;
+            padding: 24px 16px 48px;
+            overflow-x: hidden;
+            transition: background 0.6s ease;
         }
 
-        .book-container {
-            background: #f9f3e8;
-            border-radius: 10px;
-            padding: 40px;
-            max-width: 900px;
+        /* ── COVER MODE body ── */
+        body.mode-cover {
+            background: radial-gradient(ellipse at 40% 30%, #b8e0a0 0%, #7ab860 40%, #4a8a30 100%);
+        }
+
+        /* ── PAGE MODE body ── */
+        body.mode-page {
+            background: radial-gradient(ellipse at 50% 80%, #c8d8b0 0%, #8aaa60 50%, #4a7030 100%);
+        }
+
+        /* ── FLOATING NATURE ICONS ── */
+        .book-sparkles {
             width: 100%;
-            box-shadow: 
-                0 2px 10px rgba(0,0,0,0.1),
-                0 10px 40px rgba(0,0,0,0.2),
-                inset 0 0 0 1px rgba(139, 69, 19, 0.3);
-            border: 3px solid #8b4513;
+            max-width: 700px;
+            height: 68px;
             position: relative;
+            pointer-events: none;
+            margin-bottom: -6px;
+        }
+        .sparkle {
+            position: absolute;
+            animation: floatLeaf 3.5s ease-in-out infinite;
+        }
+        .sparkle:nth-child(1) { left:3%;  top:8px;  font-size:1.7em; animation-delay:0s; }
+        .sparkle:nth-child(2) { left:16%; top:34px; font-size:1.1em; animation-delay:0.6s; }
+        .sparkle:nth-child(3) { left:29%; top:6px;  font-size:1em;   animation-delay:1.1s; }
+        .sparkle:nth-child(4) { left:50%; top:16px; font-size:2em;   animation-delay:0.3s; }
+        .sparkle:nth-child(5) { left:66%; top:5px;  font-size:1.2em; animation-delay:0.9s; }
+        .sparkle:nth-child(6) { left:80%; top:32px; font-size:1em;   animation-delay:0.4s; }
+        .sparkle:nth-child(7) { left:93%; top:10px; font-size:1.6em; animation-delay:1.4s; }
+        @keyframes floatLeaf {
+            0%,100% { transform: translateY(0) rotate(0deg)    scale(1);    opacity:.85; }
+            50%      { transform: translateY(-10px) rotate(10deg) scale(1.1); opacity:1; }
         }
 
-        .book-container::before {
+        /* ══════════════════════════════════════
+           BOOK OUTER SHELL — shared wrapper
+        ══════════════════════════════════════ */
+        .book-outer {
+            max-width: 680px;
+            width: 100%;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        /* fanned pages peeking behind — only visible in page mode */
+        .book-outer::before,
+        .book-outer::after {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                rgba(139, 69, 19, 0.03) 2px,
-                rgba(139, 69, 19, 0.03) 3px
-            );
+            inset: 0;
+            border-radius: 4px 12px 12px 4px;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        body.mode-page .book-outer::before {
+            background: linear-gradient(180deg, #fdf8ee 0%, #e8dfc0 100%);
+            transform: rotate(-2deg);
+            transform-origin: bottom left;
+            opacity: 1;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        body.mode-page .book-outer::after {
+            background: linear-gradient(180deg, #fdf8ee 0%, #e8dfc0 100%);
+            transform: rotate(2deg);
+            transform-origin: bottom right;
+            opacity: 1;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        /* ══════════════════════════════════════
+           BOOK COVER  (user select screen)
+        ══════════════════════════════════════ */
+        .book-cover {
+            position: relative;
+            z-index: 2;
+            border-radius: 6px 14px 14px 6px;
+            overflow: hidden;
+            min-height: 520px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.4s ease;
+
+            /* Illustrated cover: rich teal/forest with texture */
+            background:
+                radial-gradient(ellipse at 70% 20%, rgba(255,255,255,0.08) 0%, transparent 60%),
+                linear-gradient(160deg, #2d6e3e 0%, #1e5230 40%, #163d24 100%);
+
+            /* hard cover border */
+            border: 3px solid #0f2d18;
+            box-shadow:
+                -8px 0 0 #0f2d18,
+                0 10px 0 #163d24,
+                0 18px 40px rgba(10,40,15,0.5),
+                inset 0 0 60px rgba(0,0,0,0.15);
+        }
+
+        /* Spine on left edge of cover */
+        .book-cover::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; bottom: 0;
+            width: 36px;
+            background: linear-gradient(90deg,
+                #0a1e10 0%, #163d24 35%, #1e5230 55%, #163d24 75%, #0a1e10 100%);
+            border-right: 1px solid rgba(255,255,255,0.06);
+        }
+
+        /* Gold decorative border inset on cover */
+        .book-cover::after {
+            content: '';
+            position: absolute;
+            top: 14px; left: 50px; right: 14px; bottom: 14px;
+            border: 2px solid rgba(212,180,80,0.35);
+            border-radius: 4px;
             pointer-events: none;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #8b4513;
-        }
-
-        h1 {
-            font-family: 'Georgia', serif;
-            color: #4a2c2a;
-            font-size: 2.2em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 0px rgba(139, 69, 19, 0.1);
-        }
-
-        .subtitle {
-            font-size: 1.1em;
-            color: #8b4513;
-            font-style: italic;
-        }
-
-        .level-tabs {
+        .cover-content {
+            flex: 1;
             display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-
-        .level-tab {
-            padding: 10px 20px;
-            background: #d4a574;
-            border: 2px solid #8b4513;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            color: #4a2c2a;
-            transition: all 0.3s;
-        }
-
-        .level-tab:hover {
-            background: #e8b4bc;
-        }
-
-        .level-tab.active {
-            background: #e8b4bc;
-            box-shadow: 0 4px 0 #8b4513;
-        }
-
-        .page {
-            background: white;
-            padding: 40px;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border: 1px solid #d4a574;
-            min-height: 450px;
-            position: relative;
-        }
-
-        .lesson-title {
-            font-size: 1.6em;
-            color: #4a2c2a;
-            text-align: center;
-            margin-bottom: 25px;
-            font-weight: bold;
-            border-bottom: 2px solid #d4a574;
-            padding-bottom: 15px;
-        }
-
-        .lesson-content {
-            font-size: 1.25em;
-            line-height: 1.8;
-            color: #2c1810;
-            margin: 30px 0;
-            text-align: justify;
-        }
-
-        .word {
-            display: inline;
-            cursor: pointer;
-            padding: 2px 4px;
-            border-radius: 3px;
-            transition: all 0.3s;
-        }
-
-        .word:hover {
-            background: #fff9e6;
-        }
-
-        .word.highlight {
-            background: #ffd93d;
-            font-weight: bold;
-        }
-
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 30px 0;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #e8b4bc 0%, #d89ba0 100%);
-            color: #4a2c2a;
-            border: 2px solid #8b4513;
-            padding: 12px 25px;
-            font-size: 1em;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            font-family: 'Georgia', serif;
-            box-shadow: 0 4px 0 #8b4513;
-            transition: all 0.1s;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 0 #8b4513;
-        }
-
-        .btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #8b4513;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #a8d8ea 0%, #88c9d4 100%);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #b8e6b8 0%, #90d490 100%);
-        }
-
-        .word-practice {
-            margin: 30px 0;
-            padding: 25px;
-            background: #fff9e6;
-            border-radius: 8px;
-            border: 2px solid #d4a574;
-        }
-
-        .word-practice h3 {
-            color: #4a2c2a;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .word-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            justify-content: center;
-            margin: 20px 0;
-        }
-
-        .word-card {
-            background: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            border: 2px solid #d4a574;
-            font-size: 1.3em;
-            color: #4a2c2a;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .word-card:hover {
-            background: #ffd93d;
-            transform: scale(1.05);
-        }
-
-        .progress-bar {
-            background: #d4a574;
-            height: 25px;
-            border-radius: 15px;
-            overflow: hidden;
-            margin: 20px 0;
-            border: 2px solid #8b4513;
-        }
-
-        .progress-fill {
-            background: linear-gradient(135deg, #90d490 0%, #5a9c3a 100%);
-            height: 100%;
-            transition: width 0.5s;
-            display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            padding-left: 15px;
-            color: white;
-            font-weight: bold;
+            justify-content: center;
+            padding: 40px 40px 36px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Big woodland illustration at top of cover */
+        .cover-art {
+            font-size: 5.5em;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+            animation: coverFloat 4s ease-in-out infinite;
+        }
+        @keyframes coverFloat {
+            0%,100% { transform: translateY(0); }
+            50%      { transform: translateY(-8px); }
+        }
+
+        /* Cover title */
+        .cover-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.4em;
+            color: #f0e080;
+            text-align: center;
+            line-height: 1.15;
+            text-shadow:
+                0 2px 0 rgba(0,0,0,0.4),
+                0 4px 16px rgba(0,0,0,0.3);
+            margin-bottom: 4px;
+            letter-spacing: 0.01em;
+        }
+
+        .cover-subtitle {
+            font-family: 'Lora', serif;
+            font-style: italic;
+            font-size: 0.95em;
+            color: rgba(220,240,180,0.8);
+            margin-bottom: 28px;
+            text-align: center;
+        }
+
+        /* Decorative divider */
+        .cover-divider {
+            width: 180px;
+            text-align: center;
+            color: rgba(212,180,80,0.6);
             font-size: 0.9em;
+            letter-spacing: 0.15em;
+            margin-bottom: 28px;
+        }
+
+        /* Reader select prompt */
+        .cover-prompt {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.15em;
+            color: rgba(220,240,180,0.9);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Reader buttons on cover */
+        .cover-readers {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .reader-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 16px 22px;
+            border-radius: 16px;
+            border: 3px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1em;
+            transition: all 0.2s;
+            min-width: 110px;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.25), 0 8px 20px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .reader-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0.08);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .reader-btn:hover { transform: translateY(-4px); box-shadow: 0 8px 0 rgba(0,0,0,0.2), 0 12px 24px rgba(0,0,0,0.25); }
+        .reader-btn:hover::before { opacity: 1; }
+        .reader-btn:active { transform: translateY(0); box-shadow: 0 2px 0 rgba(0,0,0,0.25); }
+
+        .reader-btn.hadley { background: linear-gradient(145deg, #b8d8f0, #88b8e0); color: #1a3a5a; border-color: rgba(100,160,220,0.5); }
+        .reader-btn.audrey { background: linear-gradient(145deg, #f8c8dc, #f090b8); color: #5a1a38; border-color: rgba(220,100,160,0.5); }
+        .reader-btn.guest  { background: linear-gradient(145deg, #d8c8f0, #b090d8); color: #3a1a5a; border-color: rgba(160,100,220,0.5); }
+
+        .reader-btn .btn-icon  { font-size: 2em; line-height: 1; }
+        .reader-btn .btn-name  { font-size: 1.1em; font-weight: bold; }
+        .reader-btn .btn-grade { font-size: 0.7em; opacity: 0.75; font-family: 'Lora', serif; font-style: italic; }
+
+        /* Cover bottom binding strip */
+        .cover-binding {
+            height: 14px;
+            background: linear-gradient(180deg, #0f2d18 0%, #081808 100%);
+            border-radius: 0 0 10px 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ══════════════════════════════════════
+           BOOK PAGE  (menu + lesson screens)
+        ══════════════════════════════════════ */
+        .book-page {
+            display: none;
+            position: relative;
+            z-index: 2;
+            min-height: 580px;
+
+            background:
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 31px,
+                    rgba(80,110,40,0.055) 31px,
+                    rgba(80,110,40,0.055) 32px
+                ),
+                linear-gradient(170deg, #fefcf5 0%, #faf4e0 50%, #f4ebcc 100%);
+
+            border-radius: 4px 12px 0 0;
+
+            /* Spine on left */
+            border-left: 40px solid #2d5a20;
+
+            box-shadow:
+                inset 10px 0 20px rgba(45,90,32,0.12),
+                inset -2px 0 8px rgba(0,0,0,0.04),
+                0 6px 0 #234818,
+                0 12px 40px rgba(20,50,10,0.35);
+
+            padding: 40px 48px 36px 44px;
+        }
+
+        body.mode-page .book-page { display: block; }
+        body.mode-cover .book-page { display: none; }
+        body.mode-cover .book-cover { display: flex; }
+        body.mode-page  .book-cover { display: none; }
+
+        /* Spine label */
+        .book-page::before {
+            content: 'McGUFFEY';
+            position: absolute;
+            top: 50%;
+            left: -32px;
+            transform: translateY(-50%) rotate(-90deg);
+            font-family: 'Lora', serif;
+            font-size: 0.52em;
+            font-weight: bold;
+            color: rgba(212,180,80,0.7);
+            letter-spacing: 0.3em;
             white-space: nowrap;
         }
 
+        /* Inner margin rule */
+        .book-page::after {
+            content: '';
+            position: absolute;
+            inset: 16px 16px 16px 56px;
+            border: 1px solid rgba(80,110,40,0.12);
+            pointer-events: none;
+            border-radius: 2px;
+        }
+
+        /* Bottom binding */
+        .book-bottom {
+            max-width: 680px;
+            width: 100%;
+            height: 13px;
+            position: relative;
+            z-index: 2;
+            border-radius: 0 0 8px 8px;
+            background: linear-gradient(180deg, #2d5a20 0%, #1e3e14 60%, #142a0c 100%);
+            box-shadow: 0 6px 20px rgba(15,40,10,0.4);
+        }
+
+        /* ── PAGE TYPOGRAPHY ── */
+        .header {
+            text-align: center;
+            margin-bottom: 22px;
+            padding-bottom: 14px;
+            border-bottom: 1.5px solid rgba(60,100,40,0.2);
+        }
+        h1 {
+            font-family: 'IM Fell English', serif;
+            color: #2a4a1a;
+            font-size: 1.9em;
+            margin-bottom: 5px;
+        }
+        .subtitle { font-size: 0.9em; color: #4a7030; font-style: italic; }
+
+        .lesson-title {
+            font-family: 'IM Fell English', serif;
+            font-size: 1.45em;
+            color: #2a4a1a;
+            text-align: center;
+            margin-bottom: 18px;
+            border-bottom: 1.5px solid rgba(60,100,40,0.2);
+            padding-bottom: 12px;
+        }
+        .lesson-content {
+            font-size: 1.18em;
+            line-height: 2.05;
+            color: #1a2e0c;
+            margin: 18px 0;
+            text-align: justify;
+        }
+        .word { display:inline; cursor:pointer; padding:1px 3px; border-radius:3px; transition:background .2s; }
+        .word:hover    { background: #d4edaa; }
+        .word.highlight { background: #a8d860; font-weight:bold; }
+
+        /* ── CONTROLS ── */
+        .controls { display:flex; justify-content:center; gap:12px; margin:20px 0; flex-wrap:wrap; }
+        .btn {
+            background: linear-gradient(135deg, #c8e8a0 0%, #a0c870 100%);
+            color: #2a4a1a; border: 2px solid #4a7a30;
+            padding: 10px 22px; font-size: 0.95em;
+            border-radius: 8px; cursor: pointer;
+            font-weight: bold; font-family: 'Lora', serif;
+            box-shadow: 0 4px 0 #3a6020; transition: all 0.1s;
+        }
+        .btn:hover  { transform:translateY(-2px); box-shadow:0 6px 0 #3a6020; }
+        .btn:active { transform:translateY(2px);  box-shadow:0 2px 0 #3a6020; }
+        .btn-primary { background:linear-gradient(135deg,#a8d8ea,#78b8cc); border-color:#4a8aaa; box-shadow:0 4px 0 #3a7a9a; }
+        .btn-primary:hover { box-shadow:0 6px 0 #3a7a9a; }
+        .btn-success { background:linear-gradient(135deg,#b8e6a0,#80c860); border-color:#4a8a30; box-shadow:0 4px 0 #3a7020; }
+        .btn-success:hover { box-shadow:0 6px 0 #3a7020; }
+
+        /* ── WORD PRACTICE ── */
+        .word-practice {
+            margin:18px 0; padding:18px;
+            background:rgba(200,230,160,0.22);
+            border-radius:8px; border:1.5px solid #7aaa50;
+        }
+        .word-practice h3 { color:#2a4a1a; margin-bottom:10px; text-align:center; font-family:'IM Fell English',serif; }
+        .word-list { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:12px 0; }
+        .word-card {
+            background:white; padding:10px 18px;
+            border-radius:8px; border:2px solid #7aaa50;
+            font-size:1.1em; color:#2a4a1a;
+            cursor:pointer; transition:all .2s;
+        }
+        .word-card:hover { background:#c8e890; transform:scale(1.05); }
+
+        /* ── PROGRESS ── */
+        .progress-bar { background:#c8e8a0; height:20px; border-radius:10px; overflow:hidden; margin:12px 0; border:2px solid #4a7a30; }
+        .progress-fill {
+            background:linear-gradient(135deg,#6ab840,#4a9020);
+            height:100%; transition:width .5s;
+            display:flex; align-items:center; padding-left:10px;
+            color:white; font-weight:bold; font-size:0.82em; white-space:nowrap;
+        }
+
+        /* ── LESSON MENU ── */
+        .level-tabs { display:flex; justify-content:center; gap:8px; margin:12px 0; flex-wrap:wrap; }
+        .level-tab {
+            padding:7px 15px; background:#c8e8a0; border:2px solid #4a7a30;
+            border-radius:8px; cursor:pointer; font-weight:bold; color:#2a4a1a;
+            font-family:'Lora',serif; transition:all .2s;
+        }
+        .level-tab:hover, .level-tab.active { background:#a0c870; box-shadow:0 3px 0 #3a6020; }
         .lesson-menu {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-            margin: 20px 0;
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-            border: 2px solid #d4a574;
+            display:grid; grid-template-columns:repeat(auto-fill,minmax(86px,1fr));
+            gap:7px; margin:12px 0; max-height:340px; overflow-y:auto;
+            padding:10px; background:rgba(200,230,160,0.18);
+            border-radius:8px; border:1.5px solid #7aaa50;
         }
+        .lesson-btn { padding:10px 6px; font-size:0.86em; text-align:center; }
+        .lesson-btn.completed { background:linear-gradient(135deg,#b8e6a0,#80c860); }
+        .hidden { display:none; }
 
-        .lesson-btn {
-            padding: 15px 10px;
-            font-size: 0.9em;
-            text-align: center;
-        }
-
-        .lesson-btn.completed {
-            background: linear-gradient(135deg, #b8e6b8 0%, #90d490 100%);
-        }
-
-        .lesson-btn.locked {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .hidden {
-            display: none;
-        }
-
+        /* ── ILLUSTRATION ── */
         .illustration {
-            text-align: center;
-            margin: 25px 0;
-            padding: 20px;
-            background: #fff;
-            border: 3px solid #8b4513;
-            border-radius: 8px;
+            text-align:center; margin:18px auto; max-width:240px;
+            background:linear-gradient(160deg,#fefcf4,#f0e8d0);
+            border:2px solid #7aaa50;
+            outline:1px solid #7aaa50; outline-offset:3px;
+            padding:16px 14px 12px;
+            box-shadow:0 4px 12px rgba(60,100,40,0.14);
+        }
+        .illus-emoji { font-size:4.2em; display:block; margin-bottom:5px; line-height:1.1; }
+        .illus-caption {
+            font-family:'IM Fell English',serif;
+            font-size:0.7em; font-style:italic; color:#3a5a20;
+            border-top:1px solid #7aaa50; margin-top:7px; padding-top:5px;
         }
 
-        .illustration img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 5px;
-        }
+        /* ── BADGES ── */
+        .level-badge { display:inline-block; padding:3px 10px; border-radius:10px; font-size:0.72em; font-weight:bold; margin-left:6px; }
+        .level-beginner     { background:#c8e0f8; color:#1a3a5a; }
+        .level-intermediate { background:#fbd8e8; color:#5a1a38; }
+        .level-advanced     { background:#e8d8f8; color:#3a1a5a; }
 
-        .level-badge {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 15px;
-            font-size: 0.8em;
-            font-weight: bold;
-            margin-left: 10px;
-        }
+        /* ── READER SWITCHER TABS ── */
+        #tab-reader-1, #tab-reader-2 { font-family:'Lora',serif; }
 
-        .level-beginner {
-            background: #b8e6b8;
-            color: #2d5016;
-        }
-
-        .level-intermediate {
-            background: #ffd93d;
-            color: #4a2c2a;
-        }
-
-        .level-advanced {
-            background: #e8b4bc;
-            color: #4a2c2a;
-        }
-
-        @media (max-width: 600px) {
-            .book-container { padding: 20px; }
-            h1 { font-size: 1.8em; }
-            .lesson-content { font-size: 1.1em; }
-            .btn { font-size: 0.9em; padding: 10px 20px; }
+        @media (max-width:600px) {
+            .book-page { border-left-width:22px; padding:24px 18px 24px 20px; }
+            .book-page::before { left:-18px; font-size:0.42em; }
+            .cover-title { font-size:1.8em; }
+            .cover-content { padding:30px 24px 28px 42px; }
+            h1 { font-size:1.5em; }
         }
     </style>
 </head>
-<body>
-    <div class="book-container">
+<body class="mode-cover">
+
+    <div class="book-sparkles">
+        <span class="sparkle">🍃</span>
+        <span class="sparkle">🌿</span>
+        <span class="sparkle">🍀</span>
+        <span class="sparkle">🌸</span>
+        <span class="sparkle">🍃</span>
+        <span class="sparkle">✨</span>
+        <span class="sparkle">🌿</span>
+    </div>
+
+    <div class="book-outer">
+
+      <!-- ══ BOOK COVER (user select screen) ══ -->
+      <div class="book-cover">
+        <div class="cover-content">
+
+          <div class="cover-art">🌿📖🌿</div>
+
+          <div class="cover-title">McGuffey's<br>Readers</div>
+          <div class="cover-subtitle">Revised Edition · 1879</div>
+
+          <div class="cover-divider">✦ ───────── ✦</div>
+
+          <div class="cover-prompt">Who is reading today?</div>
+
+          <div class="cover-readers">
+            <button class="reader-btn hadley" onclick="selectReader('hadley')">
+              <span class="btn-icon">🌷</span>
+              <span class="btn-name">Hadley</span>
+              <span class="btn-grade">Grade 1–2</span>
+            </button>
+            <button class="reader-btn audrey" onclick="selectReader('audrey')">
+              <span class="btn-icon">🐱</span>
+              <span class="btn-name">Audrey</span>
+              <span class="btn-grade">Grade K–1</span>
+            </button>
+            <button class="reader-btn guest" onclick="selectReader('guest')">
+              <span class="btn-icon">👤</span>
+              <span class="btn-name">Guest</span>
+              <span class="btn-grade">No Save</span>
+            </button>
+          </div>
+
+        </div>
+        <div class="cover-binding"></div>
+      </div>
+
+      <!-- ══ BOOK PAGE (menu + lesson screens) ══ -->
+      <div class="book-page">
         <div class="header">
-            <h1>📖 McGuffey's First Reader 📖</h1>
-            <p class="subtitle">Revised Edition - Authentic Classical Text</p>
+            <h1>📖 McGuffey's Readers</h1>
+            <p class="subtitle" id="readerSubtitle">First Reader · Revised Edition</p>
         </div>
 
-        <!-- USER SELECT SCREEN -->
-        <div id="userScreen">
-            <div style="text-align:center; padding:30px 0 10px;">
-                <h2 style="color:#4a2c2a; font-size:1.4em; margin-bottom:8px;">Who is reading today?</h2>
-                <p style="color:#8b4513; font-style:italic; font-size:0.95em;">Choose your name to save your progress</p>
-            </div>
-            <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:16px; padding:24px 0 30px;">
-                <button class="btn" onclick="selectReader('hadley')" style="font-size:1.1em; padding:18px 28px; background:#f9e4b7; border:2px solid #c8a050; color:#4a2c2a; border-radius:10px; min-width:130px;">
-                    🌷<br><strong>Hadley</strong><br><span style="font-size:0.7em; color:#8b4513;">Grade 1–2</span>
-                </button>
-                <button class="btn" onclick="selectReader('audrey')" style="font-size:1.1em; padding:18px 28px; background:#fde8d0; border:2px solid #c87840; color:#4a2c2a; border-radius:10px; min-width:130px;">
-                    🐱<br><strong>Audrey</strong><br><span style="font-size:0.7em; color:#8b4513;">Grade K–1</span>
-                </button>
-                <button class="btn" onclick="selectReader('ryder')" style="font-size:1.1em; padding:18px 28px; background:#d8e8f4; border:2px solid #5080a0; color:#2a3a4a; border-radius:10px; min-width:130px;">
-                    ⚔️<br><strong>Ryder</strong><br><span style="font-size:0.7em; color:#5080a0;">Advanced</span>
-                </button>
-                <button class="btn" onclick="selectReader('guest')" style="font-size:1.1em; padding:18px 28px; background:#e8e8e8; border:2px solid #aaa; color:#444; border-radius:10px; min-width:130px;">
-                    👤<br><strong>Guest</strong><br><span style="font-size:0.7em; color:#888;">No Save</span>
-                </button>
-            </div>
+        <!-- Reader switcher tabs -->
+        <div style="display:flex; justify-content:center; gap:10px; margin:12px 0 4px;">
+            <button id="tab-reader-1" class="btn" onclick="switchReader(1)" style="padding:7px 18px; font-size:0.82em; background:#c8e0f8; border:2px solid #6aa0d0; color:#1a3a5a; box-shadow:0 4px 0 #4a80b0;">📖 First Reader</button>
+            <button id="tab-reader-2" class="btn" onclick="switchReader(2)" style="padding:7px 18px; font-size:0.82em; background:#e8d8f8; border:2px solid #9870c8; color:#3a1a5a; box-shadow:0 4px 0 #7850a8;">📗 Second Reader</button>
         </div>
+
+        <!-- MENU SCREEN -->
         <div id="menuScreen" style="display:none">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span id="readerLabel" style="color:#8b4513; font-style:italic; font-size:0.9em;"></span>
-                <button class="btn" onclick="changeReader()" style="font-size:0.75em; padding:6px 14px; background:#f9e4b7; border:1px solid #c8a050; color:#4a2c2a; border-radius:6px;">↩ Change Reader</button>
+                <span id="readerLabel" style="color:#3a5a20; font-style:italic; font-size:0.9em;"></span>
+                <button class="btn" onclick="changeReader()" style="font-size:0.75em; padding:6px 14px;">↩ Change Reader</button>
             </div>
             <div class="progress-bar">
-                <div class="progress-fill" id="overallProgress" style="width: 0%">0% Complete</div>
+                <div class="progress-fill" id="overallProgress" style="width:0%">0% Complete</div>
             </div>
-            
-            <div class="level-tabs">
-                <div class="level-tab active" onclick="filterByLevel('all')">All Lessons</div>
-                <div class="level-tab" onclick="filterByLevel('beginner')">Beginner</div>
-                <div class="level-tab" onclick="filterByLevel('intermediate')">Intermediate</div>
-                <div class="level-tab" onclick="filterByLevel('advanced')">Advanced</div>
-            </div>
-
-            <h2 style="text-align: center; color: #4a2c2a; margin: 30px 0;">Choose a Lesson:</h2>
-            
-            <div class="lesson-menu" id="lessonMenu">
-                <!-- Filled by JavaScript -->
-            </div>
-
-            <div style="text-align: center; margin-top: 30px;">
-                <p style="color: #8b4513; font-style: italic;">Complete all lessons to unlock McGuffey's Second Reader!</p>
+            <h2 style="text-align:center; color:#2a4a1a; font-family:'IM Fell English',serif; margin:20px 0 8px;">Choose a Lesson:</h2>
+            <div class="lesson-menu" id="lessonMenu"></div>
+            <div style="text-align:center; margin-top:20px;">
+                <p id="readerTease" style="color:#4a7030; font-style:italic; font-size:0.9em;">Complete all lessons to unlock McGuffey's Second Reader!</p>
             </div>
         </div>
 
         <!-- LESSON SCREEN -->
         <div id="lessonScreen" class="hidden">
-            <div class="page">
-                <div class="lesson-title" id="lessonTitle">Lesson 1</div>
-                
-                <div class="illustration" id="illustrationDiv">
-                    <div id="illustration" style="font-size: 4em;">🐱</div>
-                </div>
-                
-                <div class="lesson-content" id="lessonText">
-                    <!-- Filled by JavaScript -->
-                </div>
-
-                <div class="controls">
-                    <button class="btn btn-primary" onclick="readAloud()">🔊 Read Aloud</button>
-                    <button class="btn" onclick="showWordPractice()">📝 Practice Words</button>
-                    <button class="btn btn-success" onclick="completeLesson()">✓ Complete Lesson</button>
-                </div>
+            <div class="lesson-title" id="lessonTitle">Lesson I</div>
+            <div class="illustration" id="illustrationDiv">
+                <span class="illus-emoji" id="illustration">🐱</span>
+                <div class="illus-caption" id="illustrationCaption"></div>
             </div>
-
-            <!-- WORD PRACTICE -->
+            <div class="lesson-content" id="lessonText"></div>
+            <div class="controls">
+                <button class="btn btn-primary" onclick="readAloud()">🔊 Read Aloud</button>
+                <button class="btn" onclick="showWordPractice()">📝 Practice Words</button>
+                <button class="btn btn-success" onclick="completeLesson()">✓ Complete Lesson</button>
+            </div>
             <div id="wordPractice" class="hidden">
                 <div class="word-practice">
                     <h3>Practice New Words:</h3>
-                    <div class="word-list" id="wordList">
-                        <!-- Filled by JavaScript -->
-                    </div>
-                    <div style="text-align: center; margin-top: 20px;">
+                    <div class="word-list" id="wordList"></div>
+                    <div style="text-align:center; margin-top:16px;">
                         <button class="btn" onclick="hideWordPractice()">Back to Lesson</button>
                     </div>
                 </div>
             </div>
-
-            <div class="controls" style="margin-top: 30px;">
+            <div class="controls" style="margin-top:20px;">
                 <button class="btn" onclick="backToMenu()">📚 Back to Menu</button>
             </div>
         </div>
-    </div>
+
+      </div><!-- end book-page -->
+      <div class="book-bottom"></div>
+    </div><!-- end book-outer -->
 
     <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.js"></script>
@@ -434,49 +585,177 @@
         });
         var db = firebase.database();
 
-        const lessons = [
-            // BEGINNER LEVEL
-            { level: "beginner", title: "Lesson 1: The Cat and Dog", text: "I see a cat. The cat is on a mat. Do you see the cat? I see a dog. The dog is by the cat. Do you see the dog? The cat and the dog are good.", words: ["cat", "dog", "mat", "see", "good"], illustration: "🐱🐕" },
-            { level: "beginner", title: "Lesson 2: Ann and Her Cat", text: "Ann has a cat. The cat is fat. It can catch a rat. Ann likes her cat. The cat likes Ann. Ann will pat the cat, and the cat will run to her.", words: ["Ann", "fat", "catch", "rat", "pat"], illustration: "👧🐱" },
-            { level: "beginner", title: "Lesson 3: The Hen", text: "The hen has a nest. The nest is in the box. The hen is on the nest. Do you see the hen? The hen will sit and sit. She has an egg in her nest.", words: ["hen", "nest", "box", "sit", "egg"], illustration: "🐔" },
-            { level: "beginner", title: "Lesson 4: The Fox", text: "Do you see the fox? The fox can run. He can jump and play. The fox is red. He has a long, big tail. The fox is in the woods.", words: ["fox", "run", "jump", "tail", "woods"], illustration: "🦊" },
-            { level: "beginner", title: "Lesson 5: The Pig", text: "This is a pig. The pig is big and fat. It has a pen. The pig is in the pen. Can the pig run? Yes, it can run. It can eat and sleep.", words: ["pig", "big", "pen", "eat", "sleep"], illustration: "🐷" },
-            // INTERMEDIATE LEVEL
-            { level: "intermediate", title: "Lesson 6: At Play", text: "The boys are at play. They have a ball. See them run and jump! How happy they are! The little girl is with them. She can run, but she cannot catch the ball. The boys will help her catch it.", words: ["boys", "play", "ball", "happy", "help"], illustration: "⚽" },
-            { level: "intermediate", title: "Lesson 7: The Sun", text: "The sun is up. See how bright it shines! The sun gives us light. It makes the day warm. When the sun goes down, it will be night. The moon and stars come out at night. Do you like to see the bright sun?", words: ["sun", "bright", "shines", "warm", "night"], illustration: "☀️" },
-            { level: "intermediate", title: "Lesson 8: The Birds", text: "See the birds in the tree! How pretty they are! One bird is on a branch. It can sing a sweet song. The little birds are in a nest. The old bird will feed them. She loves her little ones.", words: ["birds", "tree", "sing", "nest", "feed"], illustration: "🐦🌳" },
-            { level: "intermediate", title: "Lesson 9: The Good Girl", text: "Mary is a good girl. She helps her mother. She can set the table. She can wash the cups. Mary is kind to all. She is kind to her cat and dog. Every one loves good Mary.", words: ["Mary", "helps", "table", "kind", "loves"], illustration: "👧" },
-            { level: "intermediate", title: "Lesson 10: The Rain", text: "Look at the rain! How fast it falls! The rain makes the grass green. It makes the flowers grow. The birds are glad when it rains. They can drink the water. After the rain, the sun will shine again.", words: ["rain", "falls", "grass", "flowers", "drink"], illustration: "🌧️" },
-            // ADVANCED LEVEL
-            { level: "advanced", title: "Lesson 11: The Little Girl and Her Grandmother", text: "A little girl went to visit her grandmother. She carried a basket with good things to eat. On the way, she saw many pretty flowers. She picked some for her dear grandmother. When she came to the house, her grandmother was very glad to see her. She kissed the little girl and thanked her for the flowers and the good things in the basket.", words: ["grandmother", "basket", "flowers", "kissed", "thanked"], illustration: "👵👧" },
-            { level: "advanced", title: "Lesson 12: The Kind Boy", text: "John saw a poor old man. The old man looked cold and hungry. John had only one penny, but he gave it to the poor man. The old man was very thankful. He said, 'You are a kind boy. God will bless you.' John went home happy. His mother was proud of her good son.", words: ["poor", "penny", "thankful", "bless", "proud"], illustration: "👦" },
-            { level: "advanced", title: "Lesson 13: The Bee", text: "The bee is a busy little insect. It works all day long. It flies from flower to flower and gathers honey. The bee makes its home in a hive. Many bees live together in one hive. They work together and help each other. We should learn from the bee to be busy and helpful.", words: ["busy", "insect", "honey", "hive", "helpful"], illustration: "🐝" },
-            { level: "advanced", title: "Lesson 14: Spring", text: "Winter is gone, and spring has come. The cold winds have ceased to blow. The warm sun shines upon the earth. The grass is growing green. The trees are putting forth their leaves. The birds have returned from the warm countries. They are building their nests and singing sweetly. How beautiful everything looks in spring!", words: ["spring", "ceased", "earth", "forth", "returned"], illustration: "🌸" },
-            { level: "advanced", title: "Lesson 15: The Farm", text: "My grandfather has a farm. On his farm there are horses, cows, sheep, and pigs. There is a large barn where the animals stay at night. In the fields, wheat and corn are growing. There is also a garden with many vegetables. My grandmother has chickens that give fresh eggs. I love to visit the farm and help with the work.", words: ["farm", "horses", "barn", "wheat", "vegetables"], illustration: "🏡" }
-        ];
+        // ── LESSON DATA — Authentic McGuffey's First Reader, 1879 Revised Edition ──
+// ── LESSON DATA — McGuffey's First Eclectic Reader, 1879 Revised Edition (authentic text) ──
+        const READERS = {
+            1: [
+                { level:"beginner", title:"Lesson I", text:"The mat.\nThe cat.\nThe cat is on the mat.\nIs the cat on the mat?", words:["mat","cat","is","on","the"], illustration:"🐱" },
+                { level:"beginner", title:"Lesson II", text:"The man. A pen.\nThe man has a pen.\nIs the pen in his hand?\nIt is in his hand.", words:["man","pen","has","in","his","hand","it"], illustration:"✏️" },
+                { level:"beginner", title:"Lesson III", text:"A fat hen is on the box.\nA big rat ran from the box.\nCan the hen run?", words:["fat","hen","big","rat","ran","from","can","run"], illustration:"🐔" },
+                { level:"beginner", title:"Lesson IV", text:"See Rab! See Ann!\nSee! Rab has the hat.\nCan Ann catch Rab?", words:["see","Rab","Ann","hat","catch"], illustration:"👧" },
+                { level:"beginner", title:"Lesson V", text:"Ann can catch Rab.\nSee! She has the hat.\nNow Ann can pat Rab.\nLet me pat Rab, too.", words:["she","pat","too","now","let","me"], illustration:"👧🐕" },
+                { level:"beginner", title:"Lesson VI", text:"Ned has fed the hen.\nShe is a black hen.\nShe has left the nest.\nSee the eggs in the nest!\nWill the hen let Ned get the eggs?", words:["Ned","fed","black","left","nest","eggs","will","get"], illustration:"🐔🥚" },
+                { level:"beginner", title:"Lesson VII", text:"Let me get the black hat.\nNow Ned has it on his head, and he is a big man.\nCome, Nat, see the big man with his black hat.", words:["head","he","Nat","come","with","and"], illustration:"🎩" },
+                { level:"beginner", title:"Lesson VIII: Review", text:"Ned is on the box. He has a pen in his hand. A big rat ran from the box. Can the dog catch the rat?\nCome with me, Ann, and see the man with a black hat on his head.\nThe fat hen has left the nest. Run, Nat, and get the eggs.", words:["dog"], illustration:"📝" },
+                { level:"beginner", title:"Lesson IX", text:"Do you see Nell?\nYes; she has a pan with some eggs in it.\nLet me have the pan and the eggs, will you, Nell?\nHas the black hen left the nest?\nI will now run to catch Rab.\nWill you run, too?", words:["Nell","you","do","yes","some","pan","I","now"], illustration:"👧" },
+                { level:"beginner", title:"Lesson X", text:"O Ben! let me get in, will you?\nYes, if you will sit still.\nStand still, Jip, and let Ann get in.\nNow, Ben, hand me the whip.\nGet up, Jip!", words:["Ben","Jip","if","sit","still","stand","up","whip"], illustration:"🐕" },
+                { level:"beginner", title:"Lesson XI", text:"Kitty has a nice pet. It can sing a sweet song.\nShe has just fed it.\nShe will now put it in the cage, and hang the cage up.\nThen the cat can not catch it.", words:["Kitty","nice","pet","sing","sweet","song","just","put","cage","hang","then","not"], illustration:"🐦" },
+                { level:"beginner", title:"Lesson XII", text:"Look at Tom and his dog.\nThe dog has a black spot on his back. Do you think he is a good dog?\nTom has a big top, too. It is on the box with Kitty's doll.", words:["Tom","look","spot","back","think","good","top","doll"], illustration:"🐕" },
+                { level:"beginner", title:"Lesson XIII", text:"The sun is up. The man has fed the black hen and the fat duck.\nNow the duck will swim in the pond. The hen has run to her nest.\nLet us not stop at the pond now, for it is hot.\nSee how still it is! We will go to see Tom and his top.", words:["sun","duck","swim","pond","her","us","stop","for","hot","how","we","go"], illustration:"🦆☀️" },
+                { level:"beginner", title:"Lesson XIV", text:"O John! the sun has just set. It is not hot, now.\nLet us run and jump. I think it is fun to run, and skip, and jump.\nSee the duck on the pond! Her nest is up on the bank, under the rock.\nWe must not touch the nest, but we may look at it.", words:["John","set","jump","fun","skip","bank","rock","must","touch","but","may"], illustration:"🦆" },
+                { level:"beginner", title:"Lesson XV: Review", text:"The sun has set, and the pond is still.\nJohn, Ned, Ben, Tom, and Nell stand on the bank, and look at the duck.\nThe dog with a black spot on his back is with Tom. See! Tom has his hat in his hand. He has left his big top on the box.\nKitty's doll is on the rock.\nNell has put her pet in the cage. It will sing a sweet song. The duck has her nest under the rock.\nIt is not hot now. Let us run, and skip, and jump on the bank. Do you not think it is fun?", words:["stand"], illustration:"🌅" },
+                { level:"beginner", title:"Lesson XVI", text:"O Kate! the old cow is in the pond; see her drink! Will she not come out to get some grass?\nNo, John, she likes to be in the pond. See how still she stands!\nThe dear old cow gives us sweet milk to drink.", words:["Kate","old","cow","grass","no","likes","be","dear","gives","milk","drink"], illustration:"🐄" },
+                { level:"beginner", title:"Lesson XVII", text:"Papa, will you let me ride with you on Prince? I will sit still in your arms.\nSee, mamma! We are both on Prince. How large he is!\nGet up, Prince! You are not too fat to trot as far as the barn.", words:["papa","mamma","arms","ride","far","barn","both","Prince","trot","your","large"], illustration:"🐎" },
+                { level:"beginner", title:"Lesson XVIII", text:"O Fanny, what a pretty ball!\nYes; can you catch it, Ann?\nToss it to me, and see. I will not let it fall.\nThat was well done.\nNow, Fanny, toss it to the top of the wall, if you can.", words:["Fanny","what","pretty","ball","toss","fall","well","done","wall"], illustration:"⚽" },
+                { level:"beginner", title:"Lesson XIX", text:"Did you call us, mamma?\nI went with Tom to the pond. I had my doll, and Tom had his flag.\nThe fat duck swam to the bank, and we fed her. Did you think we might fall into the pond?\nWe did not go too near, did we, Tom?", words:["call","went","had","my","flag","swam","might","near","did"], illustration:"🦆" },
+                { level:"beginner", title:"Lesson XX", text:"Here comes the band!\nLet us stand still, and hear the men play as they pass.\nI hope they will stop here and play for us.\nSee the large man in front of the band, with his big hat. What has he in his hand? How fine he looks!\nLook, too, at the man on that fine horse.\nIf the men do not stop, let us go with them and see where they go.", words:["here","comes","band","hear","play","they","pass","hope","front","fine","where","horse"], illustration:"🎺" },
+                { level:"intermediate", title:"Lesson XXI", text:"Bess and Robert are very happy; papa and mamma have gone to the woods with them.\nRobert has a big tent and a flag, and Bess has a little bed for her doll.\nJip is with them. Robert will make him draw Bess and her doll in the cart.", words:["Robert","Bess","very","happy","gone","woods","tent","little","draw","cart"], illustration:"⛺" },
+                { level:"intermediate", title:"Lesson XXII", text:"Kate, will you play with me? That will be fine sport.\nNot now, James, said Kate; for I must make my doll's bed. Get Mary to play with you.\nJames went to get Mary to play with him. Then Kate made the doll's bed.\nShe sang a song to her doll, and the doll lay very still in her lap.\nDid the doll hear Kate sing?", words:["James","Mary","sport","must","make","sang","lay","lap"], illustration:"🪆" },
+                { level:"intermediate", title:"Lesson XXIII", text:"Kate has left her doll in its little bed, and has gone to play with Mary and James. They are all in the shade, now, by the brook.\nJames digs in the soft sand with his spade, and Mary picks up little stones and puts them in her lap.\nJames and Mary are glad to see Kate. She will help them pick up stones and dig, by the little brook.", words:["shade","brook","digs","soft","sand","spade","picks","stones","puts","glad","help"], illustration:"🌊" },
+                { level:"intermediate", title:"Lesson XXIV: Review", text:"What shall we do? said Fanny to John. I do not like to sit still. Shall we hunt for eggs in the barn?\nNo, said John; I like to play on the grass. Will not papa let us catch Prince, and go to the big woods? We can put the tent in the cart, and go to some nice spot where the grass is soft and sweet.\nThat will be fine, said Fanny. I will get my doll, and give her a ride with us.\nYes, said John, and we will get mamma to go, too. She will hang up a swing for us in the shade.", words:["shall","hunt","grass","spot","swing"], illustration:"🌳" },
+                { level:"intermediate", title:"Lesson XXV", text:"Peep, peep! Where have you been, little chick? Are you lost? Can you not get back to the hen?\nOh, here you are! I will take you back. Here, hen, take this little chick under your wing.\nNow, chick, tuck your little wet feet under you, and go to sleep for a while.\nPeep, peep! How safe the little chick feels now!", words:["peep","been","lost","wing","tuck","wet","feet","sleep","while","safe","feels"], illustration:"🐥" },
+                { level:"intermediate", title:"Lesson XXVI", text:"This is a fine day. The sun shines bright. There is a good wind, and my kite flies high. I can just see it.\nThe sun shines in my eyes; I will stand in the shade of this high fence.\nWhy, here comes my dog! He was under the cart. Did you see him there?\nWhat a good time we have had! Are you not glad that we did not go to the woods?", words:["fine","day","shines","bright","wind","kite","flies","high","eyes","fence","why","time"], illustration:"🪁" },
+                { level:"intermediate", title:"Lesson XXVII: Review", text:"Kate, I wish we had a boat to put the dolls in. Don't you?\nI know what we can do. We can get the little tub, and tie a rope to it, and drag it to the pond. This will float, and we can get a pole to push it from the shore.\nWhat a funny boat, Kate! A tub for a boat, and a pole for an oar! Won't it upset?\nWe can try it, Nell, and see.\nWell, you get the tub, and I will get a pole and a rope. We will put both dolls in the tub, and give them a ride.", words:["wish","boat","know","tub","tie","rope","drag","float","pole","push","shore","funny","oar","upset","try"], illustration:"⛵" },
+                { level:"intermediate", title:"Lesson XXVIII", text:"Here, Ponto! Here, Ponto! Kate called to her dog. Come, and get the dolls out of the pond.\nRose went under, but she did not drown. Bess was still on the top of the water.\nPonto came with a bound, and jumped into the pond. He swam around, and got Bess in his mouth, and brought her to shore.\nPonto then found Rose, and brought her out, too.\nKate said, Good, old Ponto! Brave, old dog!\nWhat do you think of Ponto?", words:["Ponto","called","drown","bound","jumped","swam","around","mouth","brought","brave"], illustration:"🐕" },
+                { level:"intermediate", title:"Lesson XXIX", text:"What a bright June day! The air is pure. The sky is as blue as it can be.\nLucy and her mamma are in the woods. They have found a nice spot, where there is some grass.\nThey sit in the shade of the trees, and Lucy is singing.\nThe trees are not large, but they make a good shade.\nLucy's kind mamma says that they will have a picnic when papa can get a tent.", words:["Lucy","June","air","pure","sky","blue","singing","says","picnic"], illustration:"🌳☀️" },
+                { level:"intermediate", title:"Lesson XXX: Review", text:"James and Robert have gone into the shade of a high wall to play ball.\nKate and Lucy have come from the pond near by, with the old Ponto, to see them play.\nWhen they toss the ball up in the air, and try to catch it, Ponto runs to get it in his mouth.\nNow the ball is lost. They look for it under the trees and in the grass; but they can not see it. Where can it be?\nSee! Ponto has found it. Here he comes with it. He will lay it at little Lucy's feet, or put it in her hand.", words:["toss","air","mouth","found","feet"], illustration:"⚽🐕" },
+                { level:"intermediate", title:"Lesson XXXI", text:"Papa, may we have the big flag? said James.\nWhat can my little boy do with such a big flag?\nHoist it on our tent, papa. We are playing Fourth of July.\nIs that what all this noise is about? Why not hoist your own flags?\nOh! they are too little.\nYou might spoil my flag.\nThen we will all join to pay for it. But we will not spoil it, papa.\nTake it, then, and take the coil of rope with it.\nOh! thank you. Hurrah for the flag, boys!", words:["flag","hoist","tent","noise","Fourth","July","spoil","coil","hurrah"], illustration:"🇺🇸" },
+                { level:"intermediate", title:"Lesson XXXII", text:"Frank has a pretty boat. It is white, with a black line near the water.\nHe keeps it in the pond, near his home. He always takes good care of it.\nFrank has been at work in the yard. He has worked hard.", words:["Frank","boat","white","line","keeps","home","always","care","worked","hard"], illustration:"⛵" },
+                { level:"intermediate", title:"Lesson XXXIII", text:"What is that? said Lucy, as she came out on the steps. Oh, it is a little boat! What a pretty one it is!\nI will give it to you when it is finished, said John, kindly. Would you like to have it?\nYes, very much, thank you, John. Has grandma seen it?\nNot yet; we will take it to her by and by. What have you in your pan, Lucy?\nSome corn for my hens, John; they must be very hungry by this time.", words:["Lucy","steps","finished","kindly","grandma","corn","hungry"], illustration:"🚣" },
+                { level:"intermediate", title:"Lesson XXXIV", text:"James has been to market with his mamma.\nShe has bought some bread, some meat, and some tea, which are in the basket on her arm.\nJames is trying to tell his mamma what he has seen in the market.", words:["market","bread","basket","bought","meat","tea","trying","tell"], illustration:"🧺" },
+                { level:"intermediate", title:"Lesson XXXV", text:"See my dear, old grandma in her easy-chair! How gray her hair is! She wears glasses when she reads.\nShe is always kind, and takes such good care of me that I like to do what she tells me.\nWhen she says, Robert, will you get me a drink? I run as fast as I can to get one for her. Then she says, Thank you, my boy.\nWould you not love a good grandma, who is so kind? And would you not do all you could to please her?", words:["grandma","easy-chair","gray","hair","glasses","reads","please","Robert"], illustration:"👵" },
+                { level:"intermediate", title:"Lesson XXXVI", text:"Come here, Lucy, and listen! What is in this flower?\nO mother! it is a bee. I wonder how it came to be shut up in the flower!\nIt went into the flower for some honey, and it may be it went to sleep. Then the flower shut it in.\nThe bee likes honey as well as we do, but it does not like to be shut up in the flower.\nShall we let it out, Lucy?\nYes; then it can go to other flowers, and get honey.", words:["listen","flower","bee","wonder","honey","sleep","shut","mother","other"], illustration:"🐝🌸" },
+                { level:"intermediate", title:"Lesson XXXVII", text:"Here come Frank and James White. Do you know where they live?\nFrank is riding a horse, and James is driving one hitched to a cart. They are out very early in the day. How happy they are!\nSee how well Frank rides, and how tight James holds the lines!\nThe boys should be kind to their horses. It is not best to whip them.\nWhen they have done riding, they will give the horses some hay or corn.", words:["riding","driving","hitched","early","tight","lines","should","hay"], illustration:"🐎" },
+                { level:"intermediate", title:"Lesson XXXVIII", text:"A little girl went in search of flowers for her mother. It was early in the day, and the grass was wet. Sweet little birds were singing all around her.\nAnd what do you think she found besides flowers? A nest with young birds in it.\nWhile she was looking at them, she heard the mother-bird chirp, as if she said, Do not touch my children, little girl, for I love them dearly.\nThe little girl now thought how dearly her own mother loved her.\nSo she left the birds. Then, picking some flowers, she went home, and told her mother what she had seen and heard.", words:["search","besides","young","heard","chirp","children","dearly","thought","picking","told"], illustration:"🐦🌸" },
+                { level:"intermediate", title:"Lesson XXXIX", text:"Mamma, will you go to town?\nWhat do you ask for a ticket on your train?\nOh! we will give you a ticket, mamma.\nAbout what time will you get back?\nAt half past eight.\nAh! that is after bed-time. Is this the fast train?\nYes, this is the lightning train.\nOh! that is too fast for me.\nWhat shall we get for you in town, mamma?\nA big basket, with two good little children in it.\nAll right! Time is up! Ding, ding!", words:["town","ticket","train","half","eight","lightning","fast"], illustration:"🚂" },
+                { level:"advanced", title:"Lesson XL", text:"It is noon, and the school is out. Do you see the children at play? Some run and jump, some play ball, and three little girls play school under a tree.\nWhat a big room for such a small school!\nMary is the teacher. They all have books in their hands, and Fanny is reading.\nThey are all good girls, and would not be rude even in playing school.\nKate and Mary listen to Fanny as she reads from her book.\nWhat do you think she is reading about? I will tell you. It is about a poor little boy who was lost in the woods.\nWhen Fanny has finished, the three girls will go home.", words:["noon","school","teacher","books","rude","reading","poor","finished"], illustration:"🏫" },
+                { level:"advanced", title:"Lesson XLI", text:"Lucy has a new pet. Do you know what kind of bird it is?\nLucy calls her Polly.\nPolly can say, Poor Poll! Poor Poll! Polly wants a cracker! and she can mew like a cat.\nBut Polly and the cat are good friends. One day Polly flew down, and lit upon the cat's back when she was asleep.\nI think she knew the cat would not like that, and she did it to tease her.\nWhen Lucy pets the cat, Polly flies up into the old apple tree and will not come when Lucy calls her. Then Lucy says, What a silly bird!", words:["Polly","Poll","cracker","mew","friends","asleep","tease","silly","apple"], illustration:"🦜" },
+                { level:"advanced", title:"Lesson XLII: Review", text:"Well, children, did you have a nice time in the woods?\nOh yes, mother, such a good time! See what sweet flowers we found, and what soft moss. The best flowers are for grandma. Won't they please her?\nYes; and it will please grandma to know that you thought of her.\nRab was such a good dog, mother. He stayed under the big tree by the brook, to take care of the dolls and the basket.\nWhen we came back, they were all safe. No one could get them while Rab was there.\nWe gave him some of the crackers from the basket.\nO mother, how the birds did sing in the woods!\nFanny said she would like to be a bird, and have a nest in a tree.\nIf she were a bird, her nest would be her home. But what would mother do without her little Fanny?", words:["moss","please","grandma","stayed","crackers","safe","sing"], illustration:"🌳" },
+                { level:"advanced", title:"Lesson XLIII", text:"These boys and girls live near the sea. They have been to the beach. It is now evening, and they are going home.\nJohn, who sits on the front seat, found some pretty shells. They are in the basket by his side.\nBen White is driving. He holds the lines in one hand, and his whip in the other.\nRobert has his hat in his hand, and is looking at the horses. He thinks they are very lazy; they do not trot fast.\nThe children are not far from home. In a little while the sun will set, and it will be bed-time.\nHave you ever been at the sea-side? Is it not good sport to watch the big waves, and to play on the wet sand?", words:["sea","beach","evening","shells","driving","lazy","waves","sport","watch"], illustration:"🏖️" },
+                { level:"advanced", title:"Lesson XLIV", text:"One evening Frank's father said to him, Frank, would you like to go with me to catch some fish?\nYes; can I go? and with you, father?\nYes, Frank, with me.\nOh, how glad I am!\nHere they are, on the bank of a river. Frank has just pulled a fine fish out of the water. How proud he feels!\nSee what a nice, quiet spot they have found. Frank has the stump of a big tree for his seat, and his father sits on a log near by. They like the sport.", words:["evening","father","fish","river","pulled","proud","quiet","stump","log"], illustration:"🎣" },
+                { level:"advanced", title:"Lesson XLV", text:"I like winter, when snow and ice cover the ground. What fun it is to throw snowballs, and to skate on the ice!\nSee the boys and girls! How merry they are! Henry has his sled, and draws his little sister. There they go!\nI think Henry is kind, for his sister is too small to skate.\nLook! Did you see that boy fall down? But I see he is not hurt, for he is laughing.\nSome other boys have just come to join in the sport. See them put on their skates.\nHenry says that he hopes his father will get a pair of skates for his sister next winter.", words:["winter","snow","ice","snowballs","skate","merry","Henry","sled","laughing","pair"], illustration:"⛸️❄️" },
+                { level:"advanced", title:"Lesson XLVI", text:"Ellen, do look at Fido! He sits up in a chair, with my hat on. He looks like a little boy; but it is only Fido.\nNow see him shake hands. Give me your paw, Fido. How do you do, sir? Will you take dinner with us, Fido? Speak!\nFido says, Bow-wow, which means, Thank you, I will.\nIsn't Fido a good dog, Ellen? He is always so polite.\nWhen school is out, I will try to teach him some other tricks.", words:["Ellen","Fido","chair","shake","paw","sir","dinner","speak","polite","tricks","teach"], illustration:"🐕" },
+                { level:"advanced", title:"Lesson XLVII", text:"O Hattie! I just saw a large rat in the shed; and old Nero tried to catch it.\nDid he catch it, Frank?\nNo, Nero did not; but the old cat did.\nMy cat?\nNo, it was the other one.\nDo tell me how she got it, Frank. Did she run after it?\nNo, that was not the way. Puss was hid on a big box. The rat stole out, and she jumped at it and caught it.\nPoor rat! It must have been very hungry; it came out to get something to eat.\nWhy, Hattie, you are not sorry puss got the rat, are you?\nNo, I can not say I am sorry she got it; but I do not like to see even a rat suffer pain.", words:["Hattie","Nero","shed","caught","stole","hungry","puss","suffer","pain","sorry"], illustration:"🐱🐀" },
+                { level:"advanced", title:"Lesson XLVIII", text:"Mary and Lucy have come down to the beach with their grandpa. They live in a town near the sea.\nTheir grandpa likes to sit on the large rock, and watch the big ships as they sail far away on the blue sea. Sometimes he sits there all day long.\nThe little girls like to dig in the sand, and pick up pretty shells. They watch the waves as they roll up on the beach, and break into white foam.\nThey sometimes make little houses of sand, and build walls around them; and they dig wells with their small wooden spades.\nThey have been picking up shells for their little sister. She is too young to come to the beach.\nI think all children like to play by the sea-side when the sun is bright, and the wind does not blow too hard.", words:["grandpa","ships","sail","foam","shells","walls","wells","wooden","spades","young"], illustration:"🏖️⛵" },
+                { level:"advanced", title:"Lesson XLIX", text:"One day, Willie's father saw a boy at the market with four little white rabbits in a basket.\nHe thought these would be nice pets for Willie; so he asked the lad how much he wanted for his rabbits.\nThe boy said, Only fifty cents, sir.\nWillie's father bought them, and carried them home.\nHere you see the rabbits and their little master. He has a pen for them, and always shuts them in it at night to keep them safe.\nHe gives them bread and grass to eat. They like grass, and will take it from his hand. He has called in a little friend to see them.\nWillie is telling him about their funny ways.", words:["Willie","rabbits","market","fifty","cents","master","shuts","safe","funny","ways"], illustration:"🐇" },
+                { level:"advanced", title:"Lesson L", text:"Come here, Rose. Look down into this bush.\nO Willie! a bird's nest! What cunning little eggs! May we take it, and show it to mother?\nWhat would the old bird do, Rose, if she should come back and not find her nest?\nOh, we would bring it right back, Willie!\nYes; but we could not fasten it in its place again. If the wind should blow it over, the eggs would get broken.", words:["Rose","bush","cunning","show","fasten","place","broken"], illustration:"🐦🌿" },
+                { level:"advanced", title:"Lesson LI", text:"How does the bird make the nest so strong, Willie?\nThe mother-bird has her bill and her claws to work with, but she would not know how to make the nest if God did not teach her. Do you see what it is made of?\nYes, Willie, I see some horse-hairs and some dry grass. The old bird must have worked hard to find all the hairs, and make them into such a pretty, round nest.\nShall we take the nest, Rose?\nOh no, Willie! We must not take it; but we will come and look at it again, some time.", words:["bill","claws","God","teach","horse-hairs","dry","round","time"], illustration:"🐦" },
+                { level:"advanced", title:"Lesson LII", text:"Willie, when I was feeding the birds just now, a little brown bird flew away with a crumb in its bill.\nWhere did it go, Rose?\nI don't know; away off, somewhere.\nI can guess where, Rose. Don't you know the nest we saw some days ago? What do you think is in it now?\nO Willie, I know! Some little brown birds. Let us go and see them.\nAll right; but we must not go too near. There! I just saw the old bird fly out of the bush. Stand here, Rose. Can you see?\nWhy, Willie, what ugly little things! What big mouths they have, and no feathers!\nKeep still, Rose. Here comes the old bird with a worm in her bill. How hard she must work to feed them all!", words:["feeding","crumb","guess","feathers","mouths","worm","feed"], illustration:"🐦🪺" },
+                { level:"advanced", title:"Lesson LIII", text:"One day, when Mary was taking a walk down the lane, trying to sing her doll to sleep, she met Frank, with his basket and cane.\nFrank was a poor, little, lame boy. His father and mother were dead. His dear, old grandma took care of him, and tried to make him happy.\nEvery day, Mary's mother filled Frank's basket with bread and meat, and a little tea for his grandma.\nHow do you do, Frank? said Mary. Don't make a noise; my doll is going to sleep. It is just a little sick to-day.\nWell, then, let us whistle it to sleep. And Frank, taking a willow whistle out of his pocket, blew a long note.\nOh, how sweet! cried Mary. Do let me try.", words:["lane","cane","lame","dead","filled","whistle","willow","pocket","note"], illustration:"👦🎵" },
+                { level:"advanced", title:"Lesson LIV", text:"Yes, Mary, I will give it to you, because you are so good to my grandma.\nOh! thank you very much. Mary blew and blew a long time.\nI can't make it whistle, said she, almost ready to cry.\nSometimes they will whistle, and sometimes they won't, said Frank. Try again, Mary.\nShe tried once more, and the whistle made a low, sweet sound.\nIt whistles! she cried.\nIn her joy, she had turned the doll's face down, and its eyes shut tight, as if it had gone to sleep.\nThere! cried Frank, I told you the way to put a doll to sleep, is to whistle to it.\nSo it is, said Mary. Dear, little thing; it must be put in its bed now.\nSo they went into the house. Frank's basket was soon filled, and he went home happy.", words:["because","almost","cry","sometimes","once","low","joy","tight","filled"], illustration:"🎵" },
+                { level:"advanced", title:"Lesson LV", text:"There was once a big, white hen that had twelve little chickens. They were very small, and the old hen took good care of them. She found food for them in the day-time, and at night kept them under her wings.\nOne day, this old hen took her chickens down to a small brook. She thought the air from the water would do them good.\nWhen they got to the brook, they walked on the bank a little while. It was very pretty on the other side of the brook, and the old hen thought she would take her children over there.\nThere was a large stone in the brook: she thought it would be easy for them to jump to that stone, and from it to the other side.\nSo she jumped to the stone, and told the children to come after her. For the first time, she found that they would not obey her.\nShe flapped her wings, and cried, Come here, all of you! Jump upon this stone, as I did. We can then jump to the other side. Come, now!\nO mother! we can't, we can't, we can't! said all the little chickens.\nYes you can, if you try, said the old hen. Just flap your wings, as I did, and you can jump over.\nI am flapping my wings, said Chippy, who stood by himself; but I can't jump any better than I could before.", words:["twelve","chickens","wings","night","brook","stone","obey","flapped","Chippy"], illustration:"🐔🐥" },
+                { level:"advanced", title:"Lesson LVI", text:"I never saw such children, said the old hen. You don't try at all.\nWe can't jump so far, mother. Indeed we can't, we can't! chirped the little chickens.\nWell, said the old hen, I must give it up. So she jumped back to the bank, and walked slowly home with her brood.\nI think mother asked too much of us, said one little chicken to the others.\nWell, I tried, said Chippy.\nWe didn't, said the others; it was of no use to try.\nWhen they got home, the old hen began to look about for something to eat. She soon found, near the back door, a piece of bread.\nSo she called the chickens, and they all ran up to her, each one trying to get a bite at the piece of bread.\nNo, no! said the old hen. This bread is for Chippy. He is the only one of my children that really tried to jump to the stone.", words:["chirped","indeed","slowly","brood","piece","bite","really"], illustration:"🐔" },
+                { level:"advanced", title:"Lesson LVII: The Last Lesson", text:"We have come to the last lesson in this book. We have finished the First Reader.\nYou can now read all the lessons in it, and can write them on your slates.\nHave you taken good care of your book? Children should always keep their books neat and clean.\nAre you not glad to be ready for a new book?\nYour parents are very kind to send you to school. If you are good, and if you try to learn, your teacher will love you, and you will please your parents.\nBe kind to all, and do not waste your time in school.\nWhen you go home, you may ask your parents to get you a Second Reader.", words:["last","finished","slates","neat","clean","parents","teacher","waste","Second Reader"], illustration:"📚🎓" }
+            ],
+            2: [
+                { level:"beginner", title:"The First Day of School", text:"All the children are happy to-day. Do you know why? It is the first day of school.\nHenry has a new ball, and all the boys want to look at it. When play time comes, they will have fine fun with it.\nThe girls are looking at their new books. The books are full of stories and pretty pictures.\nThe children will learn many things at school. They will learn to read and write and sing and spell.\nI can write my name, says little May; and I am going to write a letter to my teacher.\nI can read every lesson in the First Reader, says Lucy.\nBut only think how many things we shall read about in our new books, says Rose. I am glad that it is time for school to begin. I want to learn to be a good reader.\nAnd so the happy children go up the road to the pretty little school house on the hill.\nThe teacher will be at the door to tell them good morning. They will go in and sit at their places and try to do just as they are told.\nThey have been playing all summer, and now they are ready to go to work.", words:["happy","school","read","write","spell","teacher","letter","lesson","ready"], illustration:"🏫" },
+                { level:"beginner", title:"Lucy's Garden", text:"Lucy is very busy this bright, warm morning. She is working in her garden.\nIt is not a large garden, but Lucy likes to take care of it.\nI am told that sweet violets grow in it in the spring, and red roses bloom there in the summer time. Now it is fall, and you can see some tall sunflowers near the garden walk.\nLucy calls this garden her farm. Sometimes she works in it all day.\nOne day Frank came to see the flowers. Lucy was very glad, and she wished to make Frank happy.\nWould you like to have a part of my farm, Frank? You may have it if you wish.\nOh, no, Lucy, I thank you. I would not know what to do with so large a farm.", words:["garden","bright","violets","roses","sunflowers","farm","flowers","part"], illustration:"🌻" },
+                { level:"beginner", title:"Henry's Train", text:"Mother, will you go to town with us this fine morning?\nHow much do you ask for a ticket on your train?\nOh, we will give you a ticket, mother.\nThank you, Henry. At what time does your train start? Will it go soon?\nYes, mother, we are starting now. Listen to the bell. Come and get on. This is the fast train.\nIt is too fast for me, children. I think I shall stay at home to-day.", words:["town","ticket","train","bell","fast","mother","children","morning"], illustration:"🚂" },
+                { level:"beginner", title:"The New Book", text:"One day last week our teacher brought a new book to school.\nIt was a big book with many pretty pictures in it.\nShe put it on a large round table, where all the boys and girls could see it.\nThen she said, Children, if you are good every day, I will read to you from this new book.\nThat evening, when school was out, she read to us about some boys and girls who live far, far away from us.\nWhen it was time to go home, she said, In the morning, children, if you are here a little while before school begins, you may look at the pictures in this book.\nThen I will tell you about them.\nWe were all very happy, and thought that she was very good. We said that we would try to learn very fast. Do you not think we have a good teacher?", words:["teacher","brought","pictures","table","evening","morning","happy","learn"], illustration:"📚" },
+                { level:"beginner", title:"The Full Moon", text:"Oh, look at the moon!\nShe is riding so high!\nOh, mother, she looks\nLike a lamp in the sky.\nLast week she was smaller,\nAnd shaped like a bow;\nBut now she is larger,\nAnd round like an O.", words:["moon","riding","high","lamp","sky","smaller","larger","round"], illustration:"🌕" },
+                { level:"beginner", title:"Going to Town", text:"Lucy and her father are going to town to-day. They do not go often, and so Lucy is very happy.\nThe train will be here soon, and Lucy's father has gone to buy his ticket. If he stays too long, they will be left.\nLucy sat by the window and looked out. The train ran so fast that she could not see much.\nIt was winter, and the fields and woods were white with snow.\nThe day was so cold that only a few children were out of doors. Some were at school, and some were at home by the warm fire.\nThe river was full of ice, and Lucy thought that it looked very cold and deep.\nLucy thought that the town was very fine. The windows in the stores were full of pretty things.\nShe was glad to get home. As she sat by the bright fire that evening, she told her mother about the things she had seen.\nI think I will write my teacher a letter and tell her about going to town, she said.", words:["father","ticket","window","winter","snow","stores","fire","evening","letter"], illustration:"🚂❄️" },
+                { level:"beginner", title:"Our Teacher's Story", text:"Today our teacher told us a pretty story. We all left our seats and stood around her to listen.\nThe story was about three bears that had a house in the green woods. There were vines and pretty flowers all around the door of the house.\nOnce a little girl came to the house when the bears were out. She did not know who lived there. When the bears came home they found her in their little room.\nThey were good bears, and did not try to hurt the little girl.\nThey stood still and looked at her. When she saw them, she jumped out of the window and ran home as fast as she could.\nThe three bears looked after her as she ran. But they did not try to catch her.", words:["story","bears","woods","flowers","window","jumped","catch","seats"], illustration:"🐻" },
+                { level:"beginner", title:"The White Rabbits", text:"One day Robert's father saw a boy on the street with four little white rabbits in a basket.\nHe thought the rabbits would be fine pets for Robert, so he asked the boy how much he wanted for them.\nThe boy said, Only one dollar for the four.\nRobert's father gave him a dollar and said that he would carry the rabbits home with him.\nRobert was a happy boy when he saw the pretty little pets.\nHe takes good care of them. He gives them bread and fresh green grass to eat.\nThey like grass and will take it from his hand. They love Robert; he is so kind to them.", words:["rabbits","basket","dollar","pets","bread","grass","kind","carry"], illustration:"🐇" },
+                { level:"beginner", title:"Birdie and Baby", text:"What does little birdie say\nIn her nest at peep of day?\nLet me fly, says little birdie.\nMother, let me fly away!\nBirdie, rest a little longer,\nTill the little wings are stronger.\nSo she rests a little longer,\nAnd then she flies away.\nWhat does little baby say\nIn her bed at peep of day?\nBaby says, like little birdie,\nMother, let me fly away!\nBaby, sleep a little longer,\nTill the little limbs are stronger.\nIf she sleeps a little longer,\nBaby, too, may fly away.", words:["birdie","nest","wings","stronger","baby","sleep","limbs","longer"], illustration:"🐦👶" },
+                { level:"beginner", title:"The Bird's Nest", text:"One day in summer Frank and his sister Rose took a walk into the woods. All at once Frank stopped and said, Come here, Rose, and look in this bush.\nRose ran and looked. Oh, Frank! she said. A bird's nest! Let me count the eggs. One, two, three, four. Four little blue eggs!\nMay we take the nest and show it to mother?\nWhat would the bird do, sister, if she should come back and find her nest gone?\nOh, we would bring it right back, Frank. We would not keep it long.\nYes, but we could not fasten it in its place again. If the wind should blow it over, the eggs would fall on the ground and be broken.\nShe uses straw and dry grass and many other things. She lines it with soft feathers.\nShe must have worked very hard to find so many things and carry them here. And see what a pretty, round nest she has made.\nShall we take it away from her, Rose?\nOh, no, brother! We must let it stay right where the bird has put it. But we will come and look at it again some time.", words:["nest","eggs","bush","feathers","straw","fasten","broken","summer"], illustration:"🪺" },
+                { level:"beginner", title:"The Little Birds", text:"It was two or three weeks before the children saw the bird's nest again.\nOne morning when Rose was feeding her pet rabbit a little brown bird came and sat on the tree above her.\nIt looked at her a minute or two. Then it flew down and picked up a crumb.\nOh, Frank, said Rose, did you see that pretty bird?\nWhat bird, sister?\nA little brown bird. It picked up a crumb from the ground, and then flew away with it.\nWhere did it go, Rose?\nI could not see where it went. It must have gone to the woods.\nOh, I wonder if it is not the bird that made the pretty nest we saw the other day.\nIt may be the same bird, Frank. Let us go out to the woods and see the nest again.\nSo the children ran out to the woods and found the green bush where the nest was.\nStop, Rose, said Frank. I saw the old bird fly out of the bush. It was a brown bird.\nOh, Frank! And I see the little birds in it, too. What funny little things they are! There are no feathers on them.\nThey will soon have feathers. Then they will be brown like their mother, and they will fly far away in the green woods.", words:["crumb","brown","feathers","bush","woods","rabbit","flew","picked"], illustration:"🐦🌿" },
+                { level:"beginner", title:"Happy Children", text:"Come, my children, come away,\nFor the sun shines bright to-day;\nLittle children, come with me,\nBirds and brooks and flowers to see.\nBring the kite and bring the ball,\nCome with happy faces, all;\nLet us make a merry ring,\nTalk and play and laugh and sing.", words:["children","bright","brooks","flowers","kite","ball","merry","laugh","sing"], illustration:"☀️🌸" },
+                { level:"beginner", title:"The Mice", text:"In an old house in town there were very many mice.\nOne day a cat was brought to the house.\nWhat shall we do now? cried the mice. We cannot run; we cannot play; we cannot go about the old house at all. For if the cat sees us, she will be sure to catch us. We shall have to stay at home day and night.\nThey talked about this for a long time, and no one could think of any plan but to keep out of the cat's way.\nAt last a very old mouse stood up and said, I will tell you what to do.\nWhat is it? What is it? said all the other mice.\nIt is this. Let us get a bell and hang it on the cat. When she runs from place to place the bell will ring. Then we will know when she is near us, and can run out of her way.\nOh, that is a fine plan! cried all the other mice.\nSome of them ran to get the bell. When they came back the old mouse said, Our plan is a very good one as you all know. Now who will take the bell and hang it on the cat?\nNot a mouse would do it.", words:["mice","cat","bell","plan","ring","house","catch","hang"], illustration:"🐱🐭" },
+                { level:"beginner", title:"The Little Schoolboy", text:"One day our teacher told us of a little boy who did not like his books or his school. I do not want to go to school, he said. I want to play all day.\nThe sun is shining, and the birds are singing, and I cannot bear to be shut up in school on this fine day. Why is it that boys have to work? I think I will go and have some fun in the fields.\nSo off he ran into the green fields. He saw a bee flying about from flower to flower. Please, little bee, he said, please come and play with me.\nBut the pretty bee said: Oh no, no; I have no time to play. I have so much work to do that I must not be idle. I must get all the honey I can; and away went the bee, buzzing among the flowers.\nThen the boy saw a dog. Come here, my pretty dog, he said, come and have some fun with me.\nBut the dog said: I cannot come. I must take care of all the sheep that you see in this field; and he ran to drive back some lambs that were too near the road.\nThen the boy saw a bird picking up a straw from the ground, and he said: My sweet little bird, will you come and play with me? Will you sing me a pretty song?\nBut the bird said: No, no, I cannot be idle. I must get straw and sticks, and build my nest. So good morning; and away it flew with the straw in its mouth.\nThen the little boy began to think. I see, said he, that even the birds, the bees, and the dogs are busy. There is work for all to do, and I must not be idle.\nSo he ran to school as fast as he could, and never again wished that he might play all the time.", words:["school","idle","honey","bee","sheep","straw","busy","work"], illustration:"🐝🌾" },
+                { level:"beginner", title:"The Winds", text:"Which is the wind that brings the cold?\nThe north wind, Robert; and all the snow;\nAnd the sheep will scamper into the fold\nWhen the north wind begins to blow.\nWhich is the wind that brings the heat?\nThe south wind, Lucy; and corn will grow,\nAnd peaches redden for you to eat\nWhen the south wind begins to blow.\nWhich is the wind that brings the rain?\nThe east wind, Henry; and farmers know\nThat cows come shivering up the lane\nWhen the east wind begins to blow.\nWhich is the wind that brings the flowers?\nThe west wind, children; and soft and low\nThe birdies sing in the summer hours\nWhen the west wind begins to blow.", words:["north","south","east","west","snow","corn","peaches","rain","flowers"], illustration:"💨🌬️" },
+                { level:"beginner", title:"The Pet Lamb", text:"Lucy has a pet lamb which her father gave to her. She is very kind to it, and when she goes out to play the lamb is sure to follow her.\nShe calls the lamb Robin. Is not that a funny name for a little sheep?\nThe lamb knows its name, and when Lucy calls, Robin, Robin, Robin, it will run to her as fast as it can.\nOne day it went to school with Lucy. When the children went into the schoolhouse, the lamb stayed in the yard to eat grass. When play time came, Lucy took Robin home.\nOnce Lucy went away from home with her mother and was gone a long time. While she was away, Robin was put into a field to feed with some other lambs.\nWhen Lucy came home again, almost the first thing that she did was to look for her pet. There were so many lambs and sheep in the field that Lucy could not tell which one was her pet. But when she called, Robin, Robin, a fine lamb began to jump about, and ran to her.\nIt was Robin. How large you have grown, said Lucy. You are almost as big as any sheep. But I am glad to see you, even if you are bigger.\nThe lamb was glad, too. It ran and played just as when it was smaller, and when Lucy went back to the house it tried to follow her.", words:["lamb","Robin","follow","school","yard","field","grown","bigger"], illustration:"🐑" },
+                { level:"beginner", title:"The Bee", text:"One morning, when we were all busy with our lessons, a bee flew into the schoolroom.\nDo you wonder why it came in there? The window was open, and there were some flowers on the teacher's table. The bee wanted to get honey from the flowers.\nThen the teacher told us how the bees live, and what they do.\nOn warm, sunny days every bee is at work. If you go into the garden, you may hear them, buzz, buzz, buzz, among the flowers.\nThey gather honey from the flowers. They know which flowers have honey in them.\nWhen a bee gets a load of honey it carries it home. The home of the bees is called a hive.\nWhy do the bees gather honey? They feed some of it to the young bees in the hive. They put some of it away, to eat when the days are cold and wet and they cannot go out of their house.\nSometimes we take the honey away from the bees. Then they must go out and gather more.", words:["bee","honey","hive","flowers","gather","sunny","window","young"], illustration:"🐝🍯" },
+                { level:"intermediate", title:"A Kind Brother", text:"Frank lives on a farm. One day his father sent him to town with a basket of apples to sell.\nThe basket was so full that it was very heavy. So Frank's little brother went with him, to help carry the load.\nThey put a long stick under the handle of the basket, and each then took hold of an end of the stick. In this way they could carry the basket very well.\nNow the older boy thought, My brother Henry does not know about this long stick. If I put the basket near him, his load will be heavy, and mine light; but if the basket is in the middle of the stick, it will be as heavy for me as it is for him.\nHenry does not know this as I do. But I will not do it. It would be wrong, and I will not do what is wrong.\nThen he put the basket much nearer his own end of the stick. His load was now heavy, but that of his little brother was light.\nYet he was happy; for he was sure that he had done right. Had he made his brother carry the heavy load, he would not have been at all happy.", words:["farm","basket","apples","heavy","stick","handle","wrong","happy"], illustration:"🍎👦" },
+                { level:"intermediate", title:"The Mother Bird", text:"A little bird built a warm nest in a tree.\nAnd laid some blue eggs in it — one, two, three;\nAnd then very glad and delighted was she —\nVery glad and delighted was she.\nAnd after a time, but how long I can't tell,\nThe little ones came one by one from the shell;\nAnd their mother was pleased, and she loved them well —\nShe was pleased, and she loved them well.\nShe spread her soft wings on them all day long,\nTo warm them and keep them, her love was so strong;\nAnd her mate sat beside her, and sang her a song —\nHer mate sat beside her and sang her a song.", words:["nest","eggs","shell","wings","spread","mate","sang","loved"], illustration:"🐦🪺" },
+                { level:"intermediate", title:"The New Boat", text:"There was once a little boy who lived very near a large lake. His name was Robert, and his father was a fisherman. Sometimes when the weather was fine, Robert's father would take him out in his boat. They would often sail far out in the lake to catch fish.\nThose were pleasant times for Robert; and every evening when he came home he had many stories to tell his mother and his little sister.\nOne evening his father said to him: Robert, I am going to try the new boat in the morning. Would you like to go out with me, and see how it sails?\nOh, father, he said, you know I should like to go.\nWell, then, you must wake up early and be ready to start as soon as the sun is up.\nRobert was delighted. He had never been in his father's new boat.\nSo, as soon as it was night, he went to bed and tried to go to sleep. But he could not sleep. He could not help thinking of the new boat and of the fine time he would have in the morning.\nIn the morning he was up as soon as it was light. He climbed into the boat and sat down. He wondered why his father did not come.\nAfter a long while he saw his father coming from the house with a pail and a basket.\nOh, father, said Robert, laughing, I thought we were going to start as soon as the sun was up.\nAnd so we will, said his father, for the sun is not up yet. Run to the house and eat your breakfast, and then we shall be ready to start.\nHe had a fine time on the lake that day; but long before his father was ready to go home he was fast asleep in the new boat.", words:["lake","fisherman","boat","sail","fish","pleasant","breakfast","asleep"], illustration:"⛵🎣" },
+                { level:"intermediate", title:"The Ant", text:"One day a busy ant climbed into a tree to look for something to eat. It ran about among the green leaves and was not at all afraid of falling.\nAfter a while it climbed to the top of the tree and looked down to see how high it was.\nJust then the wind blew very hard. It blew the little ant from the tree, and carried it far away over the tops of the bushes.\nI shall soon fall to the ground, said the ant; but I am not afraid. I am so light that I will not be hurt very much.\nBut it did not fall to the ground. It fell into a river where the water was running fast. It tried hard to swim to the shore; but the stream was strong and swift and would soon carry it down to the sea.", words:["ant","climbed","wind","blew","stream","swift","shore","afraid"], illustration:"🐜" },
+                { level:"intermediate", title:"The Dove", text:"A pretty dove was sitting in a tree near the river and saw the ant fall into the water. She saw how hard it tried to swim to the shore.\nWhat a brave little ant! she said. It can swim well, but the stream is too swift for it. It will soon be carried far out to sea, and that will be the end of it.\nBut the ant did not give up. It worked very hard, and still it could not get any nearer to the shore.\nThen the dove said, I will save the brave little fellow.\nSo she took a leaf in her mouth and flew far out over the river. When she was just above the ant she let the leaf fall into the water. The ant climbed upon it. The wind blew it to the shore, and the ant was saved.\nThank you, kind dove, said the ant. I will help you some time if I can.", words:["dove","brave","leaf","shore","saved","kind","swift","river"], illustration:"🕊️" },
+                { level:"intermediate", title:"The Hunter", text:"Not many days after that, a hunter came into the woods. He saw the dove sitting on the tree. She was thinking of her mate far away, and did not hear him coming.\nThat is a fine dove, said the hunter. I will have a shot at her.\nHe did not see the little ant at his feet. But the ant heard what he said. It saw him point his gun at the dove.\nNow is the time for me to help my friend, it said.\nJust as the hunter was going to shoot, the ant bit his foot very hard. The hunter jumped and looked down.\nThe dove heard the noise and flew far away.\nThe next day she came back to find her little friend. She said, I thank you very much, good ant. You saved my life.\nThe ant said, Kind people are sure to have friends.", words:["hunter","gun","shoot","noise","jumped","saved","friends","kind"], illustration:"🐜🕊️" },
+                { level:"intermediate", title:"The Brook", text:"Stop, stop, pretty water!\nSaid Mary one day,\nTo a bright, happy brook\nThat was running away.\nYou run on so fast!\nI wish you would stay;\nMy boat and my flowers\nYou will carry away.\nBut I will run after:\nMother says that I may;\nFor I would know where\nYou are running away.\nSo Mary ran on;\nBut I have heard say,\nThat she never could find\nWhere the brook ran away.", words:["brook","running","stay","carry","flowers","boat","mother","away"], illustration:"🏞️" },
+                { level:"intermediate", title:"Henry and His Dog", text:"One day as little Henry was coming home from school he saw a dog lying under a bush by the road.\nThe dog's foot had been hurt, and the poor fellow could not walk on it.\nAt first, Henry was afraid to go near him. But he was a kind little boy, and he did not like to see the poor dog in so much pain.\nSo he ran down to the brook and got his pail full of water. This he carried back to the road and set before the dog.\nThe dog took a long drink, for he had not had any water that day. Then he looked at Henry as if to say, Thank you, little boy.\nHenry then washed the dog's foot in cold water, which he brought from the brook. The dog lay very still, for he knew that the boy was trying to help him.\nAfter a while Henry told the dog to get up. He did so, and Henry was delighted to see that he could walk a little on three feet.\nHe followed Henry home, and when Henry's mother saw what a fine dog he was she said that the little boy might keep him till his owner came after him.\nHenry made a soft bed of straw for him, and took good care of him till his foot was well. He fed him often, and soon boy and dog were very good friends. But no owner ever came to get the dog.\nThe dog learned to go to school with Henry. He was a great pet with the boys, and was always ready to run and play with them.", words:["dog","hurt","pain","water","washed","straw","owner","friends"], illustration:"👦🐕" },
+                { level:"intermediate", title:"How the Dog Saved Henry", text:"As the children were going to school one morning they saw some blue flowers growing on the bank of the river very near to the water.\nWhat kind of flowers are they? said May. They do not look like violets.\nI think they are lilies, said Lucy; but I am not sure. I wish I could get them.\nOh, I will get them for you, said little Henry. Then he climbed down the bank and tried to pick the flowers.\nHe had them all in his hand when his foot slipped, and he fell into the river. The water was deep, the stream was swift and strong, and the little boy could not swim.\nAll the boys and girls who saw Henry fall began to cry and scream, but they did not know how to help him in any way.\nHenry's dog heard the noise and saw his little master in the water. He ran as fast as he could and jumped into the river.\nIt did not take him long to swim out in the swift stream and catch hold of Henry's coat, and so keep him from sinking. Then he drew him to the bank and lifted him out.\nBy this time some of the big boys had come down to the river. They took Henry up and carried him home, and it was not long till he was as well and strong as ever.\nYou may be sure that Henry took good care of his dog after that.", words:["lilies","slipped","fell","stream","sinking","coat","lifted","strong"], illustration:"🐕💧" },
+                { level:"intermediate", title:"The Quarrel", text:"One day John and Henry were playing in the woods. Under a tall tree they saw a fine, large nut, and both ran to get it.\nHenry got to it first and picked it up. But John cried out, Give me that nut! It is mine, for I was the first to see it.\nNo, it is not yours, said Henry; it is mine, for I picked it up.\nThen they began to quarrel about the nut. Each wanted it, and each tried to show that he had the best right to it.\nJust then they saw Frank going by, and they asked him to stop a minute.\nShall I tell you whose it is? asked Frank.\nYes, yes, said both the little boys.\nWell, then, said Frank, who saw it first?\nI did, said John.\nWho picked it up?\nI did, said Henry.\nVery well, said Frank. I will now put an end to your little quarrel.\nHe took the nut from Henry's hand and broke the shell. When he had done this he took out the kernel.\nHere, John, he said, you shall have this half of the shell; for you were the first who saw the nut. And Henry, this other half is yours; for you picked the nut up.\nBut I shall keep the kernel as my pay for settling your quarrel.\nThe little boys did not like this very well. But Frank said: It is a good lesson for you. Most quarrels end just this way.", words:["quarrel","nut","kernel","shell","settling","lesson","picked","woods"], illustration:"🌰" },
+                { level:"intermediate", title:"The Sail", text:"One summer morning Robert and his little sister Rose were playing in the white sand by the shore of the lake.\nTheir father's boat, with the sail half set, was lying not far away. It was pulling at the rope with which it was fastened, and looking as if it wanted to get away.\nRose, how would you like to take a sail in father's new boat? asked Robert.\nOh, I should like it very much, said Rose.\nWell, then, come and get in, said Robert, and we will go out a little way. Father will not care.\nBut you are too little to sail the boat, Robert. You can not make it go to the right place.\nToo little! said the brave boy. Why, I will soon be six, and I know all about the boat.\nWell, then, said Rose, let us take just a little sail on the lake. But we must be back before dinner.\nSoon Robert had untied the boat, and it began to move out from the shore.\nBut soon a big wave broke over the side of the boat, and Robert began to feel afraid. There was water all about their feet now, and Rose began to cry.\nNever mind, Rose, said her brave little brother. I will dip it all out with father's dipper.\nBut just as he was beginning to dip, a still bigger wave came. Then he looked up and saw another boat near them. Yes, it was coming right to them! Their father was in it, and he had come after them. How glad the children were to be taken safe home!", words:["sail","shore","lake","rope","wave","afraid","brave","dinner"], illustration:"⛵🌊" },
+                { level:"intermediate", title:"The Swing", text:"How do you like to go up in a swing,\nUp in the air so blue?\nOh, I do think it the pleasantest thing\nEver a child can do!\nUp in the air and over the wall,\nTill I can see so wide,\nRivers and trees and cattle, and all\nOver the country's side —\nTill I look down on the garden green\nDown on the roof so brown —\nUp in the air I go flying again,\nUp in the air, and down!", words:["swing","air","wall","rivers","cattle","garden","roof","flying"], illustration:"🪀" },
+                { level:"intermediate", title:"The Fireside", text:"One night in winter two little girls with their mother were sitting by a bright fire in their pleasant home. All were busy. The girls were sewing, and their mother was knitting.\nAt last Lucy finished her work. As she was putting it away she said, Mother, I think the fire is very bright this evening.\nAnd I was about to say, cried Mary, that this light is better than we had last night.\nMy dear girls, said the mother, it must be that you feel happier than usual to-night. Is that why you think the fire better and the light brighter?\nBut, mother, said Mary, I do not see why we are happier now than we were then; for last night our cousins were here, and we played till every one was tired.\nI know! I know why! cried Lucy. We are happy to-night because we have been busy. We are happy because we have been doing something useful.\nYou are right, said their mother; and I am glad you have both learned that it is sometimes better and pleasanter to work than to play. You could never be happy if you had no useful work to do.", words:["fireside","sewing","knitting","bright","useful","happy","cousins","winter"], illustration:"🔥" },
+                { level:"intermediate", title:"The Cat and the Fox", text:"One day a cat met a fox in the woods.\nWhat a fine-looking fellow he is, said Pussy. Is there any wonder that people are always talking about him? I think I will speak to him.\nSo she went up to him and said, in her very kind way, Good morning, Mr. Fox! How are you?\nThe fox was a proud fellow, and thought himself very much above any cat. He looked at Puss from head to foot and did not speak for a long time. Then he said, Oh, you poor little mouse hunter, how many tricks do you know?\nI know only one trick, said the cat.\nAnd what trick is that? he asked.\nWell, she said, when the dogs run after me, I can jump up into a tree and save myself.\nIs that all? cried the fox. Why, I am master of a hundred tricks, every one of them better than that. I pity you, poor Puss.\nJust then a hunter with four dogs was seen coming through the woods. The cat climbed quickly up the tree and hid herself among the green leaves. Now show us some of your tricks, Mr. Fox! she said.\nBut before he could save himself by running the dogs were upon him. They caught him and held him fast.\nAh, Mr. Fox, said she, your hundred tricks are not of much use to you. If you had had only one trick like mine, you might have been well and happy even now.", words:["fox","cat","tricks","hunter","dogs","proud","tree","caught"], illustration:"🦊🐱" },
+                { level:"intermediate", title:"The Squirrel to the Little Boy", text:"Yes, little boy, I am up here — out of your reach, I am glad to say. Would you like to catch me, and keep me in a cage? Well, you will not catch me to-day. I will keep out of your way.\nHow glad I am that you have not brought a gun with you. Oh, I know why you did not bring it. You are so little that your father will not let you have a gun.\nDon't you wish you could climb a tree as quickly as I can? See me run out on this branch. You can't do that.\nDon't hold up your hands; I am not going to fall. I laugh at little boys who think I shall fall when I run out to the end of a branch.\nWhat have you come here for? You have come here for nuts. Wait a minute, and I will drop one into your basket.\nThere now, thank me. You may have all the nuts you can find among the dry leaves on the ground. There are enough nuts in these woods for boys and squirrels too.\nMy home is not in this tree. It is in that big tree on the other side of the brook. What a pleasant home it is, too! It is in a hollow branch, and I go into it through a hole just large enough for a door.\nThere are ever so many nuts under the leaves by that big tree — enough to last me all the winter, I think.\nI must not stay here any longer. I see a man coming this way. He has a gun, and will shoot me if he can.\nCome again, some time, and I will tell you a funny story about some of the other little people that live in the woods. Good morning!", words:["squirrel","cage","branch","nuts","hollow","woods","winter","basket"], illustration:"🐿️" },
+                { level:"intermediate", title:"In a Minute!", text:"Frank Brown had one great fault. Often when he was asked to do something he would say, In a minute, and then would not think about it again for a long time.\nHe always wanted to go with his mother when she went to town or to see his uncles and aunts; but he was never ready to start at the right time.\nHis mother often talked to him about this; but he would soon forget what she said, and be as careless as ever. At last she said, The next time you are not ready to go with me I will leave you at home.\nIt was Thanksgiving Day. Frank was to go with his father and mother to take dinner with his grandmother, who lived on a farm in the country.\nFrank had great fun playing about in the snow. When his mother called, he had just begun to make a snow house. He said, In a minute, mother, and went on with his play.\nAt last he left off his play, and ran into the house. No one was there but Mary. His father and mother and little sisters had gone and left him. Poor Frank!\nAll at once he heard some one call him from the road. He looked out and saw that it was John, the man who worked for his grandmother.\nCome, Frank, said John, your grandmother has sent me with the horse and sleigh to take you over. Come quickly, and we shall be there in time for dinner.\nIt did not take Frank long to get ready, and he was soon sitting with John in his grandmother's sleigh. They were just in time for dinner.\nAll the people were glad to see Frank. He had learned a good lesson, and was cured of his fault. When he was told to do a thing he never again said, In a minute!", words:["fault","careless","Thanksgiving","grandmother","sleigh","snow","lesson","ready"], illustration:"❄️🛷" },
+                { level:"advanced", title:"The Cross Boy", text:"John Lane was a cross boy. He would strike and hurt those with whom he was at play, if they did not do all that he wished, or all that he told them to do.\nHe did not do this when he was with big boys, for he was afraid to make them angry; but to all the little boys he was very cross.\nOne day at school he was playing with a boy whose name was Henry Ball. Henry was a little boy, and not very strong.\nThey were flying a kite, and Henry could not run as fast as John wished; so John struck him in the face.\nThis made Henry cry; and Frank Day, who was a little larger than John, heard him.\nWhy are you crying, Henry? he asked.\nJohn Lane hurt me, said Henry. He struck me because I could not run as fast as he told me to.\nThen Frank called to John, and said: It would be serving you right if I should strike you in the same way; and you know I am strong enough to hurt you if I were to try. But I shall not do it.\nHe who strikes little boys is a coward. He is only brave when he knows that no one can strike him back. Think about what I have said.", words:["cross","strike","kite","angry","coward","brave","fault","hurt"], illustration:"🪁" },
+                { level:"advanced", title:"The Crow and the Robin", text:"One warm summer day a crow was sitting in a tree, very well pleased with himself. He had found a fine piece of cheese, and was going to eat it when a robin came and sat near him.\nHow beautiful you are! said the robin. How bright and black your feathers are! And what a fine voice you must have!\nThe crow was very glad to hear this. He opened his mouth to sing.\nOf course, when he opened his mouth the cheese fell out, and the robin flew down and picked it up.\nThat was very foolish of you, said the robin. When any one tells you that you are beautiful, and asks you to sing, you may be sure that he wants something. I wanted the cheese, and I got it. Good morning.\nThe crow felt very much ashamed. He had been foolish, and had lost his dinner.\nWhen people praise you to get something from you, you are silly if you believe them.", words:["crow","robin","cheese","feathers","voice","foolish","praise","ashamed"], illustration:"🐦🧀" },
+                { level:"advanced", title:"Tom and the Eagle", text:"One day Tom found a young eagle that had fallen from its nest. He took it home and put it in a cage. He fed it and took good care of it.\nBut the eagle did not like the cage. It beat its great wings against the bars. It wanted to fly far away over the hills and into the blue sky.\nTom was a kind boy. He saw that the eagle was not happy.\nIf I were an eagle, he said, I would not like to be shut up in a cage. I will let it go.\nSo he took the eagle out of the cage, and set it on the top of a high rock. The eagle spread its great wings, and flew round and round, going higher and higher, until Tom could hardly see it.\nThen it flew away over the hills and was gone.\nTom was glad that he had let the eagle go free. He thought it was better for the eagle to fly in the free air than to sit in a cage all its life.", words:["eagle","cage","wings","hills","spread","higher","free","happy"], illustration:"🦅" },
+                { level:"advanced", title:"A Mouse at School", text:"One day a little mouse came into the schoolroom. How it came in, no one knew. It had, perhaps, lived under the floor for a long time without being seen.\nAll at once a little girl cried out, Oh! there is a mouse!\nAll the children looked. They saw a little brown mouse running along by the wall. Some of the children were afraid. Some of the little girls jumped up on their seats.\nBut the teacher said, Do not be afraid. It is only a little mouse, and it is much more afraid of you than you are of it.\nThe mouse ran this way and that way, and could not find the hole through which it had come in.\nAt last the teacher opened the door, and the little mouse ran out.\nDo you think the mouse came to school to learn to read? said the teacher. No, said the children, laughing. It came to look for something to eat, and it was frightened because it could not find its way out.\nA mouse cannot learn to read; but little boys and girls can. How glad you should be that you can go to school and learn!", words:["mouse","schoolroom","afraid","frightened","seats","teacher","door","running"], illustration:"🐭🏫" },
+                { level:"advanced", title:"God is Great and Good", text:"Come, let us go into the fields, said the mother. I will show you some of God's work.\nSo the mother and her little girl went out into the bright sunshine.\nIn the fields the grass was green and fresh. There were many pretty flowers in it.\nDo you see how beautiful everything is? said the mother.\nYes, said the little girl. Who made the grass so green? Who made the flowers so pretty?\nGod made them, said the mother. He made the earth and all that is in it.\nWho made the sun so bright and warm? asked the little girl.\nGod made the sun, too, said the mother. He made everything that you can see.\nIs not God very great? said the little girl.\nYes, He is very great, said the mother. And He is very good, too. He made all these things for us. Let us thank Him for His goodness.", words:["fields","flowers","sunshine","grass","beautiful","God","great","good"], illustration:"🌸☀️" },
+                { level:"advanced", title:"The Clouds", text:"One pleasant afternoon a father took his children out for a walk. The clouds were very beautiful that day, and the children began to ask their father about them.\nFather, said John, why do we have clouds? What are they made of?\nClouds are made of water, said his father. The sun draws the water up from the sea, and rivers and pools, and it floats in the air as tiny drops. These drops make the clouds.\nSometimes the clouds are spread out like curtains to shield the ground from the heat.\nIt soon began to rain; they went into a farmhouse for shelter. The children stood at the window to look at the rain.\nThat rain, said their father, comes from the clouds. How useful clouds are! They are great watering pots.\nWhy do you call them watering pots, father? asked Mary.\nI saw you taking a watering pot into the garden this morning. What did you do with it?\nI watered the ground about my flowers, said Mary; for when the ground becomes very dry, the plants cannot grow.\nJust so; and when all the land becomes very dry the grass, and the wheat, and the corn cannot grow. Then the clouds water it.\nThe rain was soon over, and the children went out again with their father. How pleasant it is, said they, as they breathed the cool, fresh air.\nThe children looked up and began to clap their hands. Oh, how beautiful! they cried. The great clouds were moving toward the east. The sun was shining upon them, giving them all shades of beautiful colors.", words:["clouds","water","shelter","curtains","watering","beautiful","rainbow","rain"], illustration:"☁️🌈" },
+                { level:"advanced", title:"My Doll", text:"I once had a sweet little doll, —\nThe prettiest doll in the world;\nHer cheeks were so red and so white,\nAnd her hair was so prettily curled!\nBut I lost my poor little doll,\nAs I played in the fields one day;\nAnd I cried for her more than a week,\nBut I never could find where she lay.\nI found my poor little doll,\nAs I played in the fields one day.\nThey say she is very much changed,\nFor her paint is all washed away,\nAnd her arm trodden off by the cows,\nAnd her hair not the least bit curled;\nYet for old time's sake she is still\nThe prettiest doll in the world.", words:["doll","prettiest","cheeks","curled","lost","fields","changed","washed"], illustration:"🪆" },
+                { level:"advanced", title:"The Fox and the Ducks", text:"One day in summer a man was sitting on the bank of a river and looking at some ducks that were swimming in the water.\nSoon he saw a branch with green leaves floating down the stream. As it floated near to the ducks they seemed to be frightened and flew away to another part of the river.\nIn a little while, however, they came back one by one, and began to swim in the water as before.\nSoon another branch came floating down among them, and again they took flight; but when they saw that the branch had gone by, they came back as before.\nAfter four or five branches had come down in this way, the ducks seemed but little afraid of them.\nThe man, who had been watching all this, now began to wonder who had set these branches floating down the stream. He looked around, and after a while saw a fox slyly watching the ducks.\nWhen the fox saw that the ducks were no longer afraid of the branches, he took a much larger branch than any he had yet used. He threw it into the river and then followed it, hiding himself behind it. Then he floated with it down the stream.\nRight among the ducks floated the green branch and the sly fox. The fox snapped quickly to the right and left. He seized two fine young ducks, and swam off with them.\nThe fox must have had a fine dinner to pay him for his cunning work.", words:["ducks","fox","branch","floating","cunning","frightened","seized","stream"], illustration:"🦊🦆" },
+                { level:"advanced", title:"Work and Play", text:"Charles White was not an idle boy, but he did not like to work long at any one time or at any one thing.\nOne day his father said, Charles, would you like to earn some money by pulling up the weeds and grass in the garden?\nYes, father, said Charles, I should like it quite well. How much will you pay?\nThat is not business-like, said Mr. White. Give me your price by the hour, by the day, or by the job; then I will tell you what I am willing to pay.\nI think I would like to work by the hour, said Charles. Will you pay me ten cents for every hour I work?\nYes; if you will work an hour every morning, and stick to your work till all the weeds are pulled up, I will pay you ten cents for each hour's work.\nCharles began the next morning. After working about ten minutes, he ran into the house to see what time it was. His cousin John was in the garden when he came out, and he talked with him a while.\nAfter John left him, Charles worked very hard for five minutes, and then ran into the house again to look at the clock.\nAt last it was just one hour since he had first gone into the garden. Charles thought this was working, and was surprised when his father told him that he would not pay him for an hour's work.\nWhen you have worked one whole hour you shall have ten cents. I did not agree to pay you for playing, talking, or looking at flowers. I was to pay you for pulling up weeds.\nCharles learned from this that when he agreed to work a certain time at a certain price, the way to do was to work the full time.", words:["weeds","garden","earn","money","hour","pay","idle","lesson"], illustration:"🌱" },
+                { level:"advanced", title:"The Crow and the Pitcher", text:"One hot day in summer a wise old crow felt very thirsty, but could find no water to drink. Not a drop was to be seen anywhere.\nAt last he flew down in a garden, and there he saw a pitcher among some stones. He was very much pleased, for he hoped to find some water in the pitcher.\nHe went to it and saw that indeed there was water in it, but it was so far down he could not reach it. He could not even wet the tip of his bill.\nHe then tried to turn the pitcher over, but it was far too heavy for him to move. For a minute he stood as if thinking what he should do.\nThen he took up a small stone and let it fall into the water. Again and again he did the same thing, dropping in stone after stone, till at last the water rose so high that he could reach it. Then he took a good drink and flew away.", words:["crow","pitcher","thirsty","stones","bill","reach","rose","clever"], illustration:"🐦🏺" },
+                { level:"advanced", title:"The Squirrels", text:"Little Nora lives in a log house close by the green woods. She has no sisters, and her brothers are at work on the farm all day long.\nThere is no other house near, and it is not often that Nora sees any other girls. Yet she is not lonely; for she has many little friends that live in the woods.\nHow did Nora teach the squirrel to be so tame? Nora came to the woods often, and was always so quiet and gentle that the squirrels soon found they need not be afraid of her.\nShe brought her bread and milk to eat under the trees, and was sure to leave crumbs for the squirrels.\nWhen they came near, she sat very still and watched them. So, little by little, she made them her friends, till, at last, they would sit on her shoulder and eat from her hand.\nSquirrels build for themselves summer houses. These are made of leaves, and sticks, and moss. They are pleasant and cool for summer, but would never do for the winter cold and snow.\nSo these wise little people find a hollow in an old tree. They line it with soft moss and leaves and make it very cozy and warm; and there they live all winter.", words:["squirrels","Nora","gentle","tame","crumbs","shoulder","hollow","winter"], illustration:"🐿️" },
+                { level:"advanced", title:"The Robin's Story", text:"I built me a nest\nIn the old oak tree —\nAs pretty a nest\nAs ever could be.\nI wove it with threads\nTo the oak tree bough;\nAnd three little birdies\nAre sleeping there now.\nOne day as I sang\nTo my birdies three,\nA spry little squirrel\nSprang up in the tree.\nI thought he was coming\nRight up to the bough, —\nIt makes my heart tremble\nTo think of it now.\nI flew like an eagle\nRight down through the air;\nAnd soon he was running,\nI cannot tell where.\nI pecked him and pecked him,\nAnd flew in his track;\nHe will not be in haste,\nI think, to come back.", words:["nest","oak","bough","squirrel","tremble","eagle","pecked","track"], illustration:"🐦🌳" },
+                { level:"advanced", title:"George Washington", text:"When George Washington was quite a little boy, his father gave him a hatchet. It was bright and new, and George took great delight in going about and chopping things with it.\nHe ran into the garden, and there he saw a tree which seemed to say to him, Come and cut me down!\nSo he set to work with his little hatchet, and, as the tree was a very small one, it did not take long to lay it low.\nSoon after that, his father came home.\nWho has been cutting my fine young cherry tree? he cried. It was the only tree of its kind in this country and it cost me a great deal of money.\nFather! cried little George, I will tell you the truth about it. I chopped the tree down with my new hatchet.\nHis father forgot his anger.\nGeorge, he said, and he took the little fellow in his arms. George, I am glad that you told me about it. I would rather lose all my cherry trees than that you should tell one falsehood.\nWhen George Washington became a man he did many brave things to make our country free. The people loved him, and they still love his name. He was our first president.", words:["Washington","hatchet","cherry","truth","falsehood","president","brave","country"], illustration:"🪓🌳" },
+                { level:"advanced", title:"The Kind-Hearted Boy", text:"One fine summer afternoon, Henry was walking home from school. He went along slowly, reading a book.\nHe had spent all his money for the book, but he was a happy boy.\nAfter a while he came into the highroad, where there was a gate. A blind man stood, holding it open.\nThe poor man said, Please give me a few cents to buy some bread! But Henry gave him nothing. What! did Henry give the poor blind man nothing? Yes; for, as I told you, he had spent all his money.\nSo Henry walked on, very sad. Soon after, a fine carriage came up, and in it were Robert and his mother.\nThe blind man stood, and held out his hat. Let us give the poor man something, said Robert to his mother. His mother gave him some cents. Robert took them, but did not put them into the man's hat.\nHe threw them among the grass and weeds at the side of the road. The poor man could not find them, for, as you know, he was blind.\nHenry had turned back to look at the fine carriage. When he saw Robert throw the cents upon the ground, he came back at once, and looked for the money until he found it all for the blind man. This took so long a time, that he almost lost his supper.\nWhich of the boys do you think was truly kind to the poor man?", words:["blind","money","carriage","bread","kind","truly","gate","cents"], illustration:"👦💰" },
+                { level:"advanced", title:"A Good Old Man", text:"There once lived an old man in a cozy little cottage. It had two rooms and only two windows. A small garden lay just behind it.\nOld as the poor man was, he used to work in the fields. Often he would come home very tired and weak, with his hoe or spade on his shoulder.\nAnd who do you think met him at the door? Mary and Jane, his two little grandchildren.\nThey were too young to do very much work. But little Jane could bring water from the spring, and Mary could help keep the house for their grandfather.\nThey were too poor to buy much wood or coal in winter; but they sat close together around their little fire, and were very happy. Mary would sit on one of the good man's knees, and Jane on the other.\nSometimes their grandfather would tell them a funny story. Sometimes he would teach them a little song.\nOne cold, stormy night, they heard a knock at the door. The little girls ran and opened it. Oh, how glad they were! There stood their father.\nHe had been at sea a long time. He had saved some money, and had now come home to stay.\nAfter this the old man did not work any. His son worked for him, and his grandchildren took care of him. Many happy days they lived together.", words:["cottage","grandfather","grandchildren","spade","spring","stormy","saved","together"], illustration:"👴🏠" },
+                { level:"advanced", title:"The Little Dairy Maid", text:"My name is Kate. I live on a farm. I am my mother's little dairymaid.\nI help take care of the milk, I churn the butter, and I keep everything in the dairy house clean and sweet.\nHow many cows have you on the farm, Kate?\nWe have ten cows. So you must know that we have as much milk as we can take care of.\nThe children drink some of it. Nothing is better for little boys and girls than plenty of good sweet milk.\nThe friendly cow, all red and white,\nI love with all my heart;\nShe gives me cream with all her might,\nTo eat with apple tart.\nShe wanders lowing here and there,\nAnd yet she cannot stray,\nAll in the pleasant open air,\nThe pleasant light of day.", words:["dairy","butter","cream","cows","milk","farm","churn","sweet"], illustration:"🐄🧈" },
+                { level:"advanced", title:"Little Davy", text:"It was play time at the little red schoolhouse on the hill, and the children had run out into the bright sunshine, wild with laughter and fun.\nAll but little Davy. He came out last and very slowly, and he did not laugh. He was in trouble, and he did not see the bright golden sunlight and the pretty flowers that were doing their best to make him glad.\nHe walked across the yard, and sat down on a stone where none of the children could see him.\nDavy did not hear the bird. Some of the children would not play with him because his clothes were so poor. Some had even laughed at him. The tears came into his eyes, and then ran down his cheeks.\nPoor Davy had no father, and his mother had to work hard to keep him at school.\nThat evening when school was out, he started home alone by the path that led through the woods.\nJust then his teacher came along. She saw who it was, and said very kindly, What is the matter, Davy?\nThen he told her how the children had laughed at him because of his poor clothes. The teacher listened. When he had ended, she said: The children did very wrong to laugh at you, Davy, and I am sure they did not think. But I have a plan that I think will help you.\nOh, what is it? he said, while his face became bright with joy.\nWell, how would you like to be a little flower merchant?\nOn his way to and from school, the little boy hunted in the woods and fields for mosses and pretty wild flowers. His teacher helped him put them together, and then he took them to town and sold them.\nHe soon had money enough to help his mother buy many little things that were needed for her home; and the children never thought of laughing at his poor clothes again.", words:["Davy","tears","flowers","merchant","mosses","teacher","kindly","money"], illustration:"🌸👦" },
+                { level:"advanced", title:"Mungo", text:"Once there was a miller who had a large black dog called Mungo.\nMungo was very kind to children. When the baby pulled his hair with both her hands, he would stand still and look pleased.\nAt night he stayed in the mill. When the miller came in the morning, he always found Mungo keeping watch just inside of the door.\nWhen at last the mill was started to running, and everything was in order, the miller would come upstairs and nod to Mungo. Then the dog would start to the house to get the miller's breakfast. He would make two trips. The first time he would bring a small pail of milk; then he would go back and get a dish of oatmeal tied up in a napkin.\nOne morning a little dog that lived near by was trying to cross the river by walking on a log which was sometimes used as a foot bridge. When the little dog was about half way over the foot bridge he fell into the rushing water.\nHe tried his best to swim to the shore, but the stream was too strong for him.\nJust at this time Mungo was going down to the mill with his master's dish of oatmeal. He saw the little dog fall into the water and heard him cry for help.\nMungo did not stop a minute to think. He set the dish on the ground by the side of the road, and then ran down the river bank as fast as he could.\nHe seized the poor fellow by the neck in such a way as to keep his head above water. Then he swam with him to the shore, and drew him high and dry out of the water.\nHaving done this, he went back, picked up his dish of oatmeal, and carried it to his master as if nothing had happened.", words:["Mungo","miller","mill","oatmeal","napkin","rescued","stream","faithful"], illustration:"🐕🏭" },
+                { level:"advanced", title:"Bad Apples", text:"One day Robert's father saw him playing with some very rough boys. He had thought for some time that his son was learning bad habits, and now he knew the cause.\nIn the evening he brought to the house six beautiful apples. He gave them to Robert, telling him to lay them away for a few days until they should become mellow. Robert thanked his father, and laid them upon a dish in his mother's pantry.\nJust as he was putting them away, his father laid on the dish a seventh apple, which was quite rotten, and asked Robert to let it stay there.\nFather, said Robert, the rotten apple will spoil all the others.\nDo you think so? Why should not the six good apples rather make the bad one good? asked his father.\nA week after this he asked his son to open the door of the pantry and take out the apples. The six apples were all rotten.\nMy boy, said his father, I have often told you not to play with rude boys; for, just as the rotten apple has spoiled all the good ones, so the company of such boys will make you bad.\nRobert never forgot the lesson which his father had thus taught him. When any of the bad boys asked him to go with them or play with them, he thought of the rotten apples and turned away from them.", words:["apples","rotten","spoil","habits","company","lesson","pantry","mellow"], illustration:"🍎" },
+                { level:"advanced", title:"Bruin", text:"I am going to tell about something that once happened in a little country town on the other side of the sea.\nDown in the kitchen of the inn sat a man who was going about the country with a pet bear. He was eating his supper.\nBruin, poor fellow, who never did any harm, had been left in the barnyard. He was tied to a post behind a pile of wood. He was very hungry, and yet his master had not given him a mouthful to eat.\nUp in the garret of the inn, three little children were playing. The eldest might be six years old, the youngest not more than two. They were very happy, and they often looked up at the moon and laughed.\nStump! stump! it was some one coming upstairs. The door flew open; it was Bruin — great, black, hungry Bruin! He had got tired of standing in the barnyard. He had untied himself, and had now found his way upstairs.\nThe children were much frightened when they saw the big bear. Each ran into a corner to hide; but Bruin found them all, and touched each one with his big cold nose, and did not try to harm them in any way.\nThis is nothing but a big dog, said the children. See how gentle and kind he is. Then, one by one, they came out of their dark corners and began to stroke the rough old bear.", words:["Bruin","bear","barnyard","garret","frightened","gentle","stroke","hungry"], illustration:"🐻" },
+                { level:"advanced", title:"Bruin and the Children", text:"Bruin laid himself down on the floor; and the youngest boy lay down by him and hid his head with its golden curls in the bear's long black fur. Good doggie, said the little fellow, come and play hide and seek with me.\nThen the eldest boy took his drum and beat upon it till the room was full of the noise. The bear rose up on his hind legs and began to dance. All the children were delighted, and the youngest shouted with joy.\nNext, each boy took his toy gun, and Bruin, not to be outdone, seized the broomstick. What a fine soldier he is, and how well he holds his gun! shouted the second boy.\nThen they marched — left, left, left, right, left — up and down the long room. It was fine fun, and shaggy old Bruin enjoyed it as much as any of the children.\nIn a little while some one came up the stairs and opened the door. It was the mother of the three boys.\nBut the youngest boy laughed in great delight and shook his golden curls. Then he shouted, Oh, mother, we are playing soldiers with the big doggie!\nAnd just then the master of the bear came in and led him away.", words:["drum","dance","soldier","broomstick","marched","shaggy","golden","curls"], illustration:"🐻🥁" },
+                { level:"advanced", title:"The Kind Old Oak", text:"It was almost time for winter to come. The little birds had all gone far away, for they were afraid of the cold. There was no green grass in the fields, and there were no pretty flowers in the gardens.\nMany of the trees had dropped all their leaves. Cold winter with its snow and ice was coming.\nAt the foot of an old oak tree some sweet little violets were still in blossom. Dear old oak, said they, winter is coming; we are afraid that we shall die of cold.\nDo not be afraid, little flowers, said the oak. Close your yellow eyes in sleep, and trust to me. You have made me glad many a time with your sweetness. Now I will take care that the winter shall do you no harm.\nSo the violets closed their pretty eyes and went to sleep; they knew they could trust the kind old oak. And the great tree softly dropped red leaf after red leaf upon them, until they were all covered over.\nCold winter came with its snow and ice, but it could not harm the little violets. Safe under the friendly leaves of the old oak they slept and dreamed happy dreams until the warm rains of spring came and waked them again.", words:["oak","violets","blossom","winter","trust","leaves","covered","spring"], illustration:"🌸🌳" },
+                { level:"advanced", title:"Columbus", text:"This beautiful country in which we live was once an unknown land. There were no busy towns in it, no pleasant farms, no roads, no schoolhouses.\nWild animals lived in the woods, and red Indians hunted and fished and roamed about from place to place. There was not a white man in all the land.\nThe white people who lived in Europe did not know that there was any such country in the world. No one had ever crossed the great ocean; no one knew what was on this side of it.\nAt last a brave man whose name was Columbus said: I will cross the wide ocean; I will find out what lies on the other side.\nSo, with three small ships and a hundred men, he set sail. There were no swift steamships then, and his little vessels sailed very slowly. It took them two months to cross the sea.\nHow glad Columbus and his men were to see the land! Everything was very strange to them: the people, the animals, the trees, were not like those they had known in Europe. The country seemed a fairyland.\nWhen Columbus went back to Europe he told all about the strange new land he had found. Everybody was delighted, and a great many people wanted to come here to live.\nYear after year, men from Europe came over in ships. They built houses. They cleared the ground and made farms.\nAnd now in the country that was once so wild, there are hundreds and hundreds of happy homes.", words:["Columbus","ocean","ships","Europe","unknown","brave","fairyland","farms"], illustration:"⛵🌍" },
+                { level:"advanced", title:"The Peaches", text:"One day a man who had been to market brought home five peaches. His four sons met him at the door, and he said, Here, boys, I have brought a peach for each of you, and one for your mother.\nIn the evening the father said: Well, boys, what did you do with those peaches?\nThe eldest said, I ate mine, and found it very sweet and juicy. I have put the stone away, and in the spring I will plant it. If it grows, I will have a peach tree of my own.\nYou have done right, said his father. It is a good thing to think of having something for yourself to-morrow or next year, and one should take care never to be wasteful.\nThe youngest boy then said: I ate my peach and threw away the stone, and mother gave me half of hers.\nThe next boy said: I picked up the stone which he threw away; I broke it open and ate the kernel. Then I sold my peach for enough to buy three peaches the next time I go down the street.\nThe father was not so well pleased with this answer. It is right to think of having something for yourself, but you have acted in a way that I am afraid will make you selfish and greedy.\nThe other boy then said: I did not eat my peach. I gave it to the little sick boy who lives across the street. The doctor said that ripe fruit would do him good, but his mother is too poor to buy any for him.\nThe other three brothers felt that this boy had made the best use of his peach; and the tears of joy in his mother's eyes were better to him than a basket full of fruit.", words:["peaches","stone","kernel","wasteful","selfish","generous","sick","tears"], illustration:"🍑" },
+                { level:"advanced", title:"The Two Goats", text:"On a wild mountain, two goats met on a narrow ledge near the top of a high cliff.\nThe ledge was so narrow that there was no room for them to pass each other. It was so narrow that neither of them could turn round and go back.\nA steep rock rose high above them on one side. On the other side was a deep, dark chasm at the bottom of which flowed a swift river.\nOne of them with great care laid himself down on the narrow ledge, and pressed himself as close to the rock as he could. Then the other goat gently and with great care stepped over his friend, and when he was safely past him he ran swiftly away.\nThe goat that had lain down then got from the ground and went on his way, free to spring again from rock to rock and feed on the sweet grass on the hills.\nNot long after this, two other goats met in the same place. They looked at each other and both became angry. Then each said to the other, Get out of my road and let me pass!\nThen they stamped their feet and shook their heads, but neither would give way to the other. At last they began to strike and fight with their horns; then their feet slipped, and both fell down into the swift stream, and were lost in the waters.\nBoth might still have been alive and happy if one had been willing at the right time to give up to the other.", words:["goats","ledge","cliff","chasm","willing","quarrel","horns","stream"], illustration:"🐐⛰️" },
+                { level:"advanced", title:"Oliver Goldsmith", text:"There was once a kind man whose name was Oliver Goldsmith. He wrote many good books, some of which you may read when you are older.\nHe had a gentle heart. He was always ready to help others and give them a part of anything he had. He gave so much to the poor that he was always poor himself.\nOne day a poor woman asked Doctor Goldsmith to go and see her husband; for she said he was sick and could not eat.\nGoldsmith did so. He found that the family was in great need. The man had not had work for a long time. He was not sick, but only in trouble; and as for eating, there was not a bit of food in the house.\nCall at my room this evening, said Doctor Goldsmith to the woman. I will then give you some medicine for your husband.\nIn the evening the woman called. The doctor gave her a little paper box that was very heavy.\nHere is the medicine, he said. Use it with care, and I think it will do your husband a great deal of good. But don't open the box until you reach home.\nWhen the woman reached her home she sat down by her husband, and they opened the box. It was full of pieces of money. And on the top were the directions: To be taken as often as necessity requires.\nDoctor Goldsmith had given them all the ready money that he had.", words:["Goldsmith","physician","medicine","money","poor","gentle","generous","directions"], illustration:"📚💰" },
+                { level:"advanced", title:"Alice's Supper", text:"Far down in the valley the wheat grows deep,\nAnd the reapers are making the cradles sweep;\nAnd this is the song that I hear them sing,\nWhile cheery and loud their voices ring:\nTis the finest wheat that ever did grow!\nAnd it is for Alice's supper — ho! ho!\nFar down by the river the old mill stands,\nAnd the miller is rubbing his dusty hands;\nAnd these are the words of the miller's lay,\nAs he watches the millstones grinding away:\nTis the finest flour that money can buy,\nAnd it is for Alice's supper — hi! hi!\nDownstairs in the kitchen the fire doth glow,\nAnd cook is kneading the soft, white dough;\nAnd this is the song she is singing to-day,\nAs merry and busy she's working away:\nTis the finest dough, whether near or afar,\nAnd it is for Alice's supper — ha! ha!\nTo the nursery now comes mother, at last,\nAnd what in her hand is she bringing so fast?\nTis a plateful of something, all yellow and white,\nAnd she sings as she comes, with her smile so bright:\nTis the best bread and butter I ever did see,\nAnd it is for Alice's supper — he! he!", words:["wheat","flour","mill","dough","bread","butter","supper","nursery"], illustration:"🍞" }
+            ]
 
-        let userData = { completed: [], currentLesson: 0 };
+        };
+
+
+                // Active lesson set (changes when reader is switched)
+        let currentReaderNum = 1;
+        let lessons = READERS[1];
+
+        let userData   = { first: { completed: [], currentLesson: 0 }, second: { completed: [], currentLesson: 0 } };
         let currentReader = null;
         let currentLesson = null;
         let currentLessonIndex = 0;
         let currentFilter = 'all';
 
-        // ── READER SELECT ──
+        // ── READER SELECT ──────────────────────────────────────────────────────
         function selectReader(id) {
             currentReader = id;
-            document.getElementById('userScreen').style.display = 'none';
+            document.body.className = 'mode-page';
             document.getElementById('menuScreen').style.display = 'block';
-            const icons = { hadley:'🌷', audrey:'🐱', ryder:'⚔️', guest:'👤' };
-            const names = { hadley:'Hadley', audrey:'Audrey', ryder:'Ryder', guest:'Guest' };
+            const icons = { hadley:'🌷', audrey:'🐱', guest:'👤' };
+            const names = { hadley:'Hadley', audrey:'Audrey', guest:'Guest' };
             document.getElementById('readerLabel').textContent = (icons[id]||'') + ' ' + (names[id]||id);
             if (id === 'guest') {
-                userData = { completed: [], currentLesson: 0 };
+                userData = { first: { completed: [], currentLesson: 0 }, second: { completed: [], currentLesson: 0 } };
+                switchReader(1);
                 init();
             } else {
                 db.ref('mcguffey/' + id).once('value', function(snap) {
                     var saved = snap.val();
-                    userData = saved || { completed: [], currentLesson: 0 };
-                    if (!Array.isArray(userData.completed)) userData.completed = [];
+                    if (!saved) {
+                        userData = { first: { completed: [], currentLesson: 0 }, second: { completed: [], currentLesson: 0 } };
+                    } else if (saved.first) {
+                        // New format
+                        userData = saved;
+                        if (!Array.isArray(userData.first.completed))  userData.first.completed  = [];
+                        if (!Array.isArray(userData.second.completed)) userData.second.completed = [];
+                    } else {
+                        // Migrate old flat format (completed array at root)
+                        var oldCompleted = Array.isArray(saved.completed) ? saved.completed : [];
+                        userData = {
+                            first:  { completed: oldCompleted, currentLesson: saved.currentLesson || 0 },
+                            second: { completed: [], currentLesson: 0 }
+                        };
+                    }
+                    // Auto-open Second Reader if First is complete
+                    var firstDone = userData.first.completed.length >= READERS[1].length;
+                    switchReader(firstDone ? 2 : 1);
                     init();
                 });
             }
@@ -485,12 +764,44 @@
         function changeReader() {
             currentReader = null;
             document.getElementById('menuScreen').style.display = 'none';
-            document.getElementById('userScreen').style.display = 'block';
+            document.getElementById('lessonScreen').classList.add('hidden');
+            document.body.className = 'mode-cover';
         }
 
         function saveProgress() {
             if (!currentReader || currentReader === 'guest') return;
             db.ref('mcguffey/' + currentReader).set(userData);
+        }
+
+        function switchReader(num) {
+            currentReaderNum = num;
+            lessons = READERS[num];
+            currentFilter = 'all';
+            // Update tab styles
+            var r1 = document.getElementById('tab-reader-1');
+            var r2 = document.getElementById('tab-reader-2');
+            if (r1 && r2) {
+                r1.style.background  = '#c8e0f8';
+                r1.style.borderColor = num === 1 ? '#6aa0d0' : '#a8c8e8';
+                r1.style.color       = '#1a3a5a';
+                r1.style.boxShadow   = num === 1 ? '0 4px 0 #4a80b0' : '0 4px 0 #a0c0d8';
+                r1.style.opacity     = num === 1 ? '1' : '0.6';
+                r2.style.background  = '#e8d8f8';
+                r2.style.borderColor = num === 2 ? '#9870c8' : '#c8b0e8';
+                r2.style.color       = '#3a1a5a';
+                r2.style.boxShadow   = num === 2 ? '0 4px 0 #7850a8' : '0 4px 0 #b8a0d8';
+                r2.style.opacity     = num === 2 ? '1' : '0.6';
+            }
+            var sub = document.getElementById('readerSubtitle');
+            if (sub) sub.textContent = (num === 1 ? 'First' : 'Second') + ' Reader · Revised Edition';
+            var tease = document.getElementById('readerTease');
+            if (tease) tease.style.display = (num === 1 && userData.first.completed.length < READERS[1].length) ? 'block' : 'none';
+            // Reset level filter tabs
+            document.querySelectorAll('.level-tab').forEach(t => t.classList.remove('active'));
+            var allTab = document.querySelector('.level-tab');
+            if (allTab) allTab.classList.add('active');
+            if (currentReader) renderLessonMenu();
+            updateOverallProgress();
         }
 
         if (speechSynthesis.onvoiceschanged !== undefined) {
@@ -521,7 +832,7 @@
                 btn.className = 'btn lesson-btn';
                 const levelBadge = `<span class="level-badge level-${lesson.level}">${lesson.level[0].toUpperCase()}</span>`;
                 btn.innerHTML = `${index + 1}${levelBadge}`;
-                if (userData.completed.includes(index)) {
+                if ((getCurrentData().completed||[]).includes(index)) {
                     btn.classList.add('completed');
                     btn.innerHTML += ' ✓';
                 }
@@ -530,11 +841,16 @@
             });
         }
 
+        function getCurrentData() {
+            return currentReaderNum === 1 ? userData.first : userData.second;
+        }
+
         function updateOverallProgress() {
-            const percent = Math.round((userData.completed.length / lessons.length) * 100);
+            var cd = getCurrentData();
+            const percent = Math.round(((cd.completed||[]).length / lessons.length) * 100);
             const bar = document.getElementById('overallProgress');
             bar.style.width = percent + '%';
-            bar.textContent = percent + '% Complete';
+            bar.textContent = percent + '% Complete (' + (currentReaderNum === 1 ? 'First' : 'Second') + ' Reader)';
         }
 
         function startLesson(index) {
@@ -544,6 +860,7 @@
             document.getElementById('lessonScreen').classList.remove('hidden');
             document.getElementById('lessonTitle').textContent = currentLesson.title;
             document.getElementById('illustration').textContent = currentLesson.illustration;
+            document.getElementById('illustrationCaption').textContent = currentLesson.title;
             const textDiv = document.getElementById('lessonText');
             const words = currentLesson.text.split(' ');
             textDiv.innerHTML = words.map(word => `<span class="word">${word}</span>`).join(' ');
@@ -603,13 +920,20 @@
         }
 
         function completeLesson() {
-            if (!userData.completed.includes(currentLessonIndex)) {
-                userData.completed.push(currentLessonIndex);
-                userData.currentLesson = Math.max(userData.currentLesson, currentLessonIndex + 1);
+            var cd = getCurrentData();
+            if (!(cd.completed||[]).includes(currentLessonIndex)) {
+                cd.completed = cd.completed || [];
+                cd.completed.push(currentLessonIndex);
+                cd.currentLesson = Math.max(cd.currentLesson || 0, currentLessonIndex + 1);
                 saveProgress();
             }
-            if (userData.completed.length === lessons.length) {
-                alert('🎉 Congratulations! You completed McGuffey\'s First Reader!\n\nYou are now ready for the Second Reader!');
+            if (cd.completed.length === lessons.length) {
+                if (currentReaderNum === 1) {
+                    alert('🎉 Congratulations! You completed McGuffey\'s First Reader!\n\nYou are now ready for the Second Reader! Click the 📗 Second Reader tab to begin.');
+                    switchReader(2);
+                } else {
+                    alert('🏆 Amazing! You have completed McGuffey\'s Second Reader!\n\nWell done!');
+                }
             }
             backToMenu();
         }
