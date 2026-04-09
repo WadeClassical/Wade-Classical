@@ -1651,8 +1651,7 @@ function wireButtons() {
 
 // === INIT ===
 wireButtons();
-switchUser(currentUser);
-loadAll();
+loadAll().then(() => switchUser(currentUser));
 </script>
 
 </body>
