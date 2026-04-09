@@ -1091,6 +1091,7 @@ let kidSubjectFilter = 'All';
 let _ideas = {};
 let _activities = {};
 let _completed = {};
+let _promotedIdeaId = null;
 let ideaFormOpen = false;
 let activityFormOpen = false;
 
@@ -1359,6 +1360,7 @@ function promoteIdeaToActivity(id) {
   if (!idea) return;
   document.getElementById('act-title').value = idea.title || '';
   document.getElementById('act-notes').value = idea.notes || '';
+  _promotedIdeaId = id;
   switchTab('activities');
   if (!activityFormOpen) toggleActivityForm();
   showToast('Idea loaded into activity form — fill in the rest!');
@@ -1380,6 +1382,7 @@ function clearActivityForm() {
   document.getElementById('act-subject').value = '';
   document.getElementById('act-who').value = 'both';
   document.getElementById('act-freq').value = 'repeating';
+  _promotedIdeaId = null;
 }
 
 function saveActivity() {
@@ -1398,6 +1401,10 @@ function saveActivity() {
     createdAt: Date.now()
   };
   saveActivityToFB(activity);
+  if (_promotedIdeaId) {
+    deleteIdeaFromFB(_promotedIdeaId);
+    _promotedIdeaId = null;
+  }
   toggleActivityForm();
   showToast('Activity added to the market! 🌻');
 }
