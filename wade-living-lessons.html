@@ -1377,7 +1377,7 @@ function wireButtons() {
 
   // Idea form
   document.getElementById('btn-add-idea').addEventListener('click', toggleIdeaForm);
-  document.getElementById('btn-cancel-idea').addEventListener('click', toggleIdeaForm);
+  document.querySelector('#idea-form .btn-cancel').addEventListener('click', toggleIdeaForm);
   document.getElementById('btn-pin-idea').addEventListener('click', saveIdea);
 
   // Activity form
@@ -1399,11 +1399,9 @@ function wireButtons() {
 }
 
 // === INIT ===
-document.addEventListener('DOMContentLoaded', () => {
-  wireButtons();
-  switchUser(currentUser);
-  loadAll();
-});
+wireButtons();
+switchUser(currentUser);
+loadAll();
 </script>
 
 </body>
