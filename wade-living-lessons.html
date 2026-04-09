@@ -1225,6 +1225,8 @@ async function assignActivityToPlanner(activityId, who, date) {
 
   tasks.push(newTask);
   await set(ref(db, `planner/tasks/${who}`), tasks);
+  // Clear any stale done key so today card shows fresh
+  localStorage.removeItem(`ll_today_done_${who}_${date}`);
   showToast(`Added to ${who}'s planner for ${date} ✓`);
   // Refresh today card if we just assigned to the current user for today
   if (who === currentUser && date === getTodayStr()) renderTodayAssigned();
@@ -1304,8 +1306,11 @@ function switchUser(user) {
   } else {
     document.getElementById('mom-view').style.display = 'none';
     document.getElementById('kid-view').style.display = 'block';
-    renderKidActivities();
-    renderKidCompleted();
+    // Reset browse drawer to closed
+    const drawer = document.getElementById('kid-browse-drawer');
+    const browseBtn = document.getElementById('btn-browse-toggle');
+    if (drawer) drawer.style.display = 'none';
+    if (browseBtn) browseBtn.textContent = '🌸 Browse All Activities';
     renderTodayAssigned();
   }
 }
