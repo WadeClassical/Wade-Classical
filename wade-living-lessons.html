@@ -759,6 +759,48 @@
   }
   .btn-promote:hover { background: #b0a0c4; }
 
+  /* === FREQUENCY BADGE === */
+  .badge-repeating {
+    background: var(--gingham-blue);
+    color: var(--ink);
+  }
+  .badge-onetime {
+    background: var(--sunflower-light);
+    color: var(--ink);
+  }
+
+  /* === KID DONE BUTTON === */
+  .kid-card-footer {
+    border-top: 1px dashed var(--kraft);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .btn-done {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.85rem;
+    padding: 7px 16px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    background: var(--sage-light);
+    color: var(--ink);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-done:hover { background: var(--sage); color: white; }
+  .btn-done.checked {
+    background: var(--sage);
+    color: white;
+    opacity: 0.7;
+    cursor: default;
+  }
+
+  /* === SCROLLBAR === */
   /* === SCROLLBAR === */
   ::-webkit-scrollbar { width: 8px; }
   ::-webkit-scrollbar-track { background: var(--linen); }
@@ -803,6 +845,7 @@
     <div class="tab-nav">
       <button class="tab-btn active" id="tab-ideas">💡 Ideas</button>
       <button class="tab-btn" id="tab-activities">🛍️ Activities</button>
+      <button class="tab-btn" id="tab-completed">✅ Completed</button>
     </div>
 
     <!-- IDEAS TAB -->
@@ -892,14 +935,23 @@
               <input type="text" id="act-time" placeholder="~30 min, 1 hour..." />
             </div>
           </div>
-          <div class="field-group">
-            <label>For Who?</label>
-            <select id="act-who">
-              <option value="both">Both kids</option>
-              <option value="ryder">Ryder only</option>
-              <option value="hadley">Hadley only</option>
-              <option value="all">Everyone</option>
-            </select>
+          <div class="form-row">
+            <div class="field-group">
+              <label>For Who?</label>
+              <select id="act-who">
+                <option value="both">Both kids</option>
+                <option value="ryder">Ryder only</option>
+                <option value="hadley">Hadley only</option>
+                <option value="all">Everyone</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label>Frequency</label>
+              <select id="act-freq">
+                <option value="repeating">🔁 Repeating</option>
+                <option value="onetime">✨ One-time</option>
+              </select>
+            </div>
           </div>
           <div class="field-group">
             <label>Notes / Instructions</label>
@@ -934,6 +986,22 @@
         </div>
       </div>
     </div>
+
+    <!-- COMPLETED TAB -->
+    <div id="panel-completed" style="display:none;">
+      <div class="chalk-header">
+        <div>
+          <h2>✅ Completed</h2>
+          <p>One-time activities that have been finished</p>
+        </div>
+      </div>
+      <div class="activities-grid" id="completed-grid">
+        <div class="empty-state" id="completed-empty" style="grid-column:1/-1">
+          <div class="empty-icon">✅</div>
+          <p>No completed activities yet!</p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- KID VIEW -->
@@ -965,6 +1033,14 @@
       <div class="empty-state" style="grid-column:1/-1">
         <div class="empty-icon">🌻</div>
         <p>No activities here yet!</p>
+      </div>
+    </div>
+
+    <div class="divider" style="margin-top:28px;"><span>✅ Completed</span></div>
+    <div class="activities-grid" id="kid-completed-grid">
+      <div class="empty-state" style="grid-column:1/-1">
+        <div class="empty-icon">🌟</div>
+        <p>Nothing completed yet — go do something fun!</p>
       </div>
     </div>
   </div>
@@ -1019,6 +1095,7 @@ let currentSubjectFilter = 'All';
 let kidSubjectFilter = 'All';
 let _ideas = {};
 let _activities = {};
+let _completed = {};
 let ideaFormOpen = false;
 let activityFormOpen = false;
 
@@ -1040,6 +1117,20 @@ function escHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+function linkify(str) {
+  if (!str) return '';
+  // Split on URLs, escape non-URL parts, wrap URLs in <a> tags
+  const urlRegex = /(https?:\/\/[^\s<>"]+)/g;
+  return str.split(urlRegex).map((part, i) => {
+    if (urlRegex.test(part)) { urlRegex.lastIndex = 0; }
+    if (part.match(/^https?:\/\//)) {
+      const escaped = escHtml(part);
+      return `<a href="${escaped}" target="_blank" rel="noopener" style="color:var(--gingham-blue);text-decoration:underline;word-break:break-all;">${escaped}</a>`;
+    }
+    return escHtml(part);
+  }).join('');
+}
+
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -1051,6 +1142,7 @@ function showToast(msg) {
 async function loadAll() {
   await loadIdeas();
   await loadActivities();
+  await loadCompleted();
 }
 
 async function loadIdeas() {
@@ -1089,6 +1181,30 @@ async function deleteActivityFromFB(id) {
   await loadActivities();
 }
 
+async function completeActivityToFB(activityId, who) {
+  const activity = _activities[activityId];
+  if (!activity) return;
+  // Save to completed
+  const completedEntry = {
+    ...activity,
+    completedBy: who,
+    completedAt: Date.now()
+  };
+  const newRef = push(ref(db, 'living-lessons/completed'));
+  await set(newRef, completedEntry);
+  // Remove from market
+  await remove(ref(db, `living-lessons/activities/${activityId}`));
+  await loadActivities();
+  await loadCompleted();
+}
+
+async function loadCompleted() {
+  const snap = await get(ref(db, 'living-lessons/completed'));
+  _completed = snap.val() || {};
+  renderCompleted();
+  renderKidCompleted();
+}
+
 async function assignActivityToPlanner(activityId, who, date) {
   const activity = _activities[activityId];
   if (!activity) return;
@@ -1122,13 +1238,13 @@ async function checkTodayAssignment(date) {
     const act = _activities[task.activityId] || {};
     section.innerHTML = `
       <div class="today-title">${escHtml(act.title || task.text || 'Living Lesson')}</div>
-      ${act.desc ? `<div class="today-desc">${escHtml(act.desc)}</div>` : ''}
+      ${act.desc ? `<div class="today-desc">${linkify(act.desc)}</div>` : ''}
       <div class="today-meta">
         ${act.subject ? `<span class="today-meta-tag">📚 ${escHtml(act.subject)}</span>` : ''}
         ${act.time ? `<span class="today-meta-tag">⏱ ${escHtml(act.time)}</span>` : ''}
         ${act.materials ? `<span class="today-meta-tag">🧺 ${escHtml(act.materials)}</span>` : ''}
       </div>
-      ${act.notes ? `<div class="today-desc" style="margin-top:10px;border-top:1px solid rgba(255,255,255,0.2);padding-top:10px;">📝 ${escHtml(act.notes)}</div>` : ''}
+      ${act.notes ? `<div class="today-desc" style="margin-top:10px;border-top:1px solid rgba(255,255,255,0.2);padding-top:10px;">📝 ${linkify(act.notes)}</div>` : ''}
     `;
   } catch(e) {
     console.log('Could not load today assignment:', e);
@@ -1147,6 +1263,7 @@ function switchUser(user) {
     document.getElementById('mom-view').style.display = 'none';
     document.getElementById('kid-view').style.display = 'block';
     renderKidActivities();
+    renderKidCompleted();
     renderTodayAssigned();
   }
 }
@@ -1158,6 +1275,8 @@ function switchTab(tab) {
   document.getElementById('tab-' + tab).classList.add('active');
   document.getElementById('panel-ideas').style.display = tab === 'ideas' ? 'block' : 'none';
   document.getElementById('panel-activities').style.display = tab === 'activities' ? 'block' : 'none';
+  document.getElementById('panel-completed').style.display = tab === 'completed' ? 'block' : 'none';
+  if (tab === 'completed') renderCompleted();
 }
 
 // === IDEA FORM ===
@@ -1236,6 +1355,7 @@ function clearActivityForm() {
   });
   document.getElementById('act-subject').value = '';
   document.getElementById('act-who').value = 'both';
+  document.getElementById('act-freq').value = 'repeating';
 }
 
 function saveActivity() {
@@ -1249,6 +1369,7 @@ function saveActivity() {
     materials: document.getElementById('act-materials').value.trim(),
     time: document.getElementById('act-time').value.trim(),
     who: document.getElementById('act-who').value,
+    freq: document.getElementById('act-freq').value || 'repeating',
     notes: document.getElementById('act-notes').value.trim(),
     createdAt: Date.now()
   };
@@ -1272,6 +1393,56 @@ function filterKidSubject(subject) {
     c.classList.toggle('active', c.dataset.subject === subject);
   });
   renderKidActivities();
+}
+
+// === RENDER COMPLETED (MOM) ===
+function renderCompleted() {
+  const grid = document.getElementById('completed-grid');
+  const empty = document.getElementById('completed-empty');
+  if (!grid) return;
+  const entries = Object.entries(_completed).sort((a,b) => (b[1].completedAt||0) - (a[1].completedAt||0));
+  grid.querySelectorAll('.activity-card').forEach(c => c.remove());
+  if (entries.length === 0) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  entries.forEach(([id, act]) => {
+    const card = buildActivityCard(id, act, false);
+    // Add completed-by tag
+    const meta = card.querySelector('.card-meta');
+    if (meta) {
+      const who = act.completedBy || 'unknown';
+      const date = act.completedAt ? new Date(act.completedAt).toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '';
+      const tag = document.createElement('span');
+      tag.className = 'meta-tag';
+      tag.style.background = 'var(--sage-light)';
+      tag.textContent = `✓ ${who} · ${date}`;
+      meta.prepend(tag);
+    }
+    grid.appendChild(card);
+  });
+}
+
+// === RENDER COMPLETED (KID) ===
+function renderKidCompleted() {
+  const grid = document.getElementById('kid-completed-grid');
+  if (!grid) return;
+  const entries = Object.entries(_completed)
+    .filter(([,a]) => a.completedBy === currentUser)
+    .sort((a,b) => (b[1].completedAt||0) - (a[1].completedAt||0));
+  grid.innerHTML = '';
+  if (entries.length === 0) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🌟</div><p>Nothing completed yet — go do something fun!</p></div>';
+    return;
+  }
+  entries.forEach(([id, act]) => {
+    const card = buildActivityCard(id, act, false);
+    // Replace done button with completion date
+    const footer = card.querySelector('.kid-card-footer');
+    if (footer) {
+      const date = act.completedAt ? new Date(act.completedAt).toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '';
+      footer.innerHTML = `<span style="font-family:'Patrick Hand',cursive;font-size:0.8rem;color:var(--sage);padding:6px 0;">✓ Completed ${date}</span>`;
+    }
+    grid.appendChild(card);
+  });
 }
 
 // === RENDER ACTIVITIES (MOM) ===
@@ -1317,23 +1488,58 @@ function buildActivityCard(id, act, isMom) {
     </div>
     <div class="card-body">
       <div class="card-title">${escHtml(act.title)}</div>
-      ${act.desc ? `<div class="card-desc">${escHtml(act.desc)}</div>` : ''}
+      ${act.desc ? `<div class="card-desc">${linkify(act.desc)}</div>` : ''}
       <div class="card-meta">
+        ${act.freq === 'onetime' ? '<span class="meta-tag badge-onetime">✨ One-time</span>' : '<span class="meta-tag badge-repeating">🔁 Repeating</span>'}
         ${act.time ? `<span class="meta-tag">⏱ ${escHtml(act.time)}</span>` : ''}
         ${act.materials ? `<span class="meta-tag">🧺 ${escHtml(act.materials)}</span>` : ''}
       </div>
-      ${act.notes ? `<div class="card-desc" style="font-style:italic;color:#7a6a58;border-top:1px dashed var(--kraft);padding-top:8px;margin-top:4px;">${escHtml(act.notes)}</div>` : ''}
+      ${act.notes ? `<div class="card-desc" style="font-style:italic;color:#7a6a58;border-top:1px dashed var(--kraft);padding-top:8px;margin-top:4px;">${linkify(act.notes)}</div>` : ''}
     </div>
     ${isMom ? `
     <div class="card-footer">
       <span class="for-who">👥 ${whoLabel}</span>
       <button class="btn-small btn-assign" data-assign="${id}">📅 Assign</button>
       <button class="btn-small btn-delete" data-delete-act="${id}">✕</button>
-    </div>` : ''}
+    </div>` : `
+    <div class="kid-card-footer">
+      <button class="btn-done" data-done="${id}">☐ Mark Done</button>
+    </div>`}
   `;
   if (isMom) {
     card.querySelector('[data-assign]').addEventListener('click', () => openAssignModal(id));
     card.querySelector('[data-delete-act]').addEventListener('click', () => { deleteActivityFromFB(id); showToast('Activity removed'); });
+  } else {
+    const doneBtn = card.querySelector('[data-done]');
+    if (doneBtn) {
+      // Check if already marked done today (repeating only)
+      const doneKey = `ll_done_${currentUser}_${id}_${getTodayStr()}`;
+      if (localStorage.getItem(doneKey)) {
+        doneBtn.textContent = '✓ Done!';
+        doneBtn.classList.add('checked');
+      }
+      doneBtn.addEventListener('click', () => {
+        if (doneBtn.classList.contains('checked')) return;
+        const freq = act.freq || 'repeating';
+        if (freq === 'onetime') {
+          // Move to completed in Firebase, remove from market
+          doneBtn.textContent = '✓ Done!';
+          doneBtn.classList.add('checked');
+          card.style.transition = 'opacity 0.4s, transform 0.4s';
+          card.style.opacity = '0';
+          card.style.transform = 'scale(0.95)';
+          setTimeout(() => card.remove(), 400);
+          completeActivityToFB(id, currentUser);
+          showToast('Activity complete! 🌻');
+        } else {
+          // Mark done for today only — stays in market, resets tomorrow
+          localStorage.setItem(`ll_done_${currentUser}_${id}_${getTodayStr()}`, '1');
+          doneBtn.textContent = '✓ Done!';
+          doneBtn.classList.add('checked');
+          showToast('Nice work! 🌟');
+        }
+      });
+    }
   }
   return card;
 }
@@ -1374,6 +1580,7 @@ function wireButtons() {
   // Tabs
   document.getElementById('tab-ideas').addEventListener('click', () => switchTab('ideas'));
   document.getElementById('tab-activities').addEventListener('click', () => switchTab('activities'));
+  document.getElementById('tab-completed').addEventListener('click', () => switchTab('completed'));
 
   // Idea form
   document.getElementById('btn-add-idea').addEventListener('click', toggleIdeaForm);
