@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Living Lessons — Wade Classical</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Patrick+Hand&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --cream: #faf6f0;
+    --linen: #f2ead8;
+    --kraft: #e8d5b0;
+    --wood: #c4956a;
+    --wood-dark: #8b5e3c;
+    --chalkboard: #2d3b2a;
+    --chalk: #f5f0e8;
+    --gingham-blue: #a8c5d8;
+    --gingham-light: #d4e8f2;
+    --gingham-pale: #eaf4f9;
+    --sage: #7a9e7e;
+    --sage-light: #b8d4b8;
+    --dusty-rose: #d4a0a0;
+    --rose-light: #f0d8d8;
+    --sunflower: #e8c547;
+    --sunflower-light: #f5e48a;
+    --barn-red: #b85450;
+    --lavender: #c4b0d4;
+    --shadow: rgba(100, 70, 40, 0.15);
+    --shadow-deep: rgba(100, 70, 40, 0.3);
+    --ink: #2a1f14;
+    --ink-light: #5a4a38;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Lora', serif;
+    background-color: var(--cream);
+    min-height: 100vh;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* === GINGHAM BACKGROUND === */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(168,197,216,0.18) 28px, rgba(168,197,216,0.18) 30px),
+      repeating-linear-gradient(90deg, transparent, transparent 28px, rgba(168,197,216,0.18) 28px, rgba(168,197,216,0.18) 30px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* === HEADER BANNER === */
+  .market-banner {
+    position: relative;
+    background: var(--chalkboard);
+    padding: 18px 24px 14px;
+    text-align: center;
+    overflow: hidden;
+    z-index: 10;
+  }
+
+  .market-banner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 8px;
+    background: repeating-linear-gradient(90deg,
+      var(--gingham-blue) 0px, var(--gingham-blue) 16px,
+      var(--gingham-pale) 16px, var(--gingham-pale) 32px);
+  }
+
+  .market-banner::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 8px;
+    background: repeating-linear-gradient(90deg,
+      var(--gingham-blue) 0px, var(--gingham-blue) 16px,
+      var(--gingham-pale) 16px, var(--gingham-pale) 32px);
+  }
+
+  .banner-title {
+    font-family: 'Caveat', cursive;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--chalk);
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.4);
+    line-height: 1;
+  }
+
+  .banner-sub {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.85rem;
+    color: var(--gingham-light);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* Bunting flags */
+  .bunting {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 6px;
+    position: relative;
+  }
+
+  .bunting::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    height: 1px;
+    background: var(--gingham-blue);
+    opacity: 0.6;
+  }
+
+  .flag {
+    width: 0;
+    height: 0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 20px solid var(--gingham-blue);
+    margin: 0 2px;
+    opacity: 0.8;
+  }
+
+  .flag:nth-child(2n) { border-top-color: var(--gingham-pale); }
+  .flag:nth-child(3n) { border-top-color: var(--sage-light); }
+  .flag:nth-child(4n) { border-top-color: var(--rose-light); }
+  .flag:nth-child(5n) { border-top-color: var(--sunflower-light); }
+
+  /* === USER SWITCHER === */
+  .user-bar {
+    background: var(--wood);
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 2px 8px var(--shadow-deep);
+  }
+
+  .user-label {
+    font-family: 'Patrick Hand', cursive;
+    color: var(--chalk);
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .user-btn {
+    font-family: 'Caveat', cursive;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 4px 14px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-radius: 20px;
+    cursor: pointer;
+    background: rgba(255,255,255,0.15);
+    color: var(--chalk);
+    transition: all 0.2s;
+  }
+
+  .user-btn:hover { background: rgba(255,255,255,0.3); }
+  .user-btn.active { background: rgba(255,255,255,0.9); color: var(--wood-dark); border-color: transparent; }
+
+  /* === MAIN LAYOUT === */
+  .app-body {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 16px 80px;
+  }
+
+  /* === TAB NAV === */
+  .tab-nav {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+    background: var(--wood-dark);
+    border-radius: 14px;
+    padding: 6px;
+    box-shadow: 0 3px 12px var(--shadow-deep);
+  }
+
+  .tab-btn {
+    flex: 1;
+    font-family: 'Caveat', cursive;
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 10px 8px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background: transparent;
+    color: rgba(245,240,232,0.6);
+    transition: all 0.25s;
+    letter-spacing: 0.5px;
+  }
+
+  .tab-btn.active {
+    background: var(--cream);
+    color: var(--wood-dark);
+    box-shadow: 0 2px 8px var(--shadow-deep);
+  }
+
+  .tab-btn:hover:not(.active) { color: var(--chalk); }
+
+  /* === SECTION HEADERS (chalkboard style) === */
+  .chalk-header {
+    background: var(--chalkboard);
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 3px 3px 0 var(--wood-dark);
+  }
+
+  .chalk-header h2 {
+    font-family: 'Caveat', cursive;
+    font-size: 1.6rem;
+    color: var(--chalk);
+    font-weight: 700;
+  }
+
+  .chalk-header p {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.8rem;
+    color: rgba(245,240,232,0.6);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  /* === BUTTONS === */
+  .btn-primary {
+    font-family: 'Caveat', cursive;
+    font-size: 1.05rem;
+    font-weight: 700;
+    padding: 9px 20px;
+    background: var(--sage);
+    color: white;
+    border: none;
+    border-radius: 22px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #5a7a5e;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 0 #5a7a5e; }
+  .btn-primary:active { transform: translateY(1px); box-shadow: 0 1px 0 #5a7a5e; }
+
+  .btn-small {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.8rem;
+    padding: 5px 12px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-assign { background: var(--gingham-blue); color: var(--ink); }
+  .btn-assign:hover { background: var(--gingham-light); }
+  .btn-edit { background: var(--sunflower-light); color: var(--ink); }
+  .btn-edit:hover { background: var(--sunflower); }
+  .btn-delete { background: var(--rose-light); color: var(--barn-red); }
+  .btn-delete:hover { background: var(--dusty-rose); color: white; }
+
+  /* === IDEAS BOARD === */
+  .ideas-board {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .idea-card {
+    background: var(--sunflower-light);
+    border-radius: 4px;
+    padding: 14px;
+    box-shadow: 3px 4px 0 rgba(100,70,40,0.2), 0 1px 3px var(--shadow);
+    position: relative;
+    transform: rotate(-0.5deg);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: default;
+  }
+
+  .idea-card:nth-child(2n) { transform: rotate(0.8deg); background: var(--gingham-pale); }
+  .idea-card:nth-child(3n) { transform: rotate(-1.2deg); background: var(--rose-light); }
+  .idea-card:nth-child(4n) { transform: rotate(0.4deg); background: var(--sage-light); }
+
+  .idea-card:hover { transform: rotate(0deg) scale(1.02); box-shadow: 5px 6px 0 rgba(100,70,40,0.2); z-index: 2; }
+
+  .idea-title {
+    font-family: 'Caveat', cursive;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+    line-height: 1.2;
+  }
+
+  .idea-notes {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    line-height: 1.4;
+  }
+
+  .idea-date {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.7rem;
+    color: rgba(90,74,56,0.5);
+    margin-top: 8px;
+  }
+
+  .idea-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  /* Pin decoration */
+  .idea-card::before {
+    content: '📌';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.1rem;
+  }
+
+  /* === QUICK ADD IDEA === */
+  .quick-add-idea {
+    background: var(--linen);
+    border: 2px dashed var(--wood);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .quick-add-idea h3 {
+    font-family: 'Caveat', cursive;
+    font-size: 1.2rem;
+    color: var(--wood-dark);
+    margin-bottom: 12px;
+  }
+
+  .idea-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* === INPUTS === */
+  input[type="text"], input[type="date"], textarea, select {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.95rem;
+    padding: 9px 12px;
+    border: 2px solid var(--kraft);
+    border-radius: 8px;
+    background: var(--cream);
+    color: var(--ink);
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input:focus, textarea:focus, select:focus { border-color: var(--gingham-blue); }
+  textarea { resize: vertical; min-height: 70px; }
+
+  .form-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .form-row > * { flex: 1; min-width: 140px; }
+
+  label {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.8rem;
+    color: var(--ink-light);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 3px;
+  }
+
+  .field-group { display: flex; flex-direction: column; }
+
+  /* === SUBJECT FILTER === */
+  .subject-filter {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+
+  .subject-chip {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.8rem;
+    padding: 5px 12px;
+    border-radius: 14px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--linen);
+    color: var(--ink-light);
+  }
+
+  .subject-chip.active {
+    color: white;
+    border-color: transparent;
+  }
+
+  .subject-chip[data-subject="Math"].active { background: var(--sage); }
+  .subject-chip[data-subject="Reading"].active { background: #8b6bb1; }
+  .subject-chip[data-subject="Science"].active { background: #4a8a6a; }
+  .subject-chip[data-subject="History"].active { background: #a0702a; }
+  .subject-chip[data-subject="Art"].active { background: var(--dusty-rose); color: var(--ink); }
+  .subject-chip[data-subject="PE"].active { background: var(--barn-red); }
+  .subject-chip[data-subject="Life Skills"].active { background: #6a7a9a; }
+  .subject-chip[data-subject="Field Trip"].active { background: #4a8aaa; }
+  .subject-chip[data-subject="Movie"].active { background: #6a4a8a; }
+  .subject-chip[data-subject="Other"].active { background: var(--wood); }
+  .subject-chip[data-subject="All"].active { background: var(--chalkboard); }
+
+  /* === ACTIVITY CARDS (market booth style) === */
+  .activities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+  }
+
+  .activity-card {
+    background: var(--cream);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px var(--shadow), 0 1px 3px var(--shadow);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid rgba(196,149,106,0.3);
+  }
+
+  .activity-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px var(--shadow-deep); }
+
+  .card-booth-top {
+    height: 10px;
+    background: repeating-linear-gradient(90deg,
+      var(--gingham-blue) 0px, var(--gingham-blue) 12px,
+      var(--gingham-pale) 12px, var(--gingham-pale) 24px);
+  }
+
+  .card-subject-band {
+    padding: 6px 14px;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-subject-band[data-subject="Math"] { background: var(--sage); }
+  .card-subject-band[data-subject="Reading"] { background: #8b6bb1; }
+  .card-subject-band[data-subject="Science"] { background: #4a8a6a; }
+  .card-subject-band[data-subject="History"] { background: #a0702a; }
+  .card-subject-band[data-subject="Art"] { background: var(--dusty-rose); color: var(--ink); }
+  .card-subject-band[data-subject="PE"] { background: var(--barn-red); }
+  .card-subject-band[data-subject="Life Skills"] { background: #6a7a9a; }
+  .card-subject-band[data-subject="Field Trip"] { background: #4a8aaa; }
+  .card-subject-band[data-subject="Movie"] { background: #6a4a8a; }
+  .card-subject-band[data-subject="Other"] { background: var(--wood); }
+
+  .card-body { padding: 14px 14px 10px; }
+
+  .card-title {
+    font-family: 'Caveat', cursive;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+    line-height: 1.2;
+  }
+
+  .card-desc {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.88rem;
+    color: var(--ink-light);
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  .card-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+
+  .meta-tag {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.75rem;
+    padding: 3px 9px;
+    border-radius: 10px;
+    background: var(--linen);
+    color: var(--ink-light);
+    border: 1px solid var(--kraft);
+  }
+
+  .card-footer {
+    border-top: 1px dashed var(--kraft);
+    padding: 10px 14px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .for-who {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.75rem;
+    color: var(--ink-light);
+    margin-right: auto;
+  }
+
+  /* === ADD ACTIVITY FORM === */
+  .add-activity-form {
+    background: var(--linen);
+    border: 2px solid var(--kraft);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.04);
+    display: none;
+  }
+
+  .add-activity-form.open { display: block; }
+
+  .add-activity-form h3 {
+    font-family: 'Caveat', cursive;
+    font-size: 1.4rem;
+    color: var(--wood-dark);
+    margin-bottom: 16px;
+  }
+
+  /* === ASSIGN MODAL === */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(42,31,20,0.6);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--cream);
+    border-radius: 16px;
+    padding: 28px;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    border: 3px solid var(--kraft);
+    position: relative;
+  }
+
+  .modal::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 8px;
+    background: repeating-linear-gradient(90deg,
+      var(--gingham-blue) 0px, var(--gingham-blue) 12px,
+      var(--gingham-pale) 12px, var(--gingham-pale) 24px);
+    border-radius: 13px 13px 0 0;
+  }
+
+  .modal h3 {
+    font-family: 'Caveat', cursive;
+    font-size: 1.5rem;
+    color: var(--ink);
+    margin-bottom: 16px;
+    margin-top: 4px;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: flex-end;
+  }
+
+  .btn-cancel {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    background: var(--linen);
+    color: var(--ink-light);
+    border: 1px solid var(--kraft);
+    border-radius: 20px;
+    cursor: pointer;
+  }
+
+  /* === KID VIEW === */
+  .kid-view { display: none; }
+
+  .today-assigned {
+    background: var(--chalkboard);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .today-assigned::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: repeating-linear-gradient(90deg,
+      var(--gingham-blue) 0, var(--gingham-blue) 12px,
+      var(--gingham-pale) 12px, var(--gingham-pale) 24px);
+  }
+
+  .today-label {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gingham-light);
+    margin-bottom: 8px;
+  }
+
+  .today-title {
+    font-family: 'Caveat', cursive;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--chalk);
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+
+  .today-desc {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.9rem;
+    color: rgba(245,240,232,0.8);
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  .today-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .today-meta-tag {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.15);
+    color: var(--gingham-light);
+  }
+
+  .none-assigned {
+    font-family: 'Caveat', cursive;
+    font-size: 1.3rem;
+    color: rgba(245,240,232,0.6);
+    text-align: center;
+    padding: 10px;
+  }
+
+  .browse-header {
+    font-family: 'Caveat', cursive;
+    font-size: 1.4rem;
+    color: var(--wood-dark);
+    margin-bottom: 14px;
+    padding-left: 4px;
+    border-left: 4px solid var(--gingham-blue);
+    padding-left: 10px;
+  }
+
+  /* === EMPTY STATES === */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--ink-light);
+  }
+
+  .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .empty-state p { font-family: 'Patrick Hand', cursive; font-size: 1rem; }
+
+  /* === TOAST === */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--chalkboard);
+    color: var(--chalk);
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.95rem;
+    padding: 12px 24px;
+    border-radius: 24px;
+    z-index: 200;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    white-space: nowrap;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* === SECTION DIVIDER === */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0 18px;
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--kraft);
+  }
+
+  .divider span {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.75rem;
+    color: var(--wood);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* === PROMOTE BUTTON === */
+  .btn-promote {
+    background: var(--lavender);
+    color: var(--ink);
+  }
+  .btn-promote:hover { background: #b0a0c4; }
+
+  /* === SCROLLBAR === */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--linen); }
+  ::-webkit-scrollbar-thumb { background: var(--wood); border-radius: 4px; }
+
+  @media (max-width: 600px) {
+    .banner-title { font-size: 1.8rem; }
+    .activities-grid { grid-template-columns: 1fr; }
+    .form-row { flex-direction: column; }
+    .form-row > * { min-width: unset; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="market-banner">
+  <div class="bunting">
+    <div class="flag"></div><div class="flag"></div><div class="flag"></div>
+    <div class="flag"></div><div class="flag"></div><div class="flag"></div>
+    <div class="flag"></div><div class="flag"></div><div class="flag"></div>
+    <div class="flag"></div><div class="flag"></div><div class="flag"></div>
+  </div>
+  <div class="banner-title">🌻 Living Lessons</div>
+  <div class="banner-sub">Wade Classical · Hands-On Learning</div>
+</div>
+
+<!-- USER BAR -->
+<div class="user-bar">
+  <span class="user-label">Viewing as:</span>
+  <button class="user-btn active" id="btn-amanda">Amanda 🌸</button>
+  <button class="user-btn" id="btn-ryder">Ryder</button>
+  <button class="user-btn" id="btn-hadley">Hadley</button>
+  <button class="user-btn" id="btn-audrey">Audrey 🐱</button>
+</div>
+
+<!-- MAIN APP -->
+<div class="app-body">
+
+  <!-- MOM VIEW -->
+  <div id="mom-view">
+    <div class="tab-nav">
+      <button class="tab-btn active" id="tab-ideas">💡 Ideas</button>
+      <button class="tab-btn" id="tab-activities">🛍️ Activities</button>
+    </div>
+
+    <!-- IDEAS TAB -->
+    <div id="panel-ideas">
+      <div class="chalk-header">
+        <div>
+          <h2>✏️ Idea Board</h2>
+          <p>Quick captures — things to develop later</p>
+        </div>
+        <button class="btn-primary" id="btn-add-idea">+ Add Idea</button>
+      </div>
+
+      <!-- Quick add idea -->
+      <div class="quick-add-idea" id="idea-form">
+        <h3>📌 Capture an Idea</h3>
+        <div class="idea-inputs">
+          <div class="field-group">
+            <label>Idea Title *</label>
+            <input type="text" id="idea-title-input" placeholder="What's the idea?" />
+          </div>
+          <div class="field-group">
+            <label>Notes (optional)</label>
+            <textarea id="idea-notes-input" placeholder="Any details, inspiration, materials..."></textarea>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button class="btn-cancel">Cancel</button>
+            <button class="btn-primary" id="btn-pin-idea">Pin It!</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ideas-board" id="ideas-board">
+        <div class="empty-state" id="ideas-empty" style="grid-column:1/-1">
+          <div class="empty-icon">💡</div>
+          <p>No ideas yet — add your first one above!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIVITIES TAB -->
+    <div id="panel-activities" style="display:none;">
+      <div class="chalk-header">
+        <div>
+          <h2>🛍️ Activity Market</h2>
+          <p>Developed lessons ready to assign</p>
+        </div>
+        <button class="btn-primary" id="btn-add-activity">+ New Activity</button>
+      </div>
+
+      <!-- Add Activity Form -->
+      <div class="add-activity-form" id="activity-form">
+        <h3>🌻 New Activity</h3>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="form-row">
+            <div class="field-group">
+              <label>Title *</label>
+              <input type="text" id="act-title" placeholder="Activity name" />
+            </div>
+            <div class="field-group">
+              <label>Subject *</label>
+              <select id="act-subject">
+                <option value="">Choose subject...</option>
+                <option>Math</option>
+                <option>Reading</option>
+                <option>Science</option>
+                <option>History</option>
+                <option>Art</option>
+                <option>PE</option>
+                <option>Life Skills</option>
+                <option>Field Trip</option>
+                <option>Movie</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Description</label>
+            <textarea id="act-desc" placeholder="What will they do? What's the goal?"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="field-group">
+              <label>Materials</label>
+              <input type="text" id="act-materials" placeholder="Cards, balls, pencils..." />
+            </div>
+            <div class="field-group">
+              <label>Time Estimate</label>
+              <input type="text" id="act-time" placeholder="~30 min, 1 hour..." />
+            </div>
+          </div>
+          <div class="field-group">
+            <label>For Who?</label>
+            <select id="act-who">
+              <option value="both">Both kids</option>
+              <option value="ryder">Ryder only</option>
+              <option value="hadley">Hadley only</option>
+              <option value="all">Everyone</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Notes / Instructions</label>
+            <textarea id="act-notes" placeholder="How to run it, tips, variations..."></textarea>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px;">
+            <button class="btn-cancel">Cancel</button>
+            <button class="btn-primary" id="btn-save-activity">Add to Market 🌻</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subject filter -->
+      <div class="subject-filter" id="subject-filter">
+        <button class="subject-chip active" data-subject="All">All</button>
+        <button class="subject-chip" data-subject="Math">🔢 Math</button>
+        <button class="subject-chip" data-subject="Reading">📚 Reading</button>
+        <button class="subject-chip" data-subject="Science">🔬 Science</button>
+        <button class="subject-chip" data-subject="History">🏛️ History</button>
+        <button class="subject-chip" data-subject="Art">🎨 Art</button>
+        <button class="subject-chip" data-subject="PE">⚾ PE</button>
+        <button class="subject-chip" data-subject="Life Skills">🌿 Life Skills</button>
+        <button class="subject-chip" data-subject="Field Trip">🗺️ Field Trip</button>
+        <button class="subject-chip" data-subject="Movie">🎬 Movie</button>
+        <button class="subject-chip" data-subject="Other">✨ Other</button>
+      </div>
+
+      <div class="activities-grid" id="activities-grid">
+        <div class="empty-state" id="activities-empty" style="grid-column:1/-1">
+          <div class="empty-icon">🛍️</div>
+          <p>No activities yet — add your first one above!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KID VIEW -->
+  <div id="kid-view" class="kid-view">
+    <div class="today-assigned" id="today-assigned-section">
+      <div class="today-label">📅 Today's Living Lesson</div>
+      <div id="today-content">
+        <div class="none-assigned">No lesson assigned for today ✨</div>
+      </div>
+    </div>
+
+    <div class="browse-header">🌸 All Activities for You</div>
+
+    <div class="subject-filter" id="kid-subject-filter">
+      <button class="subject-chip active" data-subject="All">All</button>
+      <button class="subject-chip" data-subject="Math">🔢 Math</button>
+      <button class="subject-chip" data-subject="Reading">📚 Reading</button>
+      <button class="subject-chip" data-subject="Science">🔬 Science</button>
+      <button class="subject-chip" data-subject="History">🏛️ History</button>
+      <button class="subject-chip" data-subject="Art">🎨 Art</button>
+      <button class="subject-chip" data-subject="PE">⚾ PE</button>
+      <button class="subject-chip" data-subject="Life Skills">🌿 Life Skills</button>
+      <button class="subject-chip" data-subject="Field Trip">🗺️ Field Trip</button>
+      <button class="subject-chip" data-subject="Movie">🎬 Movie</button>
+      <button class="subject-chip" data-subject="Other">✨ Other</button>
+    </div>
+
+    <div class="activities-grid" id="kid-activities-grid">
+      <div class="empty-state" style="grid-column:1/-1">
+        <div class="empty-icon">🌻</div>
+        <p>No activities here yet!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ASSIGN MODAL -->
+<div class="modal-overlay" id="assign-modal">
+  <div class="modal">
+    <h3>📅 Assign to Planner</h3>
+    <input type="hidden" id="assign-activity-id" />
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="field-group">
+        <label>Assign to</label>
+        <select id="assign-who">
+          <option value="ryder">Ryder</option>
+          <option value="hadley">Hadley</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Date</label>
+        <input type="date" id="assign-date" />
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel">Cancel</button>
+      <button class="btn-primary" id="btn-confirm-assign">Assign ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, set, get, push, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyBsjx3JKjCQOMuus07MSoj3o-Vu9eRW6zc",
+  authDomain: "wade-classical.firebaseapp.com",
+  databaseURL: "https://wade-classical-default-rtdb.firebaseio.com",
+  projectId: "wade-classical"
+});
+
+const db = getDatabase(app);
+
+// === STATE ===
+let currentUser = 'amanda';
+let currentTab = 'ideas';
+let currentSubjectFilter = 'All';
+let kidSubjectFilter = 'All';
+let _ideas = {};
+let _activities = {};
+let ideaFormOpen = false;
+let activityFormOpen = false;
+
+// === URL PARAMS ===
+const urlParams = new URLSearchParams(window.location.search);
+const urlUser = urlParams.get('user');
+if (urlUser && ['ryder','hadley','audrey','amanda'].includes(urlUser)) {
+  currentUser = urlUser;
+}
+
+// === HELPERS ===
+function getTodayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// === FIREBASE ===
+async function loadAll() {
+  await loadIdeas();
+  await loadActivities();
+}
+
+async function loadIdeas() {
+  const snap = await get(ref(db, 'living-lessons/ideas'));
+  _ideas = snap.val() || {};
+  renderIdeas();
+}
+
+async function loadActivities() {
+  const snap = await get(ref(db, 'living-lessons/activities'));
+  _activities = snap.val() || {};
+  renderActivities();
+  renderKidActivities();
+  renderTodayAssigned();
+}
+
+async function saveIdeaToFB(idea) {
+  const newRef = push(ref(db, 'living-lessons/ideas'));
+  await set(newRef, idea);
+  await loadIdeas();
+}
+
+async function deleteIdeaFromFB(id) {
+  await remove(ref(db, `living-lessons/ideas/${id}`));
+  await loadIdeas();
+}
+
+async function saveActivityToFB(activity) {
+  const newRef = push(ref(db, 'living-lessons/activities'));
+  await set(newRef, activity);
+  await loadActivities();
+}
+
+async function deleteActivityFromFB(id) {
+  await remove(ref(db, `living-lessons/activities/${id}`));
+  await loadActivities();
+}
+
+async function assignActivityToPlanner(activityId, who, date) {
+  const activity = _activities[activityId];
+  if (!activity) return;
+  const taskKey = `living-lesson-${activityId}`;
+  const taskData = {
+    id: taskKey,
+    text: `Living Lesson: ${activity.title}`,
+    subject: activity.subject || 'Living Lessons',
+    type: 'living-lesson',
+    activityId: activityId,
+    completed: false,
+    date: date,
+    addedAt: Date.now()
+  };
+  await set(ref(db, `planners/${who}/tasks/${date}/${taskKey}`), taskData);
+  showToast(`Assigned to ${who}'s planner for ${date} ✓`);
+}
+
+async function checkTodayAssignment(date) {
+  const section = document.getElementById('today-content');
+  if (!section) return;
+  try {
+    const snap = await get(ref(db, `planners/${currentUser}/tasks/${date}`));
+    const tasks = snap.val() || {};
+    const livingTasks = Object.values(tasks).filter(t => t && t.type === 'living-lesson');
+    if (livingTasks.length === 0) {
+      section.innerHTML = '<div class="none-assigned">No lesson assigned for today ✨</div>';
+      return;
+    }
+    const task = livingTasks[0];
+    const act = _activities[task.activityId] || {};
+    section.innerHTML = `
+      <div class="today-title">${escHtml(act.title || task.text || 'Living Lesson')}</div>
+      ${act.desc ? `<div class="today-desc">${escHtml(act.desc)}</div>` : ''}
+      <div class="today-meta">
+        ${act.subject ? `<span class="today-meta-tag">📚 ${escHtml(act.subject)}</span>` : ''}
+        ${act.time ? `<span class="today-meta-tag">⏱ ${escHtml(act.time)}</span>` : ''}
+        ${act.materials ? `<span class="today-meta-tag">🧺 ${escHtml(act.materials)}</span>` : ''}
+      </div>
+      ${act.notes ? `<div class="today-desc" style="margin-top:10px;border-top:1px solid rgba(255,255,255,0.2);padding-top:10px;">📝 ${escHtml(act.notes)}</div>` : ''}
+    `;
+  } catch(e) {
+    console.log('Could not load today assignment:', e);
+  }
+}
+
+// === USER SWITCHING ===
+function switchUser(user) {
+  currentUser = user;
+  document.querySelectorAll('.user-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + user).classList.add('active');
+  if (user === 'amanda') {
+    document.getElementById('mom-view').style.display = 'block';
+    document.getElementById('kid-view').style.display = 'none';
+  } else {
+    document.getElementById('mom-view').style.display = 'none';
+    document.getElementById('kid-view').style.display = 'block';
+    renderKidActivities();
+    renderTodayAssigned();
+  }
+}
+
+// === TAB SWITCHING ===
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('panel-ideas').style.display = tab === 'ideas' ? 'block' : 'none';
+  document.getElementById('panel-activities').style.display = tab === 'activities' ? 'block' : 'none';
+}
+
+// === IDEA FORM ===
+function toggleIdeaForm() {
+  ideaFormOpen = !ideaFormOpen;
+  document.getElementById('idea-form').style.display = ideaFormOpen ? 'block' : 'none';
+  if (!ideaFormOpen) {
+    document.getElementById('idea-title-input').value = '';
+    document.getElementById('idea-notes-input').value = '';
+  }
+}
+
+function saveIdea() {
+  const title = document.getElementById('idea-title-input').value.trim();
+  if (!title) { showToast('Please enter an idea title!'); return; }
+  const idea = {
+    title,
+    notes: document.getElementById('idea-notes-input').value.trim(),
+    createdAt: Date.now()
+  };
+  saveIdeaToFB(idea);
+  toggleIdeaForm();
+  showToast('Idea pinned! 📌');
+}
+
+// === RENDER IDEAS ===
+function renderIdeas() {
+  const board = document.getElementById('ideas-board');
+  const empty = document.getElementById('ideas-empty');
+  const entries = Object.entries(_ideas);
+  board.querySelectorAll('.idea-card').forEach(c => c.remove());
+  if (entries.length === 0) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  entries.sort((a,b) => (b[1].createdAt||0) - (a[1].createdAt||0));
+  entries.forEach(([id, idea]) => {
+    const card = document.createElement('div');
+    card.className = 'idea-card';
+    const date = idea.createdAt ? new Date(idea.createdAt).toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '';
+    card.innerHTML = `
+      <div class="idea-title">${escHtml(idea.title)}</div>
+      ${idea.notes ? `<div class="idea-notes">${escHtml(idea.notes)}</div>` : ''}
+      <div class="idea-date">${date}</div>
+      <div class="idea-actions">
+        <button class="btn-small btn-promote" data-id="${id}">→ Develop</button>
+        <button class="btn-small btn-delete" data-delete-idea="${id}">Delete</button>
+      </div>
+    `;
+    card.querySelector('[data-id]').addEventListener('click', () => promoteIdeaToActivity(id));
+    card.querySelector('[data-delete-idea]').addEventListener('click', () => { deleteIdeaFromFB(id); showToast('Idea removed'); });
+    board.appendChild(card);
+  });
+}
+
+function promoteIdeaToActivity(id) {
+  const idea = _ideas[id];
+  if (!idea) return;
+  document.getElementById('act-title').value = idea.title || '';
+  document.getElementById('act-notes').value = idea.notes || '';
+  switchTab('activities');
+  if (!activityFormOpen) toggleActivityForm();
+  showToast('Idea loaded into activity form — fill in the rest!');
+}
+
+// === ACTIVITY FORM ===
+function toggleActivityForm(forceOpen) {
+  if (forceOpen === 'open' && activityFormOpen) return;
+  activityFormOpen = !activityFormOpen;
+  const form = document.getElementById('activity-form');
+  form.classList.toggle('open', activityFormOpen);
+  if (!activityFormOpen) clearActivityForm();
+}
+
+function clearActivityForm() {
+  ['act-title','act-desc','act-materials','act-time','act-notes'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('act-subject').value = '';
+  document.getElementById('act-who').value = 'both';
+}
+
+function saveActivity() {
+  const title = document.getElementById('act-title').value.trim();
+  const subject = document.getElementById('act-subject').value;
+  if (!title) { showToast('Please enter a title!'); return; }
+  if (!subject) { showToast('Please choose a subject!'); return; }
+  const activity = {
+    title, subject,
+    desc: document.getElementById('act-desc').value.trim(),
+    materials: document.getElementById('act-materials').value.trim(),
+    time: document.getElementById('act-time').value.trim(),
+    who: document.getElementById('act-who').value,
+    notes: document.getElementById('act-notes').value.trim(),
+    createdAt: Date.now()
+  };
+  saveActivityToFB(activity);
+  toggleActivityForm();
+  showToast('Activity added to the market! 🌻');
+}
+
+// === SUBJECT FILTERS ===
+function filterSubject(subject) {
+  currentSubjectFilter = subject;
+  document.querySelectorAll('#subject-filter .subject-chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.subject === subject);
+  });
+  renderActivities();
+}
+
+function filterKidSubject(subject) {
+  kidSubjectFilter = subject;
+  document.querySelectorAll('#kid-subject-filter .subject-chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.subject === subject);
+  });
+  renderKidActivities();
+}
+
+// === RENDER ACTIVITIES (MOM) ===
+function renderActivities() {
+  const grid = document.getElementById('activities-grid');
+  const empty = document.getElementById('activities-empty');
+  let entries = Object.entries(_activities);
+  if (currentSubjectFilter !== 'All') entries = entries.filter(([,a]) => a.subject === currentSubjectFilter);
+  entries.sort((a,b) => (b[1].createdAt||0) - (a[1].createdAt||0));
+  grid.querySelectorAll('.activity-card').forEach(c => c.remove());
+  if (entries.length === 0) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  entries.forEach(([id, act]) => grid.appendChild(buildActivityCard(id, act, true)));
+}
+
+// === RENDER ACTIVITIES (KID) ===
+function renderKidActivities() {
+  const grid = document.getElementById('kid-activities-grid');
+  let entries = Object.entries(_activities);
+  if (currentUser !== 'amanda') {
+    entries = entries.filter(([,a]) => a.who === 'all' || a.who === 'both' || a.who === currentUser);
+  }
+  if (kidSubjectFilter !== 'All') entries = entries.filter(([,a]) => a.subject === kidSubjectFilter);
+  entries.sort((a,b) => (b[1].createdAt||0) - (a[1].createdAt||0));
+  grid.innerHTML = '';
+  if (entries.length === 0) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🌻</div><p>No activities here yet!</p></div>';
+    return;
+  }
+  entries.forEach(([id, act]) => grid.appendChild(buildActivityCard(id, act, false)));
+}
+
+// === BUILD ACTIVITY CARD ===
+function buildActivityCard(id, act, isMom) {
+  const card = document.createElement('div');
+  card.className = 'activity-card';
+  const whoLabel = { both: 'Both kids', ryder: 'Ryder', hadley: 'Hadley', all: 'Everyone' }[act.who] || act.who;
+  card.innerHTML = `
+    <div class="card-booth-top"></div>
+    <div class="card-subject-band" data-subject="${escHtml(act.subject||'')}">
+      ${escHtml(act.subject||'General')}
+      ${isMom ? `<span style="opacity:0.7;font-size:0.7rem;">${whoLabel}</span>` : ''}
+    </div>
+    <div class="card-body">
+      <div class="card-title">${escHtml(act.title)}</div>
+      ${act.desc ? `<div class="card-desc">${escHtml(act.desc)}</div>` : ''}
+      <div class="card-meta">
+        ${act.time ? `<span class="meta-tag">⏱ ${escHtml(act.time)}</span>` : ''}
+        ${act.materials ? `<span class="meta-tag">🧺 ${escHtml(act.materials)}</span>` : ''}
+      </div>
+      ${act.notes ? `<div class="card-desc" style="font-style:italic;color:#7a6a58;border-top:1px dashed var(--kraft);padding-top:8px;margin-top:4px;">${escHtml(act.notes)}</div>` : ''}
+    </div>
+    ${isMom ? `
+    <div class="card-footer">
+      <span class="for-who">👥 ${whoLabel}</span>
+      <button class="btn-small btn-assign" data-assign="${id}">📅 Assign</button>
+      <button class="btn-small btn-delete" data-delete-act="${id}">✕</button>
+    </div>` : ''}
+  `;
+  if (isMom) {
+    card.querySelector('[data-assign]').addEventListener('click', () => openAssignModal(id));
+    card.querySelector('[data-delete-act]').addEventListener('click', () => { deleteActivityFromFB(id); showToast('Activity removed'); });
+  }
+  return card;
+}
+
+// === TODAY'S ASSIGNED ===
+function renderTodayAssigned() {
+  checkTodayAssignment(getTodayStr());
+}
+
+// === ASSIGN MODAL ===
+function openAssignModal(activityId) {
+  document.getElementById('assign-activity-id').value = activityId;
+  document.getElementById('assign-date').value = getTodayStr();
+  document.getElementById('assign-modal').classList.add('open');
+}
+
+function closeAssignModal() {
+  document.getElementById('assign-modal').classList.remove('open');
+}
+
+function confirmAssign() {
+  const actId = document.getElementById('assign-activity-id').value;
+  const who = document.getElementById('assign-who').value;
+  const date = document.getElementById('assign-date').value;
+  if (!date) { showToast('Please pick a date!'); return; }
+  assignActivityToPlanner(actId, who, date);
+  closeAssignModal();
+}
+
+// === WIRE UP ALL BUTTONS VIA addEventListener ===
+function wireButtons() {
+  // User switcher
+  document.getElementById('btn-amanda').addEventListener('click', () => switchUser('amanda'));
+  document.getElementById('btn-ryder').addEventListener('click', () => switchUser('ryder'));
+  document.getElementById('btn-hadley').addEventListener('click', () => switchUser('hadley'));
+  document.getElementById('btn-audrey').addEventListener('click', () => switchUser('audrey'));
+
+  // Tabs
+  document.getElementById('tab-ideas').addEventListener('click', () => switchTab('ideas'));
+  document.getElementById('tab-activities').addEventListener('click', () => switchTab('activities'));
+
+  // Idea form
+  document.getElementById('btn-add-idea').addEventListener('click', toggleIdeaForm);
+  document.getElementById('btn-cancel-idea').addEventListener('click', toggleIdeaForm);
+  document.getElementById('btn-pin-idea').addEventListener('click', saveIdea);
+
+  // Activity form
+  document.getElementById('btn-add-activity').addEventListener('click', toggleActivityForm);
+  document.getElementById('btn-save-activity').addEventListener('click', saveActivity);
+
+  // Modal
+  document.getElementById('btn-confirm-assign').addEventListener('click', confirmAssign);
+  document.querySelector('#assign-modal .btn-cancel').addEventListener('click', closeAssignModal);
+  document.querySelector('#activity-form .btn-cancel').addEventListener('click', toggleActivityForm);
+
+  // Subject filter chips
+  document.querySelectorAll('#subject-filter .subject-chip').forEach(chip => {
+    chip.addEventListener('click', () => filterSubject(chip.dataset.subject));
+  });
+  document.querySelectorAll('#kid-subject-filter .subject-chip').forEach(chip => {
+    chip.addEventListener('click', () => filterKidSubject(chip.dataset.subject));
+  });
+}
+
+// === INIT ===
+document.addEventListener('DOMContentLoaded', () => {
+  wireButtons();
+  switchUser(currentUser);
+  loadAll();
+});
+</script>
+
+</body>
+</html>
