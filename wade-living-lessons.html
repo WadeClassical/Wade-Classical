@@ -819,7 +819,6 @@
   <button class="user-btn active" id="btn-amanda">Amanda 🌸</button>
   <button class="user-btn" id="btn-ryder">Ryder</button>
   <button class="user-btn" id="btn-hadley">Hadley</button>
-  <button class="user-btn" id="btn-audrey">Audrey 🐱</button>
 </div>
 
 <!-- MAIN APP -->
@@ -1098,7 +1097,7 @@ let activityFormOpen = false;
 // === URL PARAMS ===
 const urlParams = new URLSearchParams(window.location.search);
 const urlUser = urlParams.get('user');
-if (urlUser && ['ryder','hadley','audrey','amanda'].includes(urlUser)) {
+if (urlUser && ['ryder','hadley','amanda'].includes(urlUser)) {
   currentUser = urlUser;
 }
 
@@ -1216,7 +1215,7 @@ async function assignActivityToPlanner(activityId, who, date) {
     id: 'task_' + Date.now() + '_ll',
     name: activity.title,
     note: [activity.desc, activity.materials, activity.notes].filter(Boolean).join(' · ') || null,
-    app: 'wade-living-lessons.html',
+    app: 'Living Lessons',
     momFlag: true,
     recurring: null,
     date: date,
@@ -1622,7 +1621,6 @@ function wireButtons() {
   document.getElementById('btn-amanda').addEventListener('click', () => switchUser('amanda'));
   document.getElementById('btn-ryder').addEventListener('click', () => switchUser('ryder'));
   document.getElementById('btn-hadley').addEventListener('click', () => switchUser('hadley'));
-  document.getElementById('btn-audrey').addEventListener('click', () => switchUser('audrey'));
 
   // Tabs
   document.getElementById('tab-ideas').addEventListener('click', () => switchTab('ideas'));
