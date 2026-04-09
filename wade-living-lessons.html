@@ -1204,28 +1204,40 @@ async function loadCompleted() {
 async function assignActivityToPlanner(activityId, who, date) {
   const activity = _activities[activityId];
   if (!activity) return;
-  const taskKey = `living-lesson-${activityId}`;
-  const taskData = {
-    id: taskKey,
-    text: `Living Lesson: ${activity.title}`,
-    subject: activity.subject || 'Living Lessons',
-    type: 'living-lesson',
-    activityId: activityId,
-    completed: false,
+
+  // Read existing planner tasks array (same path/format as wade-planner.html)
+  const snap = await get(ref(db, `planner/tasks/${who}`));
+  let tasks = [];
+  const raw = snap.val();
+  if (raw) tasks = Array.isArray(raw) ? raw : Object.values(raw);
+
+  // Build a task in the same format the planner expects
+  const newTask = {
+    id: 'task_' + Date.now() + '_ll',
+    name: activity.title,
+    note: [activity.desc, activity.materials, activity.notes].filter(Boolean).join(' · ') || null,
+    app: 'wade-living-lessons.html',
+    momFlag: true,
+    recurring: null,
     date: date,
-    addedAt: Date.now()
+    order: tasks.length,
+    livingLessonId: activityId
   };
-  await set(ref(db, `planners/${who}/tasks/${date}/${taskKey}`), taskData);
-  showToast(`Assigned to ${who}'s planner for ${date} ✓`);
+
+  tasks.push(newTask);
+  await set(ref(db, `planner/tasks/${who}`), tasks);
+  showToast(`Added to ${who}'s planner for ${date} ✓`);
 }
 
 async function checkTodayAssignment(date) {
   const section = document.getElementById('today-content');
   if (!section) return;
   try {
-    const snap = await get(ref(db, `planners/${currentUser}/tasks/${date}`));
-    const tasks = snap.val() || {};
-    const livingTasks = Object.values(tasks).filter(t => t && t.type === 'living-lesson');
+    const snap = await get(ref(db, `planner/tasks/${currentUser}`));
+    const raw = snap.val();
+    let allTasks = [];
+    if (raw) allTasks = Array.isArray(raw) ? raw : Object.values(raw);
+    const livingTasks = allTasks.filter(t => t && t.livingLessonId && t.date === date);
     if (livingTasks.length === 0) {
       section.innerHTML = '<div class="none-assigned" style="font-family:Patrick Hand,cursive;font-size:1.1rem;color:var(--ink-light);text-align:center;padding:20px 0;">No lesson assigned for today ✨</div>';
       return;
@@ -1262,8 +1274,12 @@ async function checkTodayAssignment(date) {
         if (freq === 'onetime' && actId) {
           await completeActivityToFB(actId, currentUser);
         }
-        const taskPath = `planners/${currentUser}/tasks/${date}/${task.id}`;
-        await remove(ref(db, taskPath));
+        // Remove from planner tasks array
+        const taskSnap = await get(ref(db, `planner/tasks/${currentUser}`));
+        const taskRaw = taskSnap.val();
+        let allPlannerTasks = taskRaw ? (Array.isArray(taskRaw) ? taskRaw : Object.values(taskRaw)) : [];
+        allPlannerTasks = allPlannerTasks.filter(t => t.id !== task.id);
+        await set(ref(db, `planner/tasks/${currentUser}`), allPlannerTasks);
         section.innerHTML = '<div class="none-assigned" style="font-family:Patrick Hand,cursive;font-size:1.1rem;color:var(--ink-light);text-align:center;padding:20px 0;">All done for today! 🌟</div>';
         showToast('Great work! 🌟');
       });
