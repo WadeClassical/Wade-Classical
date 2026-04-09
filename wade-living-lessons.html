@@ -626,22 +626,7 @@
   .kid-view { display: none; }
 
   .today-assigned {
-    background: var(--chalkboard);
-    border-radius: 14px;
-    padding: 20px;
     margin-bottom: 24px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .today-assigned::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 6px;
-    background: repeating-linear-gradient(90deg,
-      var(--gingham-blue) 0, var(--gingham-blue) 12px,
-      var(--gingham-pale) 12px, var(--gingham-pale) 24px);
   }
 
   .today-label {
@@ -1009,7 +994,7 @@
 
     <!-- TODAY'S LESSON — always visible -->
     <div class="today-assigned" id="today-assigned-section">
-      <div class="today-label">📅 Today's Living Lesson</div>
+      <div style="font-family:'Caveat',cursive;font-size:1.1rem;color:var(--wood-dark);font-weight:700;margin-bottom:10px;letter-spacing:0.5px;">📅 Today's Living Lesson</div>
       <div id="today-content">
         <div class="none-assigned">No lesson assigned for today ✨</div>
       </div>
@@ -1241,60 +1226,49 @@ async function checkTodayAssignment(date) {
     const tasks = snap.val() || {};
     const livingTasks = Object.values(tasks).filter(t => t && t.type === 'living-lesson');
     if (livingTasks.length === 0) {
-      section.innerHTML = '<div class="none-assigned">No lesson assigned for today ✨</div>';
+      section.innerHTML = '<div class="none-assigned" style="font-family:Patrick Hand,cursive;font-size:1.1rem;color:var(--ink-light);text-align:center;padding:20px 0;">No lesson assigned for today ✨</div>';
       return;
     }
     const task = livingTasks[0];
     const actId = task.activityId;
-    const act = _activities[actId] || _completed[actId] || {};
+    const act = _activities[actId] || {};
     const doneKey = `ll_today_done_${currentUser}_${date}`;
     const alreadyDone = localStorage.getItem(doneKey);
 
     if (alreadyDone) {
-      section.innerHTML = '<div class="none-assigned">All done for today! 🌟</div>';
+      section.innerHTML = '<div class="none-assigned" style="font-family:Patrick Hand,cursive;font-size:1.1rem;color:var(--ink-light);text-align:center;padding:20px 0;">All done for today! 🌟</div>';
       return;
     }
 
-    section.innerHTML = `
-      <div class="today-title">${escHtml(act.title || task.text || 'Living Lesson')}</div>
-      ${act.desc ? `<div class="today-desc">${linkify(act.desc)}</div>` : ''}
-      <div class="today-meta">
-        ${act.subject ? `<span class="today-meta-tag">📚 ${escHtml(act.subject)}</span>` : ''}
-        ${act.time ? `<span class="today-meta-tag">⏱ ${escHtml(act.time)}</span>` : ''}
-        ${act.materials ? `<span class="today-meta-tag">🧺 ${escHtml(act.materials)}</span>` : ''}
-      </div>
-      ${act.notes ? `<div class="today-desc" style="margin-top:10px;border-top:1px solid rgba(255,255,255,0.2);padding-top:10px;">📝 ${linkify(act.notes)}</div>` : ''}
-      <div style="margin-top:14px;">
-        <button id="btn-today-done" style="
-          font-family:'Patrick Hand',cursive;
-          font-size:1rem;
-          padding:10px 22px;
-          border:none;
-          border-radius:22px;
-          background:rgba(255,255,255,0.2);
-          color:var(--chalk);
-          cursor:pointer;
-          border:2px solid rgba(255,255,255,0.4);
-          transition:all 0.2s;
-        ">☐ Mark Done</button>
-      </div>
-    `;
+    // Build the activity card, then inject a done button into its footer
+    section.innerHTML = '';
+    const card = buildActivityCard(actId, act, false);
 
-    document.getElementById('btn-today-done').addEventListener('click', async () => {
-      // Mark done for today
-      localStorage.setItem(doneKey, '1');
-      // If one-time, move to completed
-      const freq = act.freq || 'repeating';
-      if (freq === 'onetime' && actId) {
-        await completeActivityToFB(actId, currentUser);
-      }
-      // Remove task from planner
-      const taskPath = `planners/${currentUser}/tasks/${date}/${task.id}`;
-      await remove(ref(db, taskPath));
-      // Clear the today section
-      section.innerHTML = '<div class="none-assigned">All done for today! 🌟</div>';
-      showToast('Great work! 🌟');
-    });
+    // Replace the kid-card-footer done button with a bigger styled one
+    const footer = card.querySelector('.kid-card-footer');
+    if (footer) {
+      footer.innerHTML = '';
+      const doneBtn = document.createElement('button');
+      doneBtn.className = 'btn-done';
+      doneBtn.style.fontSize = '1rem';
+      doneBtn.style.padding = '10px 24px';
+      doneBtn.textContent = '☐ Mark Done';
+      footer.appendChild(doneBtn);
+
+      doneBtn.addEventListener('click', async () => {
+        localStorage.setItem(doneKey, '1');
+        const freq = act.freq || 'repeating';
+        if (freq === 'onetime' && actId) {
+          await completeActivityToFB(actId, currentUser);
+        }
+        const taskPath = `planners/${currentUser}/tasks/${date}/${task.id}`;
+        await remove(ref(db, taskPath));
+        section.innerHTML = '<div class="none-assigned" style="font-family:Patrick Hand,cursive;font-size:1.1rem;color:var(--ink-light);text-align:center;padding:20px 0;">All done for today! 🌟</div>';
+        showToast('Great work! 🌟');
+      });
+    }
+
+    section.appendChild(card);
 
   } catch(e) {
     console.log('Could not load today assignment:', e);
