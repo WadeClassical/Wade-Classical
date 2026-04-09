@@ -318,6 +318,13 @@
         }
 
         .badge-link:hover { border-color: var(--ink-mid); color: var(--ink); }
+
+        .badge-mom-link {
+            text-decoration: none;
+            transition: all 0.15s;
+            cursor: pointer;
+        }
+        .badge-mom-link:hover { filter: brightness(0.9); }
         .ryder-panel  .badge-link:hover { border-color: var(--ryder);  color: var(--ryder); }
         .hadley-panel .badge-link:hover { border-color: var(--hadley); color: var(--hadley); }
         .mom-panel    .badge-link:hover { border-color: var(--mom);    color: var(--mom); }
@@ -832,7 +839,6 @@ const APPS = {
     'Copywork': 'wade-copywork.html',
     'Attendance': 'wade-attendance.html',
     'Cleaning Journal': 'wade-cleaning.html',
-    'Living Lessons': 'wade-living-lessons.html',
     'None': null
 };
 
@@ -1140,8 +1146,12 @@ function saveDragOrder(person, list) {
 function buildTaskItem(task, done, ckey, idx) {
     const delay = idx * 0.04;
     let badges = '';
-    if (task.momFlag) badges += '<span class="badge-mom">🦋 Mom</span>';
-    if (task.app && APPS[task.app]) {
+    if (task.momFlag && task.app && APPS[task.app]) {
+        // Combined: mom flag + app link in one badge
+        badges += '<a class="badge-mom badge-mom-link" href="' + APPS[task.app] + '" onclick="event.stopPropagation()">🦋 Open ↗</a>';
+    } else if (task.momFlag) {
+        badges += '<span class="badge-mom">🦋 Mom</span>';
+    } else if (task.app && APPS[task.app]) {
         badges += '<a class="badge-link" href="' + APPS[task.app] + '" onclick="event.stopPropagation()">Open ↗</a>';
     }
 
