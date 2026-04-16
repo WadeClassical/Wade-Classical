@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Driver's Ed — Wade Classical</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:        #1c2130;
+  --ink-mid:    #3a4560;
+  --ink-light:  #7a8aaa;
+  --cream:      #f6f8fc;
+  --parchment:  #edf1f8;
+  --linen:      #dde4f0;
+  --clay:       #b8c4d8;
+  --road:       #2e3f5c;
+  --road-mid:   #3a5070;
+  --road-light: #5a7090;
+  --gold:       #b8974a;
+  --gold-light: #d4b870;
+  --gold-pale:  #f4edd8;
+  --sage:       #4a7c5f;
+  --sage-light: #7aac8f;
+  --sage-pale:  #e4f0e8;
+  --rose:       #c08898;
+  --rose-pale:  #f5eaee;
+  --sky:        #5a8fc0;
+  --sky-mid:    #3a6f9f;
+  --sky-pale:   #deeaf6;
+  --sky-light:  #a8c8e8;
+  --blush:      #e8b0b8;
+  --blush-pale: #faf0f2;
+  --blush-mid:  #d090a0;
+  --slate:      #4a6080;
+  --night:      #1a2538;
+  --night-mid:  #2a3858;
+  --amber:      #d4882a;
+  --amber-pale: #fdf0d8;
+  --shadow:     rgba(28,33,48,0.1);
+  --shadow-deep:rgba(28,33,48,0.2);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Jost', sans-serif;
+  background: linear-gradient(160deg, #f0f5fc 0%, #f6f8fc 60%, #faf0f4 100%);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* === ROAD TEXTURE BACKGROUND === */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    repeating-linear-gradient(180deg,
+      transparent 0px, transparent 58px,
+      rgba(184,151,74,0.06) 58px, rgba(184,151,74,0.06) 60px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* === HEADER === */
+.header {
+  background: linear-gradient(135deg, var(--road) 0%, var(--sky-mid) 60%, var(--slate) 100%);
+  position: relative;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 4px;
+  background: repeating-linear-gradient(90deg,
+    transparent 0, transparent 40px,
+    var(--sky-light) 40px, var(--sky-light) 80px,
+    transparent 80px, transparent 120px);
+  opacity: 0.5;
+}
+
+/* Road lane markings decoration */
+.header-road {
+  position: absolute;
+  bottom: 12px; left: 0; right: 0;
+  height: 2px;
+  background: repeating-linear-gradient(90deg,
+    var(--gold-light) 0, var(--gold-light) 24px,
+    transparent 24px, transparent 48px);
+  opacity: 0.3;
+}
+
+.header-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 28px 24px 24px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.header-eyebrow {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.4em;
+  color: var(--gold-light);
+  text-transform: uppercase;
+  font-weight: 400;
+  margin-bottom: 8px;
+  opacity: 0.8;
+}
+
+.header-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  color: var(--cream);
+  letter-spacing: 0.08em;
+  font-weight: 400;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.header-title span {
+  color: var(--gold-light);
+}
+
+.header-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: rgba(250,246,239,0.55);
+  font-weight: 300;
+  margin-bottom: 20px;
+}
+
+/* Headlight icons */
+.headlights {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.headlight {
+  width: 28px; height: 14px;
+  background: radial-gradient(ellipse at 40% 50%, var(--gold-light), transparent 70%);
+  border-radius: 50%;
+  opacity: 0.7;
+}
+
+/* === TAB NAV === */
+.tab-nav {
+  background: var(--slate);
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+}
+
+.tab-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  padding: 14px 20px;
+  border: none;
+  background: transparent;
+  color: rgba(250,246,239,0.45);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tab-btn:hover { color: rgba(250,246,239,0.8); }
+.tab-btn.active {
+  color: var(--gold-light);
+  border-bottom-color: var(--gold);
+  background: rgba(255,255,255,0.04);
+}
+
+/* === MAIN === */
+.main {
+  position: relative;
+  z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+}
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* === SECTION HEADER === */
+.section-header {
+  margin-bottom: 28px;
+}
+
+.section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.3rem;
+  color: var(--ink);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+
+.section-rule {
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  margin-top: 8px;
+}
+
+.section-desc {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--ink-light);
+  margin-top: 6px;
+}
+
+/* === HOURS PANEL === */
+.hours-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.hours-card {
+  background: var(--parchment);
+  border: 1px solid var(--linen);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 12px var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.hours-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+}
+
+.hours-card.day::before { background: linear-gradient(90deg, var(--sky-mid), var(--sky-light)); }
+.hours-card.night::before { background: linear-gradient(90deg, var(--night), var(--night-mid)); }
+
+.hours-card-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: var(--ink-light);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hours-big {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.2rem;
+  font-weight: 600;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.hours-card.day .hours-big { color: var(--sky-mid); }
+.hours-card.night .hours-big { color: var(--night); }
+
+.hours-of {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.78rem;
+  color: var(--ink-light);
+  font-weight: 300;
+}
+
+.hours-bar-wrap {
+  margin-top: 12px;
+  background: var(--linen);
+  border-radius: 8px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.hours-bar {
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.6s ease;
+}
+
+.hours-card.day .hours-bar { background: linear-gradient(90deg, var(--sky-mid), var(--sky-light)); }
+.hours-card.night .hours-bar { background: linear-gradient(90deg, var(--night-mid), var(--sky)); }
+
+/* Log session form */
+.log-form {
+  background: var(--parchment);
+  border: 1px solid var(--linen);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 12px var(--shadow);
+  margin-bottom: 28px;
+}
+
+.log-form h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-mid);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 130px;
+}
+
+.form-group label {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-light);
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+input[type="date"],
+input[type="number"],
+input[type="text"],
+select,
+textarea {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.9rem;
+  padding: 9px 12px;
+  border: 1px solid var(--clay);
+  border-radius: 8px;
+  background: var(--cream);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+input:focus, select:focus, textarea:focus { border-color: var(--gold); }
+
+/* === BUTTONS === */
+.btn-primary {
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  padding: 11px 24px;
+  background: var(--slate);
+  color: var(--sky-light);
+  border: 1px solid var(--road-light);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+
+.btn-primary:hover {
+  background: var(--slate);
+  border-color: var(--gold);
+}
+
+.btn-small {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.75rem;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-danger { background: var(--rose-pale); color: var(--rose); }
+.btn-danger:hover { background: var(--rose); color: white; }
+
+/* Sessions log */
+.sessions-log {
+  background: var(--parchment);
+  border: 1px solid var(--linen);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px var(--shadow);
+}
+
+.sessions-log-header {
+  padding: 16px 20px;
+  background: var(--linen);
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  color: var(--ink-mid);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--clay);
+}
+
+.session-row {
+  display: flex;
+  align-items: center;
+  padding: 13px 20px;
+  border-bottom: 1px solid var(--linen);
+  gap: 12px;
+  animation: fadeIn 0.3s ease;
+}
+
+.session-row:last-child { border-bottom: none; }
+
+.session-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.session-dot.day { background: var(--gold); }
+.session-dot.night { background: var(--night-mid); }
+
+.session-date {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.9rem;
+  color: var(--ink-mid);
+  min-width: 90px;
+}
+
+.session-hours {
+  font-family: 'Cinzel', serif;
+  font-size: 0.82rem;
+  color: var(--ink);
+  min-width: 80px;
+}
+
+.session-note {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.88rem;
+  color: var(--ink-light);
+  flex: 1;
+}
+
+.session-type-badge {
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-family: 'Jost', sans-serif;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.badge-day { background: var(--gold-pale); color: var(--gold); }
+.badge-night { background: #e0e8f0; color: var(--night-mid); }
+
+.no-sessions {
+  padding: 40px 20px;
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--ink-light);
+  font-size: 1rem;
+}
+
+/* === SKILLS PANEL === */
+.skills-category {
+  background: var(--parchment);
+  border: 1px solid var(--linen);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px var(--shadow);
+  margin-bottom: 20px;
+}
+
+.skills-cat-header {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid var(--linen);
+  background: var(--linen);
+  transition: background 0.15s;
+}
+
+.skills-cat-header:hover { background: var(--clay); }
+
+.skills-cat-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-mid);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.skills-cat-icon { font-size: 1.1rem; }
+
+.skills-progress-text {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.72rem;
+  color: var(--ink-light);
+  font-weight: 400;
+}
+
+.skills-cat-body { display: block; }
+.skills-cat-body.collapsed { display: none; }
+
+.skill-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--linen);
+  transition: background 0.15s;
+  cursor: pointer;
+}
+
+.skill-item:last-child { border-bottom: none; }
+.skill-item:hover { background: rgba(184,151,74,0.04); }
+.skill-item.done { background: var(--sky-pale); }
+.skill-item.done .skill-name { text-decoration: line-through; color: var(--ink-light); }
+
+.skill-check {
+  width: 20px; height: 20px;
+  border-radius: 4px;
+  border: 2px solid var(--clay);
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  background: white;
+}
+
+.skill-item.done .skill-check {
+  background: var(--sky-mid);
+  border-color: var(--sky-mid);
+  color: white;
+  font-size: 0.7rem;
+}
+
+.skill-text { flex: 1; }
+
+.skill-name {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.9rem;
+  color: var(--ink);
+  font-weight: 400;
+  line-height: 1.3;
+  margin-bottom: 2px;
+}
+
+.skill-note {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.82rem;
+  color: var(--ink-light);
+  line-height: 1.4;
+}
+
+/* Overall skills progress bar */
+.skills-overall {
+  background: var(--parchment);
+  border: 1px solid var(--linen);
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 12px var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.skills-overall-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-mid);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.overall-bar-wrap {
+  flex: 1;
+  min-width: 160px;
+  background: var(--linen);
+  border-radius: 8px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.overall-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--sky-mid), var(--sky-light));
+  border-radius: 8px;
+  transition: width 0.5s ease;
+}
+
+.overall-pct {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--sky-mid);
+  white-space: nowrap;
+}
+
+/* === LAWS PANEL === */
+.law-category {
+  margin-bottom: 24px;
+}
+
+.law-cat-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.14em;
+  color: var(--ink-mid);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--linen);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.law-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.law-card {
+  background: var(--parchment);
+  border: 1px solid var(--linen);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px var(--shadow);
+  border-left: 4px solid var(--clay);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.law-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 16px var(--shadow-deep);
+}
+
+.law-card.important { border-left-color: var(--blush-mid); }
+.law-card.rule     { border-left-color: var(--gold); }
+.law-card.info     { border-left-color: var(--sky); }
+.law-card.warning  { border-left-color: var(--amber); }
+
+.law-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.law-body {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.85rem;
+  color: var(--ink-mid);
+  line-height: 1.55;
+  font-weight: 300;
+}
+
+.law-tag {
+  display: inline-block;
+  font-size: 0.62rem;
+  padding: 2px 7px;
+  border-radius: 8px;
+  font-family: 'Jost', sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.tag-important { background: var(--blush-pale); color: var(--blush-mid); }
+.tag-rule      { background: var(--gold-pale); color: var(--gold); }
+.tag-info      { background: var(--sky-pale); color: var(--sky); }
+.tag-warning   { background: var(--amber-pale); color: var(--amber); }
+
+/* === TOAST === */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--slate);
+  color: var(--sky-light);
+  font-family: 'Jost', sans-serif;
+  font-size: 0.88rem;
+  padding: 11px 24px;
+  border-radius: 24px;
+  z-index: 200;
+  transition: transform 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  white-space: nowrap;
+  border: 1px solid var(--road-light);
+}
+
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(-6px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .hours-hero { grid-template-columns: 1fr; }
+  .law-cards  { grid-template-columns: 1fr; }
+  .tab-btn    { padding: 12px 12px; font-size: 0.62rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-road"></div>
+  <div class="header-inner">
+    <div class="headlights">
+      <div class="headlight"></div>
+      <div class="headlight"></div>
+    </div>
+    <div class="header-eyebrow">Wade Classical · Ava</div>
+    <h1 class="header-title">Driver's <span>Education</span></h1>
+    <div class="header-sub">Georgia Learner's Permit Program</div>
+  </div>
+</div>
+
+<!-- TAB NAV -->
+<nav class="tab-nav">
+  <button class="tab-btn active" id="tab-hours">🕐 Driving Hours</button>
+  <button class="tab-btn" id="tab-skills">✓ Skills Checklist</button>
+  <button class="tab-btn" id="tab-laws">📋 Georgia Laws</button>
+  <button class="tab-btn" id="tab-quiz">🎯 Quiz</button>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ══════════════════════════════════
+       HOURS PANEL
+  ══════════════════════════════════ -->
+  <div class="panel active" id="panel-hours">
+    <div class="section-header">
+      <div class="section-title">Supervised Driving Hours</div>
+      <div class="section-rule"></div>
+      <div class="section-desc">Georgia requires 40 total hours — at least 6 must be at night</div>
+    </div>
+
+    <div class="hours-hero">
+      <div class="hours-card day">
+        <div class="hours-card-label">☀️ Day Hours</div>
+        <div class="hours-big" id="total-day">0.0</div>
+        <div class="hours-of">of 34 hours</div>
+        <div class="hours-bar-wrap">
+          <div class="hours-bar" id="bar-day" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="hours-card night">
+        <div class="hours-card-label">🌙 Night Hours</div>
+        <div class="hours-big" id="total-night">0.0</div>
+        <div class="hours-of">of 6 hours required</div>
+        <div class="hours-bar-wrap">
+          <div class="hours-bar" id="bar-night" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Log Session -->
+    <div class="log-form">
+      <h3>Log a Session</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="log-date" />
+        </div>
+        <div class="form-group">
+          <label>Hours</label>
+          <input type="number" id="log-hours" min="0.25" max="8" step="0.25" placeholder="e.g. 1.5" />
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select id="log-type">
+            <option value="day">☀️ Day</option>
+            <option value="night">🌙 Night</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Notes (optional)</label>
+          <input type="text" id="log-note" placeholder="e.g. Highway practice, parallel parking..." />
+        </div>
+      </div>
+      <button class="btn-primary" id="btn-log">Log Session</button>
+    </div>
+
+    <!-- Sessions log -->
+    <div class="sessions-log">
+      <div class="sessions-log-header">Session History</div>
+      <div id="sessions-list">
+        <div class="no-sessions">No sessions logged yet — get on the road! 🚗</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SKILLS PANEL
+  ══════════════════════════════════ -->
+  <div class="panel" id="panel-skills">
+    <div class="section-header">
+      <div class="section-title">Behind-the-Wheel Skills</div>
+      <div class="section-rule"></div>
+      <div class="section-desc">Check off each skill as she masters it — required for the Georgia road test</div>
+    </div>
+
+    <div class="skills-overall">
+      <div class="skills-overall-label">Overall Progress</div>
+      <div class="overall-bar-wrap">
+        <div class="overall-bar" id="overall-bar" style="width:0%"></div>
+      </div>
+      <div class="overall-pct" id="overall-pct">0%</div>
+    </div>
+
+    <div id="skills-container"></div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       LAWS PANEL
+  ══════════════════════════════════ -->
+  <div class="panel" id="panel-laws">
+    <div class="section-header">
+      <div class="section-title">Georgia Traffic Laws & Rules</div>
+      <div class="section-rule"></div>
+      <div class="section-desc">Key laws every Georgia driver must know — especially on the knowledge exam</div>
+    </div>
+    <div id="laws-container"></div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       QUIZ PANEL
+  ══════════════════════════════════ -->
+  <div class="panel" id="panel-quiz">
+    <div class="section-header">
+      <div class="section-title">Georgia Laws Quiz</div>
+      <div class="section-rule"></div>
+      <div class="section-desc">Test your knowledge — 10 random questions each round</div>
+    </div>
+
+    <!-- Score summary (shown between rounds) -->
+    <div id="quiz-summary" style="display:none;">
+      <div class="quiz-score-card">
+        <div class="quiz-score-emoji" id="quiz-score-emoji">🎉</div>
+        <div class="quiz-score-big" id="quiz-score-big">8 / 10</div>
+        <div class="quiz-score-label">Questions Correct</div>
+        <div class="quiz-score-best" id="quiz-score-best"></div>
+      </div>
+      <div id="quiz-missed-section" style="display:none;">
+        <div class="quiz-missed-title">📖 Review These</div>
+        <div id="quiz-missed-list"></div>
+      </div>
+      <div style="text-align:center; margin-top:24px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <button class="btn-primary" id="btn-quiz-again">Try Again</button>
+        <button class="btn-secondary" id="btn-quiz-missed">Quiz Missed Only</button>
+      </div>
+    </div>
+
+    <!-- Active quiz -->
+    <div id="quiz-active">
+      <div class="quiz-progress-bar-wrap">
+        <div class="quiz-progress-bar" id="quiz-progress-bar" style="width:0%"></div>
+      </div>
+      <div class="quiz-counter" id="quiz-counter">Question 1 of 10</div>
+      <div class="quiz-card" id="quiz-card">
+        <div class="quiz-question" id="quiz-question">Loading...</div>
+        <div class="quiz-options" id="quiz-options"></div>
+      </div>
+    </div>
+  </div>
+
+
+</div><!-- /main -->
+
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE -->
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.min.js"></script>
+
+<script>
+// ══════════════════════════════════════════
+// DATA — SKILLS
+// ══════════════════════════════════════════
+const SKILLS = [
+  {
+    cat: 'Pre-Drive Checklist', icon: '🔑',
+    items: [
+      { id: 's01', name: 'Adjust mirrors (rear-view and both side mirrors)', note: 'Check all three before every drive' },
+      { id: 's02', name: 'Adjust seat position and steering wheel', note: 'Seat should allow full pedal depression with slight knee bend' },
+      { id: 's03', name: 'Fasten seatbelt and confirm all passengers are buckled', note: 'Georgia law — all occupants must be belted' },
+      { id: 's04', name: 'Check fuel level, dashboard warning lights', note: '' },
+      { id: 's05', name: 'Proper hand position — 9 and 3 o’clock', note: 'Required during road test; don’t rest elbow on door' },
+    ]
+  },
+  {
+    cat: 'Basic Vehicle Control', icon: '🚗',
+    items: [
+      { id: 's06', name: 'Smooth acceleration and braking', note: 'Avoid jerky stops; brake gradually' },
+      { id: 's07', name: 'Steering — straight line and curves', note: 'Both hands on wheel; hand-over-hand for turns' },
+      { id: 's08', name: 'Starting on a hill (uphill and downhill)', note: '' },
+      { id: 's09', name: 'Backing straight and in a curve', note: 'Look over right shoulder; use mirrors' },
+      { id: 's10', name: 'Turnabout / three-point turn', note: 'Road test maneuver — practice on quiet streets first' },
+    ]
+  },
+  {
+    cat: 'Intersections & Turns', icon: '🔄',
+    items: [
+      { id: 's11', name: 'Left turns — approach, yield, execute', note: 'Signal 100 ft before; check blind spots' },
+      { id: 's12', name: 'Right turns on red', note: 'Full stop required first; yield to all traffic' },
+      { id: 's13', name: 'Stop signs — complete stop behind the line', note: 'Failing to fully stop is a common road test failure' },
+      { id: 's14', name: 'Traffic signals — yellow light decisions', note: 'If you can stop safely, stop; don’t speed up' },
+      { id: 's15', name: 'Uncontrolled intersections — yield rules', note: 'Yield to vehicle already in intersection; to the right if simultaneous' },
+      { id: 's16', name: 'Roundabouts / traffic circles', note: 'Yield to traffic already in circle; signal when exiting' },
+    ]
+  },
+  {
+    cat: 'Lane Changes & Highway', icon: '🛣️',
+    items: [
+      { id: 's17', name: 'Checking blind spots before every lane change', note: 'Physically turn head — mirrors alone are not enough' },
+      { id: 's18', name: 'Signaling before lane changes and turns', note: 'Signal at least 3 seconds (100 ft) before turning' },
+      { id: 's19', name: 'Merging onto a highway at highway speed', note: 'Match speed of traffic; use full length of ramp' },
+      { id: 's20', name: 'Maintaining safe following distance', note: 'At least 2 seconds — use the one-thousand-one method' },
+      { id: 's21', name: 'Passing on a two-lane road safely', note: 'Only on solid-line-free zones; check oncoming clearly' },
+      { id: 's22', name: 'Highway exit — exit ramp deceleration', note: 'Don’t brake on the highway; slow after entering ramp' },
+    ]
+  },
+  {
+    cat: 'Parking', icon: '🅿️',
+    items: [
+      { id: 's23', name: 'Parallel parking', note: 'Common road test maneuver; practice repeatedly' },
+      { id: 's24', name: 'Angle/diagonal parking', note: '' },
+      { id: 's25', name: 'Perpendicular parking (pulling in and backing out)', note: 'Check behind before reversing; use mirrors + look back' },
+      { id: 's26', name: 'Parking on a hill — curbing wheels', note: 'Uphill with curb: turn wheels left. Downhill: turn right' },
+    ]
+  },
+  {
+    cat: 'Special Driving Conditions', icon: '🌧️',
+    items: [
+      { id: 's27', name: 'Driving in rain', note: 'Wipers on = headlights on (Georgia law). Increase following distance' },
+      { id: 's28', name: 'Night driving', note: '6 hours required for permit; use low beams in fog' },
+      { id: 's29', name: 'School zones and school bus stops', note: 'Stop for flashing red lights on both sides of undivided road' },
+      { id: 's30', name: 'Work zones — reduced speed compliance', note: 'Fines double in work zones; obey flaggers' },
+      { id: 's31', name: 'Railroad crossings', note: 'Look both ways; never stop on tracks' },
+      { id: 's32', name: 'Emergency vehicle response (Move-Over Law)', note: 'Move one lane away; if not possible slow to 10 mph below limit' },
+    ]
+  },
+  {
+    cat: 'Hazard & Defensive Driving', icon: '👁️',
+    items: [
+      { id: 's33', name: 'Scanning ahead — looking 10-12 seconds forward', note: 'Anticipate rather than react' },
+      { id: 's34', name: 'Checking mirrors every 5-8 seconds', note: '' },
+      { id: 's35', name: 'Identifying and responding to road hazards', note: 'Potholes, debris, pedestrians, cyclists' },
+      { id: 's36', name: 'Reacting to a tire blowout', note: 'Grip wheel firmly; ease off gas; steer straight; do not brake hard' },
+      { id: 's37', name: 'Recovery if wheels drop off pavement', note: 'Release gas; gently brake; steer slightly left back onto road' },
+    ]
+  },
+  {
+    cat: 'Road Test Maneuvers', icon: '📋',
+    items: [
+      { id: 's38', name: 'Full stop — completely behind the stop line', note: 'Most common reason for road test failure' },
+      { id: 's39', name: 'Smooth acceleration from stop', note: '' },
+      { id: 's40', name: 'Speed control — matching posted limits', note: '' },
+      { id: 's41', name: 'Following examiner’s spoken directions calmly', note: 'Ask for clarification if unsure; don’t guess' },
+      { id: 's42', name: 'Hand signals (in case turn signals are absent)', note: 'Left turn: arm straight out. Right turn: arm bent up. Stop: arm bent down' },
+    ]
+  },
+];
+
+// ══════════════════════════════════════════
+// DATA — LAWS
+// ══════════════════════════════════════════
+const LAWS = [
+  {
+    cat: 'Learner’s Permit Rules', icon: '🪪',
+    items: [
+      { type: 'important', title: 'Supervisor Requirement', body: 'You must have a licensed driver who is at least 21 years old in the front passenger seat at all times. They must be fit and capable of operating the vehicle.' },
+      { type: 'important', title: 'No Solo Driving — Ever', body: 'Driving alone on a learner’s permit is illegal in Georgia under any circumstances, including emergencies.' },
+      { type: 'rule', title: 'Permit Validity', body: 'Your Class CP permit is valid for 2 years. You must hold it for at least 1 year and 1 day before applying for a provisional (Class D) license.' },
+      { type: 'info', title: 'Joshua’s Law Requirements', body: 'To get a Class D license: complete 30 hours of approved driver education, 6 hours behind-the-wheel with an instructor OR 40 hours parent-taught, plus 40 hours of supervised driving (6 at night).' },
+      { type: 'warning', title: 'No Pass, No Drive', body: 'Georgia law can suspend your permit if you drop out of school or accumulate excessive unexcused absences.' },
+    ]
+  },
+  {
+    cat: 'Provisional License (Class D) Restrictions', icon: '🚦',
+    items: [
+      { type: 'important', title: 'Midnight Curfew', body: 'No driving between 12:00 midnight and 5:00 a.m. with no exceptions — not even with a parent in the car.' },
+      { type: 'rule', title: 'Passenger Limits — First 6 Months', body: 'During the first 6 months, you may not have any passengers who are not immediate family members.' },
+      { type: 'rule', title: 'Passenger Limits — Next 6 Months', body: 'After the first 6 months, you may have one non-family passenger under 21.' },
+      { type: 'info', title: 'Path to Class C (Full) License', body: 'After age 18 with a valid Class D for at least 1 year and no major violations in the last 12 months, you can exchange for a full Class C license.' },
+    ]
+  },
+  {
+    cat: 'Hands-Free Georgia Law', icon: '📵',
+    items: [
+      { type: 'important', title: 'No Handheld Devices While Driving', body: 'Georgia’s Hands-Free law applies to ALL drivers regardless of age. You may not hold or use a phone while driving — even at a red light.' },
+      { type: 'rule', title: 'Penalties for Violation', body: '1st offense: $50 fine + 1 point. 2nd offense: $100 + 2 points. 3rd+: $150 + 3 points.' },
+      { type: 'info', title: 'What’s Allowed', body: 'Hands-free calls via Bluetooth are permitted. GPS use is allowed if the phone is mounted and not held. Music is fine if started before moving.' },
+    ]
+  },
+  {
+    cat: 'Speed Laws', icon: '⚡',
+    items: [
+      { type: 'rule', title: 'Basic Speed Law', body: 'Never drive faster than is safe for conditions — even if below the posted limit. Wet roads, fog, and traffic require reduced speed.' },
+      { type: 'warning', title: 'Super Speeder Law', body: 'An additional $200 state fine applies if convicted of driving 75+ mph on a two-lane road, or 85+ mph on any road in Georgia.' },
+      { type: 'info', title: 'Slowpoke Law', body: 'If you are driving in the left lane and someone wants to pass, you must move right. Blocking the left lane is a fineable offense in Georgia.' },
+      { type: 'info', title: 'School Zone Speeds', body: 'School zone speed limits must be followed when lights are flashing. Fines are doubled in school zones.' },
+    ]
+  },
+  {
+    cat: 'Right-of-Way Rules', icon: '🤝',
+    items: [
+      { type: 'rule', title: 'Four-Way Stop', body: 'First to arrive goes first. If simultaneous, the driver to the right goes first. If opposite and going straight, both may proceed.' },
+      { type: 'rule', title: 'Yield at Intersections', body: 'Yield to any vehicle already in the intersection. When turning left, yield to all oncoming traffic.' },
+      { type: 'rule', title: 'Pedestrians in Crosswalks', body: 'You must yield to pedestrians in marked or unmarked crosswalks at all times.' },
+      { type: 'rule', title: 'Emergency Vehicles', body: 'Pull over to the right and stop when you hear sirens or see lights. Remain stopped until they pass.' },
+    ]
+  },
+  {
+    cat: 'Move-Over Law', icon: '🚨',
+    items: [
+      { type: 'important', title: 'Move Over for Stopped Vehicles', body: 'When approaching a stopped emergency, law enforcement, utility, or waste vehicle with lights on, you must move one full lane away.' },
+      { type: 'rule', title: 'When You Can’t Move Over', body: 'If a lane change is not safely possible, you must slow to a speed 10 mph below the posted speed limit.' },
+    ]
+  },
+  {
+    cat: 'DUI & Alcohol Laws', icon: '🍺',
+    items: [
+      { type: 'important', title: 'Zero Tolerance Under 21', body: 'Any driver under 21 with a BAC of 0.02% or higher faces a DUI charge in Georgia. A single drink can push a teenager over this limit.' },
+      { type: 'important', title: 'Implied Consent Law', body: 'By driving in Georgia you consent to blood, breath, or urine testing if an officer has probable cause. Refusing is itself a violation.' },
+      { type: 'warning', title: 'DUI Consequences for Teens', body: 'A DUI conviction will suspend your license, require an alcohol evaluation, and may result in jail time, fines, and a permanent record.' },
+    ]
+  },
+  {
+    cat: 'Other Key Rules', icon: '📌',
+    items: [
+      { type: 'rule', title: 'Wipers On, Lights On', body: 'Georgia law: if your windshield wipers are in use due to rain, your headlights must be on. Common knowledge exam question.' },
+      { type: 'rule', title: 'Seatbelt Law', body: 'All occupants must be buckled. The driver is responsible for ensuring all passengers under 18 are properly restrained.' },
+      { type: 'rule', title: 'School Bus Law', body: 'On an undivided road you must stop in BOTH directions when a school bus has red flashing lights. On a divided highway, only traffic behind the bus stops.' },
+      { type: 'rule', title: 'Right Turn on Red', body: 'You must come to a complete stop first, then yield to all pedestrians and vehicles before turning right on red.' },
+      { type: 'info', title: 'Double Yellow Lines', body: 'Passing is prohibited in both directions when there is a double solid yellow center line.' },
+      { type: 'info', title: 'Railroad Crossings', body: 'Never stop on railroad tracks. If stopped traffic ahead might trap you on the tracks, wait before proceeding.' },
+    ]
+  },
+];
+
+
+// ══════════════════════════════════════════
+// DATA — QUIZ QUESTIONS
+// ══════════════════════════════════════════
+const QUIZ_QUESTIONS = [
+  {
+    id: 'q01',
+    q: 'When driving with a learner’s permit in Georgia, who must be in the front passenger seat?',
+    options: ['Any licensed driver', 'A licensed driver who is at least 21 years old', 'A parent or guardian only', 'Any adult over 18'],
+    correct: 1,
+    explain: 'Georgia law requires a licensed driver who is at least 21 years old to sit in the front passenger seat, and they must be fit and capable of operating the vehicle.'
+  },
+  {
+    id: 'q02',
+    q: 'How long must you hold a Georgia learner’s permit before applying for a provisional (Class D) license?',
+    options: ['6 months', '1 year exactly', '1 year and 1 day', '2 years'],
+    correct: 2,
+    explain: 'You must hold your Class CP permit for at least 1 year and 1 day before you can apply for a Class D provisional license.'
+  },
+  {
+    id: 'q03',
+    q: 'What is the driving curfew for a Georgia provisional (Class D) license holder?',
+    options: ['No driving after 11:00 p.m.', 'No driving between midnight and 5:00 a.m.', 'No driving after 10:00 p.m.', 'No driving between 1:00 a.m. and 6:00 a.m.'],
+    correct: 1,
+    explain: 'Class D license holders cannot drive between 12:00 midnight and 5:00 a.m. — no exceptions, not even with a parent in the car.'
+  },
+  {
+    id: 'q04',
+    q: 'Under Georgia’s Hands-Free law, when are you allowed to hold your phone while driving?',
+    options: ['At a red light', 'In a parking lot', 'Never — holding a phone while driving is always illegal', 'When driving under 25 mph'],
+    correct: 2,
+    explain: 'Georgia’s Hands-Free law prohibits holding or using a phone while driving at any time, including at red lights.'
+  },
+  {
+    id: 'q05',
+    q: 'What is the BAC (blood alcohol content) limit for drivers under 21 in Georgia?',
+    options: ['0.08%', '0.04%', '0.02%', '0.00%'],
+    correct: 2,
+    explain: 'Georgia has a zero tolerance policy — any driver under 21 with a BAC of 0.02% or higher faces a DUI charge. A single drink can exceed this limit.'
+  },
+  {
+    id: 'q06',
+    q: 'Georgia’s “Wipers On, Lights On” law means:',
+    options: ['You should turn on lights when visibility is low', 'If your windshield wipers are on due to rain, your headlights must be on', 'Headlights must be on whenever it is cloudy', 'Lights should be on whenever you use your wipers, including for bugs'],
+    correct: 1,
+    explain: 'Georgia law requires headlights to be on whenever windshield wipers are in use due to rain. This is a common knowledge exam question.'
+  },
+  {
+    id: 'q07',
+    q: 'At a four-way stop, two cars arrive at exactly the same time from different roads. Who goes first?',
+    options: ['The car going straight', 'The heavier vehicle', 'The car on the left', 'The car on the right'],
+    correct: 3,
+    explain: 'When two cars arrive simultaneously at a four-way stop, the driver to the right has the right of way.'
+  },
+  {
+    id: 'q08',
+    q: 'What does Georgia’s Move-Over Law require?',
+    options: ['Move to the left lane on any highway', 'Move one lane away from stopped emergency or utility vehicles with lights on', 'Pull over completely when you see any flashing lights', 'Slow down to 25 mph near any stopped vehicle'],
+    correct: 1,
+    explain: 'Georgia’s Move-Over Law requires you to move one full lane away from stopped emergency, law enforcement, utility, or waste vehicles with lights activated. If you can’t move over, slow to 10 mph below the speed limit.'
+  },
+  {
+    id: 'q09',
+    q: 'Under Georgia’s Super Speeder Law, when does an extra $200 state fine apply?',
+    options: ['Any speeding ticket over 20 mph above the limit', 'Driving 75+ mph on a two-lane road, or 85+ mph on any road', 'Driving over 80 mph on any road', 'Any speeding in a school or work zone'],
+    correct: 1,
+    explain: 'The Super Speeder Law adds a $200 state fine (on top of court fines) for driving 75+ mph on a two-lane road or 85+ mph on any road in Georgia.'
+  },
+  {
+    id: 'q10',
+    q: 'What is Georgia’s “Slowpoke Law”?',
+    options: ['Driving too slowly on a highway is illegal', 'You must move right if someone wants to pass you in the left lane', 'Minimum speed limits are enforced on interstates', 'Both A and B'],
+    correct: 1,
+    explain: 'Georgia’s Slowpoke Law requires drivers in the left lane to move right if another vehicle wants to pass. Blocking the left lane is a fineable offense.'
+  },
+  {
+    id: 'q11',
+    q: 'What must you do before turning right on a red light in Georgia?',
+    options: ['Slow down and yield', 'Come to a complete stop, then yield to all pedestrians and vehicles', 'Check mirrors and proceed if clear', 'Signal and proceed when safe'],
+    correct: 1,
+    explain: 'You must come to a complete stop first, then yield to all pedestrians and vehicles on the cross street before turning right on red.'
+  },
+  {
+    id: 'q12',
+    q: 'Under Georgia law, when must you stop for a school bus?',
+    options: ['Only when approaching from behind', 'Always stop in both directions on any road', 'On undivided roads in both directions; on divided highways only traffic behind the bus stops', 'Only if the bus is stopped in your lane'],
+    correct: 2,
+    explain: 'On an undivided road you must stop in BOTH directions. On a divided highway (with a median), only vehicles behind the bus must stop.'
+  },
+  {
+    id: 'q13',
+    q: 'What does Georgia’s Implied Consent Law mean?',
+    options: ['You consent to follow all traffic laws by obtaining a license', 'By driving in Georgia you consent to chemical testing if an officer has probable cause', 'You agree not to drive under the influence', 'You consent to random roadside inspections'],
+    correct: 1,
+    explain: 'By driving in Georgia you automatically consent to blood, breath, or urine testing if an officer has probable cause to believe you’re impaired. Refusing is itself a violation.'
+  },
+  {
+    id: 'q14',
+    q: 'What is the Joshua’s Law requirement for 16-year-olds seeking a Class D license?',
+    options: ['Pass the knowledge test only', '30 hours classroom instruction, 40 hours supervised driving (6 at night)', 'Complete 10 hours of driving with a parent', 'Pass a road test with no prior requirements'],
+    correct: 1,
+    explain: 'Joshua’s Law requires 30 hours of approved driver education, plus 40 hours of supervised driving with at least 6 of those hours at night.'
+  },
+  {
+    id: 'q15',
+    q: 'During the first 6 months of a Georgia provisional (Class D) license, you may have which passengers?',
+    options: ['Up to 2 passengers under 21', 'Only immediate family members', 'One non-family passenger', 'No passengers at all'],
+    correct: 1,
+    explain: 'During the first 6 months of a Class D license, you may not have any passengers who are not immediate family members.'
+  },
+  {
+    id: 'q16',
+    q: 'What should you do if your wheels drop off the edge of the pavement?',
+    options: ['Brake hard and steer sharply back onto the road', 'Release the gas, hold the wheel firmly, and gently brake before steering back', 'Accelerate to get back on the road quickly', 'Immediately turn the wheel hard to the left'],
+    correct: 1,
+    explain: 'Hold the wheel firmly, release the gas, gently apply the brakes, and when slowed, carefully steer back onto the pavement. Jerking the wheel can cause a rollover.'
+  },
+  {
+    id: 'q17',
+    q: 'What does a double solid yellow center line mean?',
+    options: ['Passing is allowed from both sides', 'Passing is allowed on the left side only', 'Passing is prohibited in both directions', 'Slow down — hazardous road ahead'],
+    correct: 2,
+    explain: 'A double solid yellow line means passing is prohibited in both directions. Neither driver may cross the line to pass.'
+  },
+  {
+    id: 'q18',
+    q: 'How is the 1st offense Hands-Free violation penalized in Georgia?',
+    options: ['$25 fine, no points', '$50 fine + 1 point on your license', '$100 fine + 2 points', 'Warning only for first offense'],
+    correct: 1,
+    explain: 'A 1st offense Hands-Free violation results in a $50 fine plus 1 point added to your driver’s license.'
+  },
+  {
+    id: 'q19',
+    q: 'When must you stop at a railroad crossing?',
+    options: ['Only if a train is visible', 'Never — slow down and look both ways', 'Always stop and look both ways; never stop on the tracks', 'Only when lights are flashing'],
+    correct: 2,
+    explain: 'You must always stop and look both ways at a railroad crossing. Never stop on the tracks — wait before crossing if traffic ahead might trap you on them.'
+  },
+  {
+    id: 'q20',
+    q: 'Georgia’s “No Pass, No Drive” law means:',
+    options: ['You must pass the knowledge test to get a permit', 'Your permit can be suspended if you drop out of school or have excessive unexcused absences', 'You cannot pass another vehicle on a two-lane road', 'You must pass a vision test before every renewal'],
+    correct: 1,
+    explain: 'Georgia’s No Pass, No Drive law allows the DDS to suspend your driving permit if you drop out of school or accumulate excessive unexcused absences.'
+  },
+];
+
+// ══════════════════════════════════════════
+// QUIZ LOGIC
+// ══════════════════════════════════════════
+let _quizQueue    = [];
+let _quizIdx      = 0;
+let _quizScore    = 0;
+let _quizMissed   = [];
+let _quizBest     = 0;
+let _quizMissedOnly = false;
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz(missedOnly = false) {
+  _quizMissedOnly = missedOnly;
+  const pool = missedOnly
+    ? QUIZ_QUESTIONS.filter(q => _quizMissed.includes(q.id))
+    : QUIZ_QUESTIONS;
+
+  _quizQueue  = shuffleArray(pool).slice(0, Math.min(10, pool.length));
+  _quizIdx    = 0;
+  _quizScore  = 0;
+  _quizMissed = [];
+
+  document.getElementById('quiz-summary').style.display = 'none';
+  document.getElementById('quiz-active').style.display  = 'block';
+  showQuestion();
+}
+
+function showQuestion() {
+  const q   = _quizQueue[_quizIdx];
+  const num = _quizIdx + 1;
+  const tot = _quizQueue.length;
+  const pct = ((num - 1) / tot) * 100;
+
+  document.getElementById('quiz-counter').textContent     = `Question ${num} of ${tot}`;
+  document.getElementById('quiz-progress-bar').style.width = pct + '%';
+  document.getElementById('quiz-question').textContent    = q.q;
+
+  // Shuffle option order but track correct answer
+  const indices = shuffleArray([0, 1, 2, 3]);
+  const newCorrectIdx = indices.indexOf(q.correct);
+
+  const optionsEl = document.getElementById('quiz-options');
+  optionsEl.innerHTML = '';
+
+  // Remove any previous explanation/next btn
+  const card = document.getElementById('quiz-card');
+  card.querySelectorAll('.quiz-explanation, .quiz-next-btn').forEach(e => e.remove());
+
+  indices.forEach((origIdx, displayIdx) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-option';
+    btn.textContent = q.options[origIdx];
+    btn.dataset.orig = origIdx;
+    btn.addEventListener('click', () => handleAnswer(btn, origIdx, q.correct, newCorrectIdx, indices, q));
+    optionsEl.appendChild(btn);
+  });
+}
+
+function handleAnswer(btn, chosen, correct, newCorrectIdx, indices, q) {
+  // Disable all options
+  document.querySelectorAll('.quiz-option').forEach(b => {
+    b.disabled = true;
+    if (parseInt(b.dataset.orig) === correct) b.classList.add('correct');
+  });
+
+  const isCorrect = chosen === correct;
+  if (isCorrect) {
+    _quizScore++;
+  } else {
+    btn.classList.add('wrong');
+    _quizMissed.push(q.id);
+  }
+
+  // Show explanation
+  const exp = document.createElement('div');
+  exp.className = 'quiz-explanation';
+  exp.innerHTML = (isCorrect ? '✓ Correct! ' : '✗ Not quite. ') + q.explain;
+  document.getElementById('quiz-card').appendChild(exp);
+
+  // Next button
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'quiz-next-btn';
+  nextBtn.textContent = _quizIdx < _quizQueue.length - 1 ? 'Next Question →' : 'See Results';
+  nextBtn.addEventListener('click', () => {
+    _quizIdx++;
+    if (_quizIdx < _quizQueue.length) {
+      showQuestion();
+    } else {
+      showResults();
+    }
+  });
+  document.getElementById('quiz-card').appendChild(nextBtn);
+}
+
+function showResults() {
+  document.getElementById('quiz-active').style.display  = 'none';
+  document.getElementById('quiz-summary').style.display = 'block';
+  document.getElementById('quiz-progress-bar').style.width = '100%';
+
+  const tot = _quizQueue.length;
+  const pct = Math.round((_quizScore / tot) * 100);
+
+  // Best score tracking
+  if (_quizScore > _quizBest) {
+    _quizBest = _quizScore;
+    db.ref('drivers-ed/ava/quiz-best').set(_quizBest).catch(() => {});
+  }
+
+  const emoji = pct >= 90 ? '🌟' : pct >= 70 ? '👍' : pct >= 50 ? '📖' : '💪';
+  document.getElementById('quiz-score-emoji').textContent = emoji;
+  document.getElementById('quiz-score-big').textContent   = `${_quizScore} / ${tot}`;
+  document.getElementById('quiz-score-best').textContent  = _quizBest > 0 ? `Best: ${_quizBest} / ${tot}` : '';
+
+  // Missed items
+  const missedSection = document.getElementById('quiz-missed-section');
+  const missedList    = document.getElementById('quiz-missed-list');
+  const uniqueMissed  = [...new Set(_quizMissed)];
+  const missedBtn     = document.getElementById('btn-quiz-missed');
+
+  if (uniqueMissed.length > 0) {
+    missedSection.style.display = 'block';
+    missedList.innerHTML = uniqueMissed.map(id => {
+      const q = QUIZ_QUESTIONS.find(x => x.id === id);
+      return q ? `
+        <div class="quiz-missed-item">
+          <div class="quiz-missed-q">${q.q}</div>
+          <div class="quiz-missed-a">✓ ${q.options[q.correct]}</div>
+        </div>` : '';
+    }).join('');
+    missedBtn.style.display = 'inline-block';
+  } else {
+    missedSection.style.display = 'none';
+    missedBtn.style.display = 'none';
+  }
+}
+
+async function loadQuizBest() {
+  try {
+    const snap = await db.ref('drivers-ed/ava/quiz-best').get();
+    if (snap.val()) _quizBest = snap.val();
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════
+// FIREBASE
+// ══════════════════════════════════════════
+firebase.initializeApp({
+  apiKey: "AIzaSyBsjx3JKjCQOMuus07MSoj3o-Vu9eRW6zc",
+  authDomain: "wade-classical.firebaseapp.com",
+  databaseURL: "https://wade-classical-default-rtdb.firebaseio.com",
+  projectId: "wade-classical"
+});
+
+const db = firebase.database();
+let _sessions = [];
+let _skillsDone = {};
+
+async function loadAll() {
+  // Render skills immediately from static data so they're never blank
+  renderSkills();
+  renderHours();
+
+  try {
+    const [sessSnap, skillsSnap] = await Promise.all([
+      db.ref('drivers-ed/ava/sessions').get(),
+      db.ref('drivers-ed/ava/skills').get(),
+    ]);
+    const sv = sessSnap.val();
+    _sessions = sv ? (Array.isArray(sv) ? sv : Object.values(sv)) : [];
+    _skillsDone = skillsSnap.val() || {};
+    renderHours();
+    renderSkills();
+  } catch(e) {
+    console.warn('Firebase unavailable, running offline');
+  }
+}
+
+async function saveSession(s) {
+  _sessions.push(s);
+  await db.ref('drivers-ed/ava/sessions').set(_sessions);
+  renderHours();
+}
+
+async function deleteSession(idx) {
+  _sessions.splice(idx, 1);
+  await db.ref('drivers-ed/ava/sessions').set(_sessions);
+  renderHours();
+}
+
+async function toggleSkill(id) {
+  _skillsDone[id] = !_skillsDone[id];
+  await db.ref('drivers-ed/ava/skills').set(_skillsDone);
+  renderSkillsProgress();
+}
+
+// ══════════════════════════════════════════
+// RENDER — HOURS
+// ══════════════════════════════════════════
+function renderHours() {
+  const dayTotal   = _sessions.filter(s => s.type === 'day').reduce((a,s) => a + (parseFloat(s.hours)||0), 0);
+  const nightTotal = _sessions.filter(s => s.type === 'night').reduce((a,s) => a + (parseFloat(s.hours)||0), 0);
+  const totalAll   = dayTotal + nightTotal;
+
+  document.getElementById('total-day').textContent   = dayTotal.toFixed(1);
+  document.getElementById('total-night').textContent = nightTotal.toFixed(1);
+  document.getElementById('bar-day').style.width     = Math.min(100, (dayTotal/34)*100) + '%';
+  document.getElementById('bar-night').style.width   = Math.min(100, (nightTotal/6)*100) + '%';
+
+  // Sessions list
+  const list = document.getElementById('sessions-list');
+  if (_sessions.length === 0) {
+    list.innerHTML = '<div class="no-sessions">No sessions logged yet — get on the road! 🚗</div>';
+    return;
+  }
+  const sorted = [..._sessions].map((s,i) => ({...s, _idx:i})).sort((a,b) => b.date.localeCompare(a.date));
+  list.innerHTML = sorted.map(s => `
+    <div class="session-row">
+      <div class="session-dot ${s.type}"></div>
+      <div class="session-date">${formatDate(s.date)}</div>
+      <div class="session-hours">${parseFloat(s.hours).toFixed(1)} hrs</div>
+      <span class="session-type-badge badge-${s.type}">${s.type === 'day' ? '☀️ Day' : '🌙 Night'}</span>
+      <div class="session-note">${escHtml(s.note || '')}</div>
+      <button class="btn-small btn-danger" data-del="${s._idx}">✕</button>
+    </div>
+  `).join('');
+
+  list.querySelectorAll('[data-del]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      deleteSession(parseInt(btn.dataset.del));
+      showToast('Session removed');
+    });
+  });
+}
+
+// ══════════════════════════════════════════
+// RENDER — SKILLS
+// ══════════════════════════════════════════
+function renderSkills() {
+  const container = document.getElementById('skills-container');
+  container.innerHTML = '';
+  SKILLS.forEach(cat => {
+    const div = document.createElement('div');
+    div.className = 'skills-category';
+    const done = cat.items.filter(i => _skillsDone[i.id]).length;
+    div.innerHTML = `
+      <div class="skills-cat-header" data-cat="${cat.cat}">
+        <div class="skills-cat-title">
+          <span class="skills-cat-icon">${cat.icon}</span>
+          ${cat.cat}
+        </div>
+        <span class="skills-progress-text">${done} / ${cat.items.length}</span>
+      </div>
+      <div class="skills-cat-body" id="cat-${cat.cat.replace(/\W/g,'_')}">
+        ${cat.items.map(item => `
+          <div class="skill-item${_skillsDone[item.id] ? ' done' : ''}" data-skill="${item.id}">
+            <div class="skill-check">${_skillsDone[item.id] ? '✓' : ''}</div>
+            <div class="skill-text">
+              <div class="skill-name">${item.name}</div>
+              ${item.note ? `<div class="skill-note">${item.note}</div>` : ''}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    // Toggle category collapse
+    div.querySelector('.skills-cat-header').addEventListener('click', (e) => {
+      if (e.target.closest('.skill-item')) return;
+      div.querySelector('.skills-cat-body').classList.toggle('collapsed');
+    });
+    // Skill click
+    div.querySelectorAll('.skill-item').forEach(el => {
+      el.addEventListener('click', async () => {
+        const id = el.dataset.skill;
+        await toggleSkill(id);
+        el.classList.toggle('done', !!_skillsDone[id]);
+        el.querySelector('.skill-check').textContent = _skillsDone[id] ? '✓' : '';
+        // Update category header count
+        const catItems = SKILLS.find(c => c.items.find(i => i.id === id));
+        if (catItems) {
+          const doneCount = catItems.items.filter(i => _skillsDone[i.id]).length;
+          div.querySelector('.skills-progress-text').textContent = `${doneCount} / ${catItems.items.length}`;
+        }
+        renderSkillsProgress();
+        showToast(_skillsDone[id] ? '✓ Skill mastered!' : 'Skill unmarked');
+      });
+    });
+    container.appendChild(div);
+  });
+  renderSkillsProgress();
+}
+
+function renderSkillsProgress() {
+  const total = SKILLS.reduce((a,c) => a + c.items.length, 0);
+  const done  = SKILLS.reduce((a,c) => a + c.items.filter(i => _skillsDone[i.id]).length, 0);
+  const pct   = total > 0 ? Math.round((done/total)*100) : 0;
+  document.getElementById('overall-bar').style.width = pct + '%';
+  document.getElementById('overall-pct').textContent = pct + '%';
+}
+
+// ══════════════════════════════════════════
+// RENDER — LAWS
+// ══════════════════════════════════════════
+function renderLaws() {
+  const container = document.getElementById('laws-container');
+  if (container.innerHTML.trim() !== '') return; // already built
+  LAWS.forEach(cat => {
+    const div = document.createElement('div');
+    div.className = 'law-category';
+    div.innerHTML = `
+      <div class="law-cat-title"><span>${cat.icon}</span> ${cat.cat}</div>
+      <div class="law-cards">
+        ${cat.items.map(law => `
+          <div class="law-card ${law.type}">
+            <span class="law-tag tag-${law.type}">${law.type}</span>
+            <div class="law-title">${law.title}</div>
+            <div class="law-body">${law.body}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+// ══════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+  if (tab === 'laws') renderLaws();
+  if (tab === 'quiz') { loadQuizBest(); startQuiz(); }
+}
+
+// ══════════════════════════════════════════
+// LOG SESSION
+// ══════════════════════════════════════════
+function logSession() {
+  const date  = document.getElementById('log-date').value;
+  const hours = parseFloat(document.getElementById('log-hours').value);
+  const type  = document.getElementById('log-type').value;
+  const note  = document.getElementById('log-note').value.trim();
+
+  if (!date)            { showToast('Please select a date'); return; }
+  if (!hours || hours <= 0) { showToast('Please enter valid hours'); return; }
+
+  saveSession({ date, hours, type, note });
+  document.getElementById('log-hours').value = '';
+  document.getElementById('log-note').value  = '';
+  showToast(`Session logged — ${hours} ${type} hour${hours !== 1 ? 's' : ''}!`);
+}
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+function formatDate(str) {
+  if (!str) return '';
+  const [y,m,d] = str.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[parseInt(m)-1]} ${parseInt(d)}, ${y}`;
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+function wireButtons() {
+  document.getElementById('tab-hours').addEventListener('click', () => switchTab('hours'));
+  document.getElementById('tab-skills').addEventListener('click', () => switchTab('skills'));
+  document.getElementById('tab-laws').addEventListener('click', () => switchTab('laws'));
+  document.getElementById('tab-quiz').addEventListener('click', () => switchTab('quiz'));
+  document.getElementById('btn-quiz-again').addEventListener('click', () => startQuiz(false));
+  document.getElementById('btn-quiz-missed').addEventListener('click', () => startQuiz(true));
+  document.getElementById('btn-log').addEventListener('click', logSession);
+  // Default today's date
+  document.getElementById('log-date').value = new Date().toISOString().split('T')[0];
+}
+
+wireButtons();
+loadAll();
+</script>
+</body>
+</html>

@@ -615,6 +615,128 @@
         @media (max-width: 500px) { .mcb-recipe { display: none; } }
 
         /* Library Door Card */
+
+        /* ── DRIVER'S ED CARD ── */
+        .drivers-ed-card {
+            display: block;
+            text-decoration: none;
+            background: linear-gradient(135deg, #2e3f5c 0%, #3a5070 55%, #4a6080 100%);
+            border-radius: 16px;
+            padding: 22px 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(28,33,48,0.22);
+            border: 1px solid rgba(90,143,192,0.3);
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.6s ease 0.5s both;
+        }
+
+        .drivers-ed-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(90,143,192,0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+
+        .drivers-ed-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(28,33,48,0.3); }
+        .drivers-ed-card:hover::before { opacity: 1; }
+
+        /* Road stripe at bottom */
+        .drivers-ed-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 3px;
+            background: repeating-linear-gradient(90deg,
+                #d4b870 0, #d4b870 20px,
+                transparent 20px, transparent 40px);
+            opacity: 0.6;
+        }
+
+        .de-inner {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .de-icon {
+            font-size: 2.2rem;
+            flex-shrink: 0;
+        }
+
+        .de-text { flex: 1; min-width: 160px; }
+
+        .de-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            color: #f0f5fc;
+            letter-spacing: 0.08em;
+            margin-bottom: 3px;
+            font-weight: 400;
+        }
+
+        .de-sub {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 0.85rem;
+            color: rgba(168,200,232,0.75);
+            margin-bottom: 10px;
+        }
+
+        .de-hours-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .de-hour-block { min-width: 80px; }
+
+        .de-hour-label {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.62rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(168,200,232,0.6);
+            margin-bottom: 4px;
+            font-weight: 400;
+        }
+
+        .de-hour-bar-wrap {
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            height: 5px;
+            width: 80px;
+            margin-bottom: 3px;
+        }
+
+        .de-hour-bar {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+
+        .de-hour-bar.day   { background: linear-gradient(90deg, #d4b870, #f0e0a0); }
+        .de-hour-bar.night { background: linear-gradient(90deg, #7aacca, #a8c8e8); }
+
+        .de-hour-val {
+            font-family: 'Cinzel', serif;
+            font-size: 0.72rem;
+            color: rgba(240,245,252,0.9);
+        }
+
+        .de-arrow {
+            font-size: 1.2rem;
+            color: rgba(212,184,112,0.6);
+            transition: transform 0.2s, color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .drivers-ed-card:hover .de-arrow { transform: translateX(4px); color: #d4b870; }
+
         /* ── TWIN DOORS ── */
         .twin-doors-row {
             display: flex;
@@ -1248,6 +1370,41 @@
         </a>
     </div>
 
+
+    <!-- DRIVER'S ED SECTION -->
+    <div class="section-divider" style="margin-top:8px;">
+        <div class="divider-line"></div>
+        <span class="divider-title">Ava · Driver's Ed</span>
+        <div class="divider-line"></div>
+    </div>
+
+    <a href="wade-driversedu.html" class="drivers-ed-card">
+        <div class="de-inner">
+            <div class="de-icon">🚗</div>
+            <div class="de-text">
+                <div class="de-title">Driver's Education</div>
+                <div class="de-sub">Georgia Learner's Permit Program</div>
+                <div class="de-hours-row">
+                    <div class="de-hour-block">
+                        <div class="de-hour-label">☀️ Day Hours</div>
+                        <div class="de-hour-bar-wrap">
+                            <div class="de-hour-bar day" id="de-bar-day" style="width:0%"></div>
+                        </div>
+                        <div class="de-hour-val"><span id="de-day-val">0.0</span> / 34 hrs</div>
+                    </div>
+                    <div class="de-hour-block">
+                        <div class="de-hour-label">🌙 Night Hours</div>
+                        <div class="de-hour-bar-wrap">
+                            <div class="de-hour-bar night" id="de-bar-night" style="width:0%"></div>
+                        </div>
+                        <div class="de-hour-val"><span id="de-night-val">0.0</span> / 6 hrs</div>
+                    </div>
+                </div>
+            </div>
+            <div class="de-arrow">→</div>
+        </div>
+    </a>
+
     <footer>
         <p class="footer-text">Wade Classical Homeschool · North Georgia · Est. 2020</p>
     </footer>
@@ -1521,6 +1678,7 @@ function markToday() {
 }
 
 renderAttendance();
+loadAvaHours();
 
 // ══════════════════════════════════════════════
 // PLANNER TASK COUNTS
@@ -1563,6 +1721,26 @@ function renderPlannerCards() {
 }
 
 renderPlannerCards();
+
+// ══════════════════════════════════════════════
+// AVA DRIVER'S ED HOURS
+// ══════════════════════════════════════════════
+function loadAvaHours() {
+    if (!dashDb) return;
+    dashDb.ref('drivers-ed/ava/sessions').get().then(snap => {
+        const raw = snap.val();
+        if (!raw) return;
+        const sessions = Array.isArray(raw) ? raw : Object.values(raw);
+        const day   = sessions.filter(s => s.type === 'day').reduce((a,s) => a + (parseFloat(s.hours)||0), 0);
+        const night = sessions.filter(s => s.type === 'night').reduce((a,s) => a + (parseFloat(s.hours)||0), 0);
+        document.getElementById('de-day-val').textContent   = day.toFixed(1);
+        document.getElementById('de-night-val').textContent = night.toFixed(1);
+        document.getElementById('de-bar-day').style.width   = Math.min(100, (day/34)*100) + '%';
+        document.getElementById('de-bar-night').style.width = Math.min(100, (night/6)*100) + '%';
+    }).catch(() => {});
+}
+loadAvaHours();
+
 </script>
 </body>
 </html>
