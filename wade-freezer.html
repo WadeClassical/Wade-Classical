@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freezer & Meal Prep — Wade Classical</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --teal:        #1a6b6b;
+  --teal-mid:    #237a7a;
+  --teal-light:  #3a9898;
+  --teal-pale:   #e0f0f0;
+  --teal-frost:  #f0fafa;
+  --white:       #ffffff;
+  --off-white:   #f8fafa;
+  --border:      #daeaea;
+  --ink:         #0d2626;
+  --ink-mid:     #2a4a4a;
+  --ink-light:   #6a8a8a;
+  --frost:       #eaf4f4;
+  --amber:       #d4882a;
+  --amber-pale:  #fdf3e0;
+  --rose:        #c05a5a;
+  --rose-pale:   #fdf0f0;
+  --sage:        #4a7a5a;
+  --sage-pale:   #eef6f0;
+  --lavender:    #7a6ab8;
+  --lav-pale:    #f2f0fb;
+  --gold:        #b8974a;
+  --gold-pale:   #faf3e0;
+  --coral:       #c87060;
+  --coral-pale:  #fdf2f0;
+  --shadow:      rgba(13,38,38,0.08);
+  --shadow-deep: rgba(13,38,38,0.16);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off-white);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* === FROST GRID BACKGROUND === */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(26,107,107,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26,107,107,0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* === HEADER === */
+.header {
+  background: var(--teal);
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+}
+
+/* Ice crystal pattern */
+.header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(255,255,255,0.06) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255,255,255,0.04) 0%, transparent 40%),
+    radial-gradient(circle at 60% 80%, rgba(255,255,255,0.05) 0%, transparent 35%);
+  pointer-events: none;
+}
+
+.header-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 28px 24px 24px;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.header-left {}
+
+.header-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.header-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  color: white;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.header-title span { font-style: italic; color: rgba(255,255,255,0.7); }
+
+.header-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.5);
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+
+/* Header stats */
+.header-stats {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.stat-pill {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 24px;
+  padding: 10px 18px;
+  text-align: center;
+  backdrop-filter: blur(4px);
+}
+
+.stat-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.4rem;
+  color: white;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.stat-label {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+/* === FILTER / ACTION BAR === */
+.action-bar {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  box-shadow: 0 2px 12px var(--shadow);
+}
+
+.action-bar-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.chip {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--off-white);
+  color: var(--ink-light);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.chip:hover { border-color: var(--teal-light); color: var(--teal); }
+.chip.active { background: var(--teal); color: white; border-color: var(--teal); }
+.chip.flagged-filter.active { background: var(--amber); border-color: var(--amber); }
+
+.btn-add {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 9px 18px;
+  background: var(--teal);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.btn-add:hover { background: var(--teal-mid); }
+
+/* === MAIN === */
+.main {
+  position: relative;
+  z-index: 1;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 28px 20px 80px;
+}
+
+/* === CATEGORY GROUP === */
+.cat-group {
+  margin-bottom: 36px;
+  animation: fadeUp 0.4s ease both;
+}
+
+.cat-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.cat-icon { font-size: 1.2rem; }
+
+.cat-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.1rem;
+  color: var(--ink-mid);
+  font-weight: 400;
+}
+
+.cat-count {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--ink-light);
+  background: var(--frost);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 2px 8px;
+}
+
+.cat-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* === ITEM GRID === */
+.item-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+/* === ITEM CARD === */
+.item-card {
+  background: white;
+  border-radius: 14px;
+  border: 1.5px solid var(--border);
+  overflow: hidden;
+  box-shadow: 0 2px 8px var(--shadow);
+  transition: transform 0.15s, box-shadow 0.15s;
+  position: relative;
+  animation: fadeIn 0.3s ease both;
+}
+
+.item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--shadow-deep);
+}
+
+.item-card.flagged {
+  border-color: var(--amber);
+  box-shadow: 0 2px 8px rgba(212,136,42,0.15);
+}
+
+.item-card.empty {
+  opacity: 0.5;
+  border-style: dashed;
+}
+
+/* Category color accent */
+.card-accent {
+  height: 4px;
+  width: 100%;
+}
+
+.card-body { padding: 14px 16px 12px; }
+
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+
+.card-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.05rem;
+  color: var(--ink);
+  line-height: 1.2;
+  flex: 1;
+}
+
+.flag-badge {
+  font-size: 0.65rem;
+  padding: 2px 7px;
+  border-radius: 8px;
+  background: var(--amber-pale);
+  color: var(--amber);
+  font-family: 'Space Mono', monospace;
+  white-space: nowrap;
+  flex-shrink: 0;
+  border: 1px solid rgba(212,136,42,0.3);
+}
+
+.card-note {
+  font-size: 0.78rem;
+  color: var(--ink-light);
+  margin-bottom: 10px;
+  line-height: 1.4;
+  font-weight: 300;
+}
+
+/* Date + expiry info */
+.card-meta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.meta-date {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--ink-light);
+  background: var(--frost);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 7px;
+}
+
+.meta-age {
+  font-size: 0.7rem;
+  color: var(--ink-light);
+  font-weight: 300;
+}
+
+.meta-age.warn { color: var(--amber); font-weight: 500; }
+.meta-age.danger { color: var(--rose); font-weight: 600; }
+
+/* Serving counter */
+.serving-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--teal-frost);
+  border: 1px solid var(--teal-pale);
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+}
+
+.serving-label {
+  font-size: 0.72rem;
+  color: var(--teal);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.serving-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.serving-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--teal-light);
+  background: white;
+  color: var(--teal);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  font-weight: 600;
+}
+
+.serving-btn:hover { background: var(--teal); color: white; border-color: var(--teal); }
+.serving-btn:disabled { opacity: 0.3; cursor: default; }
+.serving-btn:disabled:hover { background: white; color: var(--teal); }
+
+.serving-count {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.2rem;
+  color: var(--teal);
+  font-weight: 700;
+  min-width: 28px;
+  text-align: center;
+}
+
+.serving-count.zero { color: var(--ink-light); }
+
+/* Card actions */
+.card-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.card-btn {
+  font-size: 0.72rem;
+  padding: 5px 10px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: var(--off-white);
+  color: var(--ink-light);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+}
+
+.card-btn:hover { background: var(--frost); color: var(--ink); border-color: var(--teal-pale); }
+.card-btn.danger:hover { background: var(--rose-pale); color: var(--rose); border-color: var(--rose); }
+.card-btn.use-all { background: var(--teal-pale); color: var(--teal); border-color: var(--teal-pale); }
+.card-btn.use-all:hover { background: var(--teal); color: white; }
+
+/* === EMPTY STATE === */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 32px 20px;
+  color: var(--ink-light);
+}
+
+.empty-icon { font-size: 2rem; margin-bottom: 8px; }
+.empty-text { font-size: 0.88rem; font-weight: 300; }
+
+/* === MODAL === */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(13,38,38,0.5);
+  z-index: 100;
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px;
+  overflow-y: auto;
+  backdrop-filter: blur(3px);
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(13,38,38,0.25);
+  border: 1px solid var(--border);
+  position: relative;
+  animation: fadeUp 0.25s ease;
+}
+
+.modal-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  color: var(--ink);
+  margin-bottom: 20px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px; right: 20px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--off-white);
+  color: var(--ink-light);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.modal-close:hover { background: var(--rose-pale); color: var(--rose); border-color: var(--rose); }
+
+/* Form fields */
+.field { margin-bottom: 14px; }
+
+.field label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ink-mid);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 5px;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  padding: 10px 13px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--off-white);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus { border-color: var(--teal-light); background: white; }
+
+.field textarea { resize: vertical; min-height: 64px; }
+
+.field-row { display: flex; gap: 12px; }
+.field-row .field { flex: 1; }
+
+.expiry-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.expiry-row input {
+  width: 80px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.expiry-unit {
+  font-size: 0.85rem;
+  color: var(--ink-light);
+  white-space: nowrap;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: flex-end;
+}
+
+.btn-cancel {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 10px 18px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: white;
+  color: var(--ink-light);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-cancel:hover { background: var(--off-white); }
+
+.btn-save {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 10px 22px;
+  background: var(--teal);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-save:hover { background: var(--teal-mid); }
+
+/* === TOAST === */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--ink);
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 11px 22px;
+  border-radius: 24px;
+  z-index: 200;
+  transition: transform 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  white-space: nowrap;
+}
+
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* === SECTION EMPTY === */
+.section-empty {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--ink-light);
+}
+
+.section-empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.section-empty p { font-size: 0.9rem; font-weight: 300; }
+.section-empty p span { color: var(--teal); font-weight: 500; }
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity:0; transform:scale(0.97); }
+  to   { opacity:1; transform:scale(1); }
+}
+
+@media (max-width: 600px) {
+  .header-inner { flex-direction: column; align-items: flex-start; }
+  .item-grid { grid-template-columns: 1fr; }
+  .field-row { flex-direction: column; }
+  .action-bar-inner { gap: 8px; }
+}
+
+/* === TAB NAV === */
+.tab-nav {
+  background: white;
+  border-bottom: 2px solid var(--border);
+  display: flex;
+  gap: 0;
+  position: sticky;
+  top: 0;
+  z-index: 25;
+}
+
+.tab-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 14px 24px;
+  border: none;
+  background: transparent;
+  color: var(--ink-light);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.15s;
+  letter-spacing: 0.01em;
+}
+
+.tab-btn:hover { color: var(--teal); }
+.tab-btn.active { color: var(--teal); border-bottom-color: var(--teal); }
+
+/* === RECIPE CARDS === */
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.recipe-card {
+  background: white;
+  border-radius: 16px;
+  border: 1.5px solid var(--border);
+  overflow: hidden;
+  box-shadow: 0 2px 8px var(--shadow);
+  transition: transform 0.15s, box-shadow 0.15s;
+  animation: fadeIn 0.3s ease both;
+}
+
+.recipe-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--shadow-deep);
+}
+
+.recipe-img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  display: block;
+  background: var(--frost);
+}
+
+.recipe-img-placeholder {
+  width: 100%;
+  height: 160px;
+  background: linear-gradient(135deg, var(--teal-frost), var(--frost));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.recipe-body { padding: 16px; }
+
+.recipe-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.recipe-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.1rem;
+  color: var(--ink);
+  line-height: 1.25;
+  flex: 1;
+}
+
+.recipe-cat-badge {
+  font-size: 0.65rem;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-family: 'Space Mono', monospace;
+  white-space: nowrap;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  background: var(--frost);
+  color: var(--ink-light);
+}
+
+.recipe-notes {
+  font-size: 0.78rem;
+  color: var(--ink-light);
+  line-height: 1.5;
+  margin-bottom: 10px;
+  font-weight: 300;
+}
+
+.recipe-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  align-items: center;
+}
+
+.recipe-servings {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--teal);
+  background: var(--teal-frost);
+  border: 1px solid var(--teal-pale);
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+
+.recipe-link {
+  font-size: 0.72rem;
+  color: var(--teal);
+  text-decoration: none;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.recipe-link:hover { text-decoration: underline; }
+
+.recipe-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.btn-made-it {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 7px 14px;
+  background: var(--teal);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-made-it:hover { background: var(--teal-mid); }
+
+/* Made It modal overlay */
+.made-it-modal {
+  background: white;
+  border-radius: 20px;
+  padding: 28px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(13,38,38,0.25);
+  border: 1px solid var(--border);
+  animation: fadeUp 0.25s ease;
+}
+
+.made-it-modal .modal-title {
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+}
+
+.made-it-desc {
+  font-size: 0.82rem;
+  color: var(--ink-light);
+  margin-bottom: 18px;
+  font-weight: 300;
+}
+
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="header-eyebrow">Wade Classical</div>
+      <h1 class="header-title">Freezer <span>&amp; Prep</span></h1>
+      <div class="header-sub">Inventory · Meal Prep · Serving Tracker</div>
+    </div>
+    <div class="header-stats">
+      <div class="stat-pill">
+        <div class="stat-num" id="stat-items">0</div>
+        <div class="stat-label">Items</div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-num" id="stat-servings">0</div>
+        <div class="stat-label">Servings</div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-num" id="stat-flagged">0</div>
+        <div class="stat-label">Flagged</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- TAB NAV -->
+<nav class="tab-nav">
+  <button class="tab-btn active" id="tab-freezer">🧊 Freezer</button>
+  <button class="tab-btn" id="tab-recipes">📌 Want to Make</button>
+</nav>
+
+<div id="panel-freezer">
+<!-- ACTION BAR -->
+<div class="action-bar">
+  <div class="action-bar-inner">
+    <div class="filter-chips" id="filter-chips">
+      <button class="chip active" data-filter="all">All</button>
+      <button class="chip flagged-filter" data-filter="flagged">⚠️ Flagged</button>
+      <button class="chip" data-filter="Proteins">🥩 Proteins</button>
+      <button class="chip" data-filter="Soups & Stews">🍲 Soups</button>
+      <button class="chip" data-filter="Complete Meals">🍽️ Meals</button>
+      <button class="chip" data-filter="Sides & Vegetables">🥦 Sides</button>
+      <button class="chip" data-filter="Breakfast Items">🍳 Breakfast</button>
+      <button class="chip" data-filter="Baked Goods & Breads">🍞 Baked</button>
+      <button class="chip" data-filter="Sauces & Broths">🫙 Sauces</button>
+      <button class="chip" data-filter="Desserts & Treats">🍪 Desserts</button>
+      <button class="chip" data-filter="Other">📦 Other</button>
+    </div>
+    <button class="btn-add" id="btn-add-item">
+      <span>+</span> Add Item
+    </button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="main-content">
+  <div class="section-empty" id="empty-state" style="display:none;">
+    <div class="section-empty-icon">🧊</div>
+    <p>Your freezer is empty — <span>add your first item</span> to get started!</p>
+  </div>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+</div><!-- /panel-freezer -->
+
+<!-- RECIPES PANEL -->
+<div id="panel-recipes" style="display:none;">
+  <div class="action-bar">
+    <div class="action-bar-inner">
+      <div style="flex:1;font-family:'DM Serif Display',serif;font-size:1rem;color:var(--ink-mid);">Recipes to try — save links, screenshots, ideas</div>
+      <button class="btn-add" id="btn-add-recipe"><span>+</span> Save Recipe</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="recipe-grid" id="recipe-grid">
+      <div class="empty-state" id="recipe-empty" style="grid-column:1/-1;display:none;">
+        <div class="empty-icon">📌</div>
+        <div class="empty-text">No recipes saved yet — add your first one!</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /panel-recipes -->
+
+<div class="modal-overlay" id="item-modal">
+  <div class="modal">
+    <button class="modal-close" id="modal-close">✕</button>
+    <div class="modal-title" id="modal-title">Add Item</div>
+
+    <input type="hidden" id="edit-id" />
+
+    <div class="field">
+      <label>Item Name *</label>
+      <input type="text" id="f-name" placeholder="e.g. Chicken Tortilla Soup" />
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Category *</label>
+        <select id="f-cat">
+          <option value="">Choose...</option>
+          <option>Proteins</option>
+          <option>Soups & Stews</option>
+          <option>Complete Meals</option>
+          <option>Sides & Vegetables</option>
+          <option>Breakfast Items</option>
+          <option>Baked Goods & Breads</option>
+          <option>Sauces & Broths</option>
+          <option>Desserts & Treats</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Date Made</label>
+        <input type="date" id="f-date" />
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Servings</label>
+        <input type="number" id="f-servings" min="0" max="100" value="1" />
+      </div>
+      <div class="field">
+        <label>Container / Size</label>
+        <input type="text" id="f-container" placeholder="e.g. quart bag, 9x13 pan" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Notes / Recipe reminder</label>
+      <textarea id="f-notes" placeholder="Ingredients, reheat instructions, source..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Flag after how long?</label>
+      <div class="expiry-row">
+        <input type="number" id="f-expiry-val" min="1" max="365" value="3" />
+        <select id="f-expiry-unit" style="flex:1;">
+          <option value="days">Days</option>
+          <option value="weeks">Weeks</option>
+          <option value="months" selected>Months</option>
+        </select>
+        <span class="expiry-unit">(0 = never flag)</span>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" id="modal-cancel">Cancel</button>
+      <button class="btn-save" id="modal-save">Save to Freezer 🧊</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- RECIPE MODAL -->
+<div class="modal-overlay" id="recipe-modal">
+  <div class="modal">
+    <button class="modal-close" id="recipe-modal-close">✕</button>
+    <div class="modal-title" id="recipe-modal-title">Save a Recipe</div>
+    <input type="hidden" id="recipe-edit-id" />
+
+    <div class="field">
+      <label>Recipe Name *</label>
+      <input type="text" id="r-name" placeholder="e.g. Slow Cooker White Chicken Chili" />
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Makes (category)</label>
+        <select id="r-cat">
+          <option value="">Choose...</option>
+          <option>Proteins</option>
+          <option>Soups & Stews</option>
+          <option>Complete Meals</option>
+          <option>Sides & Vegetables</option>
+          <option>Breakfast Items</option>
+          <option>Baked Goods & Breads</option>
+          <option>Sauces & Broths</option>
+          <option>Desserts & Treats</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Est. Servings</label>
+        <input type="number" id="r-servings" min="1" max="100" value="6" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Source / Link</label>
+      <input type="text" id="r-link" placeholder="https://... or 'Pioneer Woman cookbook p.42'" />
+    </div>
+
+    <div class="field">
+      <label>Notes</label>
+      <textarea id="r-notes" placeholder="Why you want to make it, modifications, ingredients to buy..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Screenshot / Photo</label>
+      <input type="file" id="r-photo" accept="image/*" style="font-size:0.82rem;padding:8px;" />
+      <div id="r-photo-preview" style="margin-top:8px;"></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" id="recipe-modal-cancel">Cancel</button>
+      <button class="btn-save" id="recipe-modal-save">Save Recipe 📌</button>
+    </div>
+  </div>
+</div>
+
+<!-- MADE IT MODAL -->
+<div class="modal-overlay" id="made-it-modal">
+  <div class="made-it-modal">
+    <div class="modal-title">🧊 Add to Freezer?</div>
+    <div class="made-it-desc" id="made-it-desc">Add this to your freezer inventory so you can track servings.</div>
+    <input type="hidden" id="made-it-recipe-id" />
+    <div class="field-row">
+      <div class="field">
+        <label>Servings Made</label>
+        <input type="number" id="made-it-servings" min="1" max="100" value="6" />
+      </div>
+      <div class="field">
+        <label>Container</label>
+        <input type="text" id="made-it-container" placeholder="quart bags, pan..." />
+      </div>
+    </div>
+    <div class="field">
+      <label>Date Made</label>
+      <input type="date" id="made-it-date" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="made-it-cancel">Skip</button>
+      <button class="btn-save" id="made-it-confirm">Add to Freezer 🧊</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE -->
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.min.js"></script>
+
+<script>
+// ══════════════════════════════════
+// CONFIG
+// ══════════════════════════════════
+const CATEGORIES = [
+  { key: 'Proteins',           icon: '🥩', color: '#c05a5a' },
+  { key: 'Soups & Stews',      icon: '🍲', color: '#3a7a9a' },
+  { key: 'Complete Meals',     icon: '🍽️', color: '#4a7a5a' },
+  { key: 'Sides & Vegetables', icon: '🥦', color: '#5a8a3a' },
+  { key: 'Breakfast Items',    icon: '🍳', color: '#d4882a' },
+  { key: 'Baked Goods & Breads', icon: '🍞', color: '#b8974a' },
+  { key: 'Sauces & Broths',    icon: '🫙', color: '#7a6ab8' },
+  { key: 'Desserts & Treats',  icon: '🍪', color: '#c07898' },
+  { key: 'Other',              icon: '📦', color: '#6a8a8a' },
+];
+
+function getCat(key) {
+  return CATEGORIES.find(c => c.key === key) || { icon: '📦', color: '#6a8a8a' };
+}
+
+// ══════════════════════════════════
+// FIREBASE
+// ══════════════════════════════════
+firebase.initializeApp({
+  apiKey: "AIzaSyBsjx3JKjCQOMuus07MSoj3o-Vu9eRW6zc",
+  authDomain: "wade-classical.firebaseapp.com",
+  databaseURL: "https://wade-classical-default-rtdb.firebaseio.com",
+  projectId: "wade-classical"
+});
+
+const db = firebase.database();
+let _items = {};
+let _activeFilter = 'all';
+let _editId = null;
+
+async function loadItems() {
+  try {
+    const snap = await db.ref('freezer/items').get();
+    _items = snap.val() || {};
+  } catch(e) {
+    _items = {};
+  }
+  render();
+}
+
+async function saveItem(id, data) {
+  await db.ref(`freezer/items/${id}`).set(data);
+  _items[id] = data;
+}
+
+async function deleteItem(id) {
+  await db.ref(`freezer/items/${id}`).remove();
+  delete _items[id];
+  render();
+}
+
+async function updateServings(id, delta) {
+  const item = _items[id];
+  if (!item) return;
+  const newVal = Math.max(0, (item.servings || 0) + delta);
+  item.servings = newVal;
+  await db.ref(`freezer/items/${id}/servings`).set(newVal);
+  render();
+  showToast(delta > 0 ? `+1 serving added` : newVal === 0 ? `Last serving used!` : `-1 serving used`);
+}
+
+// ══════════════════════════════════
+// EXPIRY LOGIC
+// ══════════════════════════════════
+function getAgeMs(dateStr) {
+  if (!dateStr) return null;
+  return Date.now() - new Date(dateStr).getTime();
+}
+
+function getExpiryMs(item) {
+  if (!item.expiryVal || !item.expiryUnit) return null;
+  const v = parseInt(item.expiryVal);
+  if (!v) return null;
+  const multipliers = { days: 86400000, weeks: 604800000, months: 2592000000 };
+  return v * (multipliers[item.expiryUnit] || 2592000000);
+}
+
+function getFlagStatus(item) {
+  const ageMs    = getAgeMs(item.date);
+  const expiryMs = getExpiryMs(item);
+  if (!ageMs || !expiryMs) return null;
+  const ratio = ageMs / expiryMs;
+  if (ratio >= 1) return 'danger';
+  if (ratio >= 0.75) return 'warn';
+  return null;
+}
+
+function formatAge(dateStr) {
+  const ms = getAgeMs(dateStr);
+  if (ms === null) return '';
+  const days = Math.floor(ms / 86400000);
+  if (days === 0) return 'Today';
+  if (days === 1) return '1 day ago';
+  if (days < 7) return `${days} days ago`;
+  const weeks = Math.floor(days / 7);
+  if (weeks < 5) return `${weeks}w ago`;
+  const months = Math.floor(days / 30);
+  return `${months}mo ago`;
+}
+
+function formatDate(str) {
+  if (!str) return '';
+  const [y,m,d] = str.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[parseInt(m)-1]} ${parseInt(d)}`;
+}
+
+// ══════════════════════════════════
+// RENDER
+// ══════════════════════════════════
+function render() {
+  const main = document.getElementById('main-content');
+  const emptyState = document.getElementById('empty-state');
+
+  // Filter items
+  let entries = Object.entries(_items);
+
+  if (_activeFilter === 'flagged') {
+    entries = entries.filter(([,item]) => getFlagStatus(item) !== null);
+  } else if (_activeFilter !== 'all') {
+    entries = entries.filter(([,item]) => item.category === _activeFilter);
+  }
+
+  // Stats
+  const allEntries = Object.values(_items);
+  document.getElementById('stat-items').textContent    = allEntries.length;
+  document.getElementById('stat-servings').textContent = allEntries.reduce((a,i) => a + (parseInt(i.servings)||0), 0);
+  document.getElementById('stat-flagged').textContent  = allEntries.filter(i => getFlagStatus(i) !== null).length;
+
+  // Clear old cards
+  main.querySelectorAll('.cat-group').forEach(g => g.remove());
+  emptyState.style.display = entries.length === 0 ? 'block' : 'none';
+
+  if (entries.length === 0) return;
+
+  // Group by category
+  const groups = {};
+  entries.forEach(([id, item]) => {
+    const cat = item.category || 'Other';
+    if (!groups[cat]) groups[cat] = [];
+    groups[cat].push([id, item]);
+  });
+
+  // Render in category order
+  CATEGORIES.forEach(catDef => {
+    const items = groups[catDef.key];
+    if (!items || items.length === 0) return;
+
+    const group = document.createElement('div');
+    group.className = 'cat-group';
+    group.innerHTML = `
+      <div class="cat-header">
+        <span class="cat-icon">${catDef.icon}</span>
+        <span class="cat-name">${catDef.key}</span>
+        <span class="cat-count">${items.length}</span>
+        <div class="cat-rule"></div>
+      </div>
+      <div class="item-grid" id="grid-${catDef.key.replace(/\W/g,'_')}"></div>
+    `;
+    main.appendChild(group);
+
+    const grid = group.querySelector('.item-grid');
+    items
+      .sort((a,b) => (a[1].date || '').localeCompare(b[1].date || ''))
+      .forEach(([id, item]) => grid.appendChild(buildCard(id, item, catDef)));
+  });
+}
+
+function buildCard(id, item, catDef) {
+  const flag      = getFlagStatus(item);
+  const age       = formatAge(item.date);
+  const servings  = parseInt(item.servings) || 0;
+  const isEmpty   = servings === 0;
+
+  const card = document.createElement('div');
+  card.className = `item-card${flag === 'danger' || flag === 'warn' ? ' flagged' : ''}${isEmpty ? ' empty' : ''}`;
+
+  const expiryLabel = flag === 'danger' ? '⚠️ Overdue' : flag === 'warn' ? '⏰ Aging' : '';
+  const ageClass    = flag === 'danger' ? 'danger' : flag === 'warn' ? 'warn' : '';
+
+  card.innerHTML = `
+    <div class="card-accent" style="background:${catDef.color}"></div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="card-name">${escHtml(item.name)}</div>
+        ${expiryLabel ? `<span class="flag-badge">${expiryLabel}</span>` : ''}
+      </div>
+      ${item.notes ? `<div class="card-note">${escHtml(item.notes)}</div>` : ''}
+      <div class="card-meta">
+        ${item.date ? `<span class="meta-date">${formatDate(item.date)}</span>` : ''}
+        ${age ? `<span class="meta-age ${ageClass}">${age}</span>` : ''}
+        ${item.container ? `<span class="meta-date">${escHtml(item.container)}</span>` : ''}
+      </div>
+      <div class="serving-row">
+        <span class="serving-label">Servings</span>
+        <div class="serving-controls">
+          <button class="serving-btn" data-minus="${id}" ${servings === 0 ? 'disabled' : ''}>−</button>
+          <span class="serving-count${servings === 0 ? ' zero' : ''}">${servings}</span>
+          <button class="serving-btn" data-plus="${id}">+</button>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="card-btn" data-edit="${id}">✎ Edit</button>
+        ${servings > 0 ? `<button class="card-btn use-all" data-useall="${id}">Used All</button>` : ''}
+        <button class="card-btn danger" data-delete="${id}">✕ Remove</button>
+      </div>
+    </div>
+  `;
+
+  // Wire buttons
+  card.querySelector(`[data-minus]`)?.addEventListener('click', () => updateServings(id, -1));
+  card.querySelector(`[data-plus]`)?.addEventListener('click',  () => updateServings(id, +1));
+  card.querySelector(`[data-edit]`)?.addEventListener('click',  () => openEditModal(id));
+  card.querySelector(`[data-delete]`)?.addEventListener('click', () => {
+    if (item.servings > 0) {
+      // Confirm before deleting item with servings
+      showToast('Tap Remove again to confirm');
+      card.querySelector('[data-delete]').textContent = '✕ Confirm';
+      card.querySelector('[data-delete]').dataset.confirmed = '1';
+    } else {
+      deleteItem(id);
+      showToast('Item removed');
+    }
+  });
+  card.querySelector(`[data-useall]`)?.addEventListener('click', () => {
+    _items[id].servings = 0;
+    db.ref(`freezer/items/${id}/servings`).set(0);
+    render();
+    showToast('Marked as all used!');
+  });
+
+  // Confirmed delete
+  card.addEventListener('click', (e) => {
+    if (e.target.dataset.confirmed) {
+      deleteItem(id);
+      showToast('Item removed');
+    }
+  });
+
+  return card;
+}
+
+// ══════════════════════════════════
+// MODAL
+// ══════════════════════════════════
+function openAddModal() {
+  _editId = null;
+  document.getElementById('modal-title').textContent = 'Add to Freezer';
+  document.getElementById('modal-save').textContent  = 'Save to Freezer 🧊';
+  document.getElementById('edit-id').value           = '';
+  document.getElementById('f-name').value            = '';
+  document.getElementById('f-cat').value             = '';
+  document.getElementById('f-date').value            = new Date().toISOString().split('T')[0];
+  document.getElementById('f-servings').value        = '1';
+  document.getElementById('f-container').value       = '';
+  document.getElementById('f-notes').value           = '';
+  document.getElementById('f-expiry-val').value      = '3';
+  document.getElementById('f-expiry-unit').value     = 'months';
+  document.getElementById('item-modal').classList.add('open');
+  document.getElementById('f-name').focus();
+}
+
+function openEditModal(id) {
+  const item = _items[id];
+  if (!item) return;
+  _editId = id;
+  document.getElementById('modal-title').textContent    = 'Edit Item';
+  document.getElementById('modal-save').textContent     = 'Save Changes';
+  document.getElementById('edit-id').value              = id;
+  document.getElementById('f-name').value               = item.name || '';
+  document.getElementById('f-cat').value                = item.category || '';
+  document.getElementById('f-date').value               = item.date || '';
+  document.getElementById('f-servings').value           = item.servings || '0';
+  document.getElementById('f-container').value          = item.container || '';
+  document.getElementById('f-notes').value              = item.notes || '';
+  document.getElementById('f-expiry-val').value         = item.expiryVal || '3';
+  document.getElementById('f-expiry-unit').value        = item.expiryUnit || 'months';
+  document.getElementById('item-modal').classList.add('open');
+  document.getElementById('f-name').focus();
+}
+
+function closeModal() {
+  document.getElementById('item-modal').classList.remove('open');
+  _editId = null;
+}
+
+async function saveModalItem() {
+  const name = document.getElementById('f-name').value.trim();
+  const cat  = document.getElementById('f-cat').value;
+  if (!name) { showToast('Please enter a name'); return; }
+  if (!cat)  { showToast('Please choose a category'); return; }
+
+  const data = {
+    name,
+    category:   cat,
+    date:       document.getElementById('f-date').value,
+    servings:   parseInt(document.getElementById('f-servings').value) || 0,
+    container:  document.getElementById('f-container').value.trim(),
+    notes:      document.getElementById('f-notes').value.trim(),
+    expiryVal:  document.getElementById('f-expiry-val').value,
+    expiryUnit: document.getElementById('f-expiry-unit').value,
+    addedAt:    _editId ? (_items[_editId]?.addedAt || Date.now()) : Date.now(),
+  };
+
+  const id = _editId || 'item_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+  await saveItem(id, data);
+  render();
+  closeModal();
+  showToast(_editId ? 'Item updated!' : 'Added to freezer! 🧊');
+}
+
+// ══════════════════════════════════
+// FILTER
+// ══════════════════════════════════
+function setFilter(filter) {
+  _activeFilter = filter;
+  document.querySelectorAll('.chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.filter === filter);
+  });
+  render();
+}
+
+// ══════════════════════════════════
+// HELPERS
+// ══════════════════════════════════
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ══════════════════════════════════
+// INIT
+// ══════════════════════════════════
+document.getElementById('btn-add-item').addEventListener('click', openAddModal);
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('modal-cancel').addEventListener('click', closeModal);
+document.getElementById('modal-save').addEventListener('click', saveModalItem);
+document.getElementById('item-modal').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+// Filter chips
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => setFilter(chip.dataset.filter));
+});
+
+// Enter key in name field
+document.getElementById('f-name').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') saveModalItem();
+});
+
+loadItems();
+
+// ══════════════════════════════════
+// TABS
+// ══════════════════════════════════
+function switchTab(tab) {
+  document.getElementById('panel-freezer').style.display = tab === 'freezer' ? 'block' : 'none';
+  document.getElementById('panel-recipes').style.display = tab === 'recipes'  ? 'block' : 'none';
+  document.getElementById('tab-freezer').classList.toggle('active', tab === 'freezer');
+  document.getElementById('tab-recipes').classList.toggle('active', tab === 'recipes');
+}
+
+document.getElementById('tab-freezer').addEventListener('click', () => switchTab('freezer'));
+document.getElementById('tab-recipes').addEventListener('click',  () => switchTab('recipes'));
+
+// ══════════════════════════════════
+// RECIPES DATA
+// ══════════════════════════════════
+let _recipes = {};
+let _recipeEditId = null;
+
+async function loadRecipes() {
+  try {
+    const snap = await db.ref('freezer/recipes').get();
+    _recipes = snap.val() || {};
+  } catch(e) { _recipes = {}; }
+  renderRecipes();
+}
+
+async function saveRecipe(id, data) {
+  await db.ref(`freezer/recipes/${id}`).set(data);
+  _recipes[id] = data;
+}
+
+async function deleteRecipe(id) {
+  await db.ref(`freezer/recipes/${id}`).remove();
+  delete _recipes[id];
+  renderRecipes();
+}
+
+// ══════════════════════════════════
+// RENDER RECIPES
+// ══════════════════════════════════
+function renderRecipes() {
+  const grid  = document.getElementById('recipe-grid');
+  const empty = document.getElementById('recipe-empty');
+  grid.querySelectorAll('.recipe-card').forEach(c => c.remove());
+
+  const entries = Object.entries(_recipes).sort((a,b) => (b[1].addedAt||0) - (a[1].addedAt||0));
+  empty.style.display = entries.length === 0 ? 'block' : 'none';
+
+  entries.forEach(([id, recipe]) => {
+    const cat = getCat(recipe.category || '');
+    const card = document.createElement('div');
+    card.className = 'recipe-card';
+
+    const imgHtml = recipe.photo
+      ? `<img class="recipe-img" src="${recipe.photo}" alt="${escHtml(recipe.name)}" />`
+      : `<div class="recipe-img-placeholder">${cat.icon || '🍽️'}</div>`;
+
+    const linkHtml = recipe.link
+      ? (recipe.link.startsWith('http')
+          ? `<a class="recipe-link" href="${escHtml(recipe.link)}" target="_blank" rel="noopener">🔗 Open source</a>`
+          : `<span class="recipe-link">📖 ${escHtml(recipe.link)}</span>`)
+      : '';
+
+    card.innerHTML = `
+      ${imgHtml}
+      <div class="recipe-body">
+        <div class="recipe-top">
+          <div class="recipe-name">${escHtml(recipe.name)}</div>
+          ${recipe.category ? `<span class="recipe-cat-badge">${escHtml(recipe.category)}</span>` : ''}
+        </div>
+        ${recipe.notes ? `<div class="recipe-notes">${escHtml(recipe.notes)}</div>` : ''}
+        <div class="recipe-meta">
+          ${recipe.servings ? `<span class="recipe-servings">~${recipe.servings} servings</span>` : ''}
+          ${linkHtml}
+        </div>
+        <div class="recipe-actions">
+          <button class="btn-made-it" data-made="${id}">🧊 Made It!</button>
+          <button class="card-btn" data-redit="${id}">✎ Edit</button>
+          <button class="card-btn danger" data-rdelete="${id}">✕ Remove</button>
+        </div>
+      </div>
+    `;
+
+    card.querySelector('[data-made]').addEventListener('click',    () => openMadeItModal(id));
+    card.querySelector('[data-redit]').addEventListener('click',   () => openEditRecipeModal(id));
+    card.querySelector('[data-rdelete]').addEventListener('click', () => { deleteRecipe(id); showToast('Recipe removed'); });
+
+    grid.appendChild(card);
+  });
+}
+
+// ══════════════════════════════════
+// RECIPE MODAL
+// ══════════════════════════════════
+let _pendingPhotoBase64 = null;
+
+function openAddRecipeModal() {
+  _recipeEditId = null;
+  _pendingPhotoBase64 = null;
+  document.getElementById('recipe-modal-title').textContent = 'Save a Recipe';
+  document.getElementById('recipe-modal-save').textContent  = 'Save Recipe 📌';
+  document.getElementById('recipe-edit-id').value = '';
+  document.getElementById('r-name').value     = '';
+  document.getElementById('r-cat').value      = '';
+  document.getElementById('r-servings').value = '6';
+  document.getElementById('r-link').value     = '';
+  document.getElementById('r-notes').value    = '';
+  document.getElementById('r-photo').value    = '';
+  document.getElementById('r-photo-preview').innerHTML = '';
+  document.getElementById('recipe-modal').classList.add('open');
+  document.getElementById('r-name').focus();
+}
+
+function openEditRecipeModal(id) {
+  const r = _recipes[id];
+  if (!r) return;
+  _recipeEditId = id;
+  _pendingPhotoBase64 = r.photo || null;
+  document.getElementById('recipe-modal-title').textContent = 'Edit Recipe';
+  document.getElementById('recipe-modal-save').textContent  = 'Save Changes';
+  document.getElementById('recipe-edit-id').value = id;
+  document.getElementById('r-name').value     = r.name || '';
+  document.getElementById('r-cat').value      = r.category || '';
+  document.getElementById('r-servings').value = r.servings || '6';
+  document.getElementById('r-link').value     = r.link || '';
+  document.getElementById('r-notes').value    = r.notes || '';
+  document.getElementById('r-photo').value    = '';
+  document.getElementById('r-photo-preview').innerHTML = r.photo
+    ? `<img src="${r.photo}" style="max-width:100%;max-height:140px;border-radius:8px;border:1px solid var(--border);" />`
+    : '';
+  document.getElementById('recipe-modal').classList.add('open');
+}
+
+function closeRecipeModal() {
+  document.getElementById('recipe-modal').classList.remove('open');
+  _recipeEditId = null;
+  _pendingPhotoBase64 = null;
+}
+
+// Photo preview
+document.getElementById('r-photo').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    _pendingPhotoBase64 = ev.target.result;
+    document.getElementById('r-photo-preview').innerHTML =
+      `<img src="${_pendingPhotoBase64}" style="max-width:100%;max-height:140px;border-radius:8px;border:1px solid var(--border);margin-top:4px;" />`;
+  };
+  reader.readAsDataURL(file);
+});
+
+async function saveRecipeModal() {
+  const name = document.getElementById('r-name').value.trim();
+  if (!name) { showToast('Please enter a recipe name'); return; }
+
+  const data = {
+    name,
+    category: document.getElementById('r-cat').value,
+    servings: parseInt(document.getElementById('r-servings').value) || 0,
+    link:     document.getElementById('r-link').value.trim(),
+    notes:    document.getElementById('r-notes').value.trim(),
+    photo:    _pendingPhotoBase64 || (_recipeEditId ? (_recipes[_recipeEditId]?.photo || null) : null),
+    addedAt:  _recipeEditId ? (_recipes[_recipeEditId]?.addedAt || Date.now()) : Date.now(),
+  };
+
+  const id = _recipeEditId || 'recipe_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+  await saveRecipe(id, data);
+  renderRecipes();
+  closeRecipeModal();
+  showToast(_recipeEditId ? 'Recipe updated!' : 'Recipe saved! 📌');
+}
+
+// ══════════════════════════════════
+// MADE IT MODAL
+// ══════════════════════════════════
+function openMadeItModal(recipeId) {
+  const r = _recipes[recipeId];
+  if (!r) return;
+  document.getElementById('made-it-recipe-id').value  = recipeId;
+  document.getElementById('made-it-desc').textContent = `"${r.name}" — add to your freezer inventory.`;
+  document.getElementById('made-it-servings').value   = r.servings || '6';
+  document.getElementById('made-it-container').value  = '';
+  document.getElementById('made-it-date').value       = new Date().toISOString().split('T')[0];
+  document.getElementById('made-it-modal').classList.add('open');
+}
+
+function closeMadeItModal() {
+  document.getElementById('made-it-modal').classList.remove('open');
+}
+
+async function confirmMadeIt() {
+  const recipeId  = document.getElementById('made-it-recipe-id').value;
+  const recipe    = _recipes[recipeId];
+  if (!recipe) return;
+
+  const servings  = parseInt(document.getElementById('made-it-servings').value) || 0;
+  const container = document.getElementById('made-it-container').value.trim();
+  const date      = document.getElementById('made-it-date').value;
+
+  const data = {
+    name:       recipe.name,
+    category:   recipe.category || 'Other',
+    date,
+    servings,
+    container,
+    notes:      recipe.notes || '',
+    expiryVal:  '3',
+    expiryUnit: 'months',
+    addedAt:    Date.now(),
+  };
+
+  const id = 'item_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+  await saveItem(id, data);
+  render();
+  closeMadeItModal();
+  switchTab('freezer');
+  showToast(`Added to freezer! 🧊 ${servings} servings of ${recipe.name}`);
+}
+
+// Wire recipe modal buttons
+document.getElementById('btn-add-recipe').addEventListener('click',        openAddRecipeModal);
+document.getElementById('recipe-modal-close').addEventListener('click',    closeRecipeModal);
+document.getElementById('recipe-modal-cancel').addEventListener('click',   closeRecipeModal);
+document.getElementById('recipe-modal-save').addEventListener('click',     saveRecipeModal);
+document.getElementById('recipe-modal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeRecipeModal(); });
+document.getElementById('made-it-cancel').addEventListener('click',        closeMadeItModal);
+document.getElementById('made-it-confirm').addEventListener('click',       confirmMadeIt);
+document.getElementById('made-it-modal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeMadeItModal(); });
+
+loadRecipes();
+
+</script>
+</body>
+</html>

@@ -616,6 +616,121 @@
 
         /* Library Door Card */
 
+
+        /* ── FREEZER CARD ── */
+        .freezer-card {
+            display: block;
+            text-decoration: none;
+            background: linear-gradient(135deg, #1a6b6b 0%, #237a7a 55%, #3a9898 100%);
+            border-radius: 16px;
+            padding: 22px 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(13,38,38,0.2);
+            border: 1px solid rgba(58,152,152,0.3);
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.6s ease 0.55s both;
+        }
+
+        .freezer-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.06), transparent);
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+
+        /* Frost grid overlay */
+        .freezer-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+        }
+
+        .freezer-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(13,38,38,0.28); }
+        .freezer-card:hover::before { opacity: 1; }
+
+        .fz-inner {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .fz-icon { font-size: 2.2rem; flex-shrink: 0; }
+
+        .fz-text { flex: 1; min-width: 160px; }
+
+        .fz-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            color: #f0fafa;
+            letter-spacing: 0.08em;
+            margin-bottom: 2px;
+            font-weight: 400;
+        }
+
+        .fz-sub {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 0.85rem;
+            color: rgba(200,240,240,0.65);
+            margin-bottom: 12px;
+        }
+
+        .fz-stats {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .fz-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 10px;
+            padding: 7px 14px;
+            min-width: 60px;
+        }
+
+        .fz-stat-num {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            color: white;
+            line-height: 1;
+            font-weight: 600;
+        }
+
+        .fz-stat-label {
+            font-size: 0.6rem;
+            color: rgba(200,240,240,0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-top: 2px;
+        }
+
+        .fz-arrow {
+            font-size: 1.2rem;
+            color: rgba(200,240,240,0.5);
+            transition: transform 0.2s, color 0.2s;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .freezer-card:hover .fz-arrow { transform: translateX(4px); color: rgba(200,240,240,0.9); }
+
         /* ── DRIVER'S ED CARD ── */
         .drivers-ed-card {
             display: block;
@@ -1405,6 +1520,43 @@
         </div>
     </a>
 
+
+    <!-- FREEZER SECTION -->
+    <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-title">Freezer &amp; Meal Prep</span>
+        <div class="divider-line"></div>
+    </div>
+
+    <a href="wade-freezer.html" class="freezer-card">
+        <div class="fz-inner">
+            <div class="fz-icon">🧊</div>
+            <div class="fz-text">
+                <div class="fz-title">Freezer &amp; Meal Prep</div>
+                <div class="fz-sub">Inventory · Servings · Want to Make</div>
+                <div class="fz-stats">
+                    <div class="fz-stat">
+                        <div class="fz-stat-num" id="fz-items">—</div>
+                        <div class="fz-stat-label">Items</div>
+                    </div>
+                    <div class="fz-stat">
+                        <div class="fz-stat-num" id="fz-servings">—</div>
+                        <div class="fz-stat-label">Servings</div>
+                    </div>
+                    <div class="fz-stat">
+                        <div class="fz-stat-num" id="fz-flagged">—</div>
+                        <div class="fz-stat-label">Flagged</div>
+                    </div>
+                    <div class="fz-stat">
+                        <div class="fz-stat-num" id="fz-recipes">—</div>
+                        <div class="fz-stat-label">Recipes</div>
+                    </div>
+                </div>
+            </div>
+            <div class="fz-arrow">→</div>
+        </div>
+    </a>
+
     <footer>
         <p class="footer-text">Wade Classical Homeschool · North Georgia · Est. 2020</p>
     </footer>
@@ -1721,6 +1873,45 @@ function renderPlannerCards() {
 }
 
 renderPlannerCards();
+
+
+// ══════════════════════════════════════════════
+// FREEZER STATS
+// ══════════════════════════════════════════════
+function loadFreezerStats() {
+    if (!dashDb) return;
+
+    // Load items
+    dashDb.ref('freezer/items').get().then(snap => {
+        const raw = snap.val() || {};
+        const items = Object.values(raw);
+        const itemCount    = items.length;
+        const servingTotal = items.reduce((a,i) => a + (parseInt(i.servings)||0), 0);
+
+        // Expiry check — same logic as the freezer app
+        const flagged = items.filter(item => {
+            if (!item.date || !item.expiryVal) return false;
+            const ageMs    = Date.now() - new Date(item.date).getTime();
+            const units    = { days: 86400000, weeks: 604800000, months: 2592000000 };
+            const expiryMs = parseInt(item.expiryVal) * (units[item.expiryUnit] || units.months);
+            return ageMs / expiryMs >= 0.75;
+        }).length;
+
+        document.getElementById('fz-items').textContent    = itemCount;
+        document.getElementById('fz-servings').textContent = servingTotal;
+        document.getElementById('fz-flagged').textContent  = flagged;
+        if (flagged > 0) {
+            document.getElementById('fz-flagged').style.color = '#d4882a';
+        }
+    }).catch(() => {});
+
+    // Load recipe count
+    dashDb.ref('freezer/recipes').get().then(snap => {
+        const count = snap.val() ? Object.keys(snap.val()).length : 0;
+        document.getElementById('fz-recipes').textContent = count;
+    }).catch(() => {});
+}
+loadFreezerStats();
 
 // ══════════════════════════════════════════════
 // AVA DRIVER'S ED HOURS
