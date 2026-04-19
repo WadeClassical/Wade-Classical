@@ -31,6 +31,11 @@ body{min-height:100vh;background:#1a1208;font-family:'Cormorant Garamond',serif;
 .header-eyebrow { font-family:'Jost',sans-serif; font-size:11px; letter-spacing:4px; text-transform:uppercase; color:rgba(200,230,180,0.9); margin-bottom:10px; text-shadow:0 1px 6px rgba(0,0,0,0.9); }
 .library-title { font-family:'Cinzel',serif; font-size:clamp(32px,5vw,54px); color:#fff; font-weight:600; letter-spacing:3px; text-shadow:0 0 40px rgba(155,114,170,0.8), 0 2px 12px rgba(0,0,0,0.9); }
 .library-subtitle { font-style:italic; font-size:18px; color:rgba(230,215,255,0.9); margin-top:8px; text-shadow:0 1px 8px rgba(0,0,0,0.9); }
+.reading-tracker-link { position:absolute; top:50%; right:20px; transform:translateY(-50%); display:flex; flex-direction:column; align-items:center; gap:6px; text-decoration:none; color:rgba(212,165,116,0.7); transition:all 0.3s; }
+.reading-tracker-link:hover { color:rgba(212,165,116,1); transform:translateY(-50%) scale(1.1); }
+.tracker-icon { font-size:28px; filter:drop-shadow(0 0 8px rgba(212,165,116,0.8)) drop-shadow(0 0 16px rgba(212,165,116,0.6)) drop-shadow(0 0 24px rgba(212,165,116,0.4)); }
+.tracker-label { font-family:'Jost',sans-serif; font-size:9px; letter-spacing:2px; text-transform:uppercase; opacity:0.8; }
+@media (max-width: 768px) { .reading-tracker-link { position:static; transform:none; margin:16px auto 0; } .reading-tracker-link:hover { transform:scale(1.1); } }
 .candle-group { display:flex; justify-content:center; gap:30px; margin:20px 0 10px; }
 .candle { display:flex; flex-direction:column; align-items:center; }
 .candle-body { width:14px; height:50px; background:linear-gradient(90deg,#f0e8d8,#fff5e8,#e8dcc8); border-radius:2px 2px 1px 1px; }
@@ -510,6 +515,10 @@ body{min-height:100vh;background:#1a1208;font-family:'Cormorant Garamond',serif;
     <div class="header-eyebrow">Wade Classical · Reading Room</div>
     <h1 class="library-title">Amanda's Library</h1>
     <p class="library-subtitle">A secret garden of stories &amp; knowledge</p>
+    <a href="wade-reading-tracker.html" class="reading-tracker-link" title="Shadow & Ink - My Reading Tracker">
+      <div class="tracker-icon">💛</div>
+      <div class="tracker-label">My Reads</div>
+    </a>
   </header>
 
   <div class="nav-tabs">
