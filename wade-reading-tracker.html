@@ -406,6 +406,24 @@ body {
   margin-top: 4px;
 }
 
+.book-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  justify-content: center;
+}
+
+.book-stars {
+  font-size: 12px;
+  color: var(--gold);
+}
+
+.book-crown {
+  font-size: 14px;
+  margin-left: 2px;
+}
+
 .no-books {
   text-align: center;
   padding: 60px 20px;
@@ -1173,6 +1191,25 @@ body {
       </div>
 
       <div class="form-group">
+        <label class="form-label">Rating</label>
+        <div class="spice-level">
+          <span class="spice-chili" onclick="setRating(1)" id="star-1">⭐</span>
+          <span class="spice-chili" onclick="setRating(2)" id="star-2">⭐</span>
+          <span class="spice-chili" onclick="setRating(3)" id="star-3">⭐</span>
+          <span class="spice-chili" onclick="setRating(4)" id="star-4">⭐</span>
+          <span class="spice-chili" onclick="setRating(5)" id="star-5">⭐</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">God Tier</label>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:8px;">
+          <button type="button" class="tag-select" id="god-tier-toggle" onclick="toggleGodTier()" style="font-size:20px;padding:8px 16px;">👑</button>
+          <span style="font-size:13px;color:var(--silver);font-style:italic;" id="god-tier-label">Mark as God Tier</span>
+        </div>
+      </div>
+
+      <div class="form-group">
         <label class="form-label">TikTok Notes / First Impression</label>
         <textarea class="form-textarea" id="book-notes" placeholder="What made you save this? What hooked you?"></textarea>
       </div>
@@ -1198,6 +1235,10 @@ body {
         <div class="detail-info">
           <h3 class="detail-title" id="detail-title"></h3>
           <p class="detail-author" id="detail-author"></p>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:12px;">
+            <div id="detail-rating" style="color:var(--gold);font-size:14px;"></div>
+            <div id="detail-god-tier" style="font-size:18px;"></div>
+          </div>
           <div class="detail-tags" id="detail-all-tags"></div>
         </div>
       </div>
@@ -1321,6 +1362,14 @@ var DEFAULT_FILTERS = {
 // ── HELPER FUNCTIONS ──
 function uid() { return Date.now() + '-' + Math.random().toString(36).slice(2, 7); }
 function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+function getStarDisplay(rating) {
+  var stars = '';
+  for (var i = 1; i <= 5; i++) {
+    stars += i <= rating ? '⭐' : '☆';
+  }
+  return stars;
+}
 
 // ── FIREBASE ──
 function loadFilterOptions() {
@@ -1447,8 +1496,16 @@ function openAddModal() {
   // Reset tag selections
   currentTags = { genres: [], tropes: [], vibes: [], formats: [] };
   currentSpice = 0;
+  currentRating = 0;
+  currentGodTier = false;
   renderAddTags();
   updateSpiceDisplay();
+  updateRatingDisplay();
+  
+  var godTierToggle = document.getElementById('god-tier-toggle');
+  var godTierLabel = document.getElementById('god-tier-label');
+  if (godTierToggle) godTierToggle.classList.remove('active');
+  if (godTierLabel) godTierLabel.textContent = 'Mark as God Tier';
   
   switchAddMode('search');
   openModal('add-modal');
@@ -1492,6 +1549,8 @@ function selectStatus(el, status) {
 // ── TAG MANAGEMENT ──
 var currentTags = { genres: [], tropes: [], vibes: [], formats: [] };
 var currentSpice = 0;
+var currentRating = 0;
+var currentGodTier = false;
 
 function renderAddTags() {
   renderTagGroup('genre-tags', GENRES, 'genres');
@@ -1546,6 +1605,37 @@ function updateSpiceDisplay() {
   }
 }
 
+function setRating(level) {
+  currentRating = level;
+  updateRatingDisplay();
+}
+
+function updateRatingDisplay() {
+  for (var i = 1; i <= 5; i++) {
+    var star = document.getElementById('star-' + i);
+    if (star) {
+      if (i <= currentRating) {
+        star.classList.add('active');
+      } else {
+        star.classList.remove('active');
+      }
+    }
+  }
+}
+
+function toggleGodTier() {
+  currentGodTier = !currentGodTier;
+  var toggle = document.getElementById('god-tier-toggle');
+  var label = document.getElementById('god-tier-label');
+  if (currentGodTier) {
+    toggle.classList.add('active');
+    label.textContent = 'God Tier ✓';
+  } else {
+    toggle.classList.remove('active');
+    label.textContent = 'Mark as God Tier';
+  }
+}
+
 // ── SAVE BOOK ──
 function saveBook() {
   var title, author, cover;
@@ -1578,6 +1668,8 @@ function saveBook() {
     vibes: currentTags.vibes,
     formats: currentTags.formats,
     spice: currentSpice,
+    rating: currentRating,
+    godTier: currentGodTier,
     notes: document.getElementById('book-notes').value,
     addedAt: Date.now()
   };
@@ -1625,6 +1717,10 @@ function renderBooks() {
       </div>
       <div class="book-title">${esc(book.title)}</div>
       <div class="book-author">${esc(book.author || 'Unknown Author')}</div>
+      <div class="book-rating">
+        <span class="book-stars">${getStarDisplay(book.rating || 0)}</span>
+        ${book.godTier ? '<span class="book-crown">👑</span>' : ''}
+      </div>
     `;
     grid.appendChild(card);
   }
@@ -1769,6 +1865,14 @@ function openDetailModal(book) {
   document.getElementById('detail-cover').src = book.cover || '';
   document.getElementById('detail-title').textContent = book.title;
   document.getElementById('detail-author').textContent = book.author || 'Unknown Author';
+  
+  // Rating display
+  var ratingEl = document.getElementById('detail-rating');
+  ratingEl.textContent = getStarDisplay(book.rating || 0);
+  
+  // God Tier display
+  var godTierEl = document.getElementById('detail-god-tier');
+  godTierEl.textContent = book.godTier ? '👑' : '';
   
   var tagsContainer = document.getElementById('detail-all-tags');
   tagsContainer.innerHTML = '';
