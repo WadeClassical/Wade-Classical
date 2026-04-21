@@ -355,14 +355,12 @@
 
         /* Delete choice popup */
         .delete-popup {
-            position: absolute;
-            right: 0;
-            top: 100%;
+            position: fixed;
             background: white;
             border: 1px solid var(--clay);
             border-radius: 10px;
-            box-shadow: 0 6px 24px rgba(0,0,0,0.15);
-            z-index: 100;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+            z-index: 9999;
             min-width: 190px;
             overflow: hidden;
             animation: popIn 0.15s ease;
@@ -1548,8 +1546,13 @@ function deleteTask(person, taskId, date) {
         </button>
     `;
 
-    btn.parentElement.style.position = 'relative';
-    btn.parentElement.appendChild(popup);
+    // Position fixed relative to button, appended to body to escape all overflow:hidden
+    const rect = btn.getBoundingClientRect();
+    popup.style.position = 'fixed';
+    popup.style.top  = (rect.bottom + 6) + 'px';
+    popup.style.left = Math.max(8, rect.right - 190) + 'px';
+    popup.style.zIndex = '9999';
+    document.body.appendChild(popup);
 
     popup.querySelector('#dp-skip').addEventListener('click', (e) => {
         e.stopPropagation();
