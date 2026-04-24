@@ -1281,6 +1281,9 @@ const THEMES=[
   {day:'Friday',   short:'Fri',label:'Pasta Night',  emoji:'🍝',color:'#c44090',bg:'#fae4f4',dark:'#8a1860'},
   {day:'Saturday', short:'Sat',label:'Takeout',      emoji:'🥡',color:'#5870d4',bg:'#eaeeff',dark:'#2840a0',ft:true},
   {day:'Sunday',   short:'Sun',label:'Breakfast',    emoji:'🥞',color:'#a040c8',bg:'#f4e4fc',dark:'#6818a0'},
+  {day:'Sides',    short:'Sid',label:'Sides',          emoji:'🥗',color:'#5a9a4a',bg:'#ecf5e8',dark:'#3a6a2a',extra:true},
+  {day:'Smoker',   short:'Smk',label:'Smoker',         emoji:'🔥',color:'#c06030',bg:'#faeee8',dark:'#8a3010',extra:true},
+  {day:'Desserts', short:'Des',label:'Desserts',       emoji:'🍰',color:'#c05898',bg:'#fce8f4',dark:'#883068',extra:true},
 ];
 
 // meals[i] = [{name,link},...] — link optional
@@ -1603,7 +1606,7 @@ function openEditModal(themeIdx,mealIdx){
 }
 function populateCatSelect(selectedIdx){
   const sel=document.getElementById('mmCat');sel.innerHTML='';
-  THEMES.forEach((t,i)=>{if(t.ft)return;const o=document.createElement('option');o.value=i;o.textContent=t.emoji+' '+t.day+' — '+t.label;if(i===selectedIdx)o.selected=true;sel.appendChild(o);});
+  THEMES.forEach((t,i)=>{if(t.ft||t.extra)return;const o=document.createElement('option');o.value=i;o.textContent=t.emoji+' '+t.day+' — '+t.label;if(i===selectedIdx)o.selected=true;sel.appendChild(o);});
 }
 function closeMealModal(){document.getElementById('mealModal').classList.remove('open');}
 function saveMealModal(){
@@ -1635,7 +1638,7 @@ document.getElementById('mealModal').addEventListener('click',e=>{if(e.target===
 
 // ── ACTIONS ──────────────────────────────────────────────────────
 function copyLastWeek(){const lp=getPlan(carOff-1);if(!lp.some(m=>mealName(m))){showToast('Last week has no meals!','orange');return;}S.plan[weekKey(carOff)]=[...lp];saveFB();renderAll();showToast('💥 Last week copied!','purple');if(countPlanned(carOff)===7)setTimeout(launchConfetti,300);}
-function randomFill(){const k=weekKey(carOff);if(!S.plan[k])S.plan[k]=new Array(7).fill(null);THEMES.forEach((t,i)=>{if(!mealName(S.plan[k][i])){if(t.ft)S.plan[k][i]={name:'Takeout',link:''};else{const opts=S.meals[i];if(opts.length)S.plan[k][i]=opts[Math.floor(Math.random()*opts.length)];}}});saveFB();renderAll();showToast('🎲 Random meals picked!','purple');if(countPlanned(carOff)===7)setTimeout(launchConfetti,300);}
+function randomFill(){const k=weekKey(carOff);if(!S.plan[k])S.plan[k]=new Array(7).fill(null);THEMES.forEach((t,i)=>{if(t.extra)return;if(!mealName(S.plan[k][i])){if(t.ft)S.plan[k][i]={name:'Takeout',link:''};else{const opts=S.meals[i];if(opts.length)S.plan[k][i]=opts[Math.floor(Math.random()*opts.length)];}}});saveFB();renderAll();showToast('🎲 Random meals picked!','purple');if(countPlanned(carOff)===7)setTimeout(launchConfetti,300);}
 function launchConfetti(){const c=document.getElementById('confC'),cols=['#e8559a','#9b59d4','#3a8fbf','#2a8a5a','#c44090','#5870d4','#a040c8','#fff'];for(let i=0;i<90;i++){const p=document.createElement('div');p.className='cpiec';p.style.left=Math.random()*100+'vw';p.style.top='-20px';p.style.background=cols[Math.floor(Math.random()*cols.length)];p.style.width=(7+Math.random()*9)+'px';p.style.height=(7+Math.random()*9)+'px';p.style.borderRadius=Math.random()>.5?'50%':'2px';p.style.animationDuration=(1.4+Math.random()*2.2)+'s';p.style.animationDelay=Math.random()*.6+'s';c.appendChild(p);setTimeout(()=>p.remove(),4500);}}
 let toastT;
 function showToast(msg,color='pink'){clearTimeout(toastT);const el=document.getElementById('toast');el.textContent=msg;el.className='toast show '+color;toastT=setTimeout(()=>el.classList.remove('show'),2800);}
