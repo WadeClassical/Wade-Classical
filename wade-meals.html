@@ -364,6 +364,202 @@ header{position:relative;z-index:10;background:rgba(253,246,240,.96);backdrop-fi
 }
 @media(max-width:700px){.pond-scene{height:160px;}}
 
+
+/* ── MONTH VIEW ─────────────────── */
+.mo-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 18px 16px 10px;
+}
+
+.mo-nav {
+  background: var(--card);
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: 1.4rem;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.mo-nav:hover { background: var(--linen); }
+
+.mo-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  color: var(--ink);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  min-width: 180px;
+  text-align: center;
+}
+
+.mo-legend {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 12px;
+}
+
+.mo-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  color: var(--ink-light, #888);
+  font-weight: 500;
+}
+
+.mo-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.mo-dot-b { background: #e8a030; }
+.mo-dot-l { background: #4a9a6a; }
+.mo-dot-d { background: #6a78c8; }
+.mo-dot-s { background: #c87898; }
+.mo-dot-t { background: #9a6ac8; }
+
+.mo-scroll {
+  overflow-x: auto;
+  padding: 0 8px 24px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mo-grid-wrap {
+  min-width: 700px;
+}
+
+.mo-dow-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  margin-bottom: 3px;
+}
+
+.mo-dow {
+  text-align: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-light, #888);
+  padding: 4px 0;
+}
+
+.mo-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.mo-cell {
+  background: var(--card, #fff);
+  border: 1px solid var(--stroke, #e8e0d0);
+  border-radius: 8px;
+  min-height: 90px;
+  padding: 6px;
+  cursor: pointer;
+  transition: box-shadow 0.15s, border-color 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+
+.mo-cell:hover {
+  border-color: var(--sage, #4a7a5a);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.mo-cell.today {
+  border-color: var(--gold, #b8974a);
+  border-width: 2px;
+}
+
+.mo-cell.empty-day {
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
+  pointer-events: none;
+}
+
+.mo-cell.has-meals { background: #fdfcf8; }
+
+.mo-day-num {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--ink-light, #888);
+  margin-bottom: 4px;
+  line-height: 1;
+}
+
+.mo-cell.today .mo-day-num {
+  background: var(--gold, #b8974a);
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+}
+
+.mo-meal-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 3px;
+  margin-bottom: 2px;
+}
+
+.mo-meal-text {
+  font-size: 0.67rem;
+  color: var(--ink, #2a1f14);
+  line-height: 1.25;
+  flex: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.mo-meal-text.empty-meal {
+  color: var(--stroke, #e8e0d0);
+  font-style: italic;
+}
+
+.cell-field { margin-bottom: 12px; }
+.cell-flbl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink, #2a1f14);
+  margin-bottom: 5px;
+}
+
+.cell-modal-date {
+  font-size: 0.82rem;
+  color: var(--ink-light, #888);
+  margin-bottom: 14px;
+  font-style: italic;
+}
+
+/* ── END MONTH VIEW ─────────────── */
+
 </style>
 </head>
 <body>
@@ -946,6 +1142,7 @@ header{position:relative;z-index:10;background:rgba(253,246,240,.96);backdrop-fi
     <button class="vtab active" id="btnCar" onclick="showView('car')">&#128197; Weekly View</button>
     <button class="vtab" id="btnEd"  onclick="showView('ed')">&#9998;&#65039; Plan Week</button>
     <button class="vtab" id="btnDb"  onclick="showView('db')">&#127358; Recipe Box</button>
+    <button class="vtab" id="btnMo"  onclick="showView('mo')">&#128197; Month View</button>
   </div>
 
   <!-- CAROUSEL -->
@@ -985,8 +1182,67 @@ header{position:relative;z-index:10;background:rgba(253,246,240,.96);backdrop-fi
   </div>
 </div>
 
+  <!-- MONTH VIEW -->
+  <div id="moView" style="display:none;">
+    <div class="mo-header">
+      <button class="mo-nav" id="moPrev">&#8249;</button>
+      <div class="mo-title" id="moTitle">April 2026</div>
+      <button class="mo-nav" id="moNext">&#8250;</button>
+    </div>
+    <div class="mo-legend">
+      <span class="mo-legend-item"><span class="mo-dot mo-dot-b"></span>Breakfast</span>
+      <span class="mo-legend-item"><span class="mo-dot mo-dot-l"></span>Lunch</span>
+      <span class="mo-legend-item"><span class="mo-dot mo-dot-d"></span>Dinner</span>
+      <span class="mo-legend-item"><span class="mo-dot mo-dot-s"></span>Snack</span>
+      <span class="mo-legend-item"><span class="mo-dot mo-dot-t"></span>Treat</span>
+    </div>
+    <div class="mo-scroll">
+      <div class="mo-grid-wrap">
+        <!-- Day of week headers -->
+        <div class="mo-dow-row" id="moDowRow"></div>
+        <!-- Calendar grid -->
+        <div class="mo-grid" id="moGrid"></div>
+      </div>
+    </div>
+  </div>
+
+
 <div class="toast" id="toast"></div>
 <div class="confetti-c" id="confC"></div>
+
+
+<!-- MONTH CELL MODAL -->
+<div class="overlay" id="cellModal" style="display:none;">
+  <div class="modal" style="max-width:360px;">
+    <button class="modal-close" id="cellModalClose">&times;</button>
+    <div class="modal-title" id="cellModalTitle">Edit Meals</div>
+    <div class="cell-modal-date" id="cellModalDate"></div>
+    <div class="cell-field">
+      <label class="cell-flbl"><span class="mo-dot mo-dot-b" style="display:inline-block;"></span> Breakfast</label>
+      <input class="finput" type="text" id="cellB" placeholder="e.g. Scrambled eggs, toast" />
+    </div>
+    <div class="cell-field">
+      <label class="cell-flbl"><span class="mo-dot mo-dot-l" style="display:inline-block;"></span> Lunch</label>
+      <input class="finput" type="text" id="cellL" placeholder="e.g. Grilled cheese" />
+    </div>
+    <div class="cell-field">
+      <label class="cell-flbl"><span class="mo-dot mo-dot-d" style="display:inline-block;"></span> Dinner</label>
+      <input class="finput" type="text" id="cellD" placeholder="e.g. Chicken soup" />
+    </div>
+    <div class="cell-field">
+      <label class="cell-flbl"><span class="mo-dot mo-dot-s" style="display:inline-block;"></span> Snack</label>
+      <input class="finput" type="text" id="cellS" placeholder="e.g. Apple slices, hummus" />
+    </div>
+    <div class="cell-field">
+      <label class="cell-flbl"><span class="mo-dot mo-dot-t" style="display:inline-block;"></span> Treat</label>
+      <input class="finput" type="text" id="cellT" placeholder="e.g. Cookies, ice cream" />
+    </div>
+    <div class="modal-actions" style="display:flex;gap:10px;margin-top:16px;justify-content:flex-end;">
+      <button class="act-btn b" id="cellClear" style="font-size:0.78rem;padding:8px 14px;">Clear Day</button>
+      <button class="act-btn a" id="cellSave" style="font-size:0.78rem;padding:8px 18px;">Save ✓</button>
+    </div>
+  </div>
+</div>
 
 <!-- ADD / EDIT MEAL MODAL -->
 <div class="overlay" id="mealModal">
@@ -1063,12 +1319,18 @@ function saveFB(){setSyncing();db.ref('meal-planner-v3').set({meals:S.meals,plan
 // ── VIEWS ────────────────────────────────────────────────────────
 function showView(v){
   curView=v;
-  ['car','ed','db'].forEach(n=>{document.getElementById(n+'View').style.display=v===n?'block':'none';document.getElementById('btn'+n.charAt(0).toUpperCase()+n.slice(1)).classList.toggle('active',v===n);});
+  ['car','ed','db','mo'].forEach(n=>{
+    const el=document.getElementById(n+'View');
+    if(el) el.style.display=v===n?'block':'none';
+    const btn=document.getElementById('btn'+n.charAt(0).toUpperCase()+n.slice(1));
+    if(btn) btn.classList.toggle('active',v===n);
+  });
   if(v==='ed'){edOff=carOff;renderEditor();}
   if(v==='car')renderCarousel();
   if(v==='db')renderDB();
+  if(v==='mo')renderMonth();
 }
-function renderAll(){renderCarousel();if(curView==='ed')renderEditor();if(curView==='db')renderDB();}
+function renderAll(){renderCarousel();if(curView==='ed')renderEditor();if(curView==='db')renderDB();if(curView==='mo')renderMonth();}
 
 // ── CAROUSEL ─────────────────────────────────────────────────────
 function renderCarousel(){buildCard('cLeft',carOff-1,'side left');buildCard('cCenter',carOff,'center');buildCard('cRight',carOff+1,'side right');}
@@ -1553,6 +1815,172 @@ function showToast(msg,color='pink'){clearTimeout(toastT);const el=document.getE
 })();
 
 loadFB();
+
+// ══════════════════════════════════════════
+// MONTH VIEW
+// ══════════════════════════════════════════
+let moYear  = new Date().getFullYear();
+let moMonth = new Date().getMonth(); // 0-indexed
+let moData  = {}; // keyed by "YYYY-MM-DD" => {b, l, d}
+let cellEditKey = null;
+
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DOW_NAMES   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+function moCellKey(y, m, d) {
+  return y + '-' + String(m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+}
+
+function loadMonthFB() {
+  db.ref('meal-planner-v3/monthPlan').once('value', snap => {
+    moData = snap.val() || {};
+    if (curView === 'mo') renderMonth();
+  });
+}
+
+function saveMonthFB() {
+  db.ref('meal-planner-v3/monthPlan').set(moData);
+}
+
+function renderMonth() {
+  const titleEl = document.getElementById('moTitle');
+  titleEl.textContent = MONTH_NAMES[moMonth] + ' ' + moYear;
+
+  // Day of week headers
+  const dowRow = document.getElementById('moDowRow');
+  dowRow.innerHTML = DOW_NAMES.map(d => `<div class="mo-dow">${d}</div>`).join('');
+
+  // Build grid
+  const grid     = document.getElementById('moGrid');
+  grid.innerHTML  = '';
+
+  const firstDay = new Date(moYear, moMonth, 1).getDay(); // 0=Sun
+  const daysInMonth = new Date(moYear, moMonth + 1, 0).getDate();
+  const today = new Date();
+  const todayKey = moCellKey(today.getFullYear(), today.getMonth(), today.getDate());
+
+  // Empty cells before month starts
+  for (let i = 0; i < firstDay; i++) {
+    const blank = document.createElement('div');
+    blank.className = 'mo-cell empty-day';
+    grid.appendChild(blank);
+  }
+
+  // Day cells
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key   = moCellKey(moYear, moMonth, d);
+    const meals = moData[key] || {};
+    const isToday = key === todayKey;
+    const hasMeals = meals.b || meals.l || meals.d || meals.s || meals.t;
+
+    const cell = document.createElement('div');
+    cell.className = 'mo-cell' + (isToday ? ' today' : '') + (hasMeals ? ' has-meals' : '');
+    cell.dataset.key = key;
+    cell.dataset.day = d;
+
+    const dayNumHtml = `<div class="mo-day-num">${d}</div>`;
+
+    const mealRows = [
+      { slot: 'b', dot: 'mo-dot-b', label: meals.b || '' },
+      { slot: 'l', dot: 'mo-dot-l', label: meals.l || '' },
+      { slot: 'd', dot: 'mo-dot-d', label: meals.d || '' },
+      { slot: 's', dot: 'mo-dot-s', label: meals.s || '' },
+      { slot: 't', dot: 'mo-dot-t', label: meals.t || '' },
+    ].map(row => `
+      <div class="mo-meal-row">
+        <div class="mo-dot ${row.dot}"></div>
+        <div class="mo-meal-text${row.label ? '' : ' empty-meal'}">${escHtml(row.label || '—')}</div>
+      </div>
+    `).join('');
+
+    cell.innerHTML = dayNumHtml + mealRows;
+
+    cell.addEventListener('click', () => openCellModal(key, d));
+    grid.appendChild(cell);
+  }
+}
+
+function openCellModal(key, day) {
+  cellEditKey = key;
+  const meals = moData[key] || {};
+  const [y, m, d] = key.split('-');
+  const dateObj = new Date(parseInt(y), parseInt(m)-1, parseInt(d));
+  const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+  document.getElementById('cellModalTitle').textContent = 'Meals for ' + dateStr.split(',')[1]?.trim();
+  document.getElementById('cellModalDate').textContent  = dateStr;
+  document.getElementById('cellB').value = meals.b || '';
+  document.getElementById('cellL').value = meals.l || '';
+  document.getElementById('cellD').value = meals.d || '';
+  document.getElementById('cellS').value = meals.s || '';
+  document.getElementById('cellT').value = meals.t || '';
+  document.getElementById('cellModal').style.display = 'flex';
+  document.getElementById('cellB').focus();
+}
+
+function closeCellModal() {
+  document.getElementById('cellModal').style.display = 'none';
+  cellEditKey = null;
+}
+
+function saveCellModal() {
+  if (!cellEditKey) return;
+  const b = document.getElementById('cellB').value.trim();
+  const l = document.getElementById('cellL').value.trim();
+  const d = document.getElementById('cellD').value.trim();
+  const s = document.getElementById('cellS').value.trim();
+  const t = document.getElementById('cellT').value.trim();
+  if (b || l || d || s || t) {
+    moData[cellEditKey] = { b, l, d, s, t };
+  } else {
+    delete moData[cellEditKey];
+  }
+  saveMonthFB();
+  closeCellModal();
+  renderMonth();
+}
+
+function clearCellDay() {
+  if (!cellEditKey) return;
+  delete moData[cellEditKey];
+  saveMonthFB();
+  closeCellModal();
+  renderMonth();
+  showToast('Day cleared!', 'green');
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Wire month nav
+document.getElementById('moPrev').addEventListener('click', () => {
+  moMonth--;
+  if (moMonth < 0) { moMonth = 11; moYear--; }
+  renderMonth();
+});
+
+document.getElementById('moNext').addEventListener('click', () => {
+  moMonth++;
+  if (moMonth > 11) { moMonth = 0; moYear++; }
+  renderMonth();
+});
+
+// Wire cell modal
+document.getElementById('cellModalClose').addEventListener('click', closeCellModal);
+document.getElementById('cellSave').addEventListener('click', saveCellModal);
+document.getElementById('cellClear').addEventListener('click', clearCellDay);
+document.getElementById('cellModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeCellModal(); });
+
+// Enter key saves
+['cellB','cellL','cellD','cellS','cellT'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') saveCellModal(); });
+});
+
+// Load month data
+loadMonthFB();
+
 </script>
 </body>
 </html>
