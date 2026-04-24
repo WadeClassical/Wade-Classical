@@ -1295,6 +1295,9 @@ const DM=[
   [{name:'Spaghetti & Meatballs'},{name:'Fettuccine Alfredo'},{name:'Lasagna'},{name:'Baked Ziti'},{name:'Carbonara'}],
   [],
   [{name:'Pancakes'},{name:'Waffles'},{name:'Biscuits & Gravy'},{name:'French Toast'},{name:'Breakfast Burritos'}],
+  [],
+  [],
+  [],
 ];
 
 let S={meals:DM.map(a=>a.map(m=>({...m}))),plan:{}};
@@ -1313,10 +1316,10 @@ function dayDate(wOff,dIdx){const m=getMonday(wOff),d=new Date(m);d.setDate(m.ge
 function getPlan(off){const raw=S.plan[weekKey(off)];if(!raw)return new Array(7).fill(null);if(Array.isArray(raw))return raw;const arr=new Array(7).fill(null);Object.keys(raw).forEach(k=>{const idx=parseInt(k);if(idx>=0&&idx<7)arr[idx]=raw[k];});return arr;}
 function setPlanDay(off,di,meal){const k=weekKey(off);const cur=getPlan(off);cur[di]=meal;S.plan[k]=[...cur];}
 function countPlanned(off){return getPlan(off).filter(m=>m!==null&&m!=='').length;}
-function normArr(val,fb){if(!val)return fb.map(m=>({...m}));if(Array.isArray(val))return val.map(normMeal);const arr=[];Object.keys(val).forEach(k=>{arr[parseInt(k)]=val[k];});return arr.length?arr.map(normMeal):fb.map(m=>({...m}));}
+function normArr(val,fb){if(!val)return(fb||[]).map(m=>({...m}));if(Array.isArray(val))return val.map(normMeal);const arr=[];Object.keys(val).forEach(k=>{arr[parseInt(k)]=val[k];});return arr.length?arr.map(normMeal):fb.map(m=>({...m}));}
 
 // ── FIREBASE ─────────────────────────────────────────────────────
-function loadFB(){setSyncing();db.ref('meal-planner-v3').once('value',snap=>{const v=snap.val()||{};if(v.meals){const raw=Array.isArray(v.meals)?v.meals:Object.values(v.meals);S.meals=raw.map((a,i)=>normArr(a,DM[i]));}if(v.plan&&typeof v.plan==='object')S.plan=v.plan;setSynced();renderAll();},()=>{setSyncErr();renderAll();});}
+function loadFB(){setSyncing();db.ref('meal-planner-v3').once('value',snap=>{const v=snap.val()||{};if(v.meals){const raw=Array.isArray(v.meals)?v.meals:Object.values(v.meals);S.meals=THEMES.map((_,i)=>normArr(raw[i],DM[i]||[]));}if(v.plan&&typeof v.plan==='object')S.plan=v.plan;setSynced();renderAll();},()=>{setSyncErr();renderAll();});}
 function saveFB(){setSyncing();db.ref('meal-planner-v3').set({meals:S.meals,plan:S.plan}).then(setSynced).catch(setSyncErr);}
 
 // ── VIEWS ────────────────────────────────────────────────────────
@@ -1541,6 +1544,12 @@ function selectMeal(off,di,meal,t){
 function renderDB(){
   const con=document.getElementById('dbGroups');con.innerHTML='';
   THEMES.forEach((t,i)=>{
+    if(t.extra && i===THEMES.findIndex(x=>x.extra)){
+      const sep=document.createElement('div');
+      sep.style.cssText='margin:28px 0 12px;padding:10px 0 8px;border-top:2px dashed #e8e0d0;display:flex;align-items:center;gap:10px;';
+      sep.innerHTML='<span style="font-family:inherit;font-size:0.78rem;color:#999;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;">Extra Collections</span>';
+      con.appendChild(sep);
+    }
     const grp=document.createElement('div');grp.className='db-group';
     const ghdr=document.createElement('div');ghdr.className='db-group-hdr';
     const badge=document.createElement('div');badge.className='db-theme-badge';badge.style.background=t.color;badge.innerHTML='<span>'+t.emoji+'</span><span>'+t.label+'</span>';
