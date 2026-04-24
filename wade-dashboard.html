@@ -617,6 +617,116 @@
         /* Library Door Card */
 
 
+
+        /* ── THE MENU COOKBOOK CARD ── */
+        .cookbook-card {
+            display: block;
+            text-decoration: none;
+            background: #1a0e08;
+            border-radius: 16px;
+            padding: 22px 24px;
+            margin-bottom: 20px;
+            box-shadow: 4px 4px 0 #9a2218, 0 8px 24px rgba(26,14,8,0.4);
+            border: 2px solid #9a2218;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.6s ease 0.6s both;
+        }
+
+        /* Checkered overlay */
+        .cookbook-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: repeating-conic-gradient(rgba(200,55,42,0.08) 0% 25%, transparent 0% 50%);
+            background-size: 20px 20px;
+            pointer-events: none;
+        }
+
+        .cookbook-card:hover { transform: translateY(-2px); box-shadow: 6px 6px 0 #9a2218, 0 12px 32px rgba(26,14,8,0.5); }
+
+        .cb-inner {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cb-neon {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: #ff4444;
+            text-shadow: 0 0 10px #ff4444, 0 0 20px #ff4444;
+            flex-shrink: 0;
+            letter-spacing: 0.05em;
+        }
+
+        .cb-text { flex: 1; min-width: 140px; }
+
+        .cb-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            color: #fdf8f0;
+            letter-spacing: 0.08em;
+            margin-bottom: 3px;
+            font-weight: 400;
+        }
+
+        .cb-sub {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 0.82rem;
+            color: rgba(253,200,150,0.55);
+            margin-bottom: 10px;
+        }
+
+        .cb-chefs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .cb-chef {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(200,55,42,0.2);
+            border: 1px solid rgba(200,55,42,0.4);
+            border-radius: 10px;
+            padding: 6px 12px;
+            min-width: 60px;
+        }
+
+        .cb-chef-num {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: #fdf8f0;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .cb-chef-label {
+            font-size: 0.6rem;
+            color: rgba(253,200,150,0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-top: 2px;
+        }
+
+        .cb-arrow {
+            font-size: 1.2rem;
+            color: rgba(200,55,42,0.6);
+            transition: transform 0.2s, color 0.2s;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cookbook-card:hover .cb-arrow { transform: translateX(4px); color: #ff4444; }
+
         /* ── FREEZER CARD ── */
         .freezer-card {
             display: block;
@@ -1557,6 +1667,39 @@
         </div>
     </a>
 
+
+    <!-- THE MENU SECTION -->
+    <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-title">The Menu · Junior Kitchen</span>
+        <div class="divider-line"></div>
+    </div>
+
+    <a href="wade-cookbook.html" class="cookbook-card">
+        <div class="cb-inner">
+            <div class="cb-neon">🍕</div>
+            <div class="cb-text">
+                <div class="cb-title">The Menu</div>
+                <div class="cb-sub">Ryder &amp; Hadley's Recipe Collection</div>
+                <div class="cb-chefs">
+                    <div class="cb-chef">
+                        <div class="cb-chef-num" id="cb-ryder-count">—</div>
+                        <div class="cb-chef-label">Ryder</div>
+                    </div>
+                    <div class="cb-chef">
+                        <div class="cb-chef-num" id="cb-hadley-count">—</div>
+                        <div class="cb-chef-label">Hadley</div>
+                    </div>
+                    <div class="cb-chef">
+                        <div class="cb-chef-num" id="cb-solo-count">—</div>
+                        <div class="cb-chef-label">Can Make Solo</div>
+                    </div>
+                </div>
+            </div>
+            <div class="cb-arrow">→</div>
+        </div>
+    </a>
+
     <footer>
         <p class="footer-text">Wade Classical Homeschool · North Georgia · Est. 2020</p>
     </footer>
@@ -1874,6 +2017,32 @@ function renderPlannerCards() {
 
 renderPlannerCards();
 
+
+
+// ══════════════════════════════════════════════
+// THE MENU STATS
+// ══════════════════════════════════════════════
+function loadCookbookStats() {
+    if (!dashDb) return;
+    Promise.all([
+        dashDb.ref('the-menu/ryder').get(),
+        dashDb.ref('the-menu/hadley').get(),
+    ]).then(([ryderSnap, hadleySnap]) => {
+        const ryder  = ryderSnap.val()  || {};
+        const hadley = hadleySnap.val() || {};
+        const ryderCount  = Object.keys(ryder).length;
+        const hadleyCount = Object.keys(hadley).length;
+        const soloCount   = [
+            ...Object.values(ryder),
+            ...Object.values(hadley)
+        ].filter(r => parseInt(r.mastery) === 2).length;
+
+        document.getElementById('cb-ryder-count').textContent  = ryderCount;
+        document.getElementById('cb-hadley-count').textContent = hadleyCount;
+        document.getElementById('cb-solo-count').textContent   = soloCount;
+    }).catch(() => {});
+}
+loadCookbookStats();
 
 // ══════════════════════════════════════════════
 // FREEZER STATS
