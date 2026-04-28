@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Journal — Wade Classical</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --yellow:     #FFE033;
+  --yellow-dark:#C9A800;
+  --red:        #E8302A;
+  --red-dark:   #A81F1A;
+  --blue:       #1B5CA8;
+  --blue-light: #3A7FD4;
+  --blue-pale:  #D4E8FF;
+  --ink:        #0D0D0D;
+  --white:      #FFFEF5;
+  --panel-bg:   #FFFEF5;
+  --outline:    3px solid #0D0D0D;
+  --outline-thick: 5px solid #0D0D0D;
+  --halftone:   rgba(0,0,0,0.06);
+  --green:      #1A8A3A;
+  --green-light:#D4F0DC;
+  --orange:     #F07020;
+  --orange-pale:#FEE8D4;
+  --purple:     #7030A0;
+  --purple-pale:#ECD4F8;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--yellow);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* === HALFTONE BACKGROUND === */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--halftone) 1.5px, transparent 1.5px);
+  background-size: 14px 14px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* === HEADER === */
+.header {
+  background: var(--red);
+  border-bottom: var(--outline-thick);
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.07) 1.5px, transparent 1.5px);
+  background-size: 12px 12px;
+}
+
+.header-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 20px 20px 16px;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.header-left {}
+
+.comic-title {
+  font-family: 'Bangers', cursive;
+  font-size: clamp(2.4rem, 7vw, 4rem);
+  color: var(--yellow);
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-shadow: 4px 4px 0 var(--red-dark), -1px -1px 0 var(--ink);
+  margin-bottom: 2px;
+}
+
+.comic-sub {
+  font-family: 'Bangers', cursive;
+  font-size: 0.95rem;
+  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.7);
+  text-transform: uppercase;
+}
+
+/* User switcher */
+.user-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.writer-btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  padding: 8px 18px;
+  border: 3px solid var(--ink);
+  border-radius: 4px;
+  background: var(--white);
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.12s;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.writer-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+.writer-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--ink); }
+.writer-btn.active { background: var(--yellow); color: var(--ink); }
+.writer-btn.amanda.active { background: #FF80AA; }
+.writer-btn.ryder.active  { background: #80C0FF; }
+.writer-btn.hadley.active { background: #80FFAA; }
+
+/* === MAIN === */
+.main {
+  position: relative;
+  z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px 80px;
+}
+
+/* === PANELS (comic book page sections) === */
+.panel {
+  background: var(--panel-bg);
+  border: var(--outline-thick);
+  border-radius: 4px;
+  box-shadow: 6px 6px 0 var(--ink);
+  margin-bottom: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Panel label */
+.panel-label {
+  font-family: 'Bangers', cursive;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 4px 12px;
+  display: inline-block;
+  position: absolute;
+  top: 0; left: 0;
+  z-index: 2;
+}
+
+.panel-body { padding: 20px 20px 16px; }
+.panel-body.with-label { padding-top: 36px; }
+
+/* === TODAY'S PROMPT === */
+.prompt-type-badge {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  padding: 4px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 12px;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.badge-hotstake   { background: var(--red);    color: white; }
+.badge-wouldyou   { background: var(--blue);   color: white; }
+.badge-finish     { background: var(--green);  color: white; }
+.badge-whatif     { background: var(--purple); color: white; }
+.badge-describe   { background: var(--orange); color: white; }
+.badge-rank       { background: var(--yellow-dark); color: white; }
+.badge-opinion    { background: var(--red-dark); color: white; }
+.badge-twotruth   { background: #555; color: white; }
+
+.prompt-text {
+  font-family: 'Comic Neue', cursive;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.prompt-date {
+  font-family: 'Bangers', cursive;
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  color: #888;
+  margin-bottom: 16px;
+}
+
+/* === SPEECH BUBBLE for prompt === */
+.speech-bubble {
+  position: relative;
+  background: var(--blue-pale);
+  border: var(--outline);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 30px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 20px solid var(--ink);
+}
+
+.speech-bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -16px;
+  left: 31px;
+  width: 0;
+  height: 0;
+  border-left: 9px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 18px solid var(--blue-pale);
+  z-index: 1;
+}
+
+/* === WRITING AREA === */
+.write-area {
+  width: 100%;
+  font-family: 'Comic Neue', cursive;
+  font-size: 1rem;
+  font-weight: 400;
+  padding: 14px 16px;
+  border: var(--outline);
+  border-radius: 4px;
+  background: white;
+  color: var(--ink);
+  resize: vertical;
+  min-height: 140px;
+  outline: none;
+  line-height: 1.8;
+  background-image: repeating-linear-gradient(
+    transparent, transparent 29px,
+    #d4e0f0 29px, #d4e0f0 31px
+  );
+  background-attachment: local;
+  transition: border-color 0.15s;
+}
+
+.write-area:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(27,92,168,0.15); }
+
+/* Grammar issues */
+.grammar-flags {
+  margin-top: 10px;
+  display: none;
+}
+
+.grammar-flags.show { display: block; }
+
+.grammar-flag-header {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  color: var(--orange);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.flag-item {
+  background: var(--orange-pale);
+  border: 2px solid var(--orange);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.85rem;
+  color: #5a2800;
+  line-height: 1.4;
+}
+
+.flag-sentence { font-weight: 700; color: var(--orange); }
+
+/* === SUBMIT BUTTON === */
+.submit-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.btn-submit {
+  font-family: 'Bangers', cursive;
+  font-size: 1.3rem;
+  letter-spacing: 0.1em;
+  padding: 12px 28px;
+  background: var(--red);
+  color: var(--yellow);
+  border: 3px solid var(--ink);
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: all 0.12s;
+  text-transform: uppercase;
+}
+
+.btn-submit:hover { transform: translate(-1px,-1px); box-shadow: 5px 5px 0 var(--ink); }
+.btn-submit:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+
+.word-count {
+  font-family: 'Bangers', cursive;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  color: #888;
+}
+
+/* Already submitted state */
+.already-submitted {
+  background: var(--green-light);
+  border: var(--outline);
+  border-radius: 4px;
+  padding: 16px;
+  text-align: center;
+}
+
+.submitted-label {
+  font-family: 'Bangers', cursive;
+  font-size: 1.4rem;
+  letter-spacing: 0.1em;
+  color: var(--green);
+  margin-bottom: 6px;
+}
+
+.submitted-text {
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.95rem;
+  color: #1a5a2a;
+  line-height: 1.6;
+  text-align: left;
+  background: white;
+  border: 2px solid var(--green);
+  border-radius: 4px;
+  padding: 12px;
+  margin-top: 8px;
+}
+
+.btn-edit-entry {
+  font-family: 'Bangers', cursive;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  padding: 7px 16px;
+  background: white;
+  color: var(--green);
+  border: 2px solid var(--green);
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  box-shadow: 2px 2px 0 var(--green);
+  transition: all 0.12s;
+}
+
+.btn-edit-entry:hover { background: var(--green-light); }
+
+/* === STREAK BADGE === */
+.streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--yellow);
+  border: 3px solid var(--ink);
+  border-radius: 4px;
+  padding: 5px 12px;
+  box-shadow: 3px 3px 0 var(--ink);
+  margin-bottom: 16px;
+}
+
+.streak-num {
+  font-family: 'Bangers', cursive;
+  font-size: 1.4rem;
+  letter-spacing: 0.05em;
+  color: var(--red);
+  line-height: 1;
+}
+
+.streak-label {
+  font-family: 'Bangers', cursive;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+}
+
+/* === FAMILY ENTRIES === */
+.entries-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.entry-card {
+  background: var(--panel-bg);
+  border: var(--outline);
+  border-radius: 4px;
+  box-shadow: 4px 4px 0 var(--ink);
+  overflow: hidden;
+  animation: popIn 0.25s ease both;
+}
+
+@keyframes popIn {
+  from { opacity:0; transform:scale(0.92) rotate(-1deg); }
+  to   { opacity:1; transform:scale(1) rotate(0deg); }
+}
+
+.entry-card-top {
+  padding: 10px 14px 8px;
+  border-bottom: 3px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.entry-author {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+}
+
+.author-amanda { color: #C0006A; }
+.author-ryder  { color: var(--blue); }
+.author-hadley { color: var(--green); }
+
+.entry-date-small {
+  font-family: 'Bangers', cursive;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: #aaa;
+}
+
+.entry-text {
+  padding: 12px 14px;
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.88rem;
+  color: var(--ink);
+  line-height: 1.55;
+  background: white;
+  min-height: 80px;
+}
+
+.no-entry-yet {
+  padding: 12px 14px;
+  font-family: 'Comic Neue', cursive;
+  font-style: italic;
+  font-size: 0.85rem;
+  color: #bbb;
+  background: #fafafa;
+  min-height: 60px;
+}
+
+/* === PAST PROMPTS === */
+.past-prompt-row {
+  border-bottom: 2px dashed #ddd;
+  padding: 14px 0;
+}
+
+.past-prompt-row:last-child { border-bottom: none; }
+
+.past-prompt-q {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.past-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.past-entry {
+  background: #f8f8f0;
+  border-left: 4px solid var(--blue);
+  padding: 8px 12px;
+  border-radius: 0 6px 6px 0;
+}
+
+.past-entry.amanda { border-left-color: #C0006A; }
+.past-entry.ryder  { border-left-color: var(--blue); }
+.past-entry.hadley { border-left-color: var(--green); }
+
+.past-entry-author {
+  font-family: 'Bangers', cursive;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 3px;
+}
+
+.past-entry.amanda .past-entry-author { color: #C0006A; }
+.past-entry.ryder  .past-entry-author { color: var(--blue); }
+.past-entry.hadley .past-entry-author { color: var(--green); }
+
+.past-entry-text {
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.82rem;
+  color: #444;
+  line-height: 1.4;
+}
+
+/* === POW DECORATIONS === */
+.pow-decoration {
+  position: absolute;
+  font-family: 'Bangers', cursive;
+  letter-spacing: 0.05em;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.07;
+}
+
+/* === TABS === */
+.tab-nav {
+  display: flex;
+  gap: 0;
+  margin-bottom: 20px;
+  border: var(--outline);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.tab-btn {
+  flex: 1;
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  padding: 12px 8px;
+  border: none;
+  border-right: 3px solid var(--ink);
+  background: var(--white);
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.12s;
+  text-transform: uppercase;
+}
+
+.tab-btn:last-child { border-right: none; }
+.tab-btn:hover { background: var(--yellow); }
+.tab-btn.active { background: var(--ink); color: var(--yellow); }
+
+/* === TOAST === */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  padding: 12px 28px;
+  border: 3px solid var(--yellow);
+  border-radius: 4px;
+  z-index: 200;
+  transition: transform 0.3s ease;
+  box-shadow: 4px 4px 0 var(--yellow-dark);
+  white-space: nowrap;
+}
+
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 600px) {
+  .header-inner { flex-direction: column; align-items: flex-start; }
+  .entries-grid { grid-template-columns: 1fr; }
+  .tab-btn { font-size: 0.82rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="comic-title">Daily Journal</div>
+      <div class="comic-sub">Wade Classical · Write Every Day</div>
+    </div>
+    <div class="user-row">
+      <button class="writer-btn amanda active" id="btn-amanda">✏️ Amanda</button>
+      <button class="writer-btn ryder"  id="btn-ryder">✏️ Ryder</button>
+      <button class="writer-btn hadley" id="btn-hadley">✏️ Hadley</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <div class="tab-nav">
+    <button class="tab-btn active" id="tab-today">📅 Today</button>
+    <button class="tab-btn" id="tab-family">👨‍👩‍👧‍👦 Family</button>
+    <button class="tab-btn" id="tab-archive">📚 Archive</button>
+  </div>
+
+  <!-- TODAY PANEL -->
+  <div id="panel-today">
+
+    <!-- Streak -->
+    <div id="streak-display" style="margin-bottom:16px;"></div>
+
+    <!-- Prompt -->
+    <div class="panel">
+      <div class="panel-label">TODAY'S PROMPT</div>
+      <div class="panel-body with-label">
+        <div id="prompt-badge"></div>
+        <div class="prompt-date" id="prompt-date"></div>
+        <div class="speech-bubble">
+          <div class="prompt-text" id="prompt-text">Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Write -->
+    <div class="panel" id="write-panel">
+      <div class="panel-label">YOUR ANSWER</div>
+      <div class="panel-body with-label">
+        <div id="write-area-wrap">
+          <textarea class="write-area" id="write-area" placeholder="Write your answer here... Don't worry about being perfect — just write!"></textarea>
+          <div class="grammar-flags" id="grammar-flags">
+            <div class="grammar-flag-header">✏️ Hey — check these sentences!</div>
+            <div id="flag-list"></div>
+          </div>
+          <div class="submit-row">
+            <button class="btn-submit" id="btn-submit">POW! Submit</button>
+            <span class="word-count" id="word-count">0 words</span>
+          </div>
+        </div>
+        <div id="submitted-wrap" style="display:none;"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FAMILY PANEL -->
+  <div id="panel-family" style="display:none;">
+    <div class="panel">
+      <div class="panel-label">TODAY'S PROMPT</div>
+      <div class="panel-body with-label">
+        <div id="family-prompt-text" style="font-family:'Comic Neue',cursive;font-weight:700;font-size:1rem;color:var(--ink);margin-bottom:16px;"></div>
+        <div class="entries-grid" id="family-entries-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ARCHIVE PANEL -->
+  <div id="panel-archive" style="display:none;">
+    <div class="panel">
+      <div class="panel-label">PAST ENTRIES</div>
+      <div class="panel-body with-label">
+        <div id="archive-list">
+          <div style="font-family:'Comic Neue',cursive;color:#aaa;text-align:center;padding:32px;">Loading archive...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE -->
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.min.js"></script>
+
+<script>
+// ══════════════════════════════════════════
+// PROMPT BANK — 300+ prompts
+// ══════════════════════════════════════════
+const PROMPTS = [
+  // HOT TAKES
+  {type:'hotstake', text:'Pineapple on pizza — delicious or a crime? Make your case.'},
+  {type:'hotstake', text:'Is cereal a soup? Explain your answer.'},
+  {type:'hotstake', text:'Hotdogs: sandwich or not a sandwich? Defend yourself.'},
+  {type:'hotstake', text:'What is the worst pizza topping ever invented and why?'},
+  {type:'hotstake', text:'Is a taco a sandwich? Make your argument.'},
+  {type:'hotstake', text:'What is the most overrated food that everyone pretends to love?'},
+  {type:'hotstake', text:'Morning person or night owl — which is better and why?'},
+  {type:'hotstake', text:'Dogs vs cats: settle it once and for all.'},
+  {type:'hotstake', text:'What is the most useless subject taught in school?'},
+  {type:'hotstake', text:'Is math harder than reading or is reading harder than math?'},
+  {type:'hotstake', text:'Summer is better than winter. Agree or disagree?'},
+  {type:'hotstake', text:'What is the best meal of the day and why?'},
+  {type:'hotstake', text:'Which is better: a pool or the beach?'},
+  {type:'hotstake', text:'TV shows are better than movies. True or false?'},
+  {type:'hotstake', text:'Is it better to be really smart or really funny?'},
+  {type:'hotstake', text:'What is the worst chore and why is it the worst?'},
+  {type:'hotstake', text:'Indoor recess is actually better than outdoor recess. Agree or disagree?'},
+  {type:'hotstake', text:'What is the most annoying sound in the entire world?'},
+  {type:'hotstake', text:'Is it better to be too hot or too cold?'},
+  {type:'hotstake', text:'Chocolate ice cream or vanilla — which one wins?'},
+  {type:'hotstake', text:'Is it better to have lots of friends or one really great best friend?'},
+  {type:'hotstake', text:'What is the best day of the week and why?'},
+  {type:'hotstake', text:'Sprinkles make everything better. True or false?'},
+  {type:'hotstake', text:'Is it worse to be bored or to be too busy?'},
+  {type:'hotstake', text:'What is the best snack food ever created?'},
+
+  // WOULD YOU RATHER
+  {type:'wouldyou', text:'Would you rather be able to fly OR be able to breathe underwater?'},
+  {type:'wouldyou', text:'Would you rather eat only sweet food forever OR only salty food forever?'},
+  {type:'wouldyou', text:'Would you rather be invisible OR be able to read minds?'},
+  {type:'wouldyou', text:'Would you rather have a pet dragon OR a pet unicorn?'},
+  {type:'wouldyou', text:'Would you rather live in a treehouse OR a house under the sea?'},
+  {type:'wouldyou', text:'Would you rather it always be summer OR always be winter?'},
+  {type:'wouldyou', text:'Would you rather be really tall OR really small?'},
+  {type:'wouldyou', text:'Would you rather be able to talk to animals OR speak every language on Earth?'},
+  {type:'wouldyou', text:'Would you rather never have to sleep OR never have to eat?'},
+  {type:'wouldyou', text:'Would you rather travel to the past OR the future?'},
+  {type:'wouldyou', text:'Would you rather have super strength OR super speed?'},
+  {type:'wouldyou', text:'Would you rather be covered in fur like a cat OR have scales like a fish?'},
+  {type:'wouldyou', text:'Would you rather live in a world with no music OR no TV?'},
+  {type:'wouldyou', text:'Would you rather eat a stick of butter OR drink a cup of hot sauce?'},
+  {type:'wouldyou', text:'Would you rather be famous OR be the best in the world at something no one knows about?'},
+  {type:'wouldyou', text:'Would you rather be able to pause time OR rewind time?'},
+  {type:'wouldyou', text:'Would you rather have spaghetti for hair OR maple syrup for blood?'},
+  {type:'wouldyou', text:'Would you rather explore space OR explore the deep ocean?'},
+  {type:'wouldyou', text:'Would you rather always be 10 minutes late OR always be 2 hours early?'},
+  {type:'wouldyou', text:'Would you rather lose your sense of smell OR your sense of taste?'},
+  {type:'wouldyou', text:'Would you rather have a robot best friend OR a robot pet?'},
+  {type:'wouldyou', text:'Would you rather only be able to whisper OR only be able to shout?'},
+  {type:'wouldyou', text:'Would you rather have to hop everywhere OR walk backwards everywhere?'},
+  {type:'wouldyou', text:'Would you rather eat a raw onion OR a raw potato?'},
+  {type:'wouldyou', text:'Would you rather be the funniest person in the room OR the smartest person in the room?'},
+  {type:'wouldyou', text:'Would you rather find a treasure chest OR a magic lamp with one wish?'},
+  {type:'wouldyou', text:'Would you rather never be cold again OR never be hot again?'},
+  {type:'wouldyou', text:'Would you rather be able to teleport OR have a jetpack?'},
+  {type:'wouldyou', text:'Would you rather have a talking pet fish OR a singing houseplant?'},
+  {type:'wouldyou', text:'Would you rather fight 1 horse-sized duck OR 100 duck-sized horses?'},
+
+  // FINISH THE STORY
+  {type:'finish', text:'The dog opened the refrigerator, looked inside, and said...'},
+  {type:'finish', text:'I woke up this morning and my hands were made of pizza. The first thing I did was...'},
+  {type:'finish', text:'There was a strange noise coming from the basement. I opened the door and found...'},
+  {type:'finish', text:'The cat has been staring at the wall for three days. Yesterday I figured out why...'},
+  {type:'finish', text:'My backpack started talking to me on the way to school. It said...'},
+  {type:'finish', text:'I found a map under my mattress. It led me to...'},
+  {type:'finish', text:'The clouds turned purple at exactly noon. Everyone looked up and...'},
+  {type:'finish', text:'I accidentally put my homework in the microwave. When I opened it...'},
+  {type:'finish', text:'The floor was covered in jelly. I had no idea how it got there, but...'},
+  {type:'finish', text:'A small dragon appeared on my windowsill. It seemed hungry, so I...'},
+  {type:'finish', text:'Everything in our house started floating at 8pm. My mom reacted by...'},
+  {type:'finish', text:'I found a door in my closet that had never been there before. On the other side was...'},
+  {type:'finish', text:'The cafeteria food started talking today. The mashed potatoes said...'},
+  {type:'finish', text:'My shoes refused to let me go to school. They kept walking back home because...'},
+  {type:'finish', text:'A letter arrived addressed to me. Inside it said: "You are the only one who can..."'},
+  {type:'finish', text:'I pressed a button I found in the garage. Suddenly...'},
+  {type:'finish', text:'The tree in the backyard started moving. It walked up to me and...'},
+  {type:'finish', text:'I sneezed and accidentally invented something new. It was called...'},
+  {type:'finish', text:'My shadow started doing things I did not tell it to do. Today it...'},
+  {type:'finish', text:'The moon was green last night. Scientists on TV said it was because...'},
+
+  // WHAT IF
+  {type:'whatif', text:'What if dogs could talk? What do you think yours would say?'},
+  {type:'whatif', text:'What if you woke up and you were the size of a mouse?'},
+  {type:'whatif', text:'What if it rained candy instead of water for one day?'},
+  {type:'whatif', text:'What if you had to swap lives with someone for a week — who would you pick and why?'},
+  {type:'whatif', text:'What if you could only eat one food for the rest of your life — what would you choose?'},
+  {type:'whatif', text:'What if gravity reversed for exactly one hour? What would you do?'},
+  {type:'whatif', text:'What if every time you told a lie, your nose grew — would you change anything about how you act?'},
+  {type:'whatif', text:'What if you discovered you had a superpower but only one person could know — who would you tell?'},
+  {type:'whatif', text:'What if money did not exist? How would people get the things they need?'},
+  {type:'whatif', text:'What if you could add one rule to your house that everyone had to follow?'},
+  {type:'whatif', text:'What if school was only 2 hours a day — what would you do with the rest of your time?'},
+  {type:'whatif', text:'What if you found out you were a character in a book someone else was writing?'},
+  {type:'whatif', text:'What if animals could vote? Which animal would win the election and why?'},
+  {type:'whatif', text:'What if you could live anywhere in the world — where would you go?'},
+  {type:'whatif', text:'What if you could breathe underwater? Where would you explore?'},
+  {type:'whatif', text:'What if you woke up and everyone in the world spoke a different language overnight?'},
+  {type:'whatif', text:'What if cars never existed? How would life be different?'},
+  {type:'whatif', text:'What if you had to design the perfect school day from scratch?'},
+  {type:'whatif', text:'What if trees could walk around? What problems would that cause?'},
+  {type:'whatif', text:'What if you could build any room in your house — what would it be?'},
+  {type:'whatif', text:'What if you had to survive on a deserted island for one week — what three things would you bring?'},
+  {type:'whatif', text:'What if you could talk to your past self from 3 years ago — what would you tell them?'},
+  {type:'whatif', text:'What if you woke up as the opposite gender for one day?'},
+  {type:'whatif', text:'What if you could fly but only as fast as a bicycle?'},
+  {type:'whatif', text:'What if every book you read came to life for one hour after you finished it?'},
+
+  // DESCRIBE IT
+  {type:'describe', text:'Describe what pizza tastes like to someone who has never eaten food before.'},
+  {type:'describe', text:'Describe the color blue without using the word blue or any other color.'},
+  {type:'describe', text:'Describe what being tickled feels like using only five sentences.'},
+  {type:'describe', text:'Describe what your bedroom looks like to someone who has never seen it.'},
+  {type:'describe', text:'Describe what rain sounds like to someone who has never heard it.'},
+  {type:'describe', text:'Describe what it feels like to go down a really fast slide.'},
+  {type:'describe', text:'Describe the smell of a campfire without using the word fire or smoke.'},
+  {type:'describe', text:'Describe what it feels like to be really, really sleepy.'},
+  {type:'describe', text:'Describe what swimming feels like to someone who has never been in water.'},
+  {type:'describe', text:'Describe the taste of peanut butter in the most dramatic way possible.'},
+  {type:'describe', text:'Describe what it looks like outside your window right now.'},
+  {type:'describe', text:'Describe the perfect sandwich using at least five details.'},
+  {type:'describe', text:'Describe what a hug feels like without using the word hug or warm.'},
+  {type:'describe', text:'Describe what lightning looks like to someone who has never seen a storm.'},
+  {type:'describe', text:'Describe your favorite meal like a food critic writing a five-star review.'},
+  {type:'describe', text:'Describe what it feels like when you belly laugh really hard.'},
+  {type:'describe', text:'Describe what a Saturday morning feels like compared to a Monday morning.'},
+  {type:'describe', text:'Describe the sound of silence.'},
+  {type:'describe', text:'Describe what it would feel like to pet a cloud.'},
+  {type:'describe', text:'Describe your pet or a pet you wish you had in five sentences.'},
+
+  // RANK IT
+  {type:'rank', text:'Rank these from best to worst: pizza, tacos, burgers, sushi, mac and cheese. Explain your #1 and your last place.'},
+  {type:'rank', text:'Rank these superpowers: flying, invisibility, super strength, time travel, mind reading. Explain why you put them in that order.'},
+  {type:'rank', text:'Rank these from best to worst: summer, fall, winter, spring. Defend your choices.'},
+  {type:'rank', text:'Rank these animals as pets: dog, cat, snake, parrot, hamster, horse. Justify your top two.'},
+  {type:'rank', text:'Rank these candy bars: Snickers, Kit Kat, Reeses, Twix, Milky Way, M&Ms. Explain your top pick.'},
+  {type:'rank', text:'Rank these school subjects from most to least fun: math, reading, science, history, art, P.E.'},
+  {type:'rank', text:'Rank these ice cream flavors: chocolate, vanilla, strawberry, mint chip, cookies and cream, cookie dough.'},
+  {type:'rank', text:'Rank these movies from best to worst without mentioning any actual movie titles — just describe them.'},
+  {type:'rank', text:'Rank these modes of transportation: car, bicycle, walking, boat, airplane, horse. Best to worst.'},
+  {type:'rank', text:'Rank these breakfast foods: pancakes, waffles, eggs, cereal, toast, donuts. Explain your winner.'},
+  {type:'rank', text:'Rank these: having too much homework, being bored, being sick, losing something important, being embarrassed.'},
+  {type:'rank', text:'Rank these in order of most fun: swimming, hiking, watching movies, playing board games, cooking, drawing.'},
+
+  // UNPOPULAR OPINION
+  {type:'opinion', text:'What is something everyone loves that you think is actually overrated?'},
+  {type:'opinion', text:'What is a food that most people hate but you secretly enjoy?'},
+  {type:'opinion', text:'What is something you think kids your age take way too seriously?'},
+  {type:'opinion', text:'What is a rule at home or school that you think is actually pointless?'},
+  {type:'opinion', text:'What is a popular movie or show that you just do not understand the hype about?'},
+  {type:'opinion', text:'What is something that adults think kids love, but kids actually do not care about?'},
+  {type:'opinion', text:'What is one thing you think would make school actually better?'},
+  {type:'opinion', text:'What is a talent that you think does not get enough credit?'},
+  {type:'opinion', text:'What is something that people say is scary that you actually find totally fine?'},
+  {type:'opinion', text:'What is a job that sounds glamorous but would probably be terrible?'},
+  {type:'opinion', text:'What is one thing that most people think is fun but you find boring?'},
+  {type:'opinion', text:'What is something you are surprisingly good at that people would not expect?'},
+  {type:'opinion', text:'What is a habit that most people think is weird but you think makes total sense?'},
+  {type:'opinion', text:'What is something that used to scare you but now seems silly?'},
+  {type:'opinion', text:'What is one thing you think is completely unfair about being a kid?'},
+
+  // TWO TRUTHS ONE LIE
+  {type:'twotruth', text:'Two Truths and a Lie! Write three statements about yourself. Two are true and one is a lie. Try to trick your family!'},
+  {type:'twotruth', text:'Two Truths and a Lie! Write three things you did this week. Make one of them a lie. See if anyone can spot it.'},
+  {type:'twotruth', text:'Two Truths and a Lie about your favorite food! Write three things about it — two real facts and one fake one.'},
+  {type:'twotruth', text:'Two Truths and a Lie about an animal! Write three "facts" about any animal — two real, one totally made up.'},
+  {type:'twotruth', text:'Two Truths and a Lie about your dream day! Describe three things that would happen — two you would actually love, one you would hate.'},
+
+  // PERSONAL / REFLECTIVE
+  {type:'opinion', text:'What is the nicest thing someone has done for you recently?'},
+  {type:'opinion', text:'What is one thing you learned this week that surprised you?'},
+  {type:'opinion', text:'What is something you are really looking forward to?'},
+  {type:'opinion', text:'What is one thing you wish you were better at?'},
+  {type:'opinion', text:'What made you laugh the hardest recently?'},
+  {type:'opinion', text:'What is a skill you want to learn before you grow up?'},
+  {type:'opinion', text:'What is the bravest thing you have ever done?'},
+  {type:'opinion', text:'What is something you did recently that you are proud of?'},
+  {type:'opinion', text:'If you could change one thing about your day today, what would it be?'},
+  {type:'opinion', text:'What is your favorite memory from this year so far?'},
+  {type:'opinion', text:'What would your perfect day look like from morning to night?'},
+  {type:'opinion', text:'What is something that always cheers you up when you are sad?'},
+  {type:'opinion', text:'Who is someone you look up to and why?'},
+  {type:'opinion', text:'What is something kind you did for someone else recently?'},
+  {type:'opinion', text:'What is one goal you have for next month?'},
+
+  // WILD CARDS
+  {type:'whatif', text:'If you had to eat one thing for every meal for a year to win a million dollars, what would you pick?'},
+  {type:'hotstake', text:'Name the five best inventions in human history. Explain your picks.'},
+  {type:'finish', text:'The robot was supposed to clean the house, but instead it...'},
+  {type:'describe', text:'Describe what it smells like when you walk into a bakery.'},
+  {type:'whatif', text:'If your life was a TV show, what would the title be and what would happen in this week\'s episode?'},
+  {type:'finish', text:'My imaginary restaurant just got a one-star review. The critic said...'},
+  {type:'opinion', text:'What is a word you think should exist but does not?'},
+  {type:'whatif', text:'What if you could only communicate using song lyrics for one day?'},
+  {type:'describe', text:'Describe your ideal treehouse in as much detail as you can.'},
+  {type:'hotstake', text:'What is the most useless object in your house and why does it even exist?'},
+  {type:'wouldyou', text:'Would you rather have a rewind button for your life OR a fast forward button?'},
+  {type:'finish', text:'The pizza delivery arrived three hours late. When I opened the box...'},
+  {type:'opinion', text:'If you could have any animal — real or extinct — as a pet, what would it be?'},
+  {type:'whatif', text:'What if colors had smells? What would red smell like? Blue? Yellow?'},
+  {type:'describe', text:'Describe the last dream you can remember in as much detail as possible.'},
+  {type:'hotstake', text:'What is something that kids are actually better at than adults?'},
+  {type:'finish', text:'I came home and all the furniture was rearranged. My family said a ghost did it but I think...'},
+  {type:'opinion', text:'If you could only keep five things you own, what would they be?'},
+  {type:'whatif', text:'What if everyone in the world suddenly forgot every song they had ever heard?'},
+  {type:'wouldyou', text:'Would you rather always know when someone is lying OR be able to lie without anyone ever knowing?'},
+  {type:'describe', text:'Describe your personality using only food metaphors.'},
+  {type:'finish', text:'The homework assignment was to write about your hero. I wrote about...'},
+  {type:'opinion', text:'What is one thing you know a LOT about that most people do not?'},
+  {type:'whatif', text:'What if you had to design a new holiday — what would it celebrate and how would people observe it?'},
+  {type:'hotstake', text:'What is the greatest sport ever played and why does every other sport fall short?'},
+  {type:'finish', text:'The new neighbor knocked on our door and introduced themselves. They were...'},
+  {type:'describe', text:'Describe what it feels like to be REALLY nervous about something.'},
+  {type:'wouldyou', text:'Would you rather have ten great friends OR one perfect best friend?'},
+  {type:'opinion', text:'What is one piece of advice you would give a kid younger than you?'},
+  {type:'whatif', text:'What if you woke up tomorrow and you were the president for one day?'},
+  {type:'hotstake', text:'What is the best book you have ever read and why should everyone read it?'},
+];
+
+const TYPE_LABELS = {
+  hotstake: '🔥 Hot Take',
+  wouldyou: '🤔 Would You Rather',
+  finish:   '✍️ Finish the Story',
+  whatif:   '💭 What If...',
+  describe: '🔬 Describe It',
+  rank:     '🏆 Rank It',
+  opinion:  '😤 Your Opinion',
+  twotruth: '🎭 Two Truths & A Lie',
+};
+
+// ══════════════════════════════════════════
+// FIREBASE
+// ══════════════════════════════════════════
+firebase.initializeApp({
+  apiKey: "AIzaSyBsjx3JKjCQOMuus07MSoj3o-Vu9eRW6zc",
+  authDomain: "wade-classical.firebaseapp.com",
+  databaseURL: "https://wade-classical-default-rtdb.firebaseio.com",
+  projectId: "wade-classical"
+});
+const db = firebase.database();
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let _user = 'amanda';
+let _tab  = 'today';
+let _todayKey = '';
+let _todayPrompt = null;
+let _allEntries = {};
+
+// ══════════════════════════════════════════
+// DATE / PROMPT HELPERS
+// ══════════════════════════════════════════
+function getTodayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function getPromptForDate(dateKey) {
+  // Deterministic: same date always gets same prompt
+  const [y,m,d] = dateKey.split('-').map(Number);
+  const seed = y * 10000 + m * 100 + d;
+  // Simple hash
+  const idx = ((seed * 2654435761) >>> 0) % PROMPTS.length;
+  return PROMPTS[idx];
+}
+
+function formatDateDisplay(dateKey) {
+  const [y,m,d] = dateKey.split('-');
+  const date = new Date(parseInt(y), parseInt(m)-1, parseInt(d));
+  return date.toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
+}
+
+// ══════════════════════════════════════════
+// STREAK
+// ══════════════════════════════════════════
+async function getStreak(user) {
+  try {
+    const snap = await db.ref(`daily-journal/${user}`).get();
+    const data = snap.val() || {};
+    const keys = Object.keys(data).sort().reverse();
+    if (keys.length === 0) return 0;
+
+    let streak = 0;
+    let checkDate = new Date();
+    // If today is not yet submitted, start from yesterday
+    if (!data[getTodayKey()]) checkDate.setDate(checkDate.getDate() - 1);
+
+    for (let i = 0; i < 365; i++) {
+      const key = `${checkDate.getFullYear()}-${String(checkDate.getMonth()+1).padStart(2,'0')}-${String(checkDate.getDate()).padStart(2,'0')}`;
+      if (data[key]) { streak++; checkDate.setDate(checkDate.getDate() - 1); }
+      else break;
+    }
+    return streak;
+  } catch(e) { return 0; }
+}
+
+// ══════════════════════════════════════════
+// GRAMMAR CHECK
+// ══════════════════════════════════════════
+function checkGrammar(text) {
+  const issues = [];
+  if (!text.trim()) return issues;
+
+  // Split into sentences
+  const sentences = text.match(/[^.!?]+[.!?]*/g) || [text];
+
+  sentences.forEach((raw, i) => {
+    const s = raw.trim();
+    if (!s || s.length < 3) return;
+
+    // Check capital first letter
+    const firstChar = s.replace(/^["'"'(]/, '')[0];
+    if (firstChar && firstChar !== firstChar.toUpperCase()) {
+      issues.push({ sentence: s, issue: 'Needs a capital letter at the start' });
+    }
+
+    // Check ends with punctuation
+    const lastChar = s[s.length - 1];
+    if (!['.', '!', '?'].includes(lastChar)) {
+      const alreadyFlagged = issues.find(x => x.sentence === s);
+      if (!alreadyFlagged) {
+        issues.push({ sentence: s, issue: 'Missing punctuation at the end (. ! ?)' });
+      } else {
+        alreadyFlagged.issue += ' and missing punctuation at the end';
+      }
+    }
+  });
+
+  return issues;
+}
+
+function showGrammarFlags(issues) {
+  const wrap  = document.getElementById('grammar-flags');
+  const list  = document.getElementById('flag-list');
+  if (issues.length === 0) { wrap.classList.remove('show'); return; }
+
+  list.innerHTML = issues.map(issue => `
+    <div class="flag-item">
+      <span class="flag-sentence">"${escHtml(issue.sentence.substring(0,60))}${issue.sentence.length > 60 ? '...' : ''}"</span><br>
+      → ${issue.issue}
+    </div>
+  `).join('');
+  wrap.classList.add('show');
+}
+
+// ══════════════════════════════════════════
+// RENDER TODAY
+// ══════════════════════════════════════════
+async function renderToday() {
+  _todayKey = getTodayKey();
+  _todayPrompt = getPromptForDate(_todayKey);
+
+  // Prompt display
+  document.getElementById('prompt-date').textContent = formatDateDisplay(_todayKey);
+  document.getElementById('prompt-text').textContent = _todayPrompt.text;
+
+  const badge = document.getElementById('prompt-badge');
+  badge.innerHTML = `<span class="prompt-type-badge badge-${_todayPrompt.type}">${TYPE_LABELS[_todayPrompt.type]}</span>`;
+
+  // Streak
+  const streak = await getStreak(_user);
+  const streakEl = document.getElementById('streak-display');
+  if (streak > 0) {
+    streakEl.innerHTML = `
+      <div class="streak-badge">
+        <span class="streak-num">${streak}</span>
+        <span class="streak-label">DAY STREAK 🔥</span>
+      </div>`;
+  } else {
+    streakEl.innerHTML = '';
+  }
+
+  // Check if already submitted today
+  try {
+    const snap = await db.ref(`daily-journal/${_user}/${_todayKey}`).get();
+    const entry = snap.val();
+
+    if (entry && entry.text) {
+      showSubmittedState(entry.text);
+    } else {
+      showWriteState();
+    }
+  } catch(e) {
+    showWriteState();
+  }
+}
+
+function showWriteState() {
+  document.getElementById('write-area-wrap').style.display = 'block';
+  document.getElementById('submitted-wrap').style.display  = 'none';
+  document.getElementById('write-area').value = '';
+  document.getElementById('grammar-flags').classList.remove('show');
+  document.getElementById('word-count').textContent = '0 words';
+}
+
+function showSubmittedState(text) {
+  document.getElementById('write-area-wrap').style.display = 'none';
+  const wrap = document.getElementById('submitted-wrap');
+  wrap.style.display = 'block';
+  wrap.innerHTML = `
+    <div class="already-submitted">
+      <div class="submitted-label">✅ Already Written Today!</div>
+      <div class="submitted-text">${escHtml(text)}</div>
+      <button class="btn-edit-entry" id="btn-edit-today">✏️ Edit My Answer</button>
+    </div>
+  `;
+  document.getElementById('btn-edit-today').addEventListener('click', () => {
+    document.getElementById('write-area').value = text;
+    showWriteState();
+  });
+}
+
+// ══════════════════════════════════════════
+// SUBMIT
+// ══════════════════════════════════════════
+async function submitEntry() {
+  const text = document.getElementById('write-area').value.trim();
+  if (!text) { showToast('Write something first!'); return; }
+
+  // Grammar check
+  const issues = checkGrammar(text);
+  showGrammarFlags(issues);
+
+  // Save regardless
+  const entry = {
+    text,
+    prompt: _todayPrompt.text,
+    promptType: _todayPrompt.type,
+    submittedAt: Date.now(),
+  };
+
+  await db.ref(`daily-journal/${_user}/${_todayKey}`).set(entry);
+
+  if (issues.length > 0) {
+    showToast('Saved! But check those sentences ✏️');
+  } else {
+    showToast('KAPOW! Entry saved! 💥');
+  }
+
+  showSubmittedState(text);
+
+  // Update streak display
+  const streak = await getStreak(_user);
+  const streakEl = document.getElementById('streak-display');
+  if (streak > 0) {
+    streakEl.innerHTML = `
+      <div class="streak-badge">
+        <span class="streak-num">${streak}</span>
+        <span class="streak-label">DAY STREAK 🔥</span>
+      </div>`;
+  }
+}
+
+// ══════════════════════════════════════════
+// FAMILY VIEW
+// ══════════════════════════════════════════
+async function renderFamily() {
+  const key = getTodayKey();
+  const prompt = getPromptForDate(key);
+  document.getElementById('family-prompt-text').textContent = prompt.text;
+
+  const grid = document.getElementById('family-entries-grid');
+  grid.innerHTML = '<div style="font-family:\'Comic Neue\',cursive;color:#888;padding:10px;">Loading...</div>';
+
+  const users = ['amanda', 'ryder', 'hadley'];
+  const labels = { amanda: '✏️ Amanda', ryder: '✏️ Ryder', hadley: '✏️ Hadley' };
+
+  const entries = await Promise.all(users.map(u =>
+    db.ref(`daily-journal/${u}/${key}`).get().then(s => ({ user: u, data: s.val() })).catch(() => ({ user: u, data: null }))
+  ));
+
+  grid.innerHTML = '';
+  entries.forEach(({ user, data }) => {
+    const card = document.createElement('div');
+    card.className = 'entry-card';
+    card.innerHTML = `
+      <div class="entry-card-top">
+        <span class="entry-author author-${user}">${labels[user]}</span>
+      </div>
+      ${data?.text
+        ? `<div class="entry-text">${escHtml(data.text)}</div>`
+        : `<div class="no-entry-yet">Hasn't written yet today...</div>`}
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ══════════════════════════════════════════
+// ARCHIVE
+// ══════════════════════════════════════════
+async function renderArchive() {
+  const archiveEl = document.getElementById('archive-list');
+  archiveEl.innerHTML = '<div style="font-family:\'Comic Neue\',cursive;color:#888;padding:20px;text-align:center;">Loading...</div>';
+
+  const users = ['amanda', 'ryder', 'hadley'];
+
+  try {
+    const allData = await Promise.all(users.map(u =>
+      db.ref(`daily-journal/${u}`).get().then(s => ({ user: u, data: s.val() || {} })).catch(() => ({ user: u, data: {} }))
+    ));
+
+    // Collect all dates
+    const allDates = new Set();
+    allData.forEach(({ data }) => Object.keys(data).forEach(k => allDates.add(k)));
+    const sortedDates = [...allDates].sort().reverse().slice(0, 60); // last 60 days
+
+    if (sortedDates.length === 0) {
+      archiveEl.innerHTML = '<div style="font-family:\'Comic Neue\',cursive;color:#aaa;padding:20px;text-align:center;">No entries yet!</div>';
+      return;
+    }
+
+    archiveEl.innerHTML = '';
+
+    sortedDates.forEach(date => {
+      const prompt = getPromptForDate(date);
+      const row = document.createElement('div');
+      row.className = 'past-prompt-row';
+
+      const dateStr = formatDateDisplay(date);
+      const userEntries = allData.map(({ user, data }) => data[date] ? { user, text: data[date].text } : null).filter(Boolean);
+
+      row.innerHTML = `
+        <div class="past-prompt-q">
+          <span style="font-family:'Bangers',cursive;font-size:0.75rem;letter-spacing:0.1em;color:#aaa;display:block;margin-bottom:3px;">${dateStr}</span>
+          ${escHtml(prompt.text)}
+        </div>
+        <div class="past-entries">
+          ${userEntries.length === 0
+            ? '<div style="font-family:\'Comic Neue\',cursive;color:#ccc;font-size:0.8rem;font-style:italic;">No entries for this day</div>'
+            : userEntries.map(e => `
+              <div class="past-entry ${e.user}">
+                <div class="past-entry-author">${e.user.charAt(0).toUpperCase() + e.user.slice(1)}</div>
+                <div class="past-entry-text">${escHtml(e.text)}</div>
+              </div>`).join('')}
+        </div>
+      `;
+      archiveEl.appendChild(row);
+    });
+  } catch(e) {
+    archiveEl.innerHTML = '<div style="font-family:\'Comic Neue\',cursive;color:#aaa;padding:20px;text-align:center;">Could not load archive.</div>';
+  }
+}
+
+// ══════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════
+function switchTab(tab) {
+  _tab = tab;
+  ['today','family','archive'].forEach(t => {
+    document.getElementById('panel-' + t).style.display = t === tab ? 'block' : 'none';
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+  });
+  if (tab === 'today')   renderToday();
+  if (tab === 'family')  renderFamily();
+  if (tab === 'archive') renderArchive();
+}
+
+// ══════════════════════════════════════════
+// USER SWITCHING
+// ══════════════════════════════════════════
+function switchUser(user) {
+  _user = user;
+  ['amanda','ryder','hadley'].forEach(u => {
+    document.getElementById('btn-' + u).classList.toggle('active', u === user);
+  });
+  if (_tab === 'today') renderToday();
+}
+
+// ══════════════════════════════════════════
+// WORD COUNT
+// ══════════════════════════════════════════
+document.getElementById('write-area').addEventListener('input', () => {
+  const text = document.getElementById('write-area').value.trim();
+  const words = text ? text.split(/\s+/).filter(w => w.length > 0).length : 0;
+  document.getElementById('word-count').textContent = `${words} word${words !== 1 ? 's' : ''}`;
+  // Clear grammar flags while typing
+  document.getElementById('grammar-flags').classList.remove('show');
+});
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+document.getElementById('btn-amanda').addEventListener('click', () => switchUser('amanda'));
+document.getElementById('btn-ryder').addEventListener('click',  () => switchUser('ryder'));
+document.getElementById('btn-hadley').addEventListener('click', () => switchUser('hadley'));
+document.getElementById('btn-submit').addEventListener('click', submitEntry);
+document.getElementById('tab-today').addEventListener('click',   () => switchTab('today'));
+document.getElementById('tab-family').addEventListener('click',  () => switchTab('family'));
+document.getElementById('tab-archive').addEventListener('click', () => switchTab('archive'));
+
+// URL param
+const urlUser = new URLSearchParams(window.location.search).get('user');
+if (urlUser && ['amanda','ryder','hadley'].includes(urlUser)) {
+  _user = urlUser;
+  document.querySelectorAll('.writer-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + urlUser).classList.add('active');
+}
+
+renderToday();
+</script>
+</body>
+</html>

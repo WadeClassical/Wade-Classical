@@ -618,6 +618,132 @@
 
 
 
+
+        /* ── DAILY JOURNAL CARD ── */
+        .journal-card {
+            display: block;
+            text-decoration: none;
+            background: #1a1200;
+            border-radius: 16px;
+            padding: 22px 24px;
+            margin-bottom: 20px;
+            border: 3px solid #0D0D0D;
+            box-shadow: 5px 5px 0 #0D0D0D;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.6s ease 0.65s both;
+        }
+
+        /* Halftone dots */
+        .journal-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(255,224,51,0.08) 1.5px, transparent 1.5px);
+            background-size: 14px 14px;
+            pointer-events: none;
+        }
+
+        /* Yellow stripe top */
+        .journal-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 6px;
+            background: repeating-linear-gradient(90deg,
+                #FFE033 0, #FFE033 20px,
+                #E8302A 20px, #E8302A 40px);
+        }
+
+        .journal-card:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 #0D0D0D; }
+
+        .jc-inner {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .jc-title-wrap { flex: 1; min-width: 140px; }
+
+        .jc-title {
+            font-family: 'Bangers', cursive;
+            font-size: 1.6rem;
+            letter-spacing: 0.08em;
+            color: #FFE033;
+            text-shadow: 2px 2px 0 #E8302A, -1px -1px 0 #0D0D0D;
+            line-height: 1;
+            margin-bottom: 3px;
+        }
+
+        .jc-sub {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 0.82rem;
+            color: rgba(255,224,51,0.5);
+            margin-bottom: 12px;
+        }
+
+        .jc-writers {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .jc-writer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255,224,51,0.1);
+            border: 2px solid rgba(255,224,51,0.25);
+            border-radius: 8px;
+            padding: 6px 12px;
+            min-width: 64px;
+        }
+
+        .jc-writer-streak {
+            font-family: 'Bangers', cursive;
+            font-size: 1.2rem;
+            color: #FFE033;
+            line-height: 1;
+        }
+
+        .jc-writer-label {
+            font-size: 0.6rem;
+            color: rgba(255,224,51,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-top: 2px;
+        }
+
+        .jc-prompt-preview {
+            font-family: 'Comic Neue', cursive;
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.4);
+            font-style: italic;
+            margin-top: 8px;
+            font-weight: 400;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .jc-arrow {
+            font-family: 'Bangers', cursive;
+            font-size: 1.4rem;
+            color: rgba(255,224,51,0.4);
+            transition: transform 0.2s, color 0.2s;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .journal-card:hover .jc-arrow { transform: translateX(4px); color: #FFE033; }
+
         /* ── THE MENU COOKBOOK CARD ── */
         .cookbook-card {
             display: block;
@@ -1668,6 +1794,39 @@
     </a>
 
 
+
+    <!-- DAILY JOURNAL SECTION -->
+    <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-title">Daily Journal</span>
+        <div class="divider-line"></div>
+    </div>
+
+    <a href="wade-journal.html" class="journal-card">
+        <div class="jc-inner">
+            <div class="jc-title-wrap">
+                <div class="jc-title">Daily Journal</div>
+                <div class="jc-sub">Write every day · Prompts · Family sharing</div>
+                <div class="jc-writers">
+                    <div class="jc-writer">
+                        <div class="jc-writer-streak" id="jc-amanda-streak">—</div>
+                        <div class="jc-writer-label">Amanda</div>
+                    </div>
+                    <div class="jc-writer">
+                        <div class="jc-writer-streak" id="jc-ryder-streak">—</div>
+                        <div class="jc-writer-label">Ryder</div>
+                    </div>
+                    <div class="jc-writer">
+                        <div class="jc-writer-streak" id="jc-hadley-streak">—</div>
+                        <div class="jc-writer-label">Hadley</div>
+                    </div>
+                </div>
+                <div class="jc-prompt-preview" id="jc-today-prompt"></div>
+            </div>
+            <div class="jc-arrow">→</div>
+        </div>
+    </a>
+
     <!-- THE MENU SECTION -->
     <div class="section-divider">
         <div class="divider-line"></div>
@@ -2018,6 +2177,63 @@ function renderPlannerCards() {
 renderPlannerCards();
 
 
+
+
+// ══════════════════════════════════════════════
+// DAILY JOURNAL STATS
+// ══════════════════════════════════════════════
+function getTodayKey() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+async function getJournalStreak(user) {
+    try {
+        const snap = await dashDb.ref('daily-journal/' + user).get();
+        const data = snap.val() || {};
+        const todayKey = getTodayKey();
+        let streak = 0;
+        let checkDate = new Date();
+        if (!data[todayKey]) checkDate.setDate(checkDate.getDate() - 1);
+        for (let i = 0; i < 365; i++) {
+            const key = checkDate.getFullYear() + '-' + String(checkDate.getMonth()+1).padStart(2,'0') + '-' + String(checkDate.getDate()).padStart(2,'0');
+            if (data[key]) { streak++; checkDate.setDate(checkDate.getDate() - 1); }
+            else break;
+        }
+        return streak;
+    } catch(e) { return 0; }
+}
+
+function loadJournalStats() {
+    if (!dashDb) return;
+
+    // Today's prompt preview
+    const PROMPTS_MINI = ["Pineapple on pizza — delicious or a crime?","Would you rather fly or breathe underwater?","The dog opened the refrigerator and said...","What if dogs could talk?","Describe what pizza tastes like to someone who has never eaten food before."];
+    const d = new Date();
+    const seed = d.getFullYear() * 10000 + (d.getMonth()+1) * 100 + d.getDate();
+    // Simple preview — just show a teaser
+    dashDb.ref('daily-journal/amanda/' + getTodayKey()).get().then(snap => {
+        const entry = snap.val();
+        const promptEl = document.getElementById('jc-today-prompt');
+        if (promptEl) {
+            if (entry && entry.prompt) {
+                promptEl.textContent = '📝 "' + entry.prompt.substring(0, 60) + (entry.prompt.length > 60 ? '...' : '') + '"';
+            }
+        }
+    }).catch(() => {});
+
+    // Streaks
+    ['amanda','ryder','hadley'].forEach(user => {
+        getJournalStreak(user).then(streak => {
+            const el = document.getElementById('jc-' + user + '-streak');
+            if (el) {
+                el.textContent = streak > 0 ? streak + '🔥' : '—';
+                if (streak >= 7) el.style.color = '#FFE033';
+            }
+        });
+    });
+}
+loadJournalStats();
 
 // ══════════════════════════════════════════════
 // THE MENU STATS
