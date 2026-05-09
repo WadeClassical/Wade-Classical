@@ -620,6 +620,48 @@
 
 
         /* ── DAILY JOURNAL CARD ── */
+
+        /* ── TEACH WITH CLAUDE CARD ── */
+        .teach-card {
+            display: block;
+            text-decoration: none;
+            background: linear-gradient(135deg, #1a1408 0%, #24180c 55%, #2e2010 100%);
+            border-radius: 16px;
+            padding: 22px 24px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(184,151,74,0.35);
+            box-shadow: 0 4px 20px rgba(26,20,8,0.4), 0 0 40px rgba(184,151,74,0.06);
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.6s ease 0.7s both;
+        }
+        .teach-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 30% 50%, rgba(184,151,74,0.08) 0%, transparent 65%);
+            pointer-events: none;
+        }
+        .teach-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
+        }
+        .teach-card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(26,20,8,0.5), 0 0 60px rgba(184,151,74,0.1); border-color: rgba(184,151,74,0.55); }
+        .tc-inner { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; position: relative; z-index: 1; }
+        .tc-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 12px var(--gold), 0 0 24px rgba(184,151,74,0.5); flex-shrink: 0; animation: tcPulse 2.5s ease-in-out infinite; }
+        @keyframes tcPulse { 0%,100% { box-shadow: 0 0 8px var(--gold), 0 0 16px rgba(184,151,74,0.4); } 50% { box-shadow: 0 0 16px var(--gold), 0 0 32px rgba(184,151,74,0.7); } }
+        .tc-text { flex: 1; min-width: 140px; }
+        .tc-title { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--gold-light); letter-spacing: 0.1em; margin-bottom: 3px; font-weight: 400; }
+        .tc-sub { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.82rem; color: rgba(212,184,112,0.45); margin-bottom: 10px; }
+        .tc-tags { display: flex; gap: 7px; flex-wrap: wrap; }
+        .tc-tag { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.1em; padding: 3px 9px; border-radius: 8px; border: 1px solid rgba(184,151,74,0.25); background: rgba(184,151,74,0.07); color: rgba(212,184,112,0.6); text-transform: uppercase; }
+        .tc-arrow { font-size: 1.2rem; color: rgba(184,151,74,0.35); transition: transform 0.2s, color 0.2s; flex-shrink: 0; position: relative; z-index: 1; }
+        .teach-card:hover .tc-arrow { transform: translateX(4px); color: var(--gold-light); }
+
         .journal-card {
             display: block;
             text-decoration: none;
@@ -1794,6 +1836,30 @@
     </a>
 
 
+
+
+    <!-- TEACH WITH CLAUDE -->
+    <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-title">Teach With Claude</span>
+        <div class="divider-line"></div>
+    </div>
+    <a href="wade-teach.html" class="teach-card">
+        <div class="tc-inner">
+            <div class="tc-dot"></div>
+            <div class="tc-text">
+                <div class="tc-title">Teach With Claude</div>
+                <div class="tc-sub">Your curriculum planning partner &mdash; lesson plans, explanations &amp; activities on demand</div>
+                <div class="tc-tags">
+                    <span class="tc-tag">Lesson Plans</span>
+                    <span class="tc-tag">Ryder &middot; Grade 6</span>
+                    <span class="tc-tag">Hadley &middot; Grade 1</span>
+                    <span class="tc-tag">Any Subject</span>
+                </div>
+            </div>
+            <div class="tc-arrow">&rarr;</div>
+        </div>
+    </a>
 
     <!-- DAILY JOURNAL SECTION -->
     <div class="section-divider">
