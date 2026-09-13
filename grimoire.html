@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Grimoire — A Vocabulary Spellbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parchment:#EDE0C0;
+    --page:#F8F1DC;
+    --ink:#251C10;
+    --ink-soft:#5B4E38;
+    --leather:#4A2E22;
+    --leather-dark:#331F17;
+    --gold:#B8892B;
+    --gold-bright:#D9A83B;
+    --emerald:#2F5D46;
+    --amethyst:#5B4870;
+    --crimson:#7A2E2E;
+    --line: rgba(74,46,34,.25);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh;
+    background:
+      radial-gradient(ellipse at top, rgba(184,137,43,.10), transparent 60%),
+      var(--parchment);
+    color:var(--ink); font-family:'EB Garamond', serif; font-size:18px; line-height:1.55;
+    padding:28px 16px 60px;
+  }
+  .font-display{font-family:'Cinzel', serif;}
+  .wrap{max-width:720px; margin:0 auto;}
+
+  /* ---------- header / masthead ---------- */
+  .masthead{text-align:center; margin-bottom:26px;}
+  .masthead h1{
+    font-family:'Cinzel', serif; font-weight:700; font-size:34px; letter-spacing:.03em;
+    color:var(--leather); margin:0 0 4px;
+  }
+  .masthead .flourish{color:var(--gold); font-size:15px; letter-spacing:.3em; margin-bottom:6px;}
+  .masthead .sub{font-style:italic; color:var(--ink-soft); font-size:17px;}
+  .rule{
+    border:none; height:2px; margin:18px auto; width:120px;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  /* ---------- generic page/card ---------- */
+  .page-card{
+    background:var(--page); border-radius:8px; padding:22px 26px;
+    box-shadow:0 1px 0 var(--gold), 0 0 0 1px var(--line);
+    margin-bottom:16px;
+  }
+  .backlink{
+    display:inline-block; margin-bottom:14px; color:var(--ink-soft); text-decoration:none;
+    font-family:'Cinzel',serif; font-size:13px; letter-spacing:.05em; cursor:pointer;
+  }
+  .backlink:hover{color:var(--leather);}
+
+  /* ---------- scholar picker ---------- */
+  .scholar-row{display:flex; gap:14px; justify-content:center; margin-bottom:8px;}
+  .scholar-seal{
+    font-family:'Cinzel', serif; font-weight:600; font-size:16px; letter-spacing:.03em;
+    background:var(--page); border:2px solid var(--leather); color:var(--leather);
+    padding:14px 30px; border-radius:50px; cursor:pointer;
+  }
+  .scholar-seal.active{background:var(--leather); color:var(--page); border-color:var(--leather);}
+
+  /* ---------- rank / xp bar ---------- */
+  .rankbar{
+    background:var(--leather); color:var(--page); border-radius:8px;
+    padding:14px 20px; margin-bottom:18px;
+  }
+  .rankbar .rank-title{font-family:'Cinzel',serif; font-weight:600; font-size:16px; color:var(--gold-bright); margin-bottom:6px;}
+  .rankbar .xp-track{background:rgba(255,255,255,.15); border-radius:20px; height:10px; overflow:hidden;}
+  .rankbar .xp-fill{background:linear-gradient(90deg, var(--gold), var(--gold-bright)); height:100%; border-radius:20px;}
+  .rankbar .xp-label{font-size:13px; color:rgba(255,255,255,.7); margin-top:6px; font-family:'EB Garamond',serif;}
+  .badge-row{display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;}
+  .badge{
+    width:38px; height:38px; border-radius:50%; background:var(--amethyst);
+    color:var(--page); display:flex; align-items:center; justify-content:center;
+    font-size:17px; border:2px solid var(--gold-bright); flex-shrink:0;
+  }
+  .badge[title]{cursor:default;}
+
+  /* ---------- tome (word-list) cards ---------- */
+  .tome{
+    display:flex; align-items:center; justify-content:space-between; cursor:pointer;
+    border-left:8px solid var(--leather); padding-left:16px;
+  }
+  .tome.source-curriculum{border-left-color:var(--emerald);}
+  .tome.source-reading{border-left-color:var(--amethyst);}
+  .tome.source-custom{border-left-color:var(--gold);}
+  .tome-title{font-family:'Cinzel',serif; font-size:17px; color:var(--leather); margin-bottom:2px;}
+  .tome-sub{font-size:14px; color:var(--ink-soft); font-style:italic;}
+  .tome-progress{font-family:'Cinzel',serif; font-size:14px; color:var(--gold); white-space:nowrap;}
+
+  /* ---------- word list within a tome ---------- */
+  .word-row{
+    display:flex; align-items:center; justify-content:space-between; padding:12px 4px;
+    border-bottom:1px solid var(--line); cursor:pointer;
+  }
+  .word-row:last-child{border-bottom:none;}
+  .word-row .word-name{font-family:'Cinzel',serif; font-size:17px; color:var(--ink);}
+  .status-pill{font-size:12px; font-family:'EB Garamond',serif; font-style:italic; padding:3px 12px; border-radius:20px;}
+  .status-pill.bound{background:#E7DEC0; color:var(--gold); border:1px solid var(--gold);}
+  .status-pill.progress{background:#E1EAE4; color:var(--emerald); border:1px solid var(--emerald);}
+  .status-pill.new{background:#EEE7EF; color:var(--amethyst); border:1px solid var(--amethyst);}
+
+  /* ---------- word practice view ---------- */
+  .word-hero{text-align:center; margin-bottom:8px;}
+  .word-hero .word{font-family:'Cinzel', serif; font-weight:700; font-size:40px; color:var(--leather);}
+  .word-hero .pos{font-style:italic; color:var(--ink-soft); font-size:16px;}
+  .stage-nav{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:18px 0;}
+  .stage-btn{
+    font-family:'Cinzel',serif; font-size:13px; letter-spacing:.02em;
+    background:var(--page); border:2px solid var(--ink-soft); color:var(--ink-soft);
+    padding:8px 14px; border-radius:20px; cursor:pointer;
+  }
+  .stage-btn.active{border-color:var(--leather); color:var(--leather); background:#EFE4C6;}
+  .stage-btn.complete{border-color:var(--emerald); color:var(--emerald);}
+  .stage-btn:disabled{opacity:.4; cursor:not-allowed;}
+
+  .rune-row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:20px 0;}
+  .rune-tile{
+    background:var(--page); border:2px solid var(--gold); border-radius:8px;
+    padding:12px 16px; text-align:center; min-width:90px;
+  }
+  .rune-tile .rune-part{font-family:'Cinzel',serif; font-weight:600; color:var(--leather); font-size:18px;}
+  .rune-tile .rune-meaning{font-size:14px; font-style:italic; color:var(--ink-soft); margin-top:4px; min-height:18px;}
+
+  .chip-row{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:16px 0;}
+  .chip{
+    font-family:'EB Garamond',serif; font-size:16px; padding:8px 16px; border-radius:20px;
+    border:2px solid var(--ink-soft); background:var(--page); cursor:pointer; color:var(--ink);
+  }
+  .chip.selected{border-color:var(--amethyst); background:#EEE7EF; color:var(--amethyst);}
+  .chip.correct{border-color:var(--emerald); background:#E1EAE4; color:var(--emerald);}
+  .chip.incorrect{border-color:var(--crimson); background:#F3E3E3; color:var(--crimson);}
+
+  textarea, .sentence-box{
+    width:100%; font-family:'EB Garamond',serif; font-size:17px; color:var(--ink);
+    border:2px solid var(--line); border-radius:8px; padding:12px 14px; background:var(--page);
+  }
+  .actions{display:flex; gap:10px; justify-content:center; margin-top:18px; flex-wrap:wrap;}
+  .btn{
+    font-family:'Cinzel',serif; font-size:14px; letter-spacing:.02em;
+    background:var(--leather); color:var(--page); border:none;
+    padding:11px 22px; border-radius:6px; cursor:pointer;
+  }
+  .btn.secondary{background:transparent; color:var(--leather); border:2px solid var(--leather); padding:9px 20px;}
+  .btn.gold{background:var(--gold);}
+  .fact-block{background:#F1E7CB; border-radius:8px; padding:14px 18px; margin:14px 0; font-size:16px;}
+  .fact-label{font-family:'Cinzel',serif; font-size:12px; color:var(--leather); letter-spacing:.04em; margin-bottom:3px;}
+
+  .celebrate{
+    text-align:center; padding:26px; animation:sealIn .6s ease-out;
+  }
+  @keyframes sealIn{
+    0%{ transform:scale(.6); opacity:0; }
+    60%{ transform:scale(1.08); opacity:1; }
+    100%{ transform:scale(1); opacity:1; }
+  }
+  .celebrate .seal{font-size:52px;}
+  .celebrate .title{font-family:'Cinzel',serif; font-size:24px; color:var(--gold); margin:6px 0;}
+  .celebrate .xp{color:var(--ink-soft); font-style:italic;}
+
+  .empty{color:var(--ink-soft); font-style:italic;}
+  .field-label{font-family:'Cinzel',serif; font-size:13px; color:var(--leather); margin:12px 0 4px;}
+  input[type=text]{
+    width:100%; font-family:'EB Garamond',serif; font-size:16px; padding:9px 12px;
+    border:2px solid var(--line); border-radius:6px; background:var(--page); color:var(--ink);
+  }
+  .review-word{border-bottom:1px solid var(--line); padding:14px 0;}
+  .review-word:last-child{border-bottom:none;}
+</style>
+</head>
+<body>
+  <div class="wrap" id="app"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+/* =====================================================================
+   THE GRIMOIRE — a fantasy-themed vocabulary app
+   Roots, prefixes/suffixes, word families, original sentences, and a
+   final self-check — a word is only "Bound" once all five hold up.
+
+   Paste your real firebaseConfig below (same one used across Wade
+   Classical apps) before this connects to your database.
+   ===================================================================== */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAw9V30gR9hc3WKS3zhO61IU6NeeKghyQM",
+  authDomain: "wade-classical.firebaseapp.com",
+  databaseURL: "https://wade-classical-default-rtdb.firebaseio.com",
+  projectId: "wade-classical",
+  storageBucket: "wade-classical.firebasestorage.app",
+  messagingSenderId: "72309085457",
+  appId: "1:72309085457:web:3d8b5a07302248ded6a8b0"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ---------------------------------------------------------------------
+// WORD LISTS — add more by adding entries here. "source" drives the
+// color-coded spine on each tome card: curriculum | reading | custom
+// ---------------------------------------------------------------------
+const WORDLISTS = {
+  ryder: {
+    "abeka-unit1": {
+      title: "Abeka Vocabulary — Unit 1", source: "curriculum",
+      words: [
+        { id:"diligent", word:"diligent", pos:"adjective",
+          def:"showing steady, careful effort in one's work",
+          sentence:"The diligent scout checked every knot twice before trusting the rope.",
+          root:{text:"legere", meaning:"to choose, gather", origin:"Latin"},
+          prefix:{text:"di-", meaning:"apart"},
+          family:["negligent","intelligent","elect","collect"] },
+        { id:"benevolent", word:"benevolent", pos:"adjective",
+          def:"kind and generous; wishing others well",
+          sentence:"The benevolent old wizard left food for any traveler who passed his tower.",
+          root:{text:"volens / velle", meaning:"to wish", origin:"Latin"},
+          prefix:{text:"bene-", meaning:"well"},
+          suffix:{text:"-ent", meaning:"having the quality of"},
+          family:["malevolent","volunteer","voluntary","benefactor"] },
+        { id:"adversity", word:"adversity", pos:"noun",
+          def:"a difficult or unfortunate situation",
+          sentence:"The company faced adversity but rebuilt stronger than before.",
+          root:{text:"vertere", meaning:"to turn", origin:"Latin"},
+          prefix:{text:"ad-", meaning:"toward"},
+          family:["adverse","reverse","converse","controversy"] },
+        { id:"candid", word:"candid", pos:"adjective",
+          def:"truthful and straightforward; not hiding one's real thoughts",
+          sentence:"Her candid answer surprised the council, who expected excuses.",
+          root:{text:"candere", meaning:"to shine, glow", origin:"Latin"},
+          family:["candle","incandescent","candor","candidate"] },
+        { id:"eloquent", word:"eloquent", pos:"adjective",
+          def:"fluent and persuasive in speaking or writing",
+          sentence:"The eloquent speech convinced even the skeptics in the room.",
+          root:{text:"loqui", meaning:"to speak", origin:"Latin"},
+          prefix:{text:"e-", meaning:"out"},
+          family:["colloquial","soliloquy","loquacious","elocution"] },
+        { id:"resilient", word:"resilient", pos:"adjective",
+          def:"able to recover quickly from difficulty",
+          sentence:"Bamboo is resilient — it bends in the storm instead of snapping.",
+          root:{text:"salire", meaning:"to jump, leap", origin:"Latin"},
+          prefix:{text:"re-", meaning:"back, again"},
+          family:["resile","salient","somersault"] }
+      ]
+    },
+    "lightning-thief": {
+      title: "Word Bank — Adventure Reading", source: "reading",
+      words: [
+        { id:"formidable", word:"formidable", pos:"adjective",
+          def:"inspiring fear or respect through being impressively powerful",
+          sentence:"The formidable guardian blocked the only path into the valley.",
+          root:{text:"formido", meaning:"dread", origin:"Latin"},
+          suffix:{text:"-able", meaning:"capable of being"},
+          family:["formidably"] },
+        { id:"mortal", word:"mortal", pos:"adjective / noun",
+          def:"subject to death; a human being",
+          sentence:"Even the bravest mortal hesitated at the entrance to the underworld.",
+          root:{text:"mors, mortis", meaning:"death", origin:"Latin"},
+          family:["immortal","mortality","mortuary"] },
+        { id:"treacherous", word:"treacherous", pos:"adjective",
+          def:"dangerous, or guilty of betraying trust",
+          sentence:"The treacherous cliff path crumbled with every step.",
+          root:{text:"trichier", meaning:"to cheat, trick", origin:"Old French"},
+          family:["treachery"] },
+        { id:"labyrinth", word:"labyrinth", pos:"noun",
+          def:"an elaborate, confusing network of passages; a maze",
+          sentence:"They wandered the labyrinth for hours before finding the exit.",
+          root:{text:"labyrinthos", meaning:"maze (of the Minotaur)", origin:"Greek"},
+          family:["labyrinthine"] },
+        { id:"prophecy", word:"prophecy", pos:"noun",
+          def:"a prediction, often one believed to come from divine insight",
+          sentence:"The old prophecy warned that a hero would rise before the end.",
+          root:{text:"phanai / phemi", meaning:"to speak", origin:"Greek"},
+          prefix:{text:"pro-", meaning:"before"},
+          family:["prophet","telephone","emphasis","blaspheme"] }
+      ]
+    }
+  },
+  hadley: {
+    "reading-words": {
+      title: "Words From Her Reading", source: "reading",
+      words: [
+        { id:"curious", word:"curious", pos:"adjective",
+          def:"eager to know or learn something",
+          sentence:"The curious fox peeked into every burrow in the forest.",
+          root:{text:"cura", meaning:"care", origin:"Latin"},
+          family:["cure","curator","accurate"] },
+        { id:"joyful", word:"joyful", pos:"adjective",
+          def:"feeling or showing great happiness",
+          sentence:"She gave a joyful shout when she saw the puppy.",
+          suffix:{text:"-ful", meaning:"full of"},
+          family:["joyous","enjoy","joyless"] },
+        { id:"unkind", word:"unkind", pos:"adjective",
+          def:"not kind; unfriendly",
+          sentence:"It was unkind to leave her friend out of the game.",
+          prefix:{text:"un-", meaning:"not"},
+          family:["unhappy","unfair","undo"] },
+        { id:"return", word:"return", pos:"verb",
+          def:"to come or go back to a place",
+          sentence:"The birds return to the same nest every spring.",
+          prefix:{text:"re-", meaning:"back, again"},
+          family:["revisit","replay","rewind"] }
+      ]
+    }
+  }
+};
+
+const RANKS = [
+  { min: 0,   title: "Apprentice Scribe" },
+  { min: 50,  title: "Journeyman Loremaster" },
+  { min: 150, title: "Adept Wordwright" },
+  { min: 300, title: "Scholar of the Hidden Tongue" },
+  { min: 500, title: "Archmage of Language" }
+];
+
+function rankFor(xp){
+  let current = RANKS[0], next = RANKS[1];
+  for (let i = 0; i < RANKS.length; i++){
+    if (xp >= RANKS[i].min){ current = RANKS[i]; next = RANKS[i+1] || null; }
+  }
+  return { current, next };
+}
+
+function computeBadges(stats){
+  const badges = [];
+  if (stats.mastered >= 1) badges.push({icon:"\u2726", title:"First Spell Bound"});
+  if (stats.mastered >= 12) badges.push({icon:"\u2749", title:"A Dozen Bound"});
+  if (stats.runecraft >= 10) badges.push({icon:"\u16A0", title:"Runesmith"});
+  if (stats.incantations >= 10) badges.push({icon:"\u2712", title:"Storyteller"});
+  if (stats.streak >= 3) badges.push({icon:"\u2668", title:"Ember Keeper"});
+  return badges;
+}
+
+// ---------------------------------------------------------------------
+// STATE
+// ---------------------------------------------------------------------
+let currentKid = null;
+let currentListId = null;
+let currentWordId = null;
+let currentStage = null;
+let kidProgress = {};   // { wordId: { firstCasting, runecraft, bloodline, incantation:{text}, trial, mastered } }
+let kidMeta = { xp: 0, streak: 0, lastDate: null };
+const params = new URLSearchParams(location.search);
+const reviewMode = params.get("review") === "1";
+
+function allWordsForKid(kid){
+  const lists = WORDLISTS[kid] || {};
+  const out = [];
+  Object.entries(lists).forEach(([listId, list]) => {
+    list.words.forEach(w => out.push(Object.assign({ listId }, w)));
+  });
+  return out;
+}
+
+function findWord(kid, listId, wordId){
+  const list = WORDLISTS[kid][listId];
+  return list.words.find(w => w.id === wordId);
+}
+
+// ---------------------------------------------------------------------
+// RENDER: SCHOLAR PICKER (top-level)
+// ---------------------------------------------------------------------
+function renderScholarPicker(){
+  currentKid = null;
+  const app = document.getElementById("app");
+  app.innerHTML = `
+    <div class="masthead">
+      <div class="flourish">\u2726 \u2726 \u2726</div>
+      <h1>The Grimoire</h1>
+      <div class="sub">a vocabulary spellbook</div>
+      <hr class="rule">
+    </div>
+    <div class="scholar-row" id="scholarRow">
+      ${Object.keys(WORDLISTS).map(k => `<button class="scholar-seal" data-kid="${k}">${cap(k)}</button>`).join("")}
+    </div>
+    <div class="footer-link" style="text-align:center; margin-top:26px; font-family:'Cinzel',serif; font-size:13px;">
+      <a href="?${reviewMode ? '' : 'review=1'}" style="color:var(--ink-soft);">${reviewMode ? '\u2190 Back to the Grimoire' : "Parent's Reading Room \u2192"}</a>
+    </div>
+  `;
+  document.querySelectorAll("[data-kid]").forEach(btn => {
+    btn.onclick = () => { openKid(btn.dataset.kid); };
+  });
+}
+
+function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+// ---------------------------------------------------------------------
+// LOAD KID DATA THEN RENDER LIST PICKER OR REVIEW
+// ---------------------------------------------------------------------
+function openKid(kid){
+  currentKid = kid;
+  Promise.all([
+    db.ref(`vocab/${kid}/progress`).once("value"),
+    db.ref(`vocab/${kid}/meta`).once("value")
+  ]).then(([progSnap, metaSnap]) => {
+    kidProgress = progSnap.val() || {};
+    kidMeta = Object.assign({ xp: 0, streak: 0, lastDate: null }, metaSnap.val() || {});
+    bumpStreak();
+    if (reviewMode) renderKidReview(); else renderListPicker();
+  });
+}
+
+function bumpStreak(){
+  const today = new Date().toDateString();
+  if (kidMeta.lastDate === today) return;
+  const y = new Date(); y.setDate(y.getDate()-1);
+  kidMeta.streak = (kidMeta.lastDate === y.toDateString()) ? (kidMeta.streak||0) + 1 : 1;
+  kidMeta.lastDate = today;
+  db.ref(`vocab/${currentKid}/meta`).update({ streak: kidMeta.streak, lastDate: kidMeta.lastDate });
+}
+
+function kidStats(){
+  const words = allWordsForKid(currentKid);
+  let mastered = 0, runecraft = 0, incantations = 0;
+  words.forEach(w => {
+    const p = kidProgress[w.id];
+    if (!p) return;
+    if (p.mastered) mastered++;
+    if (p.runecraft) runecraft++;
+    if (p.incantation && p.incantation.text) incantations++;
+  });
+  return { mastered, runecraft, incantations, streak: kidMeta.streak || 0 };
+}
+
+function renderRankbar(){
+  const stats = kidStats();
+  const { current, next } = rankFor(kidMeta.xp || 0);
+  const span = next ? next.min - current.min : 1;
+  const into = next ? (kidMeta.xp - current.min) : span;
+  const pct = Math.max(4, Math.min(100, Math.round((into / span) * 100)));
+  const badges = computeBadges(stats);
+  return `
+    <div class="rankbar">
+      <div class="rank-title">${current.title}</div>
+      <div class="xp-track"><div class="xp-fill" style="width:${pct}%"></div></div>
+      <div class="xp-label">${kidMeta.xp || 0} XP${next ? ` \u2014 ${next.min - kidMeta.xp} to ${next.title}` : " \u2014 the highest rank!"}</div>
+      ${badges.length ? `<div class="badge-row">${badges.map(b => `<div class="badge" title="${b.title}">${b.icon}</div>`).join("")}</div>` : ""}
+    </div>
+  `;
+}
+
+// ---------------------------------------------------------------------
+// RENDER: LIST PICKER (tomes on the shelf)
+// ---------------------------------------------------------------------
+function renderListPicker(){
+  currentListId = null;
+  const lists = WORDLISTS[currentKid];
+  const app = document.getElementById("app");
+  let html = `<a class="backlink" id="backBtn">\u2190 Choose a different scholar</a>`;
+  html += `<div class="masthead" style="margin-bottom:14px;"><h1 style="font-size:26px;">${cap(currentKid)}'s Shelf</h1></div>`;
+  html += renderRankbar();
+
+  Object.entries(lists).forEach(([listId, list]) => {
+    const total = list.words.length;
+    const mastered = list.words.filter(w => kidProgress[w.id] && kidProgress[w.id].mastered).length;
+    html += `
+      <div class="page-card tome source-${list.source}" data-open-list="${listId}">
+        <div>
+          <div class="tome-title">${list.title}</div>
+          <div class="tome-sub">${sourceLabel(list.source)}</div>
+        </div>
+        <div class="tome-progress">${mastered} / ${total} Bound</div>
+      </div>
+    `;
+  });
+
+  html += `
+    <div class="page-card tome source-custom" id="addWordCard">
+      <div>
+        <div class="tome-title">My Own Words</div>
+        <div class="tome-sub">Add a word whenever you find one</div>
+      </div>
+      <div class="tome-progress">+ Add</div>
+    </div>
+  `;
+
+  app.innerHTML = html;
+  document.getElementById("backBtn").onclick = renderScholarPicker;
+  document.querySelectorAll("[data-open-list]").forEach(card => {
+    card.onclick = () => openList(card.dataset.openList);
+  });
+  document.getElementById("addWordCard").onclick = renderAddWordForm;
+}
+
+function sourceLabel(source){
+  if (source === "curriculum") return "From the curriculum";
+  if (source === "reading") return "From a book";
+  return "Added by hand";
+}
+
+// ---------------------------------------------------------------------
+// RENDER: WORD PICKER WITHIN A TOME
+// ---------------------------------------------------------------------
+function openList(listId){
+  currentListId = listId;
+  renderWordPicker();
+}
+
+function renderWordPicker(){
+  const list = WORDLISTS[currentKid][currentListId];
+  const app = document.getElementById("app");
+  let html = `<a class="backlink" id="backBtn">\u2190 Back to the shelf</a>`;
+  html += `<div class="masthead" style="margin-bottom:10px;"><h1 style="font-size:24px;">${list.title}</h1></div>`;
+  html += `<div class="page-card">`;
+  list.words.forEach(w => {
+    const p = kidProgress[w.id];
+    const status = p && p.mastered ? "bound" : (p ? "progress" : "new");
+    const label = status === "bound" ? "Bound" : (status === "progress" ? "In Progress" : "Not Yet Cast");
+    html += `
+      <div class="word-row" data-open-word="${w.id}">
+        <div class="word-name">${w.word}</div>
+        <div class="status-pill ${status}">${label}</div>
+      </div>
+    `;
+  });
+  html += `</div>`;
+  app.innerHTML = html;
+  document.getElementById("backBtn").onclick = renderListPicker;
+  document.querySelectorAll("[data-open-word]").forEach(row => {
+    row.onclick = () => openWord(row.dataset.openWord);
+  });
+}
+
+// ---------------------------------------------------------------------
+// RENDER: WORD PRACTICE (5 stages)
+// ---------------------------------------------------------------------
+const STAGES = [
+  { id: "firstCasting", label: "First Casting" },
+  { id: "runecraft",    label: "Runecraft" },
+  { id: "bloodline",    label: "Bloodline" },
+  { id: "incantation",  label: "Incantation" },
+  { id: "trial",        label: "The Trial" }
+];
+
+function openWord(wordId){
+  currentWordId = wordId;
+  if (!kidProgress[wordId]) kidProgress[wordId] = {};
+  currentStage = firstIncompleteStage(wordId);
+  renderWordPractice();
+}
+
+function firstIncompleteStage(wordId){
+  const p = kidProgress[wordId];
+  for (const s of STAGES){
+    const done = s.id === "incantation" ? (p.incantation && p.incantation.text) : p[s.id];
+    if (!done) return s.id;
+  }
+  return "trial";
+}
+
+function stageUnlocked(wordId, stageId){
+  const idx = STAGES.findIndex(s => s.id === stageId);
+  if (idx === 0) return true;
+  const p = kidProgress[wordId];
+  const prev = STAGES[idx-1];
+  return prev.id === "incantation" ? !!(p.incantation && p.incantation.text) : !!p[prev.id];
+}
+
+function renderWordPractice(){
+  const w = findWord(currentKid, currentListId, currentWordId);
+  const p = kidProgress[currentWordId];
+  const app = document.getElementById("app");
+
+  let html = `<a class="backlink" id="backBtn">\u2190 Back to word list</a>`;
+  html += `<div class="word-hero"><div class="word">${w.word}</div><div class="pos">${w.pos}</div></div>`;
+  html += `<div class="stage-nav">`;
+  STAGES.forEach(s => {
+    const done = s.id === "incantation" ? !!(p.incantation && p.incantation.text) : !!p[s.id];
+    const unlocked = stageUnlocked(currentWordId, s.id);
+    const cls = s.id === currentStage ? "active" : (done ? "complete" : "");
+    html += `<button class="stage-btn ${cls}" data-stage="${s.id}" ${unlocked ? "" : "disabled"}>${done ? "\u2713 " : ""}${s.label}</button>`;
+  });
+  html += `</div>`;
+
+  html += `<div class="page-card" id="stageBody"></div>`;
+  app.innerHTML = html;
+  document.getElementById("backBtn").onclick = renderWordPicker;
+  document.querySelectorAll("[data-stage]").forEach(btn => {
+    btn.onclick = () => { if (!btn.disabled){ currentStage = btn.dataset.stage; renderWordPractice(); } };
+  });
+  renderStageBody(w, p);
+}
+
+function renderStageBody(w, p){
+  const body = document.getElementById("stageBody");
+  if (currentStage === "firstCasting") return renderFirstCasting(body, w);
+  if (currentStage === "runecraft") return renderRunecraft(body, w);
+  if (currentStage === "bloodline") return renderBloodline(body, w);
+  if (currentStage === "incantation") return renderIncantation(body, w, p);
+  if (currentStage === "trial") return renderTrial(body, w);
+}
+
+function renderFirstCasting(body, w){
+  let html = `
+    <div class="fact-block"><div class="fact-label">Definition</div>${w.def}</div>
+    <div class="fact-block"><div class="fact-label">In a sentence</div><em>${w.sentence}</em></div>
+  `;
+  if (w.root) html += `<div class="fact-block"><div class="fact-label">Root</div><strong>${w.root.text}</strong> (${w.root.origin}) \u2014 means "${w.root.meaning}"</div>`;
+  if (w.prefix) html += `<div class="fact-block"><div class="fact-label">Prefix</div><strong>${w.prefix.text}</strong> \u2014 means "${w.prefix.meaning}"</div>`;
+  if (w.suffix) html += `<div class="fact-block"><div class="fact-label">Suffix</div><strong>${w.suffix.text}</strong> \u2014 means "${w.suffix.meaning}"</div>`;
+  html += `<div class="actions"><button class="btn" id="doneBtn">I'm ready \u2014 mark this learned</button></div>`;
+  body.innerHTML = html;
+  document.getElementById("doneBtn").onclick = () => completeStage("firstCasting", 10);
+}
+
+function renderRunecraft(body, w){
+  const parts = [];
+  if (w.prefix) parts.push({ label: w.prefix.text, meaning: w.prefix.meaning });
+  if (w.root) parts.push({ label: w.root.text, meaning: w.root.meaning });
+  if (w.suffix) parts.push({ label: w.suffix.text, meaning: w.suffix.meaning });
+  if (parts.length === 0) parts.push({ label: w.word, meaning: w.def });
+
+  let html = `<p>Before looking, try to recall what each piece of this word means.</p>`;
+  html += `<div class="rune-row">`;
+  parts.forEach((part, i) => {
+    html += `<div class="rune-tile"><div class="rune-part">${part.label}</div><div class="rune-meaning" data-meaning="${i}"></div></div>`;
+  });
+  html += `</div>`;
+  html += `<div class="actions"><button class="btn secondary" id="revealBtn">Reveal meanings</button></div>`;
+  html += `<div id="selfAssess" style="display:none;">
+      <p style="text-align:center; margin-top:16px;">Could you explain each piece?</p>
+      <div class="actions">
+        <button class="btn" id="gotItBtn">Yes \u2014 I knew it</button>
+        <button class="btn secondary" id="practiceBtn">Not yet \u2014 more practice</button>
+      </div>
+    </div>`;
+  body.innerHTML = html;
+
+  document.getElementById("revealBtn").onclick = () => {
+    parts.forEach((part, i) => {
+      document.querySelector(`[data-meaning="${i}"]`).textContent = `"${part.meaning}"`;
+    });
+    document.getElementById("selfAssess").style.display = "block";
+    document.getElementById("revealBtn").style.display = "none";
+  };
+  document.getElementById("gotItBtn").onclick = () => completeStage("runecraft", 15);
+  document.getElementById("practiceBtn").onclick = () => renderWordPicker();
+}
+
+function renderBloodline(body, w){
+  const family = w.family || [];
+  const decoys = ["mountain","umbrella","garden","pebble","window"].filter(d => !family.includes(d));
+  const options = shuffle(family.slice(0, 4).concat(decoys.slice(0, Math.max(1, 4 - family.length))));
+  const rootText = w.root ? `${w.root.text} ("${w.root.meaning}")` : `the same word-family as "${w.word}"`;
+
+  let html = `<p>Which of these words share a root with <strong>${w.word}</strong>? The shared root is <strong>${rootText}</strong>.</p>`;
+  html += `<div class="chip-row">`;
+  options.forEach(opt => html += `<div class="chip" data-word="${opt}">${opt}</div>`);
+  html += `</div>`;
+  html += `<div class="actions"><button class="btn secondary" id="revealBtn">Reveal the family</button></div>`;
+  html += `<div id="selfAssess" style="display:none;">
+      <div class="actions">
+        <button class="btn" id="gotItBtn">I found the family</button>
+        <button class="btn secondary" id="practiceBtn">Not yet \u2014 more practice</button>
+      </div>
+    </div>`;
+  body.innerHTML = html;
+
+  document.querySelectorAll(".chip").forEach(chip => {
+    chip.onclick = () => chip.classList.toggle("selected");
+  });
+  document.getElementById("revealBtn").onclick = () => {
+    document.querySelectorAll(".chip").forEach(chip => {
+      chip.classList.remove("selected");
+      chip.classList.add(family.includes(chip.dataset.word) ? "correct" : "incorrect");
+    });
+    document.getElementById("selfAssess").style.display = "block";
+    document.getElementById("revealBtn").style.display = "none";
+  };
+  document.getElementById("gotItBtn").onclick = () => completeStage("bloodline", 15);
+  document.getElementById("practiceBtn").onclick = () => renderWordPicker();
+}
+
+function renderIncantation(body, w, p){
+  const existing = (p.incantation && p.incantation.text) || "";
+  let html = `<p>Write your own sentence using <strong>${w.word}</strong> correctly.</p>`;
+  html += `<textarea rows="3" id="sentenceInput">${escapeHtml(existing)}</textarea>`;
+  html += `<div class="actions"><button class="btn" id="saveBtn">Save my incantation</button></div>`;
+  body.innerHTML = html;
+  document.getElementById("saveBtn").onclick = () => {
+    const text = document.getElementById("sentenceInput").value.trim();
+    if (!text) return;
+    const already = !!(p.incantation && p.incantation.text);
+    kidProgress[currentWordId].incantation = { text, savedAt: new Date().toISOString() };
+    db.ref(`vocab/${currentKid}/progress/${currentWordId}/incantation`).set(kidProgress[currentWordId].incantation)
+      .then(() => {
+        if (!already) awardXp(15);
+        checkMastery();
+        const idx = STAGES.findIndex(s => s.id === "incantation");
+        if (idx >= 0 && idx < STAGES.length - 1) currentStage = STAGES[idx + 1].id;
+        renderWordPractice();
+      });
+  };
+}
+
+function renderTrial(body, w){
+  const askDefinition = Math.random() < 0.5;
+  let html = askDefinition
+    ? `<p>What does <strong>${w.word}</strong> mean?</p>`
+    : `<p>Which word means: <em>"${w.def}"</em>?</p>`;
+  html += `<div class="actions"><button class="btn secondary" id="revealBtn">Reveal answer</button></div>`;
+  html += `<div class="fact-block" id="answerBlock" style="display:none;">${askDefinition ? w.def : w.word}</div>`;
+  html += `<div id="selfAssess" style="display:none;">
+      <div class="actions">
+        <button class="btn" id="gotItBtn">I knew it</button>
+        <button class="btn secondary" id="practiceBtn">Not yet \u2014 more practice</button>
+      </div>
+    </div>`;
+  body.innerHTML = html;
+  document.getElementById("revealBtn").onclick = () => {
+    document.getElementById("answerBlock").style.display = "block";
+    document.getElementById("selfAssess").style.display = "block";
+    document.getElementById("revealBtn").style.display = "none";
+  };
+  document.getElementById("gotItBtn").onclick = () => completeStage("trial", 15, true);
+  document.getElementById("practiceBtn").onclick = () => renderWordPicker();
+}
+
+function completeStage(stageId, xp, isTrial){
+  kidProgress[currentWordId][stageId] = true;
+  db.ref(`vocab/${currentKid}/progress/${currentWordId}/${stageId}`).set(true).then(() => {
+    awardXp(xp);
+    const justMastered = checkMastery();
+    if (justMastered && isTrial) return renderMasteryMoment();
+    const idx = STAGES.findIndex(s => s.id === stageId);
+    if (idx >= 0 && idx < STAGES.length - 1) currentStage = STAGES[idx + 1].id;
+    renderWordPractice();
+  });
+}
+
+function checkMastery(){
+  const p = kidProgress[currentWordId];
+  const wasMastered = !!p.mastered;
+  const isMastered = !!(p.firstCasting && p.runecraft && p.bloodline && p.incantation && p.incantation.text && p.trial);
+  if (isMastered && !wasMastered){
+    p.mastered = true;
+    db.ref(`vocab/${currentKid}/progress/${currentWordId}/mastered`).set(true);
+    awardXp(25);
+    return true;
+  }
+  return false;
+}
+
+function awardXp(amount){
+  kidMeta.xp = (kidMeta.xp || 0) + amount;
+  db.ref(`vocab/${currentKid}/meta/xp`).set(kidMeta.xp);
+}
+
+function renderMasteryMoment(){
+  const w = findWord(currentKid, currentListId, currentWordId);
+  const app = document.getElementById("app");
+  app.innerHTML = `
+    <div class="page-card celebrate">
+      <div class="seal">\u2726</div>
+      <div class="title">Spell Bound!</div>
+      <p><strong>${w.word}</strong> is now bound in your grimoire.</p>
+      <div class="xp">+25 XP</div>
+      <div class="actions"><button class="btn gold" id="continueBtn">Continue</button></div>
+    </div>
+  `;
+  document.getElementById("continueBtn").onclick = renderWordPicker;
+}
+
+// ---------------------------------------------------------------------
+// ADD A CUSTOM WORD
+// ---------------------------------------------------------------------
+function renderAddWordForm(){
+  const app = document.getElementById("app");
+  app.innerHTML = `
+    <a class="backlink" id="backBtn">\u2190 Back to the shelf</a>
+    <div class="masthead" style="margin-bottom:10px;"><h1 style="font-size:24px;">Add a Word</h1></div>
+    <div class="page-card">
+      <div class="field-label">Word</div><input type="text" id="fWord">
+      <div class="field-label">Part of speech</div><input type="text" id="fPos" placeholder="e.g. adjective">
+      <div class="field-label">Definition</div><input type="text" id="fDef">
+      <div class="field-label">Example sentence</div><input type="text" id="fSentence">
+      <div class="field-label">Root (optional)</div><input type="text" id="fRoot" placeholder="e.g. Latin 'spectare' = to look">
+      <div class="field-label">Prefix or suffix (optional)</div><input type="text" id="fAffix" placeholder="e.g. re- = again">
+      <div class="actions"><button class="btn" id="saveWordBtn">Add to My Own Words</button></div>
+    </div>
+  `;
+  document.getElementById("backBtn").onclick = renderListPicker;
+  document.getElementById("saveWordBtn").onclick = () => {
+    const word = document.getElementById("fWord").value.trim();
+    const def = document.getElementById("fDef").value.trim();
+    if (!word || !def) return;
+    const id = "custom_" + word.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const entry = {
+      id, word, pos: document.getElementById("fPos").value.trim() || "\u2014",
+      def, sentence: document.getElementById("fSentence").value.trim(),
+      rootNote: document.getElementById("fRoot").value.trim(),
+      affixNote: document.getElementById("fAffix").value.trim()
+    };
+    db.ref(`vocab/${currentKid}/customWords/${id}`).set(entry).then(() => {
+      ensureCustomList();
+      const exists = WORDLISTS[currentKid]["my-own-words"].words.find(w2 => w2.id === id);
+      if (!exists){
+        WORDLISTS[currentKid]["my-own-words"].words.push({
+          id, word: entry.word, pos: entry.pos, def: entry.def, sentence: entry.sentence || `I used ${entry.word} in a sentence.`,
+          root: entry.rootNote ? { text: entry.rootNote, meaning: "", origin: "" } : null,
+          family: []
+        });
+      }
+      renderListPicker();
+    });
+  };
+}
+
+function ensureCustomList(){
+  if (!WORDLISTS[currentKid]["my-own-words"]){
+    WORDLISTS[currentKid]["my-own-words"] = { title: "My Own Words", source: "custom", words: [] };
+  }
+}
+
+// ---------------------------------------------------------------------
+// PARENT REVIEW
+// ---------------------------------------------------------------------
+function renderKidReview(){
+  const words = allWordsForKid(currentKid);
+  const stats = kidStats();
+  const { current } = rankFor(kidMeta.xp || 0);
+  const app = document.getElementById("app");
+  let html = `<a class="backlink" id="backBtn">\u2190 Choose a different scholar</a>`;
+  html += `<div class="masthead" style="margin-bottom:10px;"><h1 style="font-size:24px;">${cap(currentKid)}'s Progress</h1></div>`;
+  html += `<div class="page-card">
+      <p><strong>Rank:</strong> ${current.title} (${kidMeta.xp || 0} XP)</p>
+      <p><strong>Words bound:</strong> ${stats.mastered} of ${words.length}</p>
+      <p><strong>Practice streak:</strong> ${stats.streak} day${stats.streak === 1 ? "" : "s"}</p>
+    </div>`;
+
+  html += `<div class="page-card"><div class="tome-title" style="margin-bottom:10px;">Incantations to review</div>`;
+  const withSentences = words.filter(w => kidProgress[w.id] && kidProgress[w.id].incantation && kidProgress[w.id].incantation.text);
+  if (withSentences.length === 0){
+    html += `<p class="empty">No sentences written yet.</p>`;
+  } else {
+    withSentences.forEach(w => {
+      html += `<div class="review-word"><div class="word-name" style="font-family:'Cinzel',serif;">${w.word}</div><em>"${escapeHtml(kidProgress[w.id].incantation.text)}"</em></div>`;
+    });
+  }
+  html += `</div>`;
+
+  app.innerHTML = html;
+  document.getElementById("backBtn").onclick = renderScholarPicker;
+}
+
+// ---------------------------------------------------------------------
+// UTIL
+// ---------------------------------------------------------------------
+function escapeHtml(s){
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ---------------------------------------------------------------------
+// INIT
+// ---------------------------------------------------------------------
+document.addEventListener("DOMContentLoaded", () => {
+  renderScholarPicker();
+});
+</script>
+</body>
+</html>
