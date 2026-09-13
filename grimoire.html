@@ -8,24 +8,27 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --parchment:#EDE0C0;
-    --page:#F8F1DC;
-    --ink:#251C10;
-    --ink-soft:#5B4E38;
-    --leather:#4A2E22;
-    --leather-dark:#331F17;
-    --gold:#B8892B;
-    --gold-bright:#D9A83B;
-    --emerald:#2F5D46;
-    --amethyst:#5B4870;
-    --crimson:#7A2E2E;
-    --line: rgba(74,46,34,.25);
+    --parchment:#0B1220;
+    --page:#EAF2FB;
+    --ink:#16202E;
+    --ink-soft:#55677E;
+    --mist:#8FA9C7;
+    --leather:#22314B;
+    --leather-dark:#16202F;
+    --gold:#2E8FD1;
+    --gold-bright:#7FD1FF;
+    --spark:#EAF8FF;
+    --emerald:#2E8F76;
+    --amethyst:#6657A3;
+    --crimson:#C0473F;
+    --line: rgba(34,49,75,.25);
   }
   *{box-sizing:border-box;}
   body{
     margin:0; min-height:100vh;
     background:
-      radial-gradient(ellipse at top, rgba(184,137,43,.10), transparent 60%),
+      radial-gradient(ellipse at top, rgba(46,143,209,.22), transparent 60%),
+      radial-gradient(ellipse at 15% 85%, rgba(102,87,163,.16), transparent 55%),
       var(--parchment);
     color:var(--ink); font-family:'EB Garamond', serif; font-size:18px; line-height:1.55;
     padding:28px 16px 60px;
@@ -37,10 +40,19 @@
   .masthead{text-align:center; margin-bottom:26px;}
   .masthead h1{
     font-family:'Cinzel', serif; font-weight:700; font-size:34px; letter-spacing:.03em;
-    color:var(--leather); margin:0 0 4px;
+    margin:0 0 4px;
+    background: linear-gradient(110deg, var(--gold) 15%, var(--spark) 45%, var(--gold-bright) 60%, var(--gold) 85%);
+    background-size:220% auto;
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation: shimmerSweep 5s ease-in-out infinite;
   }
-  .masthead .flourish{color:var(--gold); font-size:15px; letter-spacing:.3em; margin-bottom:6px;}
-  .masthead .sub{font-style:italic; color:var(--ink-soft); font-size:17px;}
+  @keyframes shimmerSweep{
+    0%{ background-position:0% 50%; }
+    50%{ background-position:100% 50%; }
+    100%{ background-position:0% 50%; }
+  }
+  .masthead .flourish{color:var(--gold-bright); font-size:15px; letter-spacing:.3em; margin-bottom:6px;}
+  .masthead .sub{font-style:italic; color:var(--mist); font-size:17px;}
   .rule{
     border:none; height:2px; margin:18px auto; width:120px;
     background:linear-gradient(90deg, transparent, var(--gold), transparent);
@@ -53,10 +65,10 @@
     margin-bottom:16px;
   }
   .backlink{
-    display:inline-block; margin-bottom:14px; color:var(--ink-soft); text-decoration:none;
+    display:inline-block; margin-bottom:14px; color:var(--mist); text-decoration:none;
     font-family:'Cinzel',serif; font-size:13px; letter-spacing:.05em; cursor:pointer;
   }
-  .backlink:hover{color:var(--leather);}
+  .backlink:hover{color:var(--gold-bright);}
 
   /* ---------- scholar picker ---------- */
   .scholar-row{display:flex; gap:14px; justify-content:center; margin-bottom:8px;}
@@ -104,21 +116,22 @@
   .word-row:last-child{border-bottom:none;}
   .word-row .word-name{font-family:'Cinzel',serif; font-size:17px; color:var(--ink);}
   .status-pill{font-size:12px; font-family:'EB Garamond',serif; font-style:italic; padding:3px 12px; border-radius:20px;}
-  .status-pill.bound{background:#E7DEC0; color:var(--gold); border:1px solid var(--gold);}
-  .status-pill.progress{background:#E1EAE4; color:var(--emerald); border:1px solid var(--emerald);}
-  .status-pill.new{background:#EEE7EF; color:var(--amethyst); border:1px solid var(--amethyst);}
+  .status-pill.bound{background:#DCEEFC; color:var(--gold); border:1px solid var(--gold);}
+  .status-pill.progress{background:#DEF2EC; color:var(--emerald); border:1px solid var(--emerald);}
+  .status-pill.new{background:#E9E4F5; color:var(--amethyst); border:1px solid var(--amethyst);}
 
   /* ---------- word practice view ---------- */
   .word-hero{text-align:center; margin-bottom:8px;}
-  .word-hero .word{font-family:'Cinzel', serif; font-weight:700; font-size:40px; color:var(--leather);}
-  .word-hero .pos{font-style:italic; color:var(--ink-soft); font-size:16px;}
+  .word-hero .word{font-family:'Cinzel', serif; font-weight:700; font-size:40px; color:var(--gold-bright);}
+  .word-hero .pron{font-style:italic; color:var(--gold); font-size:15px; margin:2px 0;}
+  .word-hero .pos{font-style:italic; color:var(--mist); font-size:16px;}
   .stage-nav{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:18px 0;}
   .stage-btn{
     font-family:'Cinzel',serif; font-size:13px; letter-spacing:.02em;
     background:var(--page); border:2px solid var(--ink-soft); color:var(--ink-soft);
     padding:8px 14px; border-radius:20px; cursor:pointer;
   }
-  .stage-btn.active{border-color:var(--leather); color:var(--leather); background:#EFE4C6;}
+  .stage-btn.active{border-color:var(--leather); color:var(--leather); background:#DCEEFC;}
   .stage-btn.complete{border-color:var(--emerald); color:var(--emerald);}
   .stage-btn:disabled{opacity:.4; cursor:not-allowed;}
 
@@ -130,14 +143,69 @@
   .rune-tile .rune-part{font-family:'Cinzel',serif; font-weight:600; color:var(--leather); font-size:18px;}
   .rune-tile .rune-meaning{font-size:14px; font-style:italic; color:var(--ink-soft); margin-top:4px; min-height:18px;}
 
+  .rune-game{position:relative; margin:20px 0;}
+  .rune-columns{display:flex; gap:24px; flex-wrap:wrap;}
+  .rune-slots{display:flex; flex-direction:column; gap:14px; flex:1; min-width:200px;}
+  .rune-slot{
+    border:2px dashed var(--gold); border-radius:10px; padding:14px 16px; min-height:60px;
+    background:var(--page); display:flex; flex-direction:column; justify-content:center;
+    transition: box-shadow .2s, border-color .2s;
+  }
+  .rune-slot .rune-part{font-family:'Cinzel',serif; font-weight:600; color:var(--leather); font-size:17px;}
+  .rune-slot .rune-drop{font-size:14px; color:var(--ink-soft); font-style:italic; margin-top:4px;}
+  .rune-slot.filled{border-style:solid; border-color:var(--emerald); box-shadow:0 0 14px rgba(46,143,209,.35);}
+  .rune-slot.filled .rune-drop{color:var(--emerald); font-style:normal;}
+  .rune-slot.shake{animation: slotShake .4s; border-color:var(--crimson);}
+  @keyframes slotShake{
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-6px); } 40%{ transform:translateX(6px); }
+    60%{ transform:translateX(-4px); } 80%{ transform:translateX(4px); }
+  }
+  .meaning-pool{display:flex; flex-direction:column; gap:10px; flex:1; min-width:200px;}
+  .meaning-chip{
+    background:var(--page); border:2px solid var(--ink-soft); border-radius:20px;
+    padding:10px 16px; text-align:center; cursor:grab; user-select:none; touch-action:none;
+    font-size:15px; color:var(--ink);
+  }
+  .meaning-chip.dragging{opacity:.35;}
+  .meaning-chip.placed{visibility:hidden;}
+  .meaning-chip.ghost{
+    position:fixed; pointer-events:none; z-index:999; border-color:var(--gold-bright);
+    box-shadow:0 6px 18px rgba(0,0,0,.35); cursor:grabbing;
+  }
+  .rune-canvas{position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;}
+
+  .family-zone{
+    border:3px dashed var(--amethyst); border-radius:16px; padding:20px; min-height:90px;
+    background:var(--page); text-align:center; margin-bottom:18px; transition:border-color .2s;
+  }
+  .family-zone-label{font-family:'Cinzel',serif; color:var(--amethyst); font-size:15px; margin-bottom:10px;}
+  .family-found{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; min-height:30px;}
+  .family-tag{
+    background:#E9E4F5; border:2px solid var(--amethyst); color:var(--amethyst);
+    border-radius:16px; padding:6px 14px; font-size:14px;
+  }
+  .family-zone.shake{animation: slotShake .4s; border-color:var(--crimson);}
+  .chip-pool-row{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:14px 0;}
+
+  .trial-options{display:flex; flex-direction:column; gap:10px; margin:18px 0;}
+  .trial-option{
+    font-family:'EB Garamond',serif; font-size:16px; text-align:left;
+    background:var(--page); border:2px solid var(--ink-soft); border-radius:10px;
+    padding:12px 16px; cursor:pointer; color:var(--ink);
+  }
+  .trial-option.correct-flash{border-color:var(--emerald); background:#DEF2EC; color:var(--emerald);}
+  .trial-option.wrong-flash{border-color:var(--crimson); background:#FBE4E2; color:var(--crimson); animation:slotShake .4s;}
+  .trial-option.disabled{opacity:.6; pointer-events:none;}
+
   .chip-row{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:16px 0;}
   .chip{
     font-family:'EB Garamond',serif; font-size:16px; padding:8px 16px; border-radius:20px;
     border:2px solid var(--ink-soft); background:var(--page); cursor:pointer; color:var(--ink);
   }
-  .chip.selected{border-color:var(--amethyst); background:#EEE7EF; color:var(--amethyst);}
-  .chip.correct{border-color:var(--emerald); background:#E1EAE4; color:var(--emerald);}
-  .chip.incorrect{border-color:var(--crimson); background:#F3E3E3; color:var(--crimson);}
+  .chip.selected{border-color:var(--amethyst); background:#E9E4F5; color:var(--amethyst);}
+  .chip.correct{border-color:var(--emerald); background:#DEF2EC; color:var(--emerald);}
+  .chip.incorrect{border-color:var(--crimson); background:#FBE4E2; color:var(--crimson);}
 
   textarea, .sentence-box{
     width:100%; font-family:'EB Garamond',serif; font-size:17px; color:var(--ink);
@@ -151,7 +219,7 @@
   }
   .btn.secondary{background:transparent; color:var(--leather); border:2px solid var(--leather); padding:9px 20px;}
   .btn.gold{background:var(--gold);}
-  .fact-block{background:#F1E7CB; border-radius:8px; padding:14px 18px; margin:14px 0; font-size:16px;}
+  .fact-block{background:#E7F1FC; border-radius:8px; padding:14px 18px; margin:14px 0; font-size:16px;}
   .fact-label{font-family:'Cinzel',serif; font-size:12px; color:var(--leather); letter-spacing:.04em; margin-bottom:3px;}
 
   .celebrate{
@@ -212,37 +280,37 @@ const WORDLISTS = {
     "abeka-unit1": {
       title: "Abeka Vocabulary — Unit 1", source: "curriculum",
       words: [
-        { id:"diligent", word:"diligent", pos:"adjective",
+        { id:"diligent", word:"diligent", pos:"adjective", pron:"DIL-ih-junt",
           def:"showing steady, careful effort in one's work",
           sentence:"The diligent scout checked every knot twice before trusting the rope.",
           root:{text:"legere", meaning:"to choose, gather", origin:"Latin"},
           prefix:{text:"di-", meaning:"apart"},
           family:["negligent","intelligent","elect","collect"] },
-        { id:"benevolent", word:"benevolent", pos:"adjective",
+        { id:"benevolent", word:"benevolent", pos:"adjective", pron:"buh-NEV-uh-lunt",
           def:"kind and generous; wishing others well",
           sentence:"The benevolent old wizard left food for any traveler who passed his tower.",
           root:{text:"volens / velle", meaning:"to wish", origin:"Latin"},
           prefix:{text:"bene-", meaning:"well"},
           suffix:{text:"-ent", meaning:"having the quality of"},
           family:["malevolent","volunteer","voluntary","benefactor"] },
-        { id:"adversity", word:"adversity", pos:"noun",
+        { id:"adversity", word:"adversity", pos:"noun", pron:"ad-VER-sih-tee",
           def:"a difficult or unfortunate situation",
           sentence:"The company faced adversity but rebuilt stronger than before.",
           root:{text:"vertere", meaning:"to turn", origin:"Latin"},
           prefix:{text:"ad-", meaning:"toward"},
           family:["adverse","reverse","converse","controversy"] },
-        { id:"candid", word:"candid", pos:"adjective",
+        { id:"candid", word:"candid", pos:"adjective", pron:"KAN-did",
           def:"truthful and straightforward; not hiding one's real thoughts",
           sentence:"Her candid answer surprised the council, who expected excuses.",
           root:{text:"candere", meaning:"to shine, glow", origin:"Latin"},
           family:["candle","incandescent","candor","candidate"] },
-        { id:"eloquent", word:"eloquent", pos:"adjective",
+        { id:"eloquent", word:"eloquent", pos:"adjective", pron:"EL-uh-kwunt",
           def:"fluent and persuasive in speaking or writing",
           sentence:"The eloquent speech convinced even the skeptics in the room.",
           root:{text:"loqui", meaning:"to speak", origin:"Latin"},
           prefix:{text:"e-", meaning:"out"},
           family:["colloquial","soliloquy","loquacious","elocution"] },
-        { id:"resilient", word:"resilient", pos:"adjective",
+        { id:"resilient", word:"resilient", pos:"adjective", pron:"rih-ZIL-yunt",
           def:"able to recover quickly from difficulty",
           sentence:"Bamboo is resilient — it bends in the storm instead of snapping.",
           root:{text:"salire", meaning:"to jump, leap", origin:"Latin"},
@@ -253,33 +321,153 @@ const WORDLISTS = {
     "lightning-thief": {
       title: "Word Bank — Adventure Reading", source: "reading",
       words: [
-        { id:"formidable", word:"formidable", pos:"adjective",
+        { id:"formidable", word:"formidable", pos:"adjective", pron:"FOR-mih-duh-bul",
           def:"inspiring fear or respect through being impressively powerful",
           sentence:"The formidable guardian blocked the only path into the valley.",
           root:{text:"formido", meaning:"dread", origin:"Latin"},
           suffix:{text:"-able", meaning:"capable of being"},
           family:["formidably"] },
-        { id:"mortal", word:"mortal", pos:"adjective / noun",
+        { id:"mortal", word:"mortal", pos:"adjective / noun", pron:"MOR-tul",
           def:"subject to death; a human being",
           sentence:"Even the bravest mortal hesitated at the entrance to the underworld.",
           root:{text:"mors, mortis", meaning:"death", origin:"Latin"},
           family:["immortal","mortality","mortuary"] },
-        { id:"treacherous", word:"treacherous", pos:"adjective",
+        { id:"treacherous", word:"treacherous", pos:"adjective", pron:"TRECH-er-us",
           def:"dangerous, or guilty of betraying trust",
           sentence:"The treacherous cliff path crumbled with every step.",
           root:{text:"trichier", meaning:"to cheat, trick", origin:"Old French"},
           family:["treachery"] },
-        { id:"labyrinth", word:"labyrinth", pos:"noun",
+        { id:"labyrinth", word:"labyrinth", pos:"noun", pron:"LAB-uh-rinth",
           def:"an elaborate, confusing network of passages; a maze",
           sentence:"They wandered the labyrinth for hours before finding the exit.",
           root:{text:"labyrinthos", meaning:"maze (of the Minotaur)", origin:"Greek"},
           family:["labyrinthine"] },
-        { id:"prophecy", word:"prophecy", pos:"noun",
+        { id:"prophecy", word:"prophecy", pos:"noun", pron:"PROF-uh-see",
           def:"a prediction, often one believed to come from divine insight",
           sentence:"The old prophecy warned that a hero would rise before the end.",
           root:{text:"phanai / phemi", meaning:"to speak", origin:"Greek"},
           prefix:{text:"pro-", meaning:"before"},
           family:["prophet","telephone","emphasis","blaspheme"] }
+      ]
+    },
+    "greek-latin-grade6": {
+      title: "Greek & Latin Roots \u2014 Grade 6", source: "custom",
+      words: [
+        { id:"autonomous", word:"autonomous", pos:"adjective", pron:"aw-TON-uh-mus",
+          def:"able to govern or act independently, without outside control",
+          sentence:"The robot was designed to operate autonomously, without a driver.",
+          prefix:{text:"auto-", meaning:"self"},
+          root:{text:"nomos", meaning:"law", origin:"Greek"},
+          family:["autonomy","economy","astronomy"] },
+        { id:"chronology", word:"chronology", pos:"noun", pron:"kruh-NOL-uh-jee",
+          def:"the arrangement of events in the order they occurred",
+          sentence:"The museum displayed the chronology of ancient Egypt along one long wall.",
+          root:{text:"chronos", meaning:"time", origin:"Greek"},
+          family:["chronic","synchronize","chronicle"] },
+        { id:"philanthropy", word:"philanthropy", pos:"noun", pron:"fih-LAN-thruh-pee",
+          def:"the desire to help humankind, often through generous giving",
+          sentence:"Her philanthropy funded a new library for the whole town.",
+          root:{text:"philos + anthropos", meaning:"loving + human", origin:"Greek"},
+          family:["philosophy","anthropology","misanthrope"] },
+        { id:"hydroelectric", word:"hydroelectric", pos:"adjective", pron:"HY-droh-ih-LEK-trik",
+          def:"producing electricity using the power of moving water",
+          sentence:"The dam generates hydroelectric power for the whole city.",
+          prefix:{text:"hydro-", meaning:"water"},
+          root:{text:"electric", meaning:"", origin:""},
+          family:["hydrant","dehydrate","hydrogen"] },
+        { id:"democracy", word:"democracy", pos:"noun", pron:"dih-MOK-ruh-see",
+          def:"a system of government by the people, often through elected representatives",
+          sentence:"Ancient Athens is often called the birthplace of democracy.",
+          root:{text:"demos + kratos", meaning:"people + power", origin:"Greek"},
+          family:["aristocracy","bureaucracy","autocracy"] },
+        { id:"transparent", word:"transparent", pos:"adjective", pron:"trans-PAIR-unt",
+          def:"easy to see through; open and honest",
+          sentence:"The glass was so transparent it looked invisible.",
+          prefix:{text:"trans-", meaning:"across"},
+          root:{text:"parere", meaning:"to appear", origin:"Latin"},
+          family:["apparent","appear","disappear"] },
+        { id:"malfunction", word:"malfunction", pos:"noun / verb", pron:"mal-FUNK-shun",
+          def:"a failure to work correctly",
+          sentence:"The satellite began to malfunction after the storm.",
+          prefix:{text:"mal-", meaning:"bad"},
+          root:{text:"functio", meaning:"performance", origin:"Latin"},
+          family:["malicious","malnutrition","benefit"] },
+        { id:"spectator", word:"spectator", pos:"noun", pron:"SPEK-tay-tor",
+          def:"a person who watches an event without taking part",
+          sentence:"Thousands of spectators cheered from the stands.",
+          root:{text:"specere", meaning:"to look", origin:"Latin"},
+          family:["inspect","respect","spectacle","suspicious"] },
+        { id:"incredible", word:"incredible", pos:"adjective", pron:"in-KRED-uh-bul",
+          def:"hard to believe; amazing",
+          sentence:"The acrobat's incredible flip left the crowd speechless.",
+          prefix:{text:"in-", meaning:"not"},
+          root:{text:"credere", meaning:"to believe", origin:"Latin"},
+          family:["credible","credit","discredit"] },
+        { id:"voracious", word:"voracious", pos:"adjective", pron:"vor-AY-shus",
+          def:"having a huge appetite; eager and greedy",
+          sentence:"The voracious reader finished three books in a week.",
+          root:{text:"vorare", meaning:"to devour", origin:"Latin"},
+          family:["carnivorous","herbivorous","devour"] }
+      ]
+    },
+    "greek-latin-grade7": {
+      title: "Greek & Latin Roots \u2014 Grade 7", source: "custom",
+      words: [
+        { id:"anachronism", word:"anachronism", pos:"noun", pron:"uh-NAK-ruh-niz-um",
+          def:"something placed in the wrong time period; out of its proper time",
+          sentence:"A digital watch in a movie about ancient Rome would be an anachronism.",
+          prefix:{text:"ana-", meaning:"backward, against"},
+          root:{text:"chronos", meaning:"time", origin:"Greek"},
+          family:["chronology","synchronize","chronic"] },
+        { id:"juxtapose", word:"juxtapose", pos:"verb", pron:"JUK-stuh-pohz",
+          def:"to place two things side by side for comparison",
+          sentence:"The artist juxtaposed a modern building with an ancient ruin in the photo.",
+          root:{text:"juxta + ponere", meaning:"next to + to place", origin:"Latin"},
+          family:["compose","position","expose","oppose"] },
+        { id:"omniscient", word:"omniscient", pos:"adjective", pron:"om-NISH-unt",
+          def:"knowing everything",
+          sentence:"The novel is told by an omniscient narrator who knows every character's thoughts.",
+          prefix:{text:"omni-", meaning:"all"},
+          root:{text:"scire", meaning:"to know", origin:"Latin"},
+          family:["science","conscious","omnipotent","omnivore"] },
+        { id:"gregarious", word:"gregarious", pos:"adjective", pron:"grih-GAIR-ee-us",
+          def:"sociable; fond of the company of others",
+          sentence:"The gregarious puppy greeted every visitor with excitement.",
+          root:{text:"grex, gregis", meaning:"flock, herd", origin:"Latin"},
+          family:["congregate","segregate","aggregate"] },
+        { id:"verbose", word:"verbose", pos:"adjective", pron:"ver-BOHS",
+          def:"using more words than necessary; wordy",
+          sentence:"His verbose explanation could have been said in a single sentence.",
+          root:{text:"verbum", meaning:"word", origin:"Latin"},
+          family:["verb","verbatim","proverb"] },
+        { id:"synthesis", word:"synthesis", pos:"noun", pron:"SIN-thuh-sis",
+          def:"the combination of ideas or parts to form a whole",
+          sentence:"Her essay was a synthesis of three different scientific studies.",
+          prefix:{text:"syn-", meaning:"together"},
+          root:{text:"tithenai", meaning:"to place", origin:"Greek"},
+          family:["synthetic","hypothesis","antithesis"] },
+        { id:"egocentric", word:"egocentric", pos:"adjective", pron:"EE-goh-SEN-trik",
+          def:"focused only on oneself; self-centered",
+          sentence:"The egocentric captain refused to hear his teammates' ideas.",
+          root:{text:"ego + kentron", meaning:"I + center", origin:"Latin/Greek"},
+          family:["egotism","centrifuge","epicenter"] },
+        { id:"cosmopolitan", word:"cosmopolitan", pos:"adjective", pron:"KOZ-muh-POL-ih-tun",
+          def:"familiar and comfortable in many different countries and cultures",
+          sentence:"Growing up in a cosmopolitan city, she spoke four languages by age ten.",
+          root:{text:"kosmos + polis", meaning:"world + city", origin:"Greek"},
+          family:["cosmos","metropolis","political"] },
+        { id:"superfluous", word:"superfluous", pos:"adjective", pron:"soo-PER-floo-us",
+          def:"more than what is needed; unnecessary",
+          sentence:"The report was full of superfluous details that added nothing to the point.",
+          prefix:{text:"super-", meaning:"above, beyond"},
+          root:{text:"fluere", meaning:"to flow", origin:"Latin"},
+          family:["fluid","influence","fluent","affluent"] },
+        { id:"paradox", word:"paradox", pos:"noun", pron:"PAIR-uh-doks",
+          def:"a statement that seems contradictory but may reveal a truth",
+          sentence:"\"Less is more\" is a classic paradox.",
+          prefix:{text:"para-", meaning:"contrary to"},
+          root:{text:"doxa", meaning:"opinion", origin:"Greek"},
+          family:["paradoxical","orthodox"] }
       ]
     }
   },
@@ -287,26 +475,168 @@ const WORDLISTS = {
     "reading-words": {
       title: "Words From Her Reading", source: "reading",
       words: [
-        { id:"curious", word:"curious", pos:"adjective",
+        { id:"curious", word:"curious", pos:"adjective", pron:"KYOOR-ee-us",
           def:"eager to know or learn something",
           sentence:"The curious fox peeked into every burrow in the forest.",
           root:{text:"cura", meaning:"care", origin:"Latin"},
           family:["cure","curator","accurate"] },
-        { id:"joyful", word:"joyful", pos:"adjective",
+        { id:"joyful", word:"joyful", pos:"adjective", pron:"JOY-ful",
           def:"feeling or showing great happiness",
           sentence:"She gave a joyful shout when she saw the puppy.",
           suffix:{text:"-ful", meaning:"full of"},
           family:["joyous","enjoy","joyless"] },
-        { id:"unkind", word:"unkind", pos:"adjective",
+        { id:"unkind", word:"unkind", pos:"adjective", pron:"un-KYND",
           def:"not kind; unfriendly",
           sentence:"It was unkind to leave her friend out of the game.",
           prefix:{text:"un-", meaning:"not"},
           family:["unhappy","unfair","undo"] },
-        { id:"return", word:"return", pos:"verb",
+        { id:"return", word:"return", pos:"verb", pron:"rih-TURN",
           def:"to come or go back to a place",
           sentence:"The birds return to the same nest every spring.",
           prefix:{text:"re-", meaning:"back, again"},
           family:["revisit","replay","rewind"] }
+      ]
+    },
+    "greek-latin-grade2": {
+      title: "Greek & Latin Roots \u2014 Grade 2", source: "custom",
+      words: [
+        { id:"bicycle", word:"bicycle", pos:"noun", pron:"BY-sik-ul",
+          def:"a vehicle with two wheels that you pedal",
+          sentence:"She rode her bicycle around the block.",
+          prefix:{text:"bi-", meaning:"two"},
+          root:{text:"kyklos", meaning:"wheel, circle", origin:"Greek"},
+          family:["circle","cycle","tricycle","unicycle"] },
+        { id:"triangle", word:"triangle", pos:"noun", pron:"TRY-ang-gul",
+          def:"a shape with three sides and three corners",
+          sentence:"He drew a red triangle on his paper.",
+          prefix:{text:"tri-", meaning:"three"},
+          root:{text:"angulus", meaning:"angle, corner", origin:"Latin"},
+          family:["triple","tricycle","trio"] },
+        { id:"unicorn", word:"unicorn", pos:"noun", pron:"YOO-nih-korn",
+          def:"a mythical horse with one horn",
+          sentence:"The story was about a unicorn who could fly.",
+          prefix:{text:"uni-", meaning:"one"},
+          root:{text:"cornu", meaning:"horn", origin:"Latin"},
+          family:["unicycle","uniform","universe"] },
+        { id:"telephone", word:"telephone", pos:"noun", pron:"TEL-uh-fone",
+          def:"a device used to talk to someone far away",
+          sentence:"Grandma called us on the telephone.",
+          prefix:{text:"tele-", meaning:"far"},
+          root:{text:"phone", meaning:"sound", origin:"Greek"},
+          family:["television","telescope","microphone"] },
+        { id:"automatic", word:"automatic", pos:"adjective", pron:"aw-tuh-MAT-ik",
+          def:"able to work by itself, without a person controlling it",
+          sentence:"The automatic doors opened when we walked up.",
+          prefix:{text:"auto-", meaning:"self"},
+          family:["automobile","autograph"] },
+        { id:"octopus", word:"octopus", pos:"noun", pron:"OK-tuh-pus",
+          def:"a sea animal with eight arms",
+          sentence:"The octopus hid behind a rock.",
+          prefix:{text:"octo-", meaning:"eight"},
+          root:{text:"pous", meaning:"foot", origin:"Greek"},
+          family:["octagon","October"] },
+        { id:"dinosaur", word:"dinosaur", pos:"noun", pron:"DY-nuh-sor",
+          def:"a giant reptile that lived long ago",
+          sentence:"The dinosaur exhibit was her favorite part of the museum.",
+          root:{text:"deinos + sauros", meaning:"terrible + lizard", origin:"Greek"},
+          family:[] },
+        { id:"photograph", word:"photograph", pos:"noun", pron:"FOH-tuh-graf",
+          def:"a picture taken with a camera",
+          sentence:"She took a photograph of the sunset.",
+          prefix:{text:"photo-", meaning:"light"},
+          root:{text:"graphein", meaning:"to write, draw", origin:"Greek"},
+          family:["telegraph","autograph","paragraph"] }
+      ]
+    },
+    "greek-latin-grade3": {
+      title: "Greek & Latin Roots \u2014 Grade 3", source: "custom",
+      words: [
+        { id:"transport", word:"transport", pos:"verb", pron:"tran-SPORT",
+          def:"to move something from one place to another",
+          sentence:"Trucks transport food to grocery stores.",
+          prefix:{text:"trans-", meaning:"across"},
+          root:{text:"portare", meaning:"to carry", origin:"Latin"},
+          family:["import","export","report","portable"] },
+        { id:"construct", word:"construct", pos:"verb", pron:"kun-STRUKT",
+          def:"to build something",
+          sentence:"They will construct a new playground next year.",
+          prefix:{text:"con-", meaning:"together"},
+          root:{text:"struere", meaning:"to build", origin:"Latin"},
+          family:["instruct","structure","destruction"] },
+        { id:"submarine", word:"submarine", pos:"noun", pron:"SUB-muh-reen",
+          def:"a ship that travels underwater",
+          sentence:"The submarine explored the deep ocean.",
+          prefix:{text:"sub-", meaning:"under"},
+          root:{text:"marinus", meaning:"of the sea", origin:"Latin"},
+          family:["marine","submerge"] },
+        { id:"biography", word:"biography", pos:"noun", pron:"by-OG-ruh-fee",
+          def:"a true story of someone's life, written by another person",
+          sentence:"She read a biography about Amelia Earhart.",
+          prefix:{text:"bio-", meaning:"life"},
+          root:{text:"graphein", meaning:"to write", origin:"Greek"},
+          family:["biology","autobiography","biodegradable"] },
+        { id:"thermometer", word:"thermometer", pos:"noun", pron:"ther-MOM-uh-ter",
+          def:"a tool used to measure temperature",
+          sentence:"The thermometer showed it was very hot outside.",
+          root:{text:"therme + metron", meaning:"heat + measure", origin:"Greek"},
+          family:["thermos","thermal"] },
+        { id:"geography", word:"geography", pos:"noun", pron:"jee-OG-ruh-fee",
+          def:"the study of the Earth's land, features, and people",
+          sentence:"In geography class, they learned about mountains and rivers.",
+          prefix:{text:"geo-", meaning:"earth"},
+          root:{text:"graphein", meaning:"to write", origin:"Greek"},
+          family:["geology","geometry"] },
+        { id:"microscope", word:"microscope", pos:"noun", pron:"MY-kruh-skope",
+          def:"a tool that makes tiny things look bigger",
+          sentence:"Under the microscope, the cell looked huge.",
+          prefix:{text:"micro-", meaning:"small"},
+          root:{text:"skopein", meaning:"to look at", origin:"Greek"},
+          family:["telescope","periscope"] },
+        { id:"century", word:"century", pos:"noun", pron:"SEN-chuh-ree",
+          def:"a period of 100 years",
+          sentence:"The old house was built over a century ago.",
+          root:{text:"centum", meaning:"hundred", origin:"Latin"},
+          family:["percent","centimeter","centipede"] }
+      ]
+    }
+  },
+  amanda: {
+    "headmistress-lexicon": {
+      title: "The Headmistress's Lexicon", source: "custom",
+      words: [
+        { id:"pedagogy", word:"pedagogy", pos:"noun", pron:"PED-uh-goh-jee",
+          def:"the method and practice of teaching, especially as a field of study",
+          sentence:"She read three books on pedagogy before redesigning the year's curriculum.",
+          prefix:{text:"paido-", meaning:"child"},
+          root:{text:"agogos", meaning:"leader, guide", origin:"Greek"},
+          family:["pedagogue","demagogue","synagogue"] },
+        { id:"curriculum", word:"curriculum", pos:"noun", pron:"kuh-RIK-yuh-lum",
+          def:"the set of courses and their content taught in a school or program",
+          sentence:"Overhauling the curriculum took most of the summer.",
+          root:{text:"currere", meaning:"to run", origin:"Latin"},
+          family:["current","concur","occur","recur","courier"] },
+        { id:"autodidact", word:"autodidact", pos:"noun", pron:"AW-toh-DY-dakt",
+          def:"a person who has taught themselves a subject without formal instruction",
+          sentence:"The old blacksmith was an autodidact, having learned metallurgy entirely from library books.",
+          prefix:{text:"auto-", meaning:"self"},
+          root:{text:"didaskein", meaning:"to teach", origin:"Greek"},
+          family:["didactic","automatic","autonomy"] },
+        { id:"polymath", word:"polymath", pos:"noun", pron:"POL-ee-math",
+          def:"a person whose knowledge spans a wide variety of subjects",
+          sentence:"Leonardo da Vinci is history's favorite example of a polymath.",
+          prefix:{text:"poly-", meaning:"many"},
+          root:{text:"manthanein", meaning:"to learn", origin:"Greek"},
+          family:["mathematics","polyglot","polygon"] },
+        { id:"quixotic", word:"quixotic", pos:"adjective", pron:"kwik-SOT-ik",
+          def:"extremely idealistic and unrealistic, often in an impractical way",
+          sentence:"His quixotic plan to build a working windmill from spare parts amused the whole family.",
+          root:{text:"Don Quixote", meaning:"a Cervantes character famous for chasing impossible ideals", origin:"Spanish literature \u2014 an eponym, a word born from a story rather than a root"},
+          family:[] },
+        { id:"serendipity", word:"serendipity", pos:"noun", pron:"SAIR-un-DIP-ih-tee",
+          def:"finding something valuable or delightful without looking for it",
+          sentence:"Finding the missing puzzle piece under the couch felt like pure serendipity.",
+          root:{text:"Serendip", meaning:"an old name for Sri Lanka, from a Persian tale of three princes who kept making lucky discoveries", origin:"coined by Horace Walpole, 1754 \u2014 also an eponym"},
+          family:["serendipitous"] }
       ]
     }
   }
@@ -350,6 +680,32 @@ let kidMeta = { xp: 0, streak: 0, lastDate: null };
 const params = new URLSearchParams(location.search);
 const reviewMode = params.get("review") === "1";
 
+// Runecraft drag-and-drop game state. Registered once, globally — the game
+// object itself gets replaced fresh each time the Runecraft stage renders,
+// so there's never more than one live listener pair regardless of how many
+// times a player revisits the stage.
+let activeDragChip = null;
+let activeDragGhost = null;
+let runeGame = null;
+let bloodlineGame = null;
+
+document.addEventListener("pointermove", (e) => {
+  if (!activeDragGhost) return;
+  activeDragGhost.style.left = (e.clientX - activeDragGhost.offsetWidth / 2) + "px";
+  activeDragGhost.style.top = (e.clientY - activeDragGhost.offsetHeight / 2) + "px";
+});
+document.addEventListener("pointerup", (e) => {
+  if (!activeDragChip) return;
+  const dropTarget = document.elementFromPoint(e.clientX, e.clientY);
+  const slotEl = dropTarget ? dropTarget.closest(".rune-slot") : null;
+  const zoneEl = dropTarget ? dropTarget.closest(".family-zone") : null;
+  if (slotEl && runeGame && !slotEl.classList.contains("filled")) runeGame.tryMatch(slotEl, activeDragChip);
+  else if (zoneEl && bloodlineGame) bloodlineGame.tryMatch(zoneEl, activeDragChip);
+  activeDragChip.classList.remove("dragging");
+  if (activeDragGhost) { activeDragGhost.remove(); activeDragGhost = null; }
+  activeDragChip = null;
+});
+
 function allWordsForKid(kid){
   const lists = WORDLISTS[kid] || {};
   const out = [];
@@ -381,7 +737,7 @@ function renderScholarPicker(){
       ${Object.keys(WORDLISTS).map(k => `<button class="scholar-seal" data-kid="${k}">${cap(k)}</button>`).join("")}
     </div>
     <div class="footer-link" style="text-align:center; margin-top:26px; font-family:'Cinzel',serif; font-size:13px;">
-      <a href="?${reviewMode ? '' : 'review=1'}" style="color:var(--ink-soft);">${reviewMode ? '\u2190 Back to the Grimoire' : "Parent's Reading Room \u2192"}</a>
+      <a href="?${reviewMode ? '' : 'review=1'}" style="color:var(--mist);">${reviewMode ? '\u2190 Back to the Grimoire' : "Parent's Reading Room \u2192"}</a>
     </div>
   `;
   document.querySelectorAll("[data-kid]").forEach(btn => {
@@ -569,7 +925,7 @@ function renderWordPractice(){
   const app = document.getElementById("app");
 
   let html = `<a class="backlink" id="backBtn">\u2190 Back to word list</a>`;
-  html += `<div class="word-hero"><div class="word">${w.word}</div><div class="pos">${w.pos}</div></div>`;
+  html += `<div class="word-hero"><div class="word">${w.word}</div>${w.pron ? `<div class="pron">${w.pron}</div>` : ""}<div class="pos">${w.pos}</div></div>`;
   html += `<div class="stage-nav">`;
   STAGES.forEach(s => {
     const done = s.id === "incantation" ? !!(p.incantation && p.incantation.text) : !!p[s.id];
@@ -617,65 +973,219 @@ function renderRunecraft(body, w){
   if (w.suffix) parts.push({ label: w.suffix.text, meaning: w.suffix.meaning });
   if (parts.length === 0) parts.push({ label: w.word, meaning: w.def });
 
-  let html = `<p>Before looking, try to recall what each piece of this word means.</p>`;
-  html += `<div class="rune-row">`;
-  parts.forEach((part, i) => {
-    html += `<div class="rune-tile"><div class="rune-part">${part.label}</div><div class="rune-meaning" data-meaning="${i}"></div></div>`;
+  const DECOY_MEANINGS = ["without","beyond","under","across","before","between","against","around"];
+  let meanings = parts.map(p => p.meaning);
+  if (parts.length < 2){
+    const decoy = DECOY_MEANINGS.find(d => !meanings.includes(d));
+    if (decoy) meanings.push(decoy);
+  }
+  meanings = shuffle(meanings);
+
+  let html = `<p>Drag each meaning onto the piece of <strong>${w.word}</strong> it belongs to.</p>`;
+  html += `<div class="rune-game" id="runeGame"><canvas class="rune-canvas" id="runeCanvas"></canvas>`;
+  html += `<div class="rune-columns"><div class="rune-slots">`;
+  parts.forEach(p => {
+    html += `<div class="rune-slot" data-meaning="${escapeHtml(p.meaning)}">
+      <div class="rune-part">${p.label}</div>
+      <div class="rune-drop">drop meaning here</div>
+    </div>`;
   });
-  html += `</div>`;
-  html += `<div class="actions"><button class="btn secondary" id="revealBtn">Reveal meanings</button></div>`;
-  html += `<div id="selfAssess" style="display:none;">
-      <p style="text-align:center; margin-top:16px;">Could you explain each piece?</p>
-      <div class="actions">
-        <button class="btn" id="gotItBtn">Yes \u2014 I knew it</button>
-        <button class="btn secondary" id="practiceBtn">Not yet \u2014 more practice</button>
-      </div>
+  html += `</div><div class="meaning-pool" id="meaningPool">`;
+  meanings.forEach(m => {
+    html += `<div class="meaning-chip" data-meaning="${escapeHtml(m)}">${escapeHtml(m)}</div>`;
+  });
+  html += `</div></div></div>`;
+  html += `<div id="runeComplete" style="display:none; text-align:center; margin-top:18px;">
+      <p><strong>All runes bound!</strong></p>
+      <div class="actions"><button class="btn" id="runeContinueBtn">Continue</button></div>
     </div>`;
   body.innerHTML = html;
+  setupRuneGame(parts.length);
+}
 
-  document.getElementById("revealBtn").onclick = () => {
-    parts.forEach((part, i) => {
-      document.querySelector(`[data-meaning="${i}"]`).textContent = `"${part.meaning}"`;
+function setupRuneGame(requiredMatches){
+  const gameEl = document.getElementById("runeGame");
+  const canvas = document.getElementById("runeCanvas");
+  const ctx = canvas.getContext ? canvas.getContext("2d") : null;
+  if (ctx){
+    canvas.width = gameEl.clientWidth;
+    canvas.height = gameEl.clientHeight;
+  }
+
+  let particles = [];
+  function spawnBurst(x, y){
+    if (!ctx) return;
+    for (let i = 0; i < 22; i++){
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 1.5 + Math.random() * 3;
+      particles.push({ x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, life: 1,
+        color: Math.random() < 0.5 ? "#7FD1FF" : "#EAF8FF" });
+    }
+  }
+  function loop(){
+    if (!ctx || !document.body.contains(canvas)) return; // self-stops once this view is gone
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.06; p.life -= 0.025;
+      ctx.globalAlpha = Math.max(p.life, 0);
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2); ctx.fill();
     });
-    document.getElementById("selfAssess").style.display = "block";
-    document.getElementById("revealBtn").style.display = "none";
+    particles = particles.filter(p => p.life > 0);
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  }
+  if (ctx) loop();
+
+  let matched = 0;
+
+  document.querySelectorAll("#meaningPool .meaning-chip").forEach(chip => {
+    chip.addEventListener("pointerdown", (e) => {
+      if (chip.classList.contains("placed")) return;
+      activeDragChip = chip;
+      chip.classList.add("dragging");
+      activeDragGhost = chip.cloneNode(true);
+      activeDragGhost.classList.add("ghost");
+      activeDragGhost.classList.remove("dragging");
+      activeDragGhost.style.width = chip.offsetWidth + "px";
+      document.body.appendChild(activeDragGhost);
+      activeDragGhost.style.left = (e.clientX - chip.offsetWidth / 2) + "px";
+      activeDragGhost.style.top = (e.clientY - chip.offsetHeight / 2) + "px";
+    });
+  });
+
+  runeGame = {
+    tryMatch(slotEl, chip){
+      if (slotEl.dataset.meaning === chip.dataset.meaning){
+        slotEl.classList.add("filled");
+        slotEl.querySelector(".rune-drop").textContent = chip.dataset.meaning;
+        chip.classList.add("placed");
+        const rect = slotEl.getBoundingClientRect();
+        const gameRect = gameEl.getBoundingClientRect();
+        spawnBurst(rect.left - gameRect.left + rect.width / 2, rect.top - gameRect.top + rect.height / 2);
+        matched++;
+        if (matched >= requiredMatches){
+          setTimeout(() => {
+            gameEl.style.display = "none";
+            document.getElementById("runeComplete").style.display = "block";
+          }, 350);
+        }
+      } else {
+        slotEl.classList.add("shake");
+        setTimeout(() => slotEl.classList.remove("shake"), 400);
+      }
+    }
   };
-  document.getElementById("gotItBtn").onclick = () => completeStage("runecraft", 15);
-  document.getElementById("practiceBtn").onclick = () => renderWordPicker();
+
+  document.getElementById("runeContinueBtn").onclick = () => completeStage("runecraft", 15);
 }
 
 function renderBloodline(body, w){
   const family = w.family || [];
-  const decoys = ["mountain","umbrella","garden","pebble","window"].filter(d => !family.includes(d));
-  const options = shuffle(family.slice(0, 4).concat(decoys.slice(0, Math.max(1, 4 - family.length))));
-  const rootText = w.root ? `${w.root.text} ("${w.root.meaning}")` : `the same word-family as "${w.word}"`;
+  const decoys = ["mountain","umbrella","garden","pebble","window","lantern","harbor"].filter(d => !family.includes(d));
+  const requiredFamily = family.slice(0, 4);
+  const optionPool = shuffle(requiredFamily.concat(decoys.slice(0, Math.max(2, 5 - requiredFamily.length))));
+  const rootText = w.root ? w.root.text : w.word;
 
-  let html = `<p>Which of these words share a root with <strong>${w.word}</strong>? The shared root is <strong>${rootText}</strong>.</p>`;
-  html += `<div class="chip-row">`;
-  options.forEach(opt => html += `<div class="chip" data-word="${opt}">${opt}</div>`);
-  html += `</div>`;
-  html += `<div class="actions"><button class="btn secondary" id="revealBtn">Reveal the family</button></div>`;
-  html += `<div id="selfAssess" style="display:none;">
-      <div class="actions">
-        <button class="btn" id="gotItBtn">I found the family</button>
-        <button class="btn secondary" id="practiceBtn">Not yet \u2014 more practice</button>
-      </div>
+  let html = `<p>Drag the words that share a root with <strong>${w.word}</strong> into the circle. The shared root is <strong>${rootText}</strong>${w.root ? ` ("${w.root.meaning}")` : ""}.</p>`;
+  html += `<div class="rune-game" id="bloodlineGame"><canvas class="rune-canvas" id="bloodlineCanvas"></canvas>`;
+  html += `<div class="family-zone" id="familyZone">
+      <div class="family-zone-label">Family of "${rootText}"</div>
+      <div class="family-found" id="familyFound"></div>
+    </div>`;
+  html += `<div class="chip-pool-row" id="bloodlinePool">`;
+  optionPool.forEach(word => {
+    html += `<div class="meaning-chip" data-word="${escapeHtml(word)}">${escapeHtml(word)}</div>`;
+  });
+  html += `</div></div>`;
+  html += `<div id="bloodlineComplete" style="display:none; text-align:center; margin-top:18px;">
+      <p><strong>Family found!</strong></p>
+      <div class="actions"><button class="btn" id="bloodlineContinueBtn">Continue</button></div>
     </div>`;
   body.innerHTML = html;
+  setupBloodlineGame(family, requiredFamily.length);
+}
 
-  document.querySelectorAll(".chip").forEach(chip => {
-    chip.onclick = () => chip.classList.toggle("selected");
-  });
-  document.getElementById("revealBtn").onclick = () => {
-    document.querySelectorAll(".chip").forEach(chip => {
-      chip.classList.remove("selected");
-      chip.classList.add(family.includes(chip.dataset.word) ? "correct" : "incorrect");
+function setupBloodlineGame(family, requiredCount){
+  const gameEl = document.getElementById("bloodlineGame");
+  const canvas = document.getElementById("bloodlineCanvas");
+  const ctx = canvas.getContext ? canvas.getContext("2d") : null;
+  if (ctx){
+    canvas.width = gameEl.clientWidth;
+    canvas.height = gameEl.clientHeight;
+  }
+
+  let particles = [];
+  function spawnBurst(x, y){
+    if (!ctx) return;
+    for (let i = 0; i < 22; i++){
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 1.5 + Math.random() * 3;
+      particles.push({ x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, life: 1,
+        color: Math.random() < 0.5 ? "#7FD1FF" : "#EAF8FF" });
+    }
+  }
+  function loop(){
+    if (!ctx || !document.body.contains(canvas)) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.06; p.life -= 0.025;
+      ctx.globalAlpha = Math.max(p.life, 0);
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2); ctx.fill();
     });
-    document.getElementById("selfAssess").style.display = "block";
-    document.getElementById("revealBtn").style.display = "none";
+    particles = particles.filter(p => p.life > 0);
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  }
+  if (ctx) loop();
+
+  let placed = 0;
+  const zone = document.getElementById("familyZone");
+  const foundList = document.getElementById("familyFound");
+
+  document.querySelectorAll("#bloodlinePool .meaning-chip").forEach(chip => {
+    chip.addEventListener("pointerdown", (e) => {
+      if (chip.classList.contains("placed")) return;
+      activeDragChip = chip;
+      chip.classList.add("dragging");
+      activeDragGhost = chip.cloneNode(true);
+      activeDragGhost.classList.add("ghost");
+      activeDragGhost.classList.remove("dragging");
+      activeDragGhost.style.width = chip.offsetWidth + "px";
+      document.body.appendChild(activeDragGhost);
+      activeDragGhost.style.left = (e.clientX - chip.offsetWidth / 2) + "px";
+      activeDragGhost.style.top = (e.clientY - chip.offsetHeight / 2) + "px";
+    });
+  });
+
+  bloodlineGame = {
+    tryMatch(zoneEl, chip){
+      const word = chip.dataset.word;
+      if (family.includes(word)){
+        chip.classList.add("placed");
+        const tag = document.createElement("div");
+        tag.className = "family-tag";
+        tag.textContent = word;
+        foundList.appendChild(tag);
+        const rect = zoneEl.getBoundingClientRect();
+        const gameRect = gameEl.getBoundingClientRect();
+        spawnBurst(rect.left - gameRect.left + rect.width / 2, rect.top - gameRect.top + rect.height / 2);
+        placed++;
+        if (placed >= requiredCount){
+          setTimeout(() => {
+            gameEl.style.display = "none";
+            document.getElementById("bloodlineComplete").style.display = "block";
+          }, 350);
+        }
+      } else {
+        zoneEl.classList.add("shake");
+        setTimeout(() => zoneEl.classList.remove("shake"), 400);
+      }
+    }
   };
-  document.getElementById("gotItBtn").onclick = () => completeStage("bloodline", 15);
-  document.getElementById("practiceBtn").onclick = () => renderWordPicker();
+
+  document.getElementById("bloodlineContinueBtn").onclick = () => completeStage("bloodline", 15);
 }
 
 function renderIncantation(body, w, p){
@@ -701,26 +1211,57 @@ function renderIncantation(body, w, p){
 }
 
 function renderTrial(body, w){
-  const askDefinition = Math.random() < 0.5;
+  renderTrialRound(body, w, true);
+}
+
+function renderTrialRound(body, w, askDefinition){
+  const correct = askDefinition ? w.def : w.word;
+  const decoys = getDecoyPool(w, askDefinition);
+  const options = shuffle([correct].concat(decoys));
+
   let html = askDefinition
     ? `<p>What does <strong>${w.word}</strong> mean?</p>`
     : `<p>Which word means: <em>"${w.def}"</em>?</p>`;
-  html += `<div class="actions"><button class="btn secondary" id="revealBtn">Reveal answer</button></div>`;
-  html += `<div class="fact-block" id="answerBlock" style="display:none;">${askDefinition ? w.def : w.word}</div>`;
-  html += `<div id="selfAssess" style="display:none;">
-      <div class="actions">
-        <button class="btn" id="gotItBtn">I knew it</button>
-        <button class="btn secondary" id="practiceBtn">Not yet \u2014 more practice</button>
-      </div>
+  html += `<div class="trial-options" id="trialOptions">`;
+  options.forEach((opt, i) => {
+    html += `<button class="trial-option" data-correct="${opt === correct}" data-idx="${i}">${escapeHtml(opt)}</button>`;
+  });
+  html += `</div>`;
+  html += `<div id="trialComplete" style="display:none; text-align:center; margin-top:18px;">
+      <p><strong>Correct!</strong></p>
+      <div class="actions"><button class="btn" id="trialContinueBtn">Continue</button></div>
     </div>`;
   body.innerHTML = html;
-  document.getElementById("revealBtn").onclick = () => {
-    document.getElementById("answerBlock").style.display = "block";
-    document.getElementById("selfAssess").style.display = "block";
-    document.getElementById("revealBtn").style.display = "none";
-  };
-  document.getElementById("gotItBtn").onclick = () => completeStage("trial", 15, true);
-  document.getElementById("practiceBtn").onclick = () => renderWordPicker();
+
+  document.querySelectorAll(".trial-option").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (btn.classList.contains("disabled")) return;
+      document.querySelectorAll(".trial-option").forEach(b => b.classList.add("disabled"));
+      if (btn.dataset.correct === "true"){
+        btn.classList.add("correct-flash");
+        setTimeout(() => {
+          document.getElementById("trialOptions").style.display = "none";
+          document.getElementById("trialComplete").style.display = "block";
+        }, 500);
+      } else {
+        btn.classList.add("wrong-flash");
+        setTimeout(() => {
+          renderTrialRound(body, w, !askDefinition);
+        }, 700);
+      }
+    });
+  });
+
+  document.getElementById("trialContinueBtn").onclick = () => completeStage("trial", 15, true);
+}
+
+function getDecoyPool(w, askDefinition){
+  let candidates = WORDLISTS[currentKid][currentListId].words.filter(x => x.id !== w.id);
+  if (candidates.length < 3){
+    const more = allWordsForKid(currentKid).filter(x => x.id !== w.id && !candidates.some(c => c.id === x.id));
+    candidates = candidates.concat(more);
+  }
+  return shuffle(candidates).slice(0, 3).map(x => askDefinition ? x.def : x.word);
 }
 
 function completeStage(stageId, xp, isTrial){
@@ -778,6 +1319,7 @@ function renderAddWordForm(){
     <div class="masthead" style="margin-bottom:10px;"><h1 style="font-size:24px;">Add a Word</h1></div>
     <div class="page-card">
       <div class="field-label">Word</div><input type="text" id="fWord">
+      <div class="field-label">Pronunciation (optional)</div><input type="text" id="fPron" placeholder="e.g. dih-LY-junt">
       <div class="field-label">Part of speech</div><input type="text" id="fPos" placeholder="e.g. adjective">
       <div class="field-label">Definition</div><input type="text" id="fDef">
       <div class="field-label">Example sentence</div><input type="text" id="fSentence">
@@ -794,6 +1336,7 @@ function renderAddWordForm(){
     const id = "custom_" + word.toLowerCase().replace(/[^a-z0-9]/g, "");
     const entry = {
       id, word, pos: document.getElementById("fPos").value.trim() || "\u2014",
+      pron: document.getElementById("fPron").value.trim(),
       def, sentence: document.getElementById("fSentence").value.trim(),
       rootNote: document.getElementById("fRoot").value.trim(),
       affixNote: document.getElementById("fAffix").value.trim()
@@ -803,7 +1346,7 @@ function renderAddWordForm(){
       const exists = WORDLISTS[currentKid]["my-own-words"].words.find(w2 => w2.id === id);
       if (!exists){
         WORDLISTS[currentKid]["my-own-words"].words.push({
-          id, word: entry.word, pos: entry.pos, def: entry.def, sentence: entry.sentence || `I used ${entry.word} in a sentence.`,
+          id, word: entry.word, pos: entry.pos, pron: entry.pron, def: entry.def, sentence: entry.sentence || `I used ${entry.word} in a sentence.`,
           root: entry.rootNote ? { text: entry.rootNote, meaning: "", origin: "" } : null,
           family: []
         });
