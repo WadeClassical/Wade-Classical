@@ -118,11 +118,13 @@
    ===================================================================== */
 
 const firebaseConfig = {
+  apiKey: "AIzaSyAw9V30gR9hc3WKS3zhO61IU6NeeKghyQM",
+  authDomain: "wade-classical.firebaseapp.com",
   databaseURL: "https://wade-classical-default-rtdb.firebaseio.com",
-  projectId: "wade-classical"
-  // apiKey: "...",
-  // authDomain: "...",
-  // appId: "...",
+  projectId: "wade-classical",
+  storageBucket: "wade-classical.firebasestorage.app",
+  messagingSenderId: "72309085457",
+  appId: "1:72309085457:web:3d8b5a07302248ded6a8b0"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -221,6 +223,69 @@ const WORKSHEETS = {
       w1: "Rubric: clear opinion stated; 2+ reasons with examples; organized (opinion \u2192 reasons \u2192 closing); mostly correct mechanics. 3-4/4 = meets grade 3 writing."
     },
     scoringNotes: "Reading: 4-5/5 correct/reasonable = meets. Vocabulary: 6-7/7 = meets. Grammar: 5-6/6 = meets. Writing: 3-4/4 rubric points = meets. If 1-2 parts fall short, that points to a specific narrow skill to revisit, not a full grade-3 redo."
+  },
+  "hadley-grade1-ela": {
+    child: "hadley",
+    title: "Grade 1 ELA Mastery Check",
+    subtitle: "Reading, Language & Writing",
+    intro: "This checks whether Grade 1 ELA skills are solidly in place before building on them. No time limit, no grade — just answer as best you can.",
+    sections: [
+      {
+        label: "Part 1 \u2014 Reading",
+        intro: "Read the story below, then answer the questions that follow.",
+        passage: {
+          title: "Ben's Kite",
+          paragraphs: [
+            "Ben got a new kite. It was red and yellow. Ben ran to the park with his kite.",
+            "The wind was strong. Ben let the kite go up, up, up! It flew high in the sky. Ben smiled and waved to his kite.",
+            "Then the wind stopped. The kite came down slowly. Ben caught it in his hands. He was happy."
+          ]
+        },
+        questions: [
+          { id: "q1", type: "long", rows: 2, prompt: "What is this story mostly about?" },
+          { id: "q2", type: "short", prompt: "Who is the story about?" },
+          { id: "q3", type: "short", prompt: "Where did Ben go?" },
+          { id: "q4", type: "short", prompt: "What color was Ben's kite?" },
+          { id: "q5", type: "short", prompt: "How did Ben feel at the end of the story?" },
+          { id: "q6", type: "ordering", prompt: "Put these events in order. Write 1, 2, or 3 in each blank.",
+            items: [
+              { id: "e1", label: "Ben catches the kite in his hands." },
+              { id: "e2", label: "Ben runs to the park with his kite." },
+              { id: "e3", label: "The kite flies high in the sky." }
+            ]}
+        ]
+      },
+      {
+        label: "Part 2 \u2014 Language & Mechanics",
+        intro: "Rewrite each sentence correctly.",
+        questions: [
+          { id: "g1", type: "short", prompt: "ben has a kite" },
+          { id: "g2", type: "short", prompt: "is it red" },
+          { id: "g3", type: "short", prompt: "i like kites" },
+          { id: "g4", type: "blanks", prompt: "In the sentence \u201CThe dog ran fast,\u201D find the naming word (noun) and the action word (verb).",
+            fields: [ { id: "g4_noun", label: "Naming word (noun)" }, { id: "g4_verb", label: "Action word (verb)" } ] }
+        ]
+      },
+      {
+        label: "Part 3 \u2014 Writing",
+        questions: [
+          { id: "info1", type: "static", text: "Prompt: Do you like windy days or calm days better? Write one or two sentences telling why." },
+          { id: "w1", type: "long", rows: 4, prompt: "" }
+        ]
+      }
+    ],
+    answerKey: {
+      q1: "Ben flies his new kite at the park.",
+      q2: "Ben.",
+      q3: "The park.",
+      q4: "Red and yellow.",
+      q5: "Happy.",
+      q6: "Order: Ben runs to the park (1) \u2192 the kite flies high (2) \u2192 Ben catches it (3).",
+      g1: "Ben has a kite.", g2: "Is it red?", g3: "I like kites.",
+      g4_noun: "dog", g4_verb: "ran",
+      w1: "Rubric: states a preference (windy or calm); gives at least one simple reason; sentence starts with a capital letter and ends with punctuation. 2-3/3 = meets grade 1 writing."
+    },
+    scoringNotes: "Reading: 5-6/6 correct/reasonable = meets. Language & Mechanics: 5-6/6 = meets. Writing: 2-3/3 rubric points = meets. If a part falls short, that points to a specific narrow skill to revisit (e.g., just capitalization, or just sequencing), not a full grade-1 redo."
   }
 };
 
