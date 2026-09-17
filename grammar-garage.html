@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Grammar Garage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#1C2026;
+    --panel:#ECEEF1;
+    --ink:#1A1D21;
+    --ink-soft:#5B6470;
+    --mist:#9AA6B4;
+    --steel:#2B3440;
+    --steel-dark:#1B222B;
+    --orange:#E8622A;
+    --orange-bright:#FF8A50;
+    --yellow:#F4B740;
+    --ok:#2E9C6B;
+    --err:#D64545;
+    --line: rgba(43,52,64,.22);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh;
+    background:
+      radial-gradient(ellipse at top, rgba(232,98,42,.16), transparent 60%),
+      radial-gradient(ellipse at 20% 85%, rgba(244,183,64,.10), transparent 55%),
+      var(--bg);
+    color:var(--ink); font-family:'Inter', sans-serif; font-size:17px; line-height:1.55;
+    padding:26px 16px 60px;
+  }
+  .font-display{font-family:'Oswald', sans-serif;}
+  .wrap{max-width:740px; margin:0 auto;}
+
+  .masthead{text-align:center; margin-bottom:22px;}
+  .masthead .tag{color:var(--yellow); font-family:'Oswald',sans-serif; font-size:13px; letter-spacing:.25em; text-transform:uppercase; margin-bottom:6px;}
+  .masthead h1{
+    font-family:'Oswald', sans-serif; font-weight:700; font-size:32px; letter-spacing:.02em;
+    text-transform:uppercase; margin:0 0 4px; color:var(--orange-bright);
+  }
+  .masthead .sub{font-style:italic; color:var(--mist); font-size:16px;}
+  .rule-line{border:none; height:3px; margin:16px auto; width:110px; background:repeating-linear-gradient(90deg, var(--yellow) 0 10px, transparent 10px 16px);}
+
+  .panel{
+    background:var(--panel); border-radius:6px; padding:20px 24px;
+    box-shadow:0 1px 0 var(--orange), 0 0 0 1px var(--line);
+    margin-bottom:16px;
+  }
+  .backlink{
+    display:inline-block; margin-bottom:14px; color:var(--mist); text-decoration:none;
+    font-family:'Oswald',sans-serif; font-size:13px; letter-spacing:.05em; cursor:pointer;
+    text-transform:uppercase;
+  }
+  .backlink:hover{color:var(--orange-bright);}
+
+  .kid-row{display:flex; gap:12px; justify-content:center; margin-bottom:8px;}
+  .kid-badge{
+    font-family:'Oswald', sans-serif; font-weight:600; font-size:15px; letter-spacing:.03em;
+    background:var(--panel); border:2px solid var(--steel); color:var(--steel);
+    padding:12px 26px; border-radius:4px; cursor:pointer; text-transform:uppercase;
+  }
+  .kid-badge.active{background:var(--orange); color:#fff; border-color:var(--orange);}
+
+  .rankbar{background:var(--steel); color:var(--panel); border-radius:6px; padding:14px 20px; margin-bottom:18px;}
+  .rankbar .rank-title{font-family:'Oswald',sans-serif; font-weight:600; font-size:16px; color:var(--orange-bright); margin-bottom:6px; text-transform:uppercase; letter-spacing:.02em;}
+  .rankbar .xp-track{background:rgba(255,255,255,.15); border-radius:20px; height:10px; overflow:hidden;}
+  .rankbar .xp-fill{background:linear-gradient(90deg, var(--orange), var(--yellow)); height:100%; border-radius:20px;}
+  .rankbar .xp-label{font-size:13px; color:rgba(255,255,255,.7); margin-top:6px;}
+  .badge-row{display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;}
+  .cert-badge{
+    font-family:'Oswald',sans-serif; font-size:11px; font-weight:600; letter-spacing:.03em;
+    background:var(--panel); color:var(--steel); border:2px solid var(--yellow);
+    padding:5px 10px; border-radius:4px; text-transform:uppercase;
+  }
+
+  .job-card{
+    display:flex; align-items:center; justify-content:space-between; cursor:pointer;
+    border-left:8px solid var(--orange); padding-left:16px;
+  }
+  .job-card:hover{border-left-color:var(--yellow);}
+  .job-title{font-family:'Oswald',sans-serif; font-size:17px; color:var(--steel); text-transform:uppercase; letter-spacing:.01em;}
+  .job-sub{font-size:14px; color:var(--ink-soft); margin-top:2px;}
+  .status-pill{font-size:12px; font-family:'Inter',sans-serif; padding:4px 12px; border-radius:20px; font-weight:600;}
+  .status-pill.done{background:#DEF2EC; color:var(--ok); border:1px solid var(--ok);}
+  .status-pill.progress{background:#FDEEDC; color:var(--orange); border:1px solid var(--orange);}
+  .status-pill.new{background:#EBEDEF; color:var(--ink-soft); border:1px solid var(--ink-soft);}
+
+  .stage-nav{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:18px 0;}
+  .stage-btn{
+    font-family:'Oswald',sans-serif; font-size:13px; letter-spacing:.02em; text-transform:uppercase;
+    background:var(--panel); border:2px solid var(--ink-soft); color:var(--ink-soft);
+    padding:8px 14px; border-radius:4px; cursor:pointer;
+  }
+  .stage-btn.active{border-color:var(--orange); color:var(--orange); background:#FDEEDC;}
+  .stage-btn.complete{border-color:var(--ok); color:var(--ok);}
+  .stage-btn:disabled{opacity:.4; cursor:not-allowed;}
+
+  .job-hero{text-align:center; margin-bottom:8px;}
+  .job-hero .name{font-family:'Oswald', sans-serif; font-weight:700; font-size:26px; color:var(--orange-bright); text-transform:uppercase;}
+
+  .example-block{background:#F7F5F0; border-radius:6px; padding:14px 18px; margin:12px 0; font-size:16px;}
+  .example-block .broken{color:var(--err); text-decoration:line-through;}
+  .example-block .fixed{color:var(--ok); font-weight:600;}
+  .example-block .arrow{color:var(--ink-soft); margin:0 8px;}
+
+  .actions{display:flex; gap:10px; justify-content:center; margin-top:18px; flex-wrap:wrap;}
+  .btn{
+    font-family:'Oswald',sans-serif; font-size:14px; letter-spacing:.03em; text-transform:uppercase;
+    background:var(--orange); color:#fff; border:none;
+    padding:11px 24px; border-radius:4px; cursor:pointer;
+  }
+  .btn.secondary{background:transparent; color:var(--orange); border:2px solid var(--orange); padding:9px 22px;}
+
+  /* ticket card (used in Spot the Problem) */
+  .ticket{
+    background:#F7F5F0; border:2px solid var(--line); border-radius:4px;
+    padding:12px 14px; cursor:grab; user-select:none; touch-action:none; margin-bottom:10px;
+    position:relative;
+  }
+  .ticket::before{content:"WORK ORDER"; font-family:'Oswald',sans-serif; font-size:9px; letter-spacing:.1em; color:var(--mist);}
+  .ticket .ticket-text{font-size:16px; margin-top:2px;}
+  .ticket.placed{visibility:hidden;}
+  .ticket.dragging{opacity:.35;}
+  .ticket.ghost{position:fixed; pointer-events:none; z-index:999; box-shadow:0 6px 18px rgba(0,0,0,.35); cursor:grabbing;}
+
+  .sort-zones{display:flex; gap:14px; margin-bottom:18px; flex-wrap:wrap;}
+  .sort-zone{
+    flex:1; min-width:140px; border:3px dashed var(--ink-soft); border-radius:8px;
+    padding:16px; text-align:center; min-height:70px; background:var(--panel);
+  }
+  .sort-zone[data-expects="true"]{border-color:var(--orange);}
+  .sort-zone[data-expects="false"]{border-color:var(--ok);}
+  .sort-zone-label{font-family:'Oswald',sans-serif; font-size:14px; text-transform:uppercase; margin-bottom:8px;}
+  .sort-zone[data-expects="true"] .sort-zone-label{color:var(--orange);}
+  .sort-zone[data-expects="false"] .sort-zone-label{color:var(--ok);}
+  .sort-found{display:flex; flex-direction:column; gap:6px;}
+  .sort-tag{background:#fff; border-radius:4px; padding:6px 10px; font-size:14px; border:1px solid var(--line);}
+  .sort-zone.shake{animation: shakeIt .4s;}
+  @keyframes shakeIt{
+    0%,100%{ transform:translateX(0); } 20%{ transform:translateX(-6px); }
+    40%{ transform:translateX(6px); } 60%{ transform:translateX(-4px); } 80%{ transform:translateX(4px); }
+  }
+
+  /* fix-it slots */
+  .fixit-sentence{background:#F7F5F0; border-radius:6px; padding:14px 16px; margin-bottom:14px; font-size:16px;}
+  .fixit-slot{
+    display:inline-block; min-width:70px; border:2px dashed var(--orange); border-radius:4px;
+    padding:4px 10px; text-align:center; background:var(--panel); font-weight:600; color:var(--ink-soft);
+  }
+  .fixit-slot.filled{border-style:solid; border-color:var(--ok); color:var(--ok); box-shadow:0 0 10px rgba(46,156,107,.35);}
+  .fixit-slot.shake{animation: shakeIt .4s; border-color:var(--err);}
+  .tile-pool{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:14px 0;}
+  .tile{
+    background:var(--panel); border:2px solid var(--steel); border-radius:4px;
+    padding:9px 16px; cursor:grab; user-select:none; touch-action:none; font-weight:600; color:var(--steel);
+  }
+  .tile.placed{visibility:hidden;}
+  .tile.dragging{opacity:.35;}
+  .tile.ghost{position:fixed; pointer-events:none; z-index:999; box-shadow:0 6px 18px rgba(0,0,0,.35); border-color:var(--orange); cursor:grabbing;}
+
+  .canvas-layer{position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;}
+  .game-wrap{position:relative;}
+
+  .torque-options{display:flex; flex-direction:column; gap:10px; margin:18px 0;}
+  .torque-option{
+    font-family:'Inter',sans-serif; font-size:16px; text-align:left;
+    background:var(--panel); border:2px solid var(--ink-soft); border-radius:6px;
+    padding:12px 16px; cursor:pointer; color:var(--ink);
+  }
+  .torque-option.correct-flash{border-color:var(--ok); background:#DEF2EC; color:var(--ok);}
+  .torque-option.wrong-flash{border-color:var(--err); background:#FBE1E1; color:var(--err);}
+  .torque-option.disabled{opacity:.55; pointer-events:none;}
+
+  .cert-stamp{text-align:center; padding:26px; animation:stampIn .5s cubic-bezier(.3,1.6,.5,1);}
+  @keyframes stampIn{
+    0%{ transform:scale(.5) rotate(-15deg); opacity:0; }
+    100%{ transform:scale(1) rotate(-4deg); opacity:1; }
+  }
+  .cert-stamp .stamp-box{
+    display:inline-block; border:5px solid var(--orange); color:var(--orange);
+    font-family:'Oswald',sans-serif; font-weight:700; font-size:22px; letter-spacing:.05em;
+    padding:14px 28px; transform:rotate(-4deg); text-transform:uppercase;
+  }
+  .cert-stamp .xp{color:var(--ink-soft); font-style:italic; margin-top:14px;}
+
+  .empty{color:var(--mist); font-style:italic;}
+  .review-row{border-bottom:1px solid var(--line); padding:12px 0;}
+  .review-row:last-child{border-bottom:none;}
+</style>
+</head>
+<body>
+  <div class="wrap" id="app"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+/* =====================================================================
+   THE GRAMMAR GARAGE
+   Sentences come in as work orders with malfunctions. Diagnose whether
+   they need repair, fix them by dragging the right part into place,
+   then prove it sticks on a Torque Test. Mastery-gated, same philosophy
+   as the rest of Wade Classical.
+   ===================================================================== */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAw9V30gR9hc3WKS3zhO61IU6NeeKghyQM",
+  authDomain: "wade-classical.firebaseapp.com",
+  databaseURL: "https://wade-classical-default-rtdb.firebaseio.com",
+  projectId: "wade-classical",
+  storageBucket: "wade-classical.firebasestorage.app",
+  messagingSenderId: "72309085457",
+  appId: "1:72309085457:web:3d8b5a07302248ded6a8b0"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ---------------------------------------------------------------------
+// LESSONS
+// ---------------------------------------------------------------------
+const LESSONS = {
+  ryder: {
+    "capitalization": {
+      title: "Capitalization",
+      rule: "Every sentence starts with a capital letter. The word \u201CI\u201D is always capital. Names of specific people, places, and things (proper nouns) are capitalized too.",
+      examples: [
+        { broken: "the truck needs a new battery.", fixed: "The truck needs a new battery." },
+        { broken: "my dad and i changed the oil.", fixed: "My dad and I changed the oil." },
+        { broken: "evan drove the truck to atlanta.", fixed: "Evan drove the truck to Atlanta." }
+      ],
+      tickets: [
+        { text: "the engine was making a strange noise.", needsRepair: true },
+        { text: "Ryder tightened the bolt.", needsRepair: false },
+        { text: "my brother and i checked the tires.", needsRepair: true },
+        { text: "The shop closes at six.", needsRepair: false },
+        { text: "we drove to atlanta for parts.", needsRepair: true }
+      ],
+      fixits: [
+        { sentence: "___ engine was making a strange noise.", options: ["the","The","THE"], correct: "The" },
+        { sentence: "My brother and ___ checked the tires.", options: ["i","I","me"], correct: "I" },
+        { sentence: "We drove to ___ for parts.", options: ["atlanta","Atlanta","ATLANTA"], correct: "Atlanta" }
+      ],
+      torque: [
+        { options: ["the tow truck broke down.","The tow truck broke down.","The Tow Truck broke down.","the Tow truck broke down."], correct: "The tow truck broke down." },
+        { options: ["dad and i fixed the flat tire.","Dad and I fixed the flat tire.","Dad and i fixed the flat tire.","dad and I fixed the flat Tire."], correct: "Dad and I fixed the flat tire." },
+        { options: ["we called evan for help.","We called Evan for help.","we called Evan for help.","We called evan for Help."], correct: "We called Evan for help." },
+        { options: ["she works at the shop every day.","She works at the shop every day.","She Works at the shop every day.","she works at the Shop every day."], correct: "She works at the shop every day." }
+      ]
+    },
+    "end-punctuation": {
+      title: "End Punctuation",
+      rule: "A statement ends with a period (.). A question ends with a question mark (?). A sentence showing strong feeling ends with an exclamation point (!).",
+      examples: [
+        { broken: "the truck is fixed", fixed: "The truck is fixed." },
+        { broken: "is the truck fixed", fixed: "Is the truck fixed?" },
+        { broken: "watch out for that oil spill", fixed: "Watch out for that oil spill!" }
+      ],
+      tickets: [
+        { text: "Did you check the brakes", needsRepair: true },
+        { text: "The tire is flat.", needsRepair: false },
+        { text: "Look out, the jack is slipping", needsRepair: true },
+        { text: "Can you hand me that wrench", needsRepair: true },
+        { text: "We finished the repair on time.", needsRepair: false }
+      ],
+      fixits: [
+        { sentence: "Did you check the brakes___", options: [".", "?", "!"], correct: "?" },
+        { sentence: "Look out, the jack is slipping___", options: [".", "?", "!"], correct: "!" },
+        { sentence: "Can you hand me that wrench___", options: [".", "?", "!"], correct: "?" }
+      ],
+      torque: [
+        { options: ["Where did you put the keys.","Where did you put the keys!","Where did you put the keys?","Where did you put the keys"], correct: "Where did you put the keys?" },
+        { options: ["That noise is way too loud.","That noise is way too loud!","That noise is way too loud?","That noise is way too loud"], correct: "That noise is way too loud!" },
+        { options: ["The truck needs new brakes?","The truck needs new brakes!","The truck needs new brakes.","The truck needs new brakes"], correct: "The truck needs new brakes." },
+        { options: ["Have you ever driven a tow truck.","Have you ever driven a tow truck!","Have you ever driven a tow truck?","Have you ever driven a tow truck"], correct: "Have you ever driven a tow truck?" }
+      ]
+    },
+    "subject-verb": {
+      title: "Subject-Verb Agreement",
+      rule: "A singular subject needs a singular verb. A plural subject needs a plural verb. \u201CThe engine runs\u201D (one engine). \u201CThe engines run\u201D (many engines).",
+      examples: [
+        { broken: "The tires is flat.", fixed: "The tires are flat." },
+        { broken: "He drive the truck.", fixed: "He drives the truck." },
+        { broken: "The mechanics fixes cars.", fixed: "The mechanics fix cars." }
+      ],
+      tickets: [
+        { text: "The dog run fast.", needsRepair: true },
+        { text: "The tools are in the box.", needsRepair: false },
+        { text: "She know how to weld.", needsRepair: true },
+        { text: "The trucks need gas.", needsRepair: false },
+        { text: "The customers waits outside.", needsRepair: true }
+      ],
+      fixits: [
+        { sentence: "The dog ___ fast.", options: ["run","runs","running"], correct: "runs" },
+        { sentence: "She ___ how to weld.", options: ["know","knows","knowing"], correct: "knows" },
+        { sentence: "The customers ___ outside.", options: ["waits","wait","waiting"], correct: "wait" }
+      ],
+      torque: [
+        { options: ["The engine runs rough.","The engine run rough.","The engines runs rough.","The engine are running rough."], correct: "The engine runs rough." },
+        { options: ["The wheels needs air.","The wheels need air.","The wheels is needing air.","The wheels needing air."], correct: "The wheels need air." },
+        { options: ["He fix engines every day.","He fixes engines every day.","He fixing engines every day.","He is fix engines every day."], correct: "He fixes engines every day." },
+        { options: ["The mechanics knows the answer.","The mechanics know the answer.","The mechanics knowing the answer.","The mechanics is know the answer."], correct: "The mechanics know the answer." }
+      ]
+    },
+    "verb-tense": {
+      title: "Verb Tense Consistency",
+      rule: "Words like yesterday, now, and tomorrow tell you when something happens \u2014 the verb has to match. \u201CYesterday, we drove\u201D (past). \u201CRight now, we are driving\u201D (present). \u201CTomorrow, we will drive\u201D (future).",
+      examples: [
+        { broken: "Yesterday, we drive to the shop.", fixed: "Yesterday, we drove to the shop." },
+        { broken: "Tomorrow, we fixed the brakes.", fixed: "Tomorrow, we will fix the brakes." },
+        { broken: "Right now, he fixed the tire.", fixed: "Right now, he is fixing the tire." }
+      ],
+      tickets: [
+        { text: "Yesterday, the truck breaks down.", needsRepair: true },
+        { text: "Right now, she is changing the oil.", needsRepair: false },
+        { text: "Tomorrow, we fixed the engine.", needsRepair: true },
+        { text: "Last week, they towed three cars.", needsRepair: false },
+        { text: "Yesterday, I finish the repair.", needsRepair: true }
+      ],
+      fixits: [
+        { sentence: "Yesterday, the truck ___ down.", options: ["breaks","broke","will break"], correct: "broke" },
+        { sentence: "Tomorrow, we ___ the engine.", options: ["fixed","fix","will fix"], correct: "will fix" },
+        { sentence: "Yesterday, I ___ the repair.", options: ["finish","finished","will finish"], correct: "finished" }
+      ],
+      torque: [
+        { options: ["Yesterday, he drives to work.","Yesterday, he drove to work.","Yesterday, he will drive to work.","Yesterday, he is driving to work."], correct: "Yesterday, he drove to work." },
+        { options: ["Tomorrow, we will tow the car.","Tomorrow, we towed the car.","Tomorrow, we tow the car.","Tomorrow, we towing the car."], correct: "Tomorrow, we will tow the car." },
+        { options: ["Right now, the engine is running.","Right now, the engine ran.","Right now, the engine will run.","Right now, the engine run."], correct: "Right now, the engine is running." },
+        { options: ["Last night, the alarm went off.","Last night, the alarm goes off.","Last night, the alarm will go off.","Last night, the alarm going off."], correct: "Last night, the alarm went off." }
+      ]
+    },
+    "apostrophes": {
+      title: "Possessive Apostrophes",
+      rule: "To show something belongs to one thing, add \u2019s (the truck\u2019s engine). If it belongs to more than one, add the apostrophe after the s (the trucks\u2019 garage). Watch out: it\u2019s means \u201Cit is\u201D \u2014 its (no apostrophe) means belonging to it.",
+      examples: [
+        { broken: "the trucks tire is flat", fixed: "the truck's tire is flat" },
+        { broken: "the mechanics tools were missing", fixed: "the mechanics' tools were missing" },
+        { broken: "its making a weird noise", fixed: "it's making a weird noise" }
+      ],
+      tickets: [
+        { text: "The cars engine is loud.", needsRepair: true },
+        { text: "The tools belong to the shop.", needsRepair: false },
+        { text: "Its almost out of gas.", needsRepair: true },
+        { text: "Grandma's house is far away.", needsRepair: false },
+        { text: "The workers uniforms were dirty.", needsRepair: true }
+      ],
+      fixits: [
+        { sentence: "The ___ engine is loud.", options: ["cars","car's","cars'"], correct: "car's" },
+        { sentence: "___ almost out of gas.", options: ["Its","It's","Its'"], correct: "It's" },
+        { sentence: "The ___ uniforms were dirty.", options: ["workers","worker's","workers'"], correct: "workers'" }
+      ],
+      torque: [
+        { options: ["The trucks tire is flat.","The truck's tire is flat.","The trucks' tire is flat.","The truck' tire is flat."], correct: "The truck's tire is flat." },
+        { options: ["Its going to rain today.","It's going to rain today.","Its' going to rain today.","Its going too rain today."], correct: "It's going to rain today." },
+        { options: ["The mechanics toolbox is red.","The mechanic's toolbox is red.","The mechanics' toolbox is red.","The mechanics toolboxs is red."], correct: "The mechanic's toolbox is red." },
+        { options: ["The dog wagged its tail.","The dog wagged it's tail.","The dog wagged its' tail.","The dog wagged it tail."], correct: "The dog wagged its tail." }
+      ]
+    },
+    "confused-words": {
+      title: "Commonly Confused Words",
+      rule: "Some words sound alike but mean different things. every day (each day, two words) vs. everyday (ordinary, one word). your (belongs to you) vs. you're (you are). then (next, or at that time) vs. than (comparing two things).",
+      examples: [
+        { broken: "We check the oil everyday.", fixed: "We check the oil every day." },
+        { broken: "Your going to love this truck.", fixed: "You're going to love this truck." },
+        { broken: "This truck is faster then that one.", fixed: "This truck is faster than that one." }
+      ],
+      tickets: [
+        { text: "We wash the truck everyday.", needsRepair: true },
+        { text: "This is an everyday tool for mechanics.", needsRepair: false },
+        { text: "Your going to need a new belt.", needsRepair: true },
+        { text: "Your truck needs an oil change.", needsRepair: false },
+        { text: "This engine is louder then that one.", needsRepair: true }
+      ],
+      fixits: [
+        { sentence: "We wash the truck ___.", options: ["everyday","every day"], correct: "every day" },
+        { sentence: "___ going to need a new belt.", options: ["Your","You're"], correct: "You're" },
+        { sentence: "This engine is louder ___ that one.", options: ["then","than"], correct: "than" }
+      ],
+      torque: [
+        { options: ["We check the tires everyday.","We check the tires every day.","We check the tires Every day.","We check the tires everday."], correct: "We check the tires every day." },
+        { options: ["Your the best mechanic here.","You're the best mechanic here.","Your'e the best mechanic here.","Youre the best mechanic here."], correct: "You're the best mechanic here." },
+        { options: ["I would rather drive this then that.","I would rather drive this than that.","I would rather drive this then, that.","I would rather drive this than, that."], correct: "I would rather drive this than that." },
+        { options: ["This is just an everyday repair.","This is just an every day repair.","This is just an EveryDay repair.","This is just an every-day repair."], correct: "This is just an everyday repair." }
+      ]
+    },
+    "nouns-verbs": {
+      title: "Nouns & Verbs",
+      rule: "A noun names a person, place, thing, or idea \u2014 like mechanic, garage, wrench, or teamwork. A verb shows an action or state of being \u2014 like fix, drive, run, or is. Every complete sentence needs at least one of each.",
+      examples: [
+        { text: "The <strong>mechanic</strong> (noun) <strong>tightened</strong> (verb) the bolt." },
+        { text: "<strong>Ryder</strong> (noun) <strong>drove</strong> (verb) the truck." },
+        { text: "The <strong>engine</strong> (noun) <strong>roared</strong> (verb)." }
+      ],
+      spotZones: { trueLabel: "Noun", falseLabel: "Verb", trueIcon: "\uD83C\uDFF7\uFE0F", falseIcon: "\u2699\uFE0F" },
+      spotInstructions: "Drag each word into the bin where it belongs.",
+      tickets: [
+        { text: "wrench", needsRepair: true },
+        { text: "drive", needsRepair: false },
+        { text: "garage", needsRepair: true },
+        { text: "fix", needsRepair: false },
+        { text: "roar", needsRepair: false }
+      ],
+      fixits: [
+        { sentence: "The ___ was too tight to loosen.", options: ["bolt","tighten","quickly"], correct: "bolt" },
+        { sentence: "Ryder will ___ the flat tire tomorrow.", options: ["tire","fix","careful"], correct: "fix" },
+        { sentence: "The ___ filled up with tools.", options: ["toolbox","organize","heavy"], correct: "toolbox" }
+      ],
+      torque: [
+        { options: ["In \u2018The truck stalled on the highway,\u2019 the subject is truck.","In \u2018The truck stalled on the highway,\u2019 the subject is stalled.","In \u2018The truck stalled on the highway,\u2019 the subject is on.","In \u2018The truck stalled on the highway,\u2019 the subject is the."], correct: "In \u2018The truck stalled on the highway,\u2019 the subject is truck." },
+        { options: ["In \u2018Ryder fixed the brakes,\u2019 the verb is Ryder.","In \u2018Ryder fixed the brakes,\u2019 the verb is fixed.","In \u2018Ryder fixed the brakes,\u2019 the verb is brakes.","In \u2018Ryder fixed the brakes,\u2019 the verb is the."], correct: "In \u2018Ryder fixed the brakes,\u2019 the verb is fixed." },
+        { options: ["In \u2018The mechanic checked the oil,\u2019 the subject is mechanic.","In \u2018The mechanic checked the oil,\u2019 the subject is checked.","In \u2018The mechanic checked the oil,\u2019 the subject is oil.","In \u2018The mechanic checked the oil,\u2019 the subject is the."], correct: "In \u2018The mechanic checked the oil,\u2019 the subject is mechanic." },
+        { options: ["In \u2018The engine roared loudly,\u2019 the verb is engine.","In \u2018The engine roared loudly,\u2019 the verb is roared.","In \u2018The engine roared loudly,\u2019 the verb is loudly.","In \u2018The engine roared loudly,\u2019 the verb is the."], correct: "In \u2018The engine roared loudly,\u2019 the verb is roared." }
+      ]
+    },
+    "complete-sentences": {
+      title: "Complete Sentences",
+      rule: "A complete sentence needs a subject (who or what) and a verb (the action), and it has to express a complete thought. \u201CBecause the engine stalled\u201D isn't complete \u2014 it's a fragment. \u201CThe truck stalled because the engine overheated\u201D is complete.",
+      examples: [
+        { broken: "Under the hood of the truck.", fixed: "There was a leak under the hood of the truck." },
+        { broken: "Because the battery died.", fixed: "The truck wouldn't start because the battery died." },
+        { broken: "Fixing the brakes all afternoon.", fixed: "Ryder spent all afternoon fixing the brakes." }
+      ],
+      tickets: [
+        { text: "After the tow truck arrived.", needsRepair: true },
+        { text: "The mechanic checked the oil.", needsRepair: false },
+        { text: "Spinning wheels in the mud.", needsRepair: true },
+        { text: "Evan drove to the garage.", needsRepair: false },
+        { text: "Because it was raining hard.", needsRepair: true }
+      ],
+      fixits: [
+        { sentence: "The tow truck ___ down the road.", options: ["rumbling","rumbled","to rumble"], correct: "rumbled" },
+        { sentence: "___ the engine stalled, we pulled over.", options: ["When","Stalling","Stalled"], correct: "When" },
+        { sentence: "The mechanic ___ the tire before we left.", options: ["checking","checked","to check"], correct: "checked" }
+      ],
+      torque: [
+        { options: ["Running out of gas on the highway.","We ran out of gas on the highway.","Out of gas on the highway.","Running out of gas."], correct: "We ran out of gas on the highway." },
+        { options: ["Because the brakes were worn out.","The brakes were worn out.","Worn out brakes.","Being worn out."], correct: "The brakes were worn out." },
+        { options: ["Fixing the flat tire in the rain.","In the rain fixing the flat tire.","We fixed the flat tire in the rain.","Flat tire in the rain."], correct: "We fixed the flat tire in the rain." },
+        { options: ["The tow truck, arriving late.","Arriving late, the tow truck.","The tow truck arrived late.","Late arriving tow truck."], correct: "The tow truck arrived late." }
+      ]
+    },
+    "commas-series": {
+      title: "Commas in a Series",
+      rule: "When you list three or more items in a row, put a comma after each one except the last. \u201CWe packed wrenches, pliers, and a jack.\u201D",
+      examples: [
+        { broken: "We packed wrenches pliers and a jack.", fixed: "We packed wrenches, pliers, and a jack." },
+        { broken: "The truck was loud slow and old.", fixed: "The truck was loud, slow, and old." },
+        { broken: "He checked the oil the tires and the brakes.", fixed: "He checked the oil, the tires, and the brakes." }
+      ],
+      tickets: [
+        { text: "We need a wrench a hammer and a flashlight.", needsRepair: true },
+        { text: "The garage was clean, organized, and bright.", needsRepair: false },
+        { text: "Ryder likes shop class, cooking, and reading.", needsRepair: false },
+        { text: "The tow truck was big loud and fast.", needsRepair: true },
+        { text: "She checked the brakes the lights and the horn.", needsRepair: true }
+      ],
+      fixits: [
+        { sentence: "We packed wrenches___ pliers, and a jack.", options: [",", "no comma", ";"], correct: "," },
+        { sentence: "The truck was loud, slow___ and old.", options: [",", "no comma", "."], correct: "," },
+        { sentence: "He checked the oil, the tires___ and the brakes.", options: [",", "no comma", ";"], correct: "," }
+      ],
+      torque: [
+        { options: ["We need a wrench, a hammer, and a flashlight.","We need a wrench a hammer and a flashlight.","We need a wrench, a hammer and, a flashlight.","We need, a wrench a hammer, and a flashlight."], correct: "We need a wrench, a hammer, and a flashlight." },
+        { options: ["The shop was loud messy and busy.","The shop was loud, messy busy.","The shop was loud, messy, and busy.","The shop was, loud messy and busy."], correct: "The shop was loud, messy, and busy." },
+        { options: ["She checked the brakes, the lights, and the horn.","She checked the brakes the lights and the horn.","She checked the brakes, the lights and, the horn.","She checked, the brakes the lights and the horn."], correct: "She checked the brakes, the lights, and the horn." },
+        { options: ["Ryder likes wrenches gears and engines.","Ryder likes wrenches, gears, and engines.","Ryder likes wrenches, gears and, engines.","Ryder likes, wrenches gears, and engines."], correct: "Ryder likes wrenches, gears, and engines." }
+      ]
+    },
+    "commas-intro": {
+      title: "Commas After Introductions",
+      rule: "When a sentence starts with a word or phrase that isn't the main subject (like Yesterday, After lunch, or Before we left), put a comma after it before the main sentence starts.",
+      examples: [
+        { broken: "Yesterday we towed three cars.", fixed: "Yesterday, we towed three cars." },
+        { broken: "After lunch we started the repair.", fixed: "After lunch, we started the repair." },
+        { broken: "Before we left Ryder checked the oil.", fixed: "Before we left, Ryder checked the oil." }
+      ],
+      tickets: [
+        { text: "Suddenly the engine backfired.", needsRepair: true },
+        { text: "The engine backfired suddenly.", needsRepair: false },
+        { text: "After the storm we checked for damage.", needsRepair: true },
+        { text: "We checked for damage after the storm.", needsRepair: false },
+        { text: "Finally the truck started.", needsRepair: true }
+      ],
+      fixits: [
+        { sentence: "Suddenly___ the engine backfired.", options: [",", "no comma", "."], correct: "," },
+        { sentence: "After the storm___ we checked for damage.", options: [",", "no comma", ";"], correct: "," },
+        { sentence: "Finally___ the truck started.", options: [",", "no comma", "!"], correct: "," }
+      ],
+      torque: [
+        { options: ["Yesterday we towed three cars.","Yesterday, we towed three cars.","Yesterday; we towed three cars.","Yesterday we, towed three cars."], correct: "Yesterday, we towed three cars." },
+        { options: ["Before we left Ryder checked the oil.","Before we left, Ryder checked the oil.","Before, we left Ryder checked the oil.","Before we left Ryder, checked the oil."], correct: "Before we left, Ryder checked the oil." },
+        { options: ["After lunch we started the repair.","After lunch, we started the repair.","After, lunch we started the repair.","After lunch we, started the repair."], correct: "After lunch, we started the repair." },
+        { options: ["Eventually the truck was fixed.","Eventually, the truck was fixed.","Eventually; the truck was fixed.","Eventually the truck, was fixed."], correct: "Eventually, the truck was fixed." }
+      ]
+    },
+    "compound-sentences": {
+      title: "Compound Sentences",
+      rule: "A compound sentence joins two complete sentences with a comma and a joining word like and, but, or, or so. \u201CThe truck stalled, but Ryder fixed it fast.\u201D",
+      examples: [
+        { broken: "The truck stalled but Ryder fixed it fast.", fixed: "The truck stalled, but Ryder fixed it fast." },
+        { broken: "We checked the oil and we checked the brakes.", fixed: "We checked the oil, and we checked the brakes." },
+        { broken: "The tire was flat so we called for help.", fixed: "The tire was flat, so we called for help." }
+      ],
+      tickets: [
+        { text: "The engine roared and the truck lurched forward.", needsRepair: true },
+        { text: "We fixed the flat, and then we left.", needsRepair: false },
+        { text: "It was late but the shop stayed open.", needsRepair: true },
+        { text: "Ryder likes shop class, but he dislikes writing.", needsRepair: false },
+        { text: "The battery died so we jump-started it.", needsRepair: true }
+      ],
+      fixits: [
+        { sentence: "The engine roared___ and the truck lurched forward.", options: [",", "no comma", "."], correct: "," },
+        { sentence: "It was late___ but the shop stayed open.", options: [",", "no comma", ";"], correct: "," },
+        { sentence: "The battery died___ so we jump-started it.", options: [",", "no comma", "!"], correct: "," }
+      ],
+      torque: [
+        { options: ["We checked the oil and we checked the brakes.","We checked the oil, and we checked the brakes.","We checked the oil and, we checked the brakes.","We, checked the oil and we checked the brakes."], correct: "We checked the oil, and we checked the brakes." },
+        { options: ["The tire was flat so we called for help.","The tire was flat, so we called for help.","The tire was flat so, we called for help.","The tire, was flat so we called for help."], correct: "The tire was flat, so we called for help." },
+        { options: ["Ryder likes shop class but he dislikes writing.","Ryder likes shop class, but he dislikes writing.","Ryder likes shop class but, he dislikes writing.","Ryder, likes shop class but he dislikes writing."], correct: "Ryder likes shop class, but he dislikes writing." },
+        { options: ["The truck stalled but Ryder fixed it fast.","The truck stalled, but Ryder fixed it fast.","The truck stalled but, Ryder fixed it fast.","The truck, stalled but Ryder fixed it fast."], correct: "The truck stalled, but Ryder fixed it fast." }
+      ]
+    },
+    "run-ons": {
+      title: "Run-ons & Comma Splices",
+      rule: "Two complete sentences can't just be jammed together \u2014 and a comma alone isn't strong enough to join them either, that's called a comma splice. Use a period, or a comma with a joining word like and, but, or so.",
+      examples: [
+        { broken: "The engine stalled we pulled over.", fixed: "The engine stalled, so we pulled over." },
+        { broken: "The tire went flat, we changed it.", fixed: "The tire went flat, and we changed it." },
+        { broken: "Ryder loves shop class he hates writing.", fixed: "Ryder loves shop class, but he hates writing." }
+      ],
+      tickets: [
+        { text: "The brakes squealed we checked them right away.", needsRepair: true },
+        { text: "The brakes squealed, so we checked them right away.", needsRepair: false },
+        { text: "It started raining, we kept working anyway.", needsRepair: true },
+        { text: "It started raining, but we kept working anyway.", needsRepair: false },
+        { text: "The truck wouldn't start we called for a tow.", needsRepair: true }
+      ],
+      fixits: [
+        { sentence: "The brakes squealed___ we checked them right away.", options: [", so", " we", ","], correct: ", so" },
+        { sentence: "It started raining___ we kept working anyway.", options: [",", ", but", " but"], correct: ", but" },
+        { sentence: "The truck wouldn't start___ we called for a tow.", options: [", so", " so", ","], correct: ", so" }
+      ],
+      torque: [
+        { options: ["The engine stalled we pulled over.","The engine stalled, we pulled over.","The engine stalled, so we pulled over.","The engine stalled so we pulled over."], correct: "The engine stalled, so we pulled over." },
+        { options: ["The tire went flat, we changed it.","The tire went flat we changed it.","The tire went flat, and we changed it.","The tire went flat and, we changed it."], correct: "The tire went flat, and we changed it." },
+        { options: ["Ryder loves shop class he hates writing.","Ryder loves shop class, he hates writing.","Ryder loves shop class, but he hates writing.","Ryder loves shop class but he hates, writing."], correct: "Ryder loves shop class, but he hates writing." },
+        { options: ["We fixed the flat we were back on the road.","We fixed the flat, we were back on the road.","We fixed the flat, and we were back on the road.","We fixed the flat and, we were back on the road."], correct: "We fixed the flat, and we were back on the road." }
+      ]
+    },
+    "pronoun-agreement": {
+      title: "Pronoun-Antecedent Agreement",
+      rule: "A pronoun has to match the noun it stands for in number. One thing gets \u201Cit.\u201D More than one gets \u201Cthey\u201D or \u201Cthem.\u201D \u201CThe truck lost its tire\u201D \u2014 not \u201Ctheir tire,\u201D since \u201Ctruck\u201D is one thing.",
+      examples: [
+        { broken: "The tires needed air, so we filled it up.", fixed: "The tires needed air, so we filled them up." },
+        { broken: "The truck needed gas, so we filled them up.", fixed: "The truck needed gas, so we filled it up." },
+        { broken: "The mechanics finished the job, and it went home.", fixed: "The mechanics finished the job, and they went home." }
+      ],
+      tickets: [
+        { text: "The wrenches were dirty, so we cleaned it.", needsRepair: true },
+        { text: "The truck broke down, so we towed it.", needsRepair: false },
+        { text: "The customers waited, and it left early.", needsRepair: true },
+        { text: "The tools were put away, and they were locked up.", needsRepair: false },
+        { text: "The engine overheated, so we let them cool.", needsRepair: true }
+      ],
+      fixits: [
+        { sentence: "The wrenches were dirty, so we cleaned ___.", options: ["it","them","him"], correct: "them" },
+        { sentence: "The customers waited, and ___ left early.", options: ["it","they","she"], correct: "they" },
+        { sentence: "The engine overheated, so we let ___ cool.", options: ["them","it","her"], correct: "it" }
+      ],
+      torque: [
+        { options: ["The tires needed air, so we filled it up.","The tires needed air, so we filled them up.","The tires needed air, so we filled him up.","The tires needed air, so we filled her up."], correct: "The tires needed air, so we filled them up." },
+        { options: ["The truck needed gas, so we filled them up.","The truck needed gas, so we filled it up.","The truck needed gas, so we filled they up.","The truck needed gas, so we filled us up."], correct: "The truck needed gas, so we filled it up." },
+        { options: ["The mechanics finished the job, and it went home.","The mechanics finished the job, and they went home.","The mechanics finished the job, and she went home.","The mechanics finished the job, and it goes home."], correct: "The mechanics finished the job, and they went home." },
+        { options: ["The bolts were loose, so we tightened it.","The bolts were loose, so we tightened them.","The bolts were loose, so we tightened him.","The bolts were loose, so we tightened her."], correct: "The bolts were loose, so we tightened them." }
+      ]
+    },
+    "contractions": {
+      title: "Contractions",
+      rule: "An apostrophe can also mean letters are missing \u2014 that's a contraction. \u201CDo not\u201D becomes \u201Cdon't.\u201D \u201CCan not\u201D becomes \u201Ccan't.\u201D Don't mix these up with possessives: it's = it is, its = belongs to it.",
+      examples: [
+        { broken: "We dont have the right size wrench.", fixed: "We don't have the right size wrench." },
+        { broken: "Its going to take an hour to fix.", fixed: "It's going to take an hour to fix." },
+        { broken: "The truck wont start this morning.", fixed: "The truck won't start this morning." }
+      ],
+      tickets: [
+        { text: "We cant find the missing bolt.", needsRepair: true },
+        { text: "It's almost time to close the shop.", needsRepair: false },
+        { text: "Theyre bringing the truck in tomorrow.", needsRepair: true },
+        { text: "The shop isn't open on Sundays.", needsRepair: false },
+        { text: "Ryder doesnt like doing paperwork.", needsRepair: true }
+      ],
+      fixits: [
+        { sentence: "We ___ find the missing bolt.", options: ["cant","can't","ca'nt"], correct: "can't" },
+        { sentence: "___ bringing the truck in tomorrow.", options: ["Theyre","They're","Their"], correct: "They're" },
+        { sentence: "Ryder ___ like doing paperwork.", options: ["doesnt","does'nt","doesn't"], correct: "doesn't" }
+      ],
+      torque: [
+        { options: ["We dont have the right wrench.","We don't have the right wrench.","We do'nt have the right wrench.","We don't, have the right wrench."], correct: "We don't have the right wrench." },
+        { options: ["Its going to take an hour.","It's going to take an hour.","Its' going to take an hour.","I'ts going to take an hour."], correct: "It's going to take an hour." },
+        { options: ["The truck wont start this morning.","The truck won't start this morning.","The truck wo'nt start this morning.","The truck won't, start this morning."], correct: "The truck won't start this morning." },
+        { options: ["Theyre bringing the truck tomorrow.","They're bringing the truck tomorrow.","Their bringing the truck tomorrow.","There bringing the truck tomorrow."], correct: "They're bringing the truck tomorrow." }
+      ]
+    },
+    "adjectives-adverbs": {
+      title: "Adjectives vs. Adverbs",
+      rule: "Adjectives describe nouns (a good mechanic). Adverbs describe verbs and often end in -ly (he works well, drives carefully). Don't use an adjective where an adverb belongs \u2014 \u201Che drives good\u201D should be \u201Che drives well.\u201D",
+      examples: [
+        { broken: "He fixed the truck quick.", fixed: "He fixed the truck quickly." },
+        { broken: "She drives real careful in the rain.", fixed: "She drives really carefully in the rain." },
+        { broken: "The engine runs good now.", fixed: "The engine runs well now." }
+      ],
+      tickets: [
+        { text: "He works slow but careful.", needsRepair: true },
+        { text: "She checked the brakes carefully.", needsRepair: false },
+        { text: "The truck stopped sudden.", needsRepair: true },
+        { text: "He explained the repair clearly.", needsRepair: false },
+        { text: "They finished the job quick.", needsRepair: true }
+      ],
+      fixits: [
+        { sentence: "He works slow but ___.", options: ["careful","carefully","carefuly"], correct: "carefully" },
+        { sentence: "The truck stopped ___.", options: ["sudden","suddenly","suddenley"], correct: "suddenly" },
+        { sentence: "They finished the job ___.", options: ["quick","quickly","quik"], correct: "quickly" }
+      ],
+      torque: [
+        { options: ["He fixed the truck quick.","He fixed the truck quickly.","He fixed the truck quicker.","He fixed the truck quickest."], correct: "He fixed the truck quickly." },
+        { options: ["The engine runs good now.","The engine runs well now.","The engine runs goodly now.","The engine runs best now."], correct: "The engine runs well now." },
+        { options: ["She drives real careful.","She drives really careful.","She drives really carefully.","She drives real carefully."], correct: "She drives really carefully." },
+        { options: ["He did the job perfect.","He did the job perfectly.","He did the job perfecter.","He did the job perfection."], correct: "He did the job perfectly." }
+      ]
+    },
+    "double-negatives": {
+      title: "Double Negatives",
+      rule: "Don't use two negative words together \u2014 they cancel each other out in a confusing way. \u201CI don't have no tools\u201D should be \u201CI don't have any tools.\u201D",
+      examples: [
+        { broken: "I don't have no wrench.", fixed: "I don't have any wrench." },
+        { broken: "We didn't see nothing wrong.", fixed: "We didn't see anything wrong." },
+        { broken: "There isn't nobody in the shop.", fixed: "There isn't anybody in the shop." }
+      ],
+      tickets: [
+        { text: "I don't have no gloves.", needsRepair: true },
+        { text: "I don't have any gloves.", needsRepair: false },
+        { text: "We didn't find nothing broken.", needsRepair: true },
+        { text: "We didn't find anything broken.", needsRepair: false },
+        { text: "There isn't nobody here.", needsRepair: true }
+      ],
+      fixits: [
+        { sentence: "I don't have ___ gloves.", options: ["no","any","none"], correct: "any" },
+        { sentence: "We didn't find ___ broken.", options: ["nothing","anything","none"], correct: "anything" },
+        { sentence: "There isn't ___ here.", options: ["nobody","anybody","no one"], correct: "anybody" }
+      ],
+      torque: [
+        { options: ["I don't have no wrench.","I don't have a wrench.","I haven't no wrench.","I don't got no wrench."], correct: "I don't have a wrench." },
+        { options: ["We didn't see nothing wrong.","We didn't see anything wrong.","We seen nothing wrong.","We didn't seen anything wrong."], correct: "We didn't see anything wrong." },
+        { options: ["There isn't nobody in the shop.","There isn't anybody in the shop.","There ain't nobody in the shop.","There isn't no one in the shop."], correct: "There isn't anybody in the shop." },
+        { options: ["He doesn't have no tools.","He doesn't have any tools.","He don't have no tools.","He haven't no tools."], correct: "He doesn't have any tools." }
+      ]
+    },
+    "quotation-marks": {
+      title: "Quotation Marks for Dialogue",
+      rule: "When someone is speaking, put quotation marks around their exact words. End punctuation for the spoken words goes inside the closing quotation mark. \u201CThe truck is ready,\u201D said Ryder.",
+      examples: [
+        { broken: "Ryder said, The brakes are fixed.", fixed: "Ryder said, \"The brakes are fixed.\"" },
+        { broken: "\"Watch your step, said Evan.", fixed: "\"Watch your step,\" said Evan." },
+        { broken: "\"Is it ready\" asked Amanda.", fixed: "\"Is it ready?\" asked Amanda." }
+      ],
+      tickets: [
+        { text: "Ryder said, The truck needs new brakes.", needsRepair: true },
+        { text: "\"The truck needs new brakes,\" Ryder said.", needsRepair: false },
+        { text: "\"Watch out for that oil, Evan warned.", needsRepair: true },
+        { text: "\"Watch out for that oil,\" Evan warned.", needsRepair: false },
+        { text: "Amanda asked, Is the truck ready yet?", needsRepair: true }
+      ],
+      fixits: [
+        { sentence: "Ryder said, ___", options: ["The brakes are fixed.", "\"The brakes are fixed.\"", "'The brakes are fixed.'"], correct: "\"The brakes are fixed.\"" },
+        { sentence: "___ Evan warned.", options: ["Watch out for that oil,", "\"Watch out for that oil,\"", "\"Watch out for that oil\","], correct: "\"Watch out for that oil,\"" },
+        { sentence: "Amanda asked, ___", options: ["Is the truck ready yet?", "\"Is the truck ready yet?\"", "\"Is the truck ready yet\"?"], correct: "\"Is the truck ready yet?\"" }
+      ],
+      torque: [
+        { options: ["Ryder said, The truck is fixed.", "Ryder said, \"The truck is fixed.\"", "Ryder said \"The truck is fixed\".", "Ryder said, \"The truck is fixed"], correct: "Ryder said, \"The truck is fixed.\"" },
+        { options: ["\"Hand me that wrench,\" Ryder said.", "Hand me that wrench, Ryder said.", "\"Hand me that wrench, Ryder said.\"", "Hand me that wrench, \"Ryder said.\""], correct: "\"Hand me that wrench,\" Ryder said." },
+        { options: ["Evan asked, Is the tow truck ready?", "Evan asked, \"Is the tow truck ready?\"", "Evan asked \"Is the tow truck ready\"?", "Evan asked, \"Is the tow truck ready\""], correct: "Evan asked, \"Is the tow truck ready?\"" },
+        { options: ["\"Careful, the jack is loose,\" Amanda warned.", "Careful, the jack is loose, Amanda warned.", "\"Careful, the jack is loose, Amanda warned.\"", "Careful, \"the jack is loose,\" Amanda warned."], correct: "\"Careful, the jack is loose,\" Amanda warned." }
+      ]
+    }
+  },
+  hadley: {
+    "nouns-verbs": {
+      title: "Nouns & Verbs",
+      rule: "A noun is a naming word \u2014 it names a person, place, or thing (like dog, park, or truck). A verb is an action word \u2014 it tells what someone or something does (like run, jump, or fix). Every good sentence needs both.",
+      examples: [
+        { text: "The <strong>dog</strong> (noun) <strong>ran</strong> (verb) fast." },
+        { text: "<strong>Hadley</strong> (noun) <strong>read</strong> (verb) a book." },
+        { text: "The <strong>truck</strong> (noun) <strong>stopped</strong> (verb)." }
+      ],
+      spotZones: { trueLabel: "Noun", falseLabel: "Verb", trueIcon: "\uD83C\uDFF7\uFE0F", falseIcon: "\u2699\uFE0F" },
+      spotInstructions: "Drag each word into the bin where it belongs.",
+      tickets: [
+        { text: "dog", needsRepair: true },
+        { text: "jump", needsRepair: false },
+        { text: "book", needsRepair: true },
+        { text: "read", needsRepair: false },
+        { text: "run", needsRepair: false }
+      ],
+      fixits: [
+        { sentence: "The ___ barked loudly.", options: ["dog","bark","loudly"], correct: "dog" },
+        { sentence: "She will ___ to the park.", options: ["park","walk","fast"], correct: "walk" },
+        { sentence: "The ___ is red.", options: ["truck","drive","fast"], correct: "truck" }
+      ],
+      torque: [
+        { options: ["In \u2018The cat sat on the mat,\u2019 the subject is cat.","In \u2018The cat sat on the mat,\u2019 the subject is sat.","In \u2018The cat sat on the mat,\u2019 the subject is on.","In \u2018The cat sat on the mat,\u2019 the subject is the."], correct: "In \u2018The cat sat on the mat,\u2019 the subject is cat." },
+        { options: ["In \u2018Hadley reads books,\u2019 the verb is Hadley.","In \u2018Hadley reads books,\u2019 the verb is reads.","In \u2018Hadley reads books,\u2019 the verb is books.","In \u2018Hadley reads books,\u2019 the verb is the."], correct: "In \u2018Hadley reads books,\u2019 the verb is reads." },
+        { options: ["In \u2018The dog ran fast,\u2019 the subject is dog.","In \u2018The dog ran fast,\u2019 the subject is ran.","In \u2018The dog ran fast,\u2019 the subject is fast.","In \u2018The dog ran fast,\u2019 the subject is the."], correct: "In \u2018The dog ran fast,\u2019 the subject is dog." },
+        { options: ["In \u2018The truck stopped suddenly,\u2019 the verb is truck.","In \u2018The truck stopped suddenly,\u2019 the verb is stopped.","In \u2018The truck stopped suddenly,\u2019 the verb is suddenly.","In \u2018The truck stopped suddenly,\u2019 the verb is the."], correct: "In \u2018The truck stopped suddenly,\u2019 the verb is stopped." }
+      ]
+    },
+    "capitalization": {
+      title: "Capitalization",
+      rule: "Every sentence starts with a capital letter. The word \u201CI\u201D is always capital. Names of people and places are capitalized too.",
+      examples: [
+        { broken: "the dog ran fast.", fixed: "The dog ran fast." },
+        { broken: "my sister and i played outside.", fixed: "My sister and I played outside." },
+        { broken: "we live in georgia.", fixed: "We live in Georgia." }
+      ],
+      tickets: [
+        { text: "the sun is bright today.", needsRepair: true },
+        { text: "Hadley likes to read.", needsRepair: false },
+        { text: "my brother and i play games.", needsRepair: true },
+        { text: "The dog is brown.", needsRepair: false },
+        { text: "we went to the park.", needsRepair: true }
+      ],
+      fixits: [
+        { sentence: "___ sun is bright today.", options: ["the","The","THE"], correct: "The" },
+        { sentence: "My brother and ___ play games.", options: ["i","I","me"], correct: "I" },
+        { sentence: "___ went to the park.", options: ["we","We","WE"], correct: "We" }
+      ],
+      torque: [
+        { options: ["the dog ran fast.","The dog ran fast.","The Dog ran fast.","the Dog ran Fast."], correct: "The dog ran fast." },
+        { options: ["my sister and i played.","My sister and I played.","My sister and i played.","my Sister and I played."], correct: "My sister and I played." },
+        { options: ["we live in georgia.","We live in Georgia.","we live in Georgia.","We live in georgia."], correct: "We live in Georgia." },
+        { options: ["hadley likes to read.","Hadley likes to read.","hadley Likes to read.","Hadley Likes to Read."], correct: "Hadley likes to read." }
+      ]
+    },
+    "end-punctuation": {
+      title: "End Punctuation",
+      rule: "A sentence that tells something ends with a period (.). A sentence that asks something ends with a question mark (?).",
+      examples: [
+        { broken: "The dog is happy", fixed: "The dog is happy." },
+        { broken: "Do you like dogs", fixed: "Do you like dogs?" },
+        { broken: "I see a bird", fixed: "I see a bird." }
+      ],
+      tickets: [
+        { text: "Do you like cats", needsRepair: true },
+        { text: "The sky is blue.", needsRepair: false },
+        { text: "Can we go outside", needsRepair: true },
+        { text: "I have a red ball.", needsRepair: false },
+        { text: "What is your name", needsRepair: true }
+      ],
+      fixits: [
+        { sentence: "Do you like cats___", options: [".", "?", "!"], correct: "?" },
+        { sentence: "Can we go outside___", options: [".", "?", "!"], correct: "?" },
+        { sentence: "What is your name___", options: [".", "?", "!"], correct: "?" }
+      ],
+      torque: [
+        { options: ["Where is the ball.","Where is the ball?","Where is the ball!","Where is the ball"], correct: "Where is the ball?" },
+        { options: ["I like ice cream?","I like ice cream!","I like ice cream.","I like ice cream"], correct: "I like ice cream." },
+        { options: ["Do you want to play.","Do you want to play?","Do you want to play!","Do you want to play"], correct: "Do you want to play?" },
+        { options: ["The cat is soft?","The cat is soft!","The cat is soft.","The cat is soft"], correct: "The cat is soft." }
+      ]
+    },
+    "complete-sentences": {
+      title: "Complete Sentences",
+      rule: "A complete sentence needs a naming part (who or what) and a telling part (what they do). \u201CRan fast\u201D isn't complete \u2014 it doesn't say who. \u201CThe dog ran fast\u201D is complete.",
+      examples: [
+        { broken: "Ran to the park.", fixed: "Hadley ran to the park." },
+        { broken: "The little cat.", fixed: "The little cat slept." },
+        { broken: "Jumped very high.", fixed: "The frog jumped very high." }
+      ],
+      tickets: [
+        { text: "Ate breakfast quickly.", needsRepair: true },
+        { text: "The bird flew away.", needsRepair: false },
+        { text: "The tall tree.", needsRepair: true },
+        { text: "She likes pizza.", needsRepair: false },
+        { text: "Ran around the yard.", needsRepair: true }
+      ],
+      fixits: [
+        { sentence: "The dog ___ around the yard.", options: ["running","ran","to run"], correct: "ran" },
+        { sentence: "___ ate breakfast quickly.", options: ["Hadley","Quickly","Breakfast"], correct: "Hadley" },
+        { sentence: "The tall tree ___ in the wind.", options: ["swaying","swayed","to sway"], correct: "swayed" }
+      ],
+      torque: [
+        { options: ["Ran to the park.","Hadley ran to the park.","To the park ran.","Running to the park."], correct: "Hadley ran to the park." },
+        { options: ["The little cat.","The little cat slept.","Slept the little cat.","Little cat sleeping."], correct: "The little cat slept." },
+        { options: ["Jumped very high.","The frog jumped very high.","Very high jumped.","Jumping very high."], correct: "The frog jumped very high." },
+        { options: ["The red ball.","The red ball bounced.","Bounced the red ball.","Red ball bouncing."], correct: "The red ball bounced." }
+      ]
+    }
+  }
+};
+
+const LESSON_ORDER = ["nouns-verbs","complete-sentences","capitalization","end-punctuation","commas-series","commas-intro","compound-sentences","run-ons","subject-verb","verb-tense","pronoun-agreement","apostrophes","contractions","adjectives-adverbs","double-negatives","quotation-marks","confused-words"];
+
+const RANKS = [
+  { min: 0,    title: "Shop Sweeper" },
+  { min: 100,  title: "Grease Monkey" },
+  { min: 250,  title: "Apprentice Mechanic" },
+  { min: 450,  title: "Journeyman Mechanic" },
+  { min: 700,  title: "Senior Mechanic" },
+  { min: 1000, title: "Master Mechanic" }
+];
+
+function rankFor(xp){
+  let current = RANKS[0], next = RANKS[1];
+  for (let i = 0; i < RANKS.length; i++){
+    if (xp >= RANKS[i].min){ current = RANKS[i]; next = RANKS[i+1] || null; }
+  }
+  return { current, next };
+}
+
+function computeCerts(stats){
+  const certs = [];
+  if (stats.completed >= 1) certs.push("First Repair Certified");
+  if (stats.lessonDone["nouns-verbs"]) certs.push("Parts of Speech Certified");
+  if (stats.lessonDone["complete-sentences"]) certs.push("Sentence Structure Certified");
+  if (stats.lessonDone["end-punctuation"]) certs.push("Punctuation Certified");
+  if (stats.lessonDone["compound-sentences"]) certs.push("Comma Certified");
+  if (stats.lessonDone["apostrophes"]) certs.push("Apostrophe Certified");
+  if (stats.lessonDone["subject-verb"]) certs.push("Agreement Certified");
+  if (stats.lessonDone["verb-tense"]) certs.push("Tense Certified");
+  if (stats.lessonDone["contractions"]) certs.push("Contraction Certified");
+  if (stats.lessonDone["adjectives-adverbs"]) certs.push("Style Certified");
+  if (stats.lessonDone["quotation-marks"]) certs.push("Dialogue Certified");
+  if (stats.completed >= stats.total) certs.push("Shop Foreman \u2014 Master Mechanic");
+  return certs;
+}
+
+// ---------------------------------------------------------------------
+// STATE
+// ---------------------------------------------------------------------
+let currentKid = null;
+let currentLessonId = null;
+let currentStage = null;
+let kidProgress = {};
+let kidMeta = { xp: 0 };
+const params = new URLSearchParams(location.search);
+const reviewMode = params.get("review") === "1";
+
+let activeDragChip = null;
+let activeDragGhost = null;
+let spotGame = null;
+let fixitGame = null;
+
+document.addEventListener("pointermove", (e) => {
+  if (!activeDragGhost) return;
+  activeDragGhost.style.left = (e.clientX - activeDragGhost.offsetWidth / 2) + "px";
+  activeDragGhost.style.top = (e.clientY - activeDragGhost.offsetHeight / 2) + "px";
+});
+document.addEventListener("pointerup", (e) => {
+  if (!activeDragChip) return;
+  const dropTarget = document.elementFromPoint(e.clientX, e.clientY);
+  const zoneEl = dropTarget ? dropTarget.closest(".sort-zone") : null;
+  const slotEl = dropTarget ? dropTarget.closest(".fixit-slot") : null;
+  if (zoneEl && spotGame) spotGame.tryMatch(zoneEl, activeDragChip);
+  else if (slotEl && fixitGame && !slotEl.classList.contains("filled")) fixitGame.tryMatch(slotEl, activeDragChip);
+  activeDragChip.classList.remove("dragging");
+  if (activeDragGhost) { activeDragGhost.remove(); activeDragGhost = null; }
+  activeDragChip = null;
+});
+
+function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+function escapeHtml(s){
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function kidStats(){
+  const lessons = LESSONS[currentKid];
+  let completed = 0;
+  const lessonDone = {};
+  Object.keys(lessons).forEach(id => {
+    const p = kidProgress[id];
+    const done = !!(p && p.torque);
+    lessonDone[id] = done;
+    if (done) completed++;
+  });
+  return { completed, total: Object.keys(lessons).length, lessonDone };
+}
+
+// ---------------------------------------------------------------------
+// RENDER: KID PICKER
+// ---------------------------------------------------------------------
+function renderKidPicker(){
+  currentKid = null;
+  const app = document.getElementById("app");
+  app.innerHTML = `
+    <div class="masthead">
+      <div class="tag">Wade Classical</div>
+      <h1>The Grammar Garage</h1>
+      <div class="sub">diagnose it. fix it. torque test it.</div>
+      <hr class="rule-line">
+    </div>
+    <div class="kid-row" id="kidRow">
+      ${Object.keys(LESSONS).map(k => `<button class="kid-badge" data-kid="${k}">${cap(k)}</button>`).join("")}
+    </div>
+    <div style="text-align:center; margin-top:24px; font-family:'Oswald',sans-serif; font-size:13px;">
+      <a href="?${reviewMode ? '' : 'review=1'}" style="color:var(--mist); text-decoration:none; text-transform:uppercase; letter-spacing:.05em;">${reviewMode ? '\u2190 Back to the Garage' : "Parent Inspection \u2192"}</a>
+    </div>
+  `;
+  document.querySelectorAll("[data-kid]").forEach(btn => {
+    btn.onclick = () => openKid(btn.dataset.kid);
+  });
+}
+
+function openKid(kid){
+  currentKid = kid;
+  Promise.all([
+    db.ref(`garage/${kid}/progress`).once("value"),
+    db.ref(`garage/${kid}/meta`).once("value")
+  ]).then(([progSnap, metaSnap]) => {
+    kidProgress = progSnap.val() || {};
+    kidMeta = Object.assign({ xp: 0 }, metaSnap.val() || {});
+    if (reviewMode) renderKidReview(); else renderLessonPicker();
+  });
+}
+
+function renderRankbar(){
+  const stats = kidStats();
+  const { current, next } = rankFor(kidMeta.xp || 0);
+  const span = next ? next.min - current.min : 1;
+  const into = next ? (kidMeta.xp - current.min) : span;
+  const pct = Math.max(4, Math.min(100, Math.round((into / span) * 100)));
+  const certs = computeCerts(stats);
+  return `
+    <div class="rankbar">
+      <div class="rank-title">${current.title}</div>
+      <div class="xp-track"><div class="xp-fill" style="width:${pct}%"></div></div>
+      <div class="xp-label">${kidMeta.xp || 0} XP${next ? ` \u2014 ${next.min - kidMeta.xp} to ${next.title}` : " \u2014 top rank!"}</div>
+      ${certs.length ? `<div class="badge-row">${certs.map(c => `<span class="cert-badge">${c}</span>`).join("")}</div>` : ""}
+    </div>
+  `;
+}
+
+// ---------------------------------------------------------------------
+// RENDER: LESSON PICKER
+// ---------------------------------------------------------------------
+function renderLessonPicker(){
+  currentLessonId = null;
+  const lessons = LESSONS[currentKid];
+  const app = document.getElementById("app");
+  let html = `<a class="backlink" id="backBtn">\u2190 Switch Mechanic</a>`;
+  html += `<div class="masthead" style="margin-bottom:14px;"><h1 style="font-size:24px;">${cap(currentKid)}'s Bay</h1></div>`;
+  html += renderRankbar();
+
+  LESSON_ORDER.forEach(id => {
+    const lesson = lessons[id];
+    if (!lesson) return;
+    const done = !!(kidProgress[id] && kidProgress[id].torque);
+    html += `
+      <div class="panel job-card" data-open-lesson="${id}">
+        <div>
+          <div class="job-title">${lesson.title}</div>
+          <div class="job-sub">4 repair stages</div>
+        </div>
+        <div class="status-pill ${done ? 'done' : (kidProgress[id] ? 'progress' : 'new')}">${done ? 'Certified' : (kidProgress[id] ? 'In the Bay' : 'Not Started')}</div>
+      </div>
+    `;
+  });
+
+  app.innerHTML = html;
+  document.getElementById("backBtn").onclick = renderKidPicker;
+  document.querySelectorAll("[data-open-lesson]").forEach(card => {
+    card.onclick = () => openLesson(card.dataset.openLesson);
+  });
+}
+
+// ---------------------------------------------------------------------
+// RENDER: LESSON (4 stages)
+// ---------------------------------------------------------------------
+const STAGES = [
+  { id: "hood", label: "Under the Hood" },
+  { id: "spot", label: "Spot the Problem" },
+  { id: "fixit", label: "Fix It" },
+  { id: "torque", label: "Torque Test" }
+];
+
+function openLesson(lessonId){
+  currentLessonId = lessonId;
+  if (!kidProgress[lessonId]) kidProgress[lessonId] = {};
+  currentStage = firstIncompleteStage();
+  renderLesson();
+}
+
+function firstIncompleteStage(){
+  const p = kidProgress[currentLessonId];
+  for (const s of STAGES){
+    if (!p[s.id]) return s.id;
+  }
+  return "torque";
+}
+
+function stageUnlocked(stageId){
+  const idx = STAGES.findIndex(s => s.id === stageId);
+  if (idx === 0) return true;
+  return !!kidProgress[currentLessonId][STAGES[idx-1].id];
+}
+
+function renderLesson(){
+  const lesson = LESSONS[currentKid][currentLessonId];
+  const p = kidProgress[currentLessonId];
+  const app = document.getElementById("app");
+  let html = `<a class="backlink" id="backBtn">\u2190 Back to the Bay</a>`;
+  html += `<div class="job-hero"><div class="name">${lesson.title}</div></div>`;
+  html += `<div class="stage-nav">`;
+  STAGES.forEach(s => {
+    const done = !!p[s.id];
+    const unlocked = stageUnlocked(s.id);
+    const cls = s.id === currentStage ? "active" : (done ? "complete" : "");
+    html += `<button class="stage-btn ${cls}" data-stage="${s.id}" ${unlocked ? "" : "disabled"}>${done ? "\u2713 " : ""}${s.label}</button>`;
+  });
+  html += `</div><div class="panel" id="stageBody"></div>`;
+  app.innerHTML = html;
+  document.getElementById("backBtn").onclick = renderLessonPicker;
+  document.querySelectorAll("[data-stage]").forEach(btn => {
+    btn.onclick = () => { if (!btn.disabled){ currentStage = btn.dataset.stage; renderLesson(); } };
+  });
+  renderStageBody(lesson, p);
+}
+
+function renderStageBody(lesson, p){
+  const body = document.getElementById("stageBody");
+  if (currentStage === "hood") return renderHood(body, lesson);
+  if (currentStage === "spot") return renderSpot(body, lesson);
+  if (currentStage === "fixit") return renderFixIt(body, lesson);
+  if (currentStage === "torque") return renderTorque(body, lesson);
+}
+
+// ---- STAGE 1: Under the Hood ----
+function renderHood(body, lesson){
+  let html = `<p>${lesson.rule}</p>`;
+  lesson.examples.forEach(ex => {
+    if (ex.text){
+      html += `<div class="example-block">${ex.text}</div>`;
+    } else {
+      html += `<div class="example-block"><span class="broken">${escapeHtml(ex.broken)}</span><span class="arrow">\u2192</span><span class="fixed">${escapeHtml(ex.fixed)}</span></div>`;
+    }
+  });
+  html += `<div class="actions"><button class="btn" id="doneBtn">Got it \u2014 into the bay</button></div>`;
+  body.innerHTML = html;
+  document.getElementById("doneBtn").onclick = () => completeStage("hood", 10);
+}
+
+// ---- STAGE 2: Spot the Problem (two-zone sort) ----
+function renderSpot(body, lesson){
+  const tickets = shuffle(lesson.tickets);
+  const zones = lesson.spotZones || { trueLabel: "Needs Repair", falseLabel: "All Good", trueIcon: "\uD83D\uDD27", falseIcon: "\u2705" };
+  const instructions = lesson.spotInstructions || "Drag each work order into the right bay.";
+  let html = `<p>${instructions}</p>`;
+  html += `<div class="sort-zones">
+      <div class="sort-zone" data-expects="true"><div class="sort-zone-label">${zones.trueIcon} ${zones.trueLabel}</div><div class="sort-found" id="zoneTrue"></div></div>
+      <div class="sort-zone" data-expects="false"><div class="sort-zone-label">${zones.falseIcon} ${zones.falseLabel}</div><div class="sort-found" id="zoneFalse"></div></div>
+    </div>`;
+  html += `<div id="ticketPool">`;
+  tickets.forEach((t, i) => {
+    html += `<div class="ticket" data-idx="${i}" data-needs-repair="${t.needsRepair}"><div class="ticket-text">${escapeHtml(t.text)}</div></div>`;
+  });
+  html += `</div>`;
+  html += `<div id="spotComplete" style="display:none; text-align:center; margin-top:18px;">
+      <p><strong>All sorted!</strong></p>
+      <div class="actions"><button class="btn" id="spotContinueBtn">Continue</button></div>
+    </div>`;
+  body.innerHTML = html;
+  setupSpotGame(tickets.length);
+}
+
+function setupSpotGame(total){
+  let sorted = 0;
+  document.querySelectorAll("#ticketPool .ticket").forEach(chip => {
+    chip.addEventListener("pointerdown", (e) => {
+      if (chip.classList.contains("placed")) return;
+      activeDragChip = chip;
+      chip.classList.add("dragging");
+      activeDragGhost = chip.cloneNode(true);
+      activeDragGhost.classList.add("ghost");
+      activeDragGhost.classList.remove("dragging");
+      activeDragGhost.style.width = chip.offsetWidth + "px";
+      document.body.appendChild(activeDragGhost);
+      activeDragGhost.style.left = (e.clientX - chip.offsetWidth / 2) + "px";
+      activeDragGhost.style.top = (e.clientY - chip.offsetHeight / 2) + "px";
+    });
+  });
+
+  spotGame = {
+    tryMatch(zoneEl, chip){
+      const expects = zoneEl.dataset.expects;
+      if (chip.dataset.needsRepair === expects){
+        chip.classList.add("placed");
+        const target = expects === "true" ? "zoneTrue" : "zoneFalse";
+        const tag = document.createElement("div");
+        tag.className = "sort-tag";
+        tag.textContent = chip.querySelector(".ticket-text").textContent;
+        document.getElementById(target).appendChild(tag);
+        sorted++;
+        if (sorted >= total){
+          setTimeout(() => {
+            document.getElementById("ticketPool").style.display = "none";
+            document.getElementById("spotComplete").style.display = "block";
+          }, 300);
+        }
+      } else {
+        zoneEl.classList.add("shake");
+        setTimeout(() => zoneEl.classList.remove("shake"), 400);
+      }
+    }
+  };
+
+  document.getElementById("spotContinueBtn").onclick = () => completeStage("spot", 15);
+}
+
+// ---- STAGE 3: Fix It (slot + tile drag, reused pattern) ----
+function renderFixIt(body, lesson){
+  let html = `<p>Drag the right piece into each blank.</p>`;
+  html += `<div class="game-wrap" id="fixitGame"><canvas class="canvas-layer" id="fixitCanvas"></canvas>`;
+  lesson.fixits.forEach((f, i) => {
+    const parts = f.sentence.split("___");
+    html += `<div class="fixit-sentence">${escapeHtml(parts[0])}<span class="fixit-slot" data-idx="${i}" data-answer="${escapeHtml(f.correct)}">blank</span>${escapeHtml(parts[1] || "")}</div>`;
+  });
+  html += `<div class="tile-pool" id="tilePool">`;
+  const allTiles = shuffle(lesson.fixits.flatMap(f => f.options.map(o => ({ value: o, forAnswer: f.correct }))));
+  allTiles.forEach((t, i) => {
+    html += `<div class="tile" data-idx="${i}" data-value="${escapeHtml(t.value)}">${escapeHtml(t.value)}</div>`;
+  });
+  html += `</div></div>`;
+  html += `<div id="fixitComplete" style="display:none; text-align:center; margin-top:18px;">
+      <p><strong>All repairs complete!</strong></p>
+      <div class="actions"><button class="btn" id="fixitContinueBtn">Continue</button></div>
+    </div>`;
+  body.innerHTML = html;
+  setupFixitGame(lesson.fixits.length);
+}
+
+function setupFixitGame(requiredMatches){
+  const gameEl = document.getElementById("fixitGame");
+  const canvas = document.getElementById("fixitCanvas");
+  const ctx = canvas.getContext ? canvas.getContext("2d") : null;
+  if (ctx){ canvas.width = gameEl.clientWidth; canvas.height = gameEl.clientHeight; }
+
+  let particles = [];
+  function spawnBurst(x, y){
+    if (!ctx) return;
+    for (let i = 0; i < 20; i++){
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 1.5 + Math.random() * 3;
+      particles.push({ x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, life: 1,
+        color: Math.random() < 0.5 ? "#FF8A50" : "#F4B740" });
+    }
+  }
+  function loop(){
+    if (!ctx || !document.body.contains(canvas)) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.06; p.life -= 0.025;
+      ctx.globalAlpha = Math.max(p.life, 0);
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2); ctx.fill();
+    });
+    particles = particles.filter(p => p.life > 0);
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  }
+  if (ctx) loop();
+
+  let matched = 0;
+  document.querySelectorAll("#tilePool .tile").forEach(chip => {
+    chip.addEventListener("pointerdown", (e) => {
+      if (chip.classList.contains("placed")) return;
+      activeDragChip = chip;
+      chip.classList.add("dragging");
+      activeDragGhost = chip.cloneNode(true);
+      activeDragGhost.classList.add("ghost");
+      activeDragGhost.classList.remove("dragging");
+      activeDragGhost.style.width = chip.offsetWidth + "px";
+      document.body.appendChild(activeDragGhost);
+      activeDragGhost.style.left = (e.clientX - chip.offsetWidth / 2) + "px";
+      activeDragGhost.style.top = (e.clientY - chip.offsetHeight / 2) + "px";
+    });
+  });
+
+  fixitGame = {
+    tryMatch(slotEl, chip){
+      if (slotEl.dataset.answer === chip.dataset.value){
+        slotEl.classList.add("filled");
+        slotEl.textContent = chip.dataset.value;
+        chip.classList.add("placed");
+        const rect = slotEl.getBoundingClientRect();
+        const gameRect = gameEl.getBoundingClientRect();
+        spawnBurst(rect.left - gameRect.left + rect.width / 2, rect.top - gameRect.top + rect.height / 2);
+        matched++;
+        if (matched >= requiredMatches){
+          setTimeout(() => {
+            document.getElementById("tilePool").style.display = "none";
+            document.getElementById("fixitComplete").style.display = "block";
+          }, 350);
+        }
+      } else {
+        slotEl.classList.add("shake");
+        setTimeout(() => slotEl.classList.remove("shake"), 400);
+      }
+    }
+  };
+
+  document.getElementById("fixitContinueBtn").onclick = () => completeStage("fixit", 15);
+}
+
+// ---- STAGE 4: Torque Test (multiple choice, elimination on wrong) ----
+function renderTorque(body, lesson){
+  const q = shuffle(lesson.torque)[0];
+  const options = shuffle(q.options);
+  let html = `<p>Which sentence is fixed correctly?</p>`;
+  html += `<div class="torque-options" id="torqueOptions">`;
+  options.forEach((opt, i) => {
+    html += `<button class="torque-option" data-correct="${opt === q.correct}" data-idx="${i}">${escapeHtml(opt)}</button>`;
+  });
+  html += `</div>`;
+  html += `<div id="torqueComplete" style="display:none; text-align:center; margin-top:18px;">
+      <p><strong>Torqued to spec!</strong></p>
+      <div class="actions"><button class="btn" id="torqueContinueBtn">Continue</button></div>
+    </div>`;
+  body.innerHTML = html;
+
+  document.querySelectorAll(".torque-option").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (btn.classList.contains("disabled")) return;
+      if (btn.dataset.correct === "true"){
+        btn.classList.add("correct-flash");
+        document.querySelectorAll(".torque-option").forEach(b => b.classList.add("disabled"));
+        setTimeout(() => {
+          document.getElementById("torqueOptions").style.display = "none";
+          document.getElementById("torqueComplete").style.display = "block";
+        }, 500);
+      } else {
+        btn.classList.add("wrong-flash");
+        btn.classList.add("disabled");
+      }
+    });
+  });
+
+  document.getElementById("torqueContinueBtn").onclick = () => completeStage("torque", 15, true);
+}
+
+// ---------------------------------------------------------------------
+// PROGRESS / XP / CERTIFICATION MOMENT
+// ---------------------------------------------------------------------
+function completeStage(stageId, xp, isFinal){
+  kidProgress[currentLessonId][stageId] = true;
+  db.ref(`garage/${currentKid}/progress/${currentLessonId}/${stageId}`).set(true).then(() => {
+    awardXp(xp);
+    if (isFinal){
+      awardXp(25);
+      return renderCertMoment();
+    }
+    const idx = STAGES.findIndex(s => s.id === stageId);
+    if (idx >= 0 && idx < STAGES.length - 1) currentStage = STAGES[idx + 1].id;
+    renderLesson();
+  });
+}
+
+function awardXp(amount){
+  kidMeta.xp = (kidMeta.xp || 0) + amount;
+  db.ref(`garage/${currentKid}/meta/xp`).set(kidMeta.xp);
+}
+
+function renderCertMoment(){
+  const lesson = LESSONS[currentKid][currentLessonId];
+  const app = document.getElementById("app");
+  app.innerHTML = `
+    <div class="panel cert-stamp">
+      <div class="stamp-box">Certified</div>
+      <p style="margin-top:16px;"><strong>${lesson.title}</strong> \u2014 repaired and torqued to spec.</p>
+      <div class="xp">+25 XP</div>
+      <div class="actions"><button class="btn" id="continueBtn">Back to the Bay</button></div>
+    </div>
+  `;
+  document.getElementById("continueBtn").onclick = renderLessonPicker;
+}
+
+// ---------------------------------------------------------------------
+// PARENT REVIEW
+// ---------------------------------------------------------------------
+function renderKidReview(){
+  const stats = kidStats();
+  const { current } = rankFor(kidMeta.xp || 0);
+  const app = document.getElementById("app");
+  let html = `<a class="backlink" id="backBtn">\u2190 Switch Mechanic</a>`;
+  html += `<div class="masthead" style="margin-bottom:10px;"><h1 style="font-size:24px;">${cap(currentKid)}'s Inspection</h1></div>`;
+  html += `<div class="panel">
+      <p><strong>Rank:</strong> ${current.title} (${kidMeta.xp || 0} XP)</p>
+      <p><strong>Lessons certified:</strong> ${stats.completed} of ${stats.total}</p>
+    </div>`;
+  html += `<div class="panel">`;
+  LESSON_ORDER.forEach(id => {
+    const lesson = LESSONS[currentKid][id];
+    if (!lesson) return;
+    const p = kidProgress[id] || {};
+    const stageList = STAGES.map(s => `${s.label}: ${p[s.id] ? "\u2713" : "\u2014"}`).join(" \u00b7 ");
+    html += `<div class="review-row"><strong>${lesson.title}</strong><br><span style="font-size:14px; color:var(--ink-soft);">${stageList}</span></div>`;
+  });
+  html += `</div>`;
+  app.innerHTML = html;
+  document.getElementById("backBtn").onclick = renderKidPicker;
+}
+
+// ---------------------------------------------------------------------
+// INIT
+// ---------------------------------------------------------------------
+document.addEventListener("DOMContentLoaded", () => {
+  renderKidPicker();
+});
+</script>
+</body>
+</html>
