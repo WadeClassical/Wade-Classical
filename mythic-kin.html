@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mythic Kin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#120a06; --panel:#EAD9BE; --ink:#241812; --ink-soft:#8A6A46;
+    --gold:#E8A94A; --gold-bright:#FFE5B0; --line:rgba(255,190,120,.2);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh;
+    background: radial-gradient(ellipse at center, #2a1a10, #120a06);
+    font-family:'EB Garamond', serif; color:var(--panel); padding:26px 16px 60px;
+  }
+  .wrap{max-width:760px; margin:0 auto;}
+  .masthead{text-align:center; margin-bottom:20px;}
+  .masthead .tag{color:var(--gold); font-family:'Cinzel',serif; font-size:12px; letter-spacing:.25em; text-transform:uppercase; margin-bottom:6px;}
+  .masthead h1{font-family:'Cinzel',serif; font-weight:700; font-size:30px; letter-spacing:.03em; margin:0 0 4px; color:var(--gold-bright); text-transform:uppercase;}
+  .masthead .sub{font-style:italic; color:var(--ink-soft); font-size:15px;}
+  .rule{border:none; height:2px; margin:14px auto; width:100px; background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+
+  .kid-row{display:flex; gap:12px; justify-content:center; margin-bottom:20px;}
+  .kid-badge{font-family:'Cinzel',serif; font-weight:600; font-size:14px; background:transparent; border:2px solid var(--gold); color:var(--gold); padding:10px 24px; border-radius:20px; cursor:pointer; text-transform:uppercase;}
+  .kid-badge.active{background:var(--gold); color:#241812;}
+
+  .backlink{display:inline-block; margin-bottom:14px; color:var(--ink-soft); text-decoration:none; font-family:'Cinzel',serif; font-size:12px; letter-spacing:.05em; cursor:pointer; text-transform:uppercase;}
+  .backlink:hover{color:var(--gold-bright);}
+
+  .progress-bar{background:rgba(255,255,255,.06); border-radius:20px; height:10px; overflow:hidden; margin-bottom:6px;}
+  .progress-fill{background:linear-gradient(90deg,var(--gold),var(--gold-bright)); height:100%;}
+  .progress-label{text-align:center; font-size:13px; color:var(--ink-soft); margin-bottom:20px;}
+
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:14px; margin-bottom:20px;}
+  .slot{border-radius:12px; padding:14px 10px; text-align:center; cursor:pointer; border:2px solid var(--line);}
+  .slot.locked{background:rgba(255,255,255,.03); opacity:.55;}
+  .slot.unlocked{background:rgba(255,255,255,.05); border-color:var(--gold);}
+  .slot .glyph{font-size:26px; margin-bottom:6px;}
+  .slot .name{font-family:'Cinzel',serif; font-size:12px; text-transform:uppercase; letter-spacing:.03em;}
+  .slot .chapter{font-size:11px; color:var(--ink-soft); margin-top:4px;}
+
+  .capstone-card{
+    border-radius:14px; padding:18px 20px; text-align:center; margin-top:10px; cursor:pointer;
+    border:2px solid var(--gold); background:rgba(232,169,74,.08);
+  }
+  .capstone-card.locked{opacity:.5; cursor:default;}
+  .capstone-card .glyph{font-size:32px; margin-bottom:8px;}
+  .capstone-card .name{font-family:'Cinzel',serif; font-size:16px; text-transform:uppercase; letter-spacing:.05em; color:var(--gold-bright);}
+
+  .card{width:100%; max-width:320px; margin:0 auto; border-radius:18px; padding:14px;}
+  .card-inner{background:linear-gradient(180deg,#241812,#150d09); border-radius:12px; padding:16px 16px 20px; border:1px solid rgba(255,190,120,.25);}
+  .card-name{font-family:'Cinzel',serif; font-weight:700; font-size:22px; letter-spacing:.03em; text-align:center; text-transform:uppercase; margin:0 0 10px;
+    background:linear-gradient(100deg,var(--gold),var(--gold-bright),var(--gold)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .art-window{position:relative; border-radius:10px; overflow:hidden; height:200px; margin-bottom:12px; border:1px solid rgba(255,190,120,.3);}
+  .stat-block{background:rgba(255,255,255,.03); border-radius:8px; margin-bottom:12px; border:1px solid rgba(255,190,120,.25); overflow:hidden;}
+  .stat-row{display:flex; justify-content:space-between; align-items:center; padding:7px 14px; border-bottom:1px solid rgba(255,190,120,.12);}
+  .stat-row:last-child{border-bottom:none;}
+  .stat-label{font-family:'Cinzel',serif; font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft);}
+  .stat-value{font-size:14px; font-weight:600; color:var(--gold-bright); text-align:right;}
+  .blurb{background:rgba(255,255,255,.04); border-radius:8px; padding:12px 14px; color:var(--panel); font-size:14px; line-height:1.5; border:1px solid rgba(255,190,120,.15); margin-bottom:10px;}
+  .fun-fact{font-style:italic; color:var(--ink-soft); font-size:12px; text-align:center;}
+
+  .panel{background:rgba(255,255,255,.04); border-radius:12px; padding:18px 20px; margin-bottom:16px; border:1px solid var(--line);}
+  .q-block{background:rgba(255,255,255,.03); border-radius:8px; padding:12px 14px; margin-bottom:10px; border-left:3px solid var(--gold);}
+  .btn{font-family:'Cinzel',serif; font-size:13px; letter-spacing:.03em; text-transform:uppercase; background:var(--gold); color:#241812; border:none; padding:11px 24px; border-radius:6px; cursor:pointer;}
+  .btn.secondary{background:transparent; color:var(--gold); border:2px solid var(--gold); padding:9px 22px;}
+  .actions{display:flex; gap:10px; justify-content:center; margin-top:14px; flex-wrap:wrap;}
+
+  textarea{width:100%; font-family:'EB Garamond',serif; font-size:15px; color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:var(--panel); margin-bottom:12px;}
+  .reflect-label{font-family:'Cinzel',serif; font-size:13px; color:var(--gold); margin-bottom:6px; display:block;}
+
+  .stamp{text-align:center; padding:20px; animation:stampIn .5s cubic-bezier(.3,1.6,.5,1);}
+  @keyframes stampIn{0%{transform:scale(.5) rotate(-15deg); opacity:0;} 100%{transform:scale(1) rotate(-3deg); opacity:1;}}
+  .stamp .box{display:inline-block; border:4px solid var(--gold); color:var(--gold-bright); font-family:'Cinzel',serif; font-weight:700; font-size:18px; padding:12px 24px; transform:rotate(-3deg); text-transform:uppercase;}
+
+  .review-row{border-bottom:1px solid var(--line); padding:10px 0; font-size:14px;}
+</style>
+</head>
+<body>
+  <div class="wrap" id="app"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+/* =====================================================================
+   MYTHIC KIN — collectible god cards, tied to the Percy Jackson read-along.
+   Discussion-based, not scored: each card unlocks after you and the kid
+   talk through 2-3 questions together. No quiz, no auto-grading.
+   ===================================================================== */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAw9V30gR9hc3WKS3zhO61IU6NeeKghyQM",
+  authDomain: "wade-classical.firebaseapp.com",
+  databaseURL: "https://wade-classical-default-rtdb.firebaseio.com",
+  projectId: "wade-classical",
+  storageBucket: "wade-classical.firebasestorage.app",
+  messagingSenderId: "72309085457",
+  appId: "1:72309085457:web:3d8b5a07302248ded6a8b0"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ---------------------------------------------------------------------
+// GODS — add more kids later by adding a sibling key with their own set.
+// ---------------------------------------------------------------------
+const GOD_ART = {
+  zeus: `<rect width="300" height="200" fill="url(#zeusBg)"/><polygon points="150,40 130,95 155,95 135,160 185,90 158,90 175,40" fill="#FFE9A8"/><path d="M60 130 Q90 90 130 110 Q120 95 140 90 Q160 85 170 100 Q210 95 240 130 Q210 145 170 140 Q140 150 130 140 Q95 155 60 130Z" fill="#3A4A6A" opacity=".6"/>`,
+  poseidon: `<rect width="300" height="200" fill="url(#poseidonBg)"/><rect x="140" y="95" width="20" height="80" fill="#B8D8E0"/><rect x="112" y="82" width="76" height="14" rx="4" fill="#B8D8E0"/><polygon points="122,82 138,82 130,35" fill="#B8D8E0"/><polygon points="142,82 158,82 150,28" fill="#B8D8E0"/><polygon points="162,82 178,82 170,35" fill="#B8D8E0"/><path d="M40 170 Q80 152 120 170 Q160 152 200 170 Q240 152 270 170" stroke="#7FC4D4" stroke-width="6" fill="none" stroke-linecap="round"/>`,
+  hades: `<rect width="300" height="200" fill="url(#hadesBg)"/><path d="M105 165 Q100 90 150 75 Q200 90 195 165 Z" fill="#33383D"/><rect x="128" y="105" width="14" height="55" fill="#12140F"/><rect x="158" y="105" width="14" height="55" fill="#12140F"/><rect x="115" y="112" width="70" height="14" fill="#12140F"/><circle cx="135" cy="118" r="3.5" fill="#7FE0A0"/><circle cx="165" cy="118" r="3.5" fill="#7FE0A0"/>`,
+  hera: `<rect width="300" height="200" fill="url(#heraBg)"/><circle cx="150" cy="112" r="38" fill="#7A4A9E"/><circle cx="150" cy="112" r="26" fill="#C9A0E0"/><circle cx="150" cy="112" r="13" fill="#2A1440"/><g stroke="#E8C9F0" stroke-width="3" opacity="0.8"><line x1="150" y1="66" x2="150" y2="45"/><line x1="118" y1="80" x2="98" y2="62"/><line x1="182" y1="80" x2="202" y2="62"/></g><polygon points="130,45 150,20 170,45" fill="#F0DFF8"/>`,
+  demeter: `<rect width="300" height="200" fill="url(#demeterBg)"/><g transform="translate(150,150)">${Array.from({length:7},(_,i)=>`<line x1="0" y1="0" x2="${(i-3)*14}" y2="-90" stroke="#E8C468" stroke-width="5" stroke-linecap="round"/>`).join('')}</g><path d="M90 165 Q150 190 210 165 Q200 145 150 150 Q100 145 90 165Z" fill="#C48A3A"/>`,
+  athena: `<rect width="300" height="200" fill="url(#athenaBg)"/><polygon points="118,80 108,45 138,72" fill="#D8CBA8"/><polygon points="182,80 192,45 162,72" fill="#D8CBA8"/><ellipse cx="150" cy="115" rx="36" ry="34" fill="#E8DCC0"/><circle cx="136" cy="112" r="15" fill="#FFFFFF"/><circle cx="164" cy="112" r="15" fill="#FFFFFF"/><circle cx="136" cy="112" r="7" fill="#2A2A2C"/><circle cx="164" cy="112" r="7" fill="#2A2A2C"/><polygon points="145,128 155,128 150,140" fill="#B89860"/><path d="M150 150 Q120 155 105 130 Q125 140 150 150Z" fill="#8FAA6A"/><ellipse cx="108" cy="128" rx="7" ry="4" fill="#8FAA6A"/><ellipse cx="120" cy="140" rx="7" ry="4" fill="#8FAA6A"/>`,
+  apollo: `<rect width="300" height="200" fill="url(#apolloBg)"/><circle cx="150" cy="100" r="30" fill="#FFE9A8"/><g stroke="#FFD87A" stroke-width="4">${Array.from({length:8},(_,i)=>{const a=i*Math.PI/4;const x1=150+Math.cos(a)*38,y1=100+Math.sin(a)*38,x2=150+Math.cos(a)*58,y2=100+Math.sin(a)*58;return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;}).join('')}</g><path d="M110 165 Q110 130 150 130 Q190 130 190 165" stroke="#C99A50" stroke-width="5" fill="none"/><line x1="122" y1="140" x2="122" y2="160" stroke="#C99A50" stroke-width="2"/><line x1="150" y1="132" x2="150" y2="164" stroke="#C99A50" stroke-width="2"/><line x1="178" y1="140" x2="178" y2="160" stroke="#C99A50" stroke-width="2"/>`,
+  artemis: `<rect width="300" height="200" fill="url(#artemisBg)"/><circle cx="145" cy="95" r="42" fill="#E8E8F0"/><circle cx="163" cy="86" r="38" fill="#141a2e"/><path d="M95 160 Q120 100 175 90" stroke="#C9C9E0" stroke-width="6" fill="none" stroke-linecap="round"/><line x1="100" y1="155" x2="215" y2="115" stroke="#E8E8F0" stroke-width="3"/><polygon points="215,115 200,110 205,124" fill="#E8E8F0"/>`,
+  ares: `<rect width="300" height="200" fill="url(#aresBg)"/><polygon points="150,32 163,120 137,120" fill="#D8D8D8"/><rect x="122" y="118" width="56" height="12" rx="3" fill="#8A6A46"/><rect x="143" y="128" width="14" height="30" fill="#8A6A46"/><circle cx="150" cy="163" r="9" fill="#5A4028"/><path d="M85 95 Q105 60 130 85 Q112 92 105 112 Q88 112 85 95Z" fill="#FF6A2D"/><path d="M215 95 Q195 60 170 85 Q188 92 195 112 Q212 112 215 95Z" fill="#FF6A2D"/>`,
+  aphrodite: `<rect width="300" height="200" fill="url(#aphroditeBg)"/><path d="M150,105 Q118,72 85,88 Q112,98 133,112 Q112,126 85,140 Q118,148 150,120 Q182,148 215,140 Q188,126 167,112 Q188,98 215,88 Q182,72 150,105Z" fill="#FFF5F8"/><circle cx="150" cy="105" r="6" fill="#F5C9D8"/>`,
+  hephaestus: `<rect width="300" height="200" fill="url(#hephaestusBg)"/><path d="M60 160 Q80 60 150 60 Q220 60 240 160 Q220 130 150 130 Q80 130 60 160Z" fill="#FF8A3D" opacity="0.55"/><path d="M85 165 Q105 95 150 95 Q195 95 215 165 Q195 145 150 145 Q105 145 85 165Z" fill="#FFC060" opacity="0.7"/><rect x="95" y="150" width="110" height="34" rx="4" fill="#3A3A3D"/><rect x="95" y="150" width="110" height="8" rx="4" fill="#57575B"/><rect x="130" y="184" width="16" height="14" fill="#2A2A2C"/><rect x="154" y="184" width="16" height="14" fill="#2A2A2C"/><g transform="translate(178,60) rotate(35)"><rect x="-6" y="0" width="12" height="70" rx="4" fill="#7A4A25"/><rect x="-22" y="-22" width="44" height="26" rx="5" fill="#4A4A4E"/><rect x="-22" y="-22" width="44" height="8" rx="4" fill="#6A6A6E"/></g><circle cx="150" cy="35" r="5" fill="#FFD98A"/>`,
+  hermes: `<rect width="300" height="200" fill="url(#hermesBg)"/><rect x="144" y="65" width="12" height="100" fill="#D8B860"/><path d="M150 75 Q120 88 150 100 Q180 112 150 124 Q120 136 150 148" stroke="#5AA85A" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M144 68 Q105 55 90 75 Q120 78 144 88Z" fill="#EDEDED"/><path d="M156 68 Q195 55 210 75 Q180 78 156 88Z" fill="#EDEDED"/>`,
+  dionysus: `<rect width="300" height="200" fill="url(#dionysusBg)"/><g>${[[125,100],[150,90],[175,100],[135,120],[165,120],[150,135],[120,125],[180,125]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="13" fill="#8A4A9E"/>`).join('')}</g><path d="M90 160 Q120 130 150 160 Q180 130 210 160" stroke="#5A8A4A" stroke-width="4" fill="none"/><ellipse cx="105" cy="150" rx="8" ry="5" fill="#6AAA5A"/><ellipse cx="195" cy="150" rx="8" ry="5" fill="#6AAA5A"/>`
+};
+
+const GODS = {
+  ryder: {
+    zeus: {
+      name:"Zeus", roman:"Jupiter", unlockChapter:5,
+      bg:["#1a2a4a","#3a4a7a"], artBg:"radial-gradient(ellipse at 50% 60%, #3a4a7a, #0e1830 75%)",
+      stats:[["Domain","Sky & Thunder"],["Symbol","Lightning Bolt"],["Roman name","Jupiter"],["Parents","Kronos & Rhea"],["Wife","Hera"],["Home","Mount Olympus"]],
+      blurb:"King of the gods and ruler of Olympus, Zeus commands the sky and wields the thunderbolt as his weapon. He overthrew his own father, Kronos, to end the age of the Titans and become the most powerful of the gods. Proud and quick to anger, he demands respect above all else.",
+      funFact:"The word \u201Cjovial\u201D comes from Jove \u2014 another name for Zeus's Roman counterpart, Jupiter.",
+      questions:[
+        "Zeus is furious that his master bolt is missing and blames Percy before even meeting him. Why do you think powerful people sometimes jump to blame before they have proof?",
+        "The gods almost start a war over a stolen weapon. What does that tell you about how the most powerful people in a room can still act the least reasonable?"
+      ]
+    },
+    poseidon: {
+      name:"Poseidon", roman:"Neptune", unlockChapter:6,
+      artBg:"radial-gradient(ellipse at 50% 60%, #1a5a6a, #0a1a2a 75%)",
+      stats:[["Domain","Sea & Earthquakes"],["Symbol","Trident"],["Roman name","Neptune"],["Parents","Kronos & Rhea"],["Wife","Amphitrite"],["Home","Undersea Palace"]],
+      blurb:"God of the sea, earthquakes, and horses, Poseidon rules the oceans from his underwater palace. He is known for his fierce temper and his rivalry with his brother Zeus, though he is often the more patient of the two. Sailors prayed to him for safe passage across his unpredictable waters.",
+      funFact:"",
+      questions:[
+        "Poseidon broke his own promise to Zeus by having Percy. What do you think would make someone break a big promise like that?",
+        "Percy finally learns who his father is at camp. Why do you think knowing that changes how he sees himself, even though Poseidon isn't around?"
+      ]
+    },
+    hades: {
+      name:"Hades", roman:"Pluto", unlockChapter:18,
+      artBg:"radial-gradient(ellipse at 50% 60%, #1a3a2a, #0a120a 75%)",
+      stats:[["Domain","The Underworld"],["Symbol","Helm of Darkness"],["Roman name","Pluto"],["Parents","Kronos & Rhea"],["Wife","Persephone"],["Home","The Underworld"]],
+      blurb:"God of the dead and ruler of the Underworld, Hades governs the souls of everyone who has ever died. Though often feared, he is not evil \u2014 he enforces the boundary between the living and the dead, and rarely leaves his realm. He is one of the few gods who keeps his word absolutely.",
+      funFact:"\u201CStygian\u201D (meaning extremely dark) comes from the River Styx, which flows through his realm.",
+      questions:[
+        "Everyone assumed Hades was the villain just because he rules the dead. Has that ever happened to you or someone you know \u2014 being blamed because of a reputation rather than what you actually did?",
+        "Hades turns out to be one of the only honest people in this whole book. Why do you think the 'scary' one ends up being the most trustworthy?"
+      ]
+    },
+    hera: {
+      name:"Hera", roman:"Juno", unlockChapter:8,
+      artBg:"radial-gradient(ellipse at 50% 60%, #4a2a6a, #180a2a 75%)",
+      stats:[["Domain","Marriage & Family"],["Symbol","Peacock Feather"],["Roman name","Juno"],["Parents","Kronos & Rhea"],["Husband","Zeus"]],
+      blurb:"Queen of the gods and goddess of marriage and family, Hera is Zeus's wife and one of the most powerful goddesses on Olympus. Fiercely loyal to the institution of marriage, she is famous for her jealousy toward Zeus's many other children.",
+      funFact:"",
+      questions:[
+        "Hera cares deeply about family loyalty, but she's also famous for holding grudges against Zeus's other children. Can someone care about family and still act unfairly toward part of it?"
+      ]
+    },
+    demeter: {
+      name:"Demeter", roman:"Ceres", unlockChapter:8,
+      artBg:"radial-gradient(ellipse at 50% 60%, #5a4a1a, #1a1408 75%)",
+      stats:[["Domain","Harvest & Agriculture"],["Symbol","Wheat Sheaf"],["Roman name","Ceres"],["Parents","Kronos & Rhea"],["Daughter","Persephone"]],
+      blurb:"Goddess of the harvest, Demeter controls the growing seasons and the fertility of the earth. When her daughter Persephone was taken to the Underworld, Demeter's grief caused the world's first winter \u2014 and her joy at Persephone's yearly return brings spring.",
+      funFact:"\u201CCereal\u201D comes from Ceres, her Roman name.",
+      questions:[
+        "Demeter's grief over her daughter caused an entire season, according to the myth. Have you ever felt like your mood affected everything around you?"
+      ]
+    },
+    athena: {
+      name:"Athena", roman:"Minerva", unlockChapter:8,
+      artBg:"radial-gradient(ellipse at 50% 60%, #4a4a3a, #14140e 75%)",
+      stats:[["Domain","Wisdom & Strategy"],["Symbol","Owl"],["Roman name","Minerva"],["Parents","Zeus (alone)"],["Sacred City","Athens"]],
+      blurb:"Goddess of wisdom, strategy, and crafts, Athena was born fully grown and armored from the head of Zeus. She favors clever, disciplined heroes over brute strength, and is the patron of Athens, which she won by gifting its people the olive tree.",
+      funFact:"The city of Athens is literally named for her.",
+      questions:[
+        "Annabeth has been waiting years to be claimed by Athena. What do you think that kind of waiting does to a person's patience \u2014 or their confidence?",
+        "Athena values strategy over brute strength. Where have you seen 'thinking your way through it' beat just being tough?"
+      ]
+    },
+    apollo: {
+      name:"Apollo", roman:"Apollo", unlockChapter:9,
+      artBg:"radial-gradient(ellipse at 50% 60%, #6a5a1a, #201a08 75%)",
+      stats:[["Domain","Sun, Music & Prophecy"],["Symbol","Lyre"],["Roman name","Apollo (same)"],["Parents","Zeus & Leto"],["Twin","Artemis"]],
+      blurb:"God of the sun, music, poetry, and prophecy, Apollo is one of the most multi-talented gods on Olympus. He speaks through the Oracle at Delphi, delivering visions of the future in riddles, and is famous for his skill with a lyre.",
+      funFact:"NASA's Apollo moon missions were named after him.",
+      questions:[
+        "The Oracle's prophecy is confusing on purpose. Why do you think Riordan \u2014 and the ancient myths themselves \u2014 made prophecies riddles instead of just saying what happens?"
+      ]
+    },
+    artemis: {
+      name:"Artemis", roman:"Diana", unlockChapter:8,
+      artBg:"radial-gradient(ellipse at 50% 60%, #2a3a5a, #0a0e1a 75%)",
+      stats:[["Domain","Hunt & Moon"],["Symbol","Bow & Arrow"],["Roman name","Diana"],["Parents","Zeus & Leto"],["Twin","Apollo"]],
+      blurb:"Goddess of the hunt, the moon, and wild places, Artemis is Apollo's twin sister and fiercely independent. She swore never to marry and surrounds herself with a band of loyal huntresses, quick to anger when her wilderness is disrespected.",
+      funFact:"NASA's modern moon program, Artemis, is named after her.",
+      questions:[
+        "Artemis surrounds herself with people who share her exact values. Do you think it's better to build a tight circle of people just like you, or a wider group of different people?"
+      ]
+    },
+    ares: {
+      name:"Ares", roman:"Mars", unlockChapter:10,
+      artBg:"radial-gradient(ellipse at 50% 60%, #6a1a1a, #200808 75%)",
+      stats:[["Domain","War"],["Symbol","Sword & Spear"],["Roman name","Mars"],["Parents","Zeus & Hera"],["Rival","Athena"]],
+      blurb:"God of war, Ares delights in the chaos and bloodshed of battle rather than the strategy behind it. Most other gods, including his own father Zeus, find him reckless and unpleasant despite his strength.",
+      funFact:"\u201CMartial\u201D (as in martial arts) comes from Mars, his Roman name.",
+      questions:[
+        "Ares helps Percy, but it turns out to be a trap. Has anyone ever helped you in a way that actually made things worse?",
+        "Ares loves conflict for its own sake. Do you know anyone who seems to enjoy drama or fighting more than actually solving the problem?"
+      ]
+    },
+    aphrodite: {
+      name:"Aphrodite", roman:"Venus", unlockChapter:8,
+      artBg:"radial-gradient(ellipse at 50% 60%, #6a3a4a, #200e14 75%)",
+      stats:[["Domain","Love & Beauty"],["Symbol","Dove & Shell"],["Roman name","Venus"],["Parents","Sea foam (Uranus)"],["Husband","Hephaestus"]],
+      blurb:"Goddess of love and beauty, Aphrodite has the power to make anyone fall hopelessly in love. Married to Hephaestus, she was infamously caught having an affair with Ares \u2014 one of the most retold scandals on Olympus.",
+      funFact:"",
+      questions:[
+        "Aphrodite's cabin is barely mentioned in this book, but she's one of the most powerful gods in mythology. Why do you think power doesn't always look loud or obvious?"
+      ]
+    },
+    hephaestus: {
+      name:"Hephaestus", roman:"Vulcan", unlockChapter:8,
+      artBg:"radial-gradient(ellipse at 50% 65%, #7A2E0E, #2A1006 75%)",
+      stats:[["Domain","Fire & Forge"],["Symbol","Hammer & Anvil"],["Roman name","Vulcan"],["Parents","Zeus & Hera"],["Wife","Aphrodite"],["Home","Mount Etna"]],
+      blurb:"Born to Zeus and Hera, Hephaestus was cast out of Olympus for his lameness \u2014 yet became the greatest craftsman the gods ever knew. In his forge beneath the mountain, he built armor for heroes, thrones for gods, and mechanical servants of gold to assist him.",
+      funFact:"The word \u201Cvolcano\u201D comes from Vulcan \u2014 the Romans believed eruptions were his forge venting.",
+      questions:[
+        "Hephaestus was rejected for how he looked, but became the most skilled craftsman of all the gods. Where have you seen someone underestimated turn out to be the most capable person in the room?"
+      ]
+    },
+    hermes: {
+      name:"Hermes", roman:"Mercury", unlockChapter:6,
+      artBg:"radial-gradient(ellipse at 50% 60%, #5a5a1a, #181808 75%)",
+      stats:[["Domain","Travel & Messages"],["Symbol","Winged Sandals"],["Roman name","Mercury"],["Parents","Zeus & Maia"],["Son","Luke"]],
+      blurb:"God of travelers, thieves, and messengers, Hermes is the fastest of all the gods, carried by his winged sandals. He serves as the official messenger of Olympus, and was said to have invented the lyre on the very day he was born.",
+      funFact:"\u201CMercurial\u201D (quick to change) comes from Mercury, his Roman name.",
+      questions:[
+        "Luke is Hermes' son, and he's bitter that his father was never around. Do you think that fully explains why Luke turned against everyone at camp, or is that letting him off the hook?"
+      ]
+    },
+    dionysus: {
+      name:"Dionysus", roman:"Bacchus", unlockChapter:5,
+      artBg:"radial-gradient(ellipse at 50% 60%, #4a2a5a, #140a1a 75%)",
+      stats:[["Domain","Wine & Festivity"],["Symbol","Grapevine"],["Roman name","Bacchus"],["Parents","Zeus & Semele"],["Camp Role","Director"]],
+      blurb:"God of wine, festivity, and madness, Dionysus can bring wild joy or complete chaos wherever he goes. Zeus assigned him to run Camp Half-Blood as a punishment for chasing a forbidden wood nymph \u2014 a job he resents openly.",
+      funFact:"\u201CBacchanalian\u201D (a wild, unrestrained celebration) comes from Bacchus, his Roman name.",
+      questions:[
+        "Mr. D clearly doesn't want to be running Camp Half-Blood \u2014 it's literally his punishment. Have you ever had to do a responsibility you didn't choose? How did you handle it?"
+      ]
+    }
+  }
+};
+
+const GOD_ORDER = ["zeus","poseidon","hades","hera","demeter","athena","apollo","artemis","ares","aphrodite","hephaestus","hermes","dionysus"];
+
+const CAPSTONE_QUESTIONS = [
+  { id:"q1", label:"Which god's story did you connect with the most, and why?" },
+  { id:"q2", label:"What's one trait from a god you'd genuinely like to have more of yourself?" },
+  { id:"q3", label:"What's something about you that people might underestimate \u2014 the way people underestimated Hephaestus, or the way Percy got dismissed for his dyslexia?" }
+];
+
+// ---------------------------------------------------------------------
+// STATE
+// ---------------------------------------------------------------------
+let currentKid = null;
+let kidProgress = {};
+let kidCapstone = {};
+const params = new URLSearchParams(location.search);
+const reviewMode = params.get("review") === "1";
+
+function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+function escapeHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+// ---------------------------------------------------------------------
+// RENDER: KID PICKER
+// ---------------------------------------------------------------------
+function renderKidPicker(){
+  currentKid = null;
+  const app = document.getElementById("app");
+  app.innerHTML = `
+    <div class="masthead">
+      <div class="tag">Wade Classical</div>
+      <h1>Mythic Kin</h1>
+      <div class="sub">a collection of the gods, gathered as you read</div>
+      <hr class="rule">
+    </div>
+    <div class="kid-row">${Object.keys(GODS).map(k=>`<button class="kid-badge" data-kid="${k}">${cap(k)}</button>`).join("")}</div>
+    <div style="text-align:center; font-family:'Cinzel',serif; font-size:12px;">
+      <a href="?${reviewMode?'':'review=1'}" style="color:var(--ink-soft); text-decoration:none; text-transform:uppercase;">${reviewMode?'\u2190 Back':"Parent Review \u2192"}</a>
+    </div>
+  `;
+  document.querySelectorAll("[data-kid]").forEach(b=>b.onclick=()=>openKid(b.dataset.kid));
+}
+
+function openKid(kid){
+  currentKid = kid;
+  Promise.all([
+    db.ref(`mythicKin/${kid}/progress`).once("value"),
+    db.ref(`mythicKin/${kid}/capstone`).once("value")
+  ]).then(([p,c])=>{
+    kidProgress = p.val() || {};
+    kidCapstone = c.val() || {};
+    if (reviewMode) renderReview(); else renderCollection();
+  });
+}
+
+// ---------------------------------------------------------------------
+// RENDER: COLLECTION GRID
+// ---------------------------------------------------------------------
+function renderCollection(){
+  const gods = GODS[currentKid];
+  const unlockedCount = GOD_ORDER.filter(id=>kidProgress[id]).length;
+  const app = document.getElementById("app");
+  let html = `<a class="backlink" id="backBtn">\u2190 Switch Scholar</a>`;
+  html += `<div class="masthead" style="margin-bottom:14px;"><h1 style="font-size:24px;">${cap(currentKid)}'s Collection</h1></div>`;
+  html += `<div class="progress-bar"><div class="progress-fill" style="width:${(unlockedCount/GOD_ORDER.length)*100}%"></div></div>`;
+  html += `<div class="progress-label">${unlockedCount} of ${GOD_ORDER.length} gathered</div>`;
+  html += `<div class="grid">`;
+  GOD_ORDER.forEach(id=>{
+    const g = gods[id];
+    const unlocked = !!kidProgress[id];
+    html += `<div class="slot ${unlocked?'unlocked':'locked'}" data-open="${id}">
+        <div class="glyph">${unlocked?'\u2726':'\uD83D\uDD12'}</div>
+        <div class="name">${unlocked?g.name:'???'}</div>
+        <div class="chapter">${unlocked?'':'Ch. '+g.unlockChapter}</div>
+      </div>`;
+  });
+  html += `</div>`;
+  const allDone = unlockedCount >= GOD_ORDER.length;
+  html += `<div class="capstone-card ${allDone?'':'locked'}" id="capstoneCard">
+      <div class="glyph">\u269C\uFE0F</div>
+      <div class="name">${allDone ? "Reveal Your Mythic Kin" : "Mythic Kin \u2014 locked until all 13 gathered"}</div>
+    </div>`;
+  app.innerHTML = html;
+  document.getElementById("backBtn").onclick = renderKidPicker;
+  document.querySelectorAll("[data-open]").forEach(s=>s.onclick=()=>openGod(s.dataset.open));
+  if (allDone) document.getElementById("capstoneCard").onclick = renderCapstone;
+}
+
+// ---------------------------------------------------------------------
+// RENDER: GOD DETAIL (unlocked card, or discussion prompt if locked)
+// ---------------------------------------------------------------------
+function openGod(id){
+  const g = GODS[currentKid][id];
+  const unlocked = !!kidProgress[id];
+  const app = document.getElementById("app");
+  let html = `<a class="backlink" id="backBtn">\u2190 Back to Collection</a>`;
+
+  if (unlocked){
+    html += renderCardHtml(g, id);
+  } else {
+    html += `<div class="panel">
+        <p style="text-align:center; font-family:'Cinzel',serif; color:var(--gold);">This one unlocks around Chapter ${g.unlockChapter}.</p>
+        <p>Read together, then talk through these:</p>
+        ${g.questions.map(q=>`<div class="q-block">${escapeHtml(q)}</div>`).join("")}
+        <div class="actions"><button class="btn" id="discussedBtn">We talked about this \u2014 unlock</button></div>
+      </div>`;
+  }
+  app.innerHTML = html;
+  document.getElementById("backBtn").onclick = renderCollection;
+  const btn = document.getElementById("discussedBtn");
+  if (btn) btn.onclick = () => {
+    kidProgress[id] = true;
+    db.ref(`mythicKin/${currentKid}/progress/${id}`).set(true).then(()=>openGod(id));
+  };
+}
+
+function renderCardHtml(g, id){
+  return `
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-name">${g.name}</div>
+        <div class="art-window" style="background:${g.artBg}">
+          <svg viewBox="0 0 300 200" width="100%" height="100%">
+            <defs><radialGradient id="${id}Bg"><stop offset="0%" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
+            ${GOD_ART[id] || ""}
+          </svg>
+        </div>
+        <div class="stat-block">
+          ${g.stats.map(([label,value])=>`<div class="stat-row"><span class="stat-label">${label}</span><span class="stat-value">${value}</span></div>`).join("")}
+        </div>
+        <div class="blurb">${g.blurb}</div>
+        ${g.funFact ? `<div class="fun-fact">Fun fact: ${g.funFact}</div>` : ""}
+      </div>
+    </div>
+  `;
+}
+
+// ---------------------------------------------------------------------
+// RENDER: CAPSTONE
+// ---------------------------------------------------------------------
+function renderCapstone(){
+  const app = document.getElementById("app");
+  let html = `<a class="backlink" id="backBtn">\u2190 Back to Collection</a>`;
+  html += `<div class="masthead" style="margin-bottom:10px;"><h1 style="font-size:24px;">Your Mythic Kin</h1></div>`;
+  html += `<div class="panel">`;
+  CAPSTONE_QUESTIONS.forEach(q=>{
+    html += `<label class="reflect-label">${q.label}</label><textarea rows="2" data-cq="${q.id}">${escapeHtml(kidCapstone[q.id]||"")}</textarea>`;
+  });
+  html += `<label class="reflect-label">If you had to name your Mythic Kin \u2014 not your favorite, but the one whose nature actually matches yours \u2014 who is it?</label>
+    <textarea rows="2" data-cq="kinChoice">${escapeHtml(kidCapstone.kinChoice||"")}</textarea>
+    <label class="reflect-label">Why?</label>
+    <textarea rows="3" data-cq="kinReason">${escapeHtml(kidCapstone.kinReason||"")}</textarea>`;
+  html += `<div class="actions"><button class="btn" id="saveCapstoneBtn">Save</button></div>
+    <div id="capstoneSaved" style="display:none; text-align:center; margin-top:14px;">
+      <div class="stamp"><div class="box">Mythic Kin Declared</div></div>
+    </div>`;
+  html += `</div>`;
+  app.innerHTML = html;
+  document.getElementById("backBtn").onclick = renderCollection;
+  document.getElementById("saveCapstoneBtn").onclick = () => {
+    document.querySelectorAll("[data-cq]").forEach(t=>{ kidCapstone[t.dataset.cq] = t.value; });
+    db.ref(`mythicKin/${currentKid}/capstone`).set(kidCapstone).then(()=>{
+      document.getElementById("capstoneSaved").style.display = "block";
+    });
+  };
+}
+
+// ---------------------------------------------------------------------
+// PARENT REVIEW
+// ---------------------------------------------------------------------
+function renderReview(){
+  const gods = GODS[currentKid];
+  const unlockedCount = GOD_ORDER.filter(id=>kidProgress[id]).length;
+  const app = document.getElementById("app");
+  let html = `<a class="backlink" id="backBtn">\u2190 Switch Scholar</a>`;
+  html += `<div class="masthead" style="margin-bottom:10px;"><h1 style="font-size:24px;">${cap(currentKid)}'s Progress</h1></div>`;
+  html += `<div class="panel"><p><strong>Gathered:</strong> ${unlockedCount} of ${GOD_ORDER.length}</p>`;
+  GOD_ORDER.forEach(id=>{
+    html += `<div class="review-row">${gods[id].name} \u2014 ${kidProgress[id] ? "discussed" : "not yet"}</div>`;
+  });
+  html += `</div>`;
+  if (Object.keys(kidCapstone).length){
+    html += `<div class="panel"><div style="font-family:'Cinzel',serif; color:var(--gold); margin-bottom:10px;">Mythic Kin Reflection</div>`;
+    CAPSTONE_QUESTIONS.forEach(q=>{
+      html += `<div class="review-row"><strong>${q.label}</strong><br>${escapeHtml(kidCapstone[q.id]||"(no answer yet)")}</div>`;
+    });
+    html += `<div class="review-row"><strong>Chosen Mythic Kin:</strong> ${escapeHtml(kidCapstone.kinChoice||"(not yet)")}<br>${escapeHtml(kidCapstone.kinReason||"")}</div>`;
+    html += `</div>`;
+  }
+  app.innerHTML = html;
+  document.getElementById("backBtn").onclick = renderKidPicker;
+}
+
+// ---------------------------------------------------------------------
+// INIT
+// ---------------------------------------------------------------------
+document.addEventListener("DOMContentLoaded", () => {
+  renderKidPicker();
+});
+</script>
+</body>
+</html>
