@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Georgia Field Research Bureau — Case Files</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pine:#1E3D2F;
+    --pine-dark:#132A20;
+    --clay:#9B3B2B;
+    --clay-dark:#7C2F22;
+    --brass:#A9812F;
+    --parchment:#EFE7D2;
+    --parchment-dark:#E3D8BA;
+    --ink:#23324A;
+    --ink-soft:#4A5568;
+    --paper-line: rgba(35,50,74,0.14);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--parchment);
+    background-image:
+      radial-gradient(circle at 100% 0%, rgba(30,61,47,0.05), transparent 45%),
+      repeating-linear-gradient(0deg, transparent, transparent 27px, var(--paper-line) 28px);
+    color:var(--ink);
+    font-family:'Source Sans 3', sans-serif;
+    min-height:100vh;
+  }
+  a{color:inherit;}
+
+  header.masthead{
+    background:var(--pine);
+    color:var(--parchment);
+    padding:28px 24px 22px;
+    border-bottom:6px solid var(--brass);
+    position:relative;
+    overflow:hidden;
+  }
+  header.masthead::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image: linear-gradient(115deg, rgba(255,255,255,0.035) 0%, transparent 35%);
+  }
+  .masthead-inner{
+    max-width:920px; margin:0 auto; display:flex; align-items:baseline;
+    justify-content:space-between; gap:16px; flex-wrap:wrap; position:relative; z-index:1;
+  }
+  .bureau-name{
+    font-family:'Fraunces', serif; font-weight:600; font-size:1.7rem; letter-spacing:0.01em;
+  }
+  .bureau-name small{
+    display:block; font-family:'IBM Plex Mono', monospace; font-size:0.62rem;
+    letter-spacing:0.14em; color:#C9BE9E; margin-top:4px; font-weight:500;
+  }
+  .division-tag{
+    font-family:'IBM Plex Mono', monospace; font-size:0.72rem; color:var(--parchment);
+    border:1px solid rgba(239,231,210,0.4); padding:5px 10px; border-radius:2px;
+    white-space:nowrap;
+  }
+
+  nav.tabs{
+    max-width:920px; margin:0 auto; display:flex; gap:2px; padding:0 24px;
+    transform:translateY(1px);
+  }
+  nav.tabs button{
+    font-family:'Source Sans 3', sans-serif; font-weight:600; font-size:0.86rem;
+    background:var(--parchment-dark); color:var(--ink-soft); border:1px solid var(--paper-line);
+    border-bottom:none; padding:10px 18px 9px; cursor:pointer; border-radius:5px 5px 0 0;
+    position:relative; top:0;
+  }
+  nav.tabs button.active{
+    background:var(--parchment); color:var(--pine); border-color:var(--pine);
+    box-shadow: inset 0 3px 0 var(--brass);
+  }
+
+  main{max-width:920px; margin:0 auto; padding:26px 24px 70px;}
+
+  .view{display:none;}
+  .view.active{display:block;}
+
+  .intro-line{
+    font-size:0.95rem; color:var(--ink-soft); max-width:620px; margin:2px 0 26px;
+  }
+
+  .file-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:16px;
+  }
+  .file-card{
+    background:#FBF7EA; border:1px solid var(--paper-line); border-left:5px solid var(--brass);
+    padding:16px 16px 14px; cursor:pointer; text-align:left; font-family:inherit;
+    display:flex; flex-direction:column; gap:8px; position:relative;
+  }
+  .file-card:hover{ border-left-color:var(--clay); background:#fdfaf0;}
+  .file-card .code{
+    font-family:'IBM Plex Mono', monospace; font-size:0.68rem; color:var(--brass); letter-spacing:0.04em;
+  }
+  .file-card h3{
+    font-family:'Fraunces', serif; font-size:1.18rem; margin:0; font-weight:600; color:var(--pine-dark);
+    line-height:1.2;
+  }
+  .file-card .role{font-size:0.83rem; color:var(--ink-soft);}
+  .file-card .status{
+    margin-top:6px; font-family:'IBM Plex Mono', monospace; font-size:0.65rem;
+    letter-spacing:0.05em; padding:3px 7px; border-radius:2px; width:fit-content;
+  }
+  .status.open{background:rgba(155,59,43,0.12); color:var(--clay-dark);}
+  .status.reviewed{background:rgba(30,61,47,0.13); color:var(--pine-dark);}
+
+  /* Case file detail */
+  .casefile{
+    background:#FBF7EA; border:1px solid var(--paper-line); padding:0; margin-top:4px;
+  }
+  .casefile-top{
+    display:flex; justify-content:space-between; align-items:flex-start; gap:12px;
+    padding:20px 24px 16px; border-bottom:2px solid var(--pine);
+    background:linear-gradient(180deg, rgba(30,61,47,0.05), transparent);
+  }
+  .casefile-top .code{font-family:'IBM Plex Mono', monospace; font-size:0.72rem; color:var(--brass);}
+  .casefile-top h2{
+    font-family:'Fraunces', serif; font-size:1.7rem; margin:4px 0 2px; color:var(--pine-dark);
+  }
+  .casefile-top .role{color:var(--ink-soft); font-size:0.95rem;}
+  .back-btn{
+    background:none; border:1px solid var(--pine); color:var(--pine); font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem; padding:7px 12px; cursor:pointer; letter-spacing:0.03em; white-space:nowrap;
+  }
+  .back-btn:hover{background:var(--pine); color:var(--parchment);}
+
+  .casefile-body{padding:20px 24px 26px; display:grid; gap:22px; grid-template-columns: 1fr;}
+  @media(min-width:680px){ .casefile-body{grid-template-columns: 1.5fr 1fr; } }
+
+  .field-block h4{
+    font-family:'IBM Plex Mono', monospace; font-size:0.7rem; letter-spacing:0.08em;
+    color:var(--ink-soft); margin:0 0 8px; text-transform:uppercase;
+  }
+  .field-block p{margin:0 0 10px; line-height:1.58; font-size:0.98rem;}
+  .field-block p:last-child{margin-bottom:0;}
+
+  .fact-strip{
+    display:grid; gap:10px; align-self:start; background:rgba(30,61,47,0.045);
+    border:1px solid var(--paper-line); padding:14px 16px;
+  }
+  .fact-row{display:flex; justify-content:space-between; gap:10px; font-size:0.87rem; border-bottom:1px dashed var(--paper-line); padding-bottom:8px;}
+  .fact-row:last-child{border-bottom:none; padding-bottom:0;}
+  .fact-row span:first-child{color:var(--ink-soft); font-weight:600;}
+  .fact-row span:last-child{text-align:right; max-width:58%;}
+
+  .trait-stamp{
+    margin-top:14px; display:inline-flex; align-items:center; gap:8px;
+    border:2px solid var(--clay); color:var(--clay-dark); padding:8px 12px;
+    transform:rotate(-2deg); font-family:'IBM Plex Mono', monospace; font-size:0.72rem;
+    letter-spacing:0.06em; font-weight:600; background:rgba(155,59,43,0.05);
+  }
+
+  .mark-btn{
+    margin-top:16px; background:var(--pine); color:var(--parchment); border:none; padding:10px 16px;
+    font-family:'Source Sans 3', sans-serif; font-weight:600; font-size:0.88rem; cursor:pointer;
+  }
+  .mark-btn[disabled]{background:rgba(30,61,47,0.4); cursor:default;}
+
+  /* Glossary */
+  .trait-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:14px;}
+  .trait-item{
+    background:#FBF7EA; border:1px solid var(--paper-line); border-top:4px solid var(--clay);
+    padding:14px 16px;
+  }
+  .trait-item h4{font-family:'Fraunces', serif; margin:0 0 6px; font-size:1.05rem; color:var(--clay-dark);}
+  .trait-item p{margin:0; font-size:0.87rem; color:var(--ink-soft); line-height:1.5;}
+
+  .progress-note{
+    font-family:'IBM Plex Mono', monospace; font-size:0.72rem; color:var(--ink-soft);
+    margin-bottom:18px; letter-spacing:0.02em;
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="bureau-name">Georgia Field Research Bureau
+      <small>HISTORICAL FIGURES DIVISION</small>
+    </div>
+    <div class="division-tag">CASE SET: Q1 · SS2H1 / SS2CG3</div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="active" data-view="files">Case Files</button>
+  <button data-view="glossary">Citizenship Trait Glossary</button>
+</nav>
+
+<main>
+
+  <section class="view active" id="view-files">
+    <p class="intro-line">Six people shaped Georgia's story. Open each case file, read the field report, and mark it reviewed once you can tell the story back without looking.</p>
+    <p class="progress-note" id="progress-note">0 of 6 case files reviewed</p>
+    <div class="file-grid" id="file-grid"></div>
+  </section>
+
+  <section class="view" id="view-detail"></section>
+
+  <section class="view" id="view-glossary">
+    <p class="intro-line">Every figure in this case set is on file because they showed one of these traits. Learn the words — you'll be asked to spot them in the case files.</p>
+    <div class="trait-grid" id="trait-grid"></div>
+  </section>
+
+</main>
+
+<script>
+const FIGURES = [
+  {
+    id:"oglethorpe",
+    code:"FR-1733-OG",
+    name:"James Oglethorpe",
+    role:"Founder of the Georgia Colony",
+    born:"1696, London, England",
+    field:"Colonial founder & trustee",
+    trait:"Compassion",
+    story:[
+      "James Oglethorpe was a British soldier and member of Parliament who believed people deserved a second chance. In England at the time, people who owed money they couldn't pay were sent to overcrowded debtors' prisons.",
+      "In 1733, Oglethorpe led a group of settlers across the Atlantic Ocean and founded the colony of Georgia at Savannah — the 13th and last of the original English colonies. He wanted it to be a place where people could start over.",
+      "Oglethorpe worked closely with Tomochichi, a Yamacraw Creek leader, to keep peace between the new colonists and the Native peoples already living on the land."
+    ],
+    connection:"Founded and laid out the city of Savannah, on the Coastal Plain region near the Savannah River — Georgia's first permanent English settlement."
+  },
+  {
+    id:"tomochichi",
+    code:"FR-1733-TO",
+    name:"Tomochichi",
+    role:"Yamacraw Creek Leader",
+    born:"c. 1644, Georgia region",
+    field:"Diplomat & tribal leader",
+    trait:"Honor",
+    story:[
+      "Tomochichi was the leader (mico) of the Yamacraw, a small Creek community living near present-day Savannah. When Oglethorpe's ships arrived in 1733, Tomochichi chose diplomacy over conflict.",
+      "He allowed the English to settle nearby, taught them how to survive in the unfamiliar land, and traveled to England to meet the king — helping build a relationship that kept the young colony from war.",
+      "Because Tomochichi welcomed the settlers and helped negotiate fair treatment for his people, Georgia's earliest years were far more peaceful than many other colonies'."
+    ],
+    connection:"Led his community from a village near what is now Savannah, on the Coastal Plain — the same region where Oglethorpe's colonists landed."
+  },
+  {
+    id:"musgrove",
+    code:"FR-1733-MM",
+    name:"Mary Musgrove",
+    role:"Trader & Interpreter",
+    born:"c. 1700, Coweta Creek Town",
+    field:"Interpreter, diplomat, trader",
+    trait:"Trustworthiness",
+    story:[
+      "Mary Musgrove had a Creek mother and an English father, and grew up speaking both English and Muscogee. That made her one of the only people who could translate accurately between the colonists and the Creek Nation.",
+      "She ran a busy trading post near Savannah and used her position to smooth over disagreements and keep communication honest on both sides — no small thing when a single misunderstanding could start a war.",
+      "Historians consider her one of the most important — and often overlooked — figures in early Georgia, because so much of the colony's survival depended on her accurate translation."
+    ],
+    connection:"Operated her trading post on the Savannah River, at the edge of the new colony — a meeting point between English Savannah and Creek territory."
+  },
+  {
+    id:"sequoyah",
+    code:"FR-1821-SQ",
+    name:"Sequoyah",
+    role:"Creator of the Cherokee Syllabary",
+    born:"c. 1770, Tuskegee, Cherokee Nation",
+    field:"Silversmith & inventor of writing",
+    trait:"Dependability",
+    story:[
+      "Sequoyah was a Cherokee silversmith who noticed that English speakers could write down words — and thought his own language deserved the same. Cherokee had no written form at the time.",
+      "Working mostly alone over about twelve years, he invented a syllabary — a system of 85 symbols, each standing for a syllable sound in the Cherokee language.",
+      "By 1821, the syllabary was finished. Cherokee people could learn to read and write it in days, and it spread so fast that within a few years thousands of Cherokee speakers were literate — preserving the language for generations after."
+    ],
+    connection:"Grew up and worked in Cherokee towns in what is now northern Georgia and the Appalachian region — the traditional homeland of the Cherokee Nation."
+  },
+  {
+    id:"robinson",
+    code:"FR-1947-JR",
+    name:"Jackie Robinson",
+    role:"First to break MLB's color line",
+    born:"1919, Cairo, Georgia",
+    field:"Professional baseball player",
+    trait:"Good Sportsmanship",
+    story:[
+      "Jackie Robinson was born in Cairo, Georgia, and grew into one of the finest all-around athletes of his era. In 1947, he became the first African American to play Major League Baseball in the modern era, joining the Brooklyn Dodgers.",
+      "He faced constant hostility from opposing players, fans, and even some teammates — and was asked to respond with restraint rather than anger, no matter the provocation.",
+      "Robinson answered every insult with excellent play instead of retaliation, won Rookie of the Year, and opened the door for other Black athletes in professional sports."
+    ],
+    connection:"Born in Cairo, in Georgia's Coastal Plain region, in the far southwest corner of the state."
+  },
+  {
+    id:"mlk",
+    code:"FR-1963-MLK",
+    name:"Martin Luther King, Jr.",
+    role:"Civil Rights Leader",
+    born:"1929, Atlanta, Georgia",
+    field:"Minister & civil rights leader",
+    trait:"Civility",
+    story:[
+      "Martin Luther King, Jr. was born in Atlanta and became a Baptist minister who led the movement to end unfair, unequal treatment of Black Americans through nonviolent protest — marches, speeches, and peaceful resistance rather than violence.",
+      "In 1963, he delivered his famous 'I Have a Dream' speech in Washington, D.C., describing a future where people were judged by their character, not their race.",
+      "In 1964, he became the youngest person at the time to win the Nobel Peace Prize for his work. His birthday is now a national holiday."
+    ],
+    connection:"Born and raised in Atlanta, in Georgia's Piedmont region — where he later returned to preach at Ebenezer Baptist Church."
+  },
+  {
+    id:"low",
+    code:"FR-1912-JGL",
+    name:"Juliette Gordon Low",
+    role:"Founder of the Girl Scouts",
+    born:"1860, Savannah, Georgia",
+    field:"Founder, youth organization",
+    trait:"Dependability",
+    story:[
+      "Juliette Gordon Low grew up in Savannah and traveled widely, where she met the founder of the Girl Guides in Britain and saw how the program built girls' confidence and skills.",
+      "In 1912, back home in Savannah, she gathered 18 girls for the very first Girl Scout troop meeting in the United States — teaching first aid, camping, and community service at a time when few such opportunities existed for girls.",
+      "The organization she started with 18 members has grown into one with millions of members, all tracing back to that first troop in Savannah."
+    ],
+    connection:"Founded the Girl Scouts in her hometown of Savannah, in the Coastal Plain region, where her childhood home still stands today."
+  },
+  {
+    id:"carter",
+    code:"FR-1977-JC",
+    name:"Jimmy Carter",
+    role:"39th President of the United States",
+    born:"1924, Plains, Georgia",
+    field:"Farmer, Governor, President",
+    trait:"Honesty",
+    story:[
+      "Jimmy Carter grew up on a peanut farm in the small town of Plains, Georgia. He served in the Navy, ran the family farm business, and was elected Governor of Georgia before becoming President in 1977.",
+      "As president, he was known for speaking plainly and admitting hard truths, even when they weren't popular — a habit that earned him a reputation for honesty in office.",
+      "After his presidency, Carter spent decades building houses with Habitat for Humanity and working on global health and peace efforts, which won him the Nobel Peace Prize in 2002."
+    ],
+    connection:"Grew up and returned to live in Plains, in Georgia's Coastal Plain region, and served as Governor from the State Capitol in Atlanta."
+  }
+];
+
+const TRAITS = [
+  {name:"Honesty", desc:"Telling the truth, even when it's hard or unpopular."},
+  {name:"Dependability", desc:"Doing what you said you'd do, and finishing what you start."},
+  {name:"Trustworthiness", desc:"Being someone others can safely rely on and believe."},
+  {name:"Honor", desc:"Acting with integrity and keeping your word, even under pressure."},
+  {name:"Civility", desc:"Treating others with respect and courtesy, even in disagreement."},
+  {name:"Good Sportsmanship", desc:"Handling both winning and losing, and unfairness, with grace."},
+  {name:"Patience", desc:"Staying steady and calm while working toward something slowly."},
+  {name:"Compassion", desc:"Caring about others' hardship and acting to help."}
+];
+
+const STORAGE_KEY = "ga_bureau_reviewed_q1";
+
+function getReviewed(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){ return {}; }
+}
+function setReviewed(map){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(map)); }catch(e){}
+}
+
+function showView(name){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.remove("active"));
+  if(name === "files"){
+    document.getElementById("view-files").classList.add("active");
+    document.querySelector('nav.tabs button[data-view="files"]').classList.add("active");
+  } else if(name === "glossary"){
+    document.getElementById("view-glossary").classList.add("active");
+    document.querySelector('nav.tabs button[data-view="glossary"]').classList.add("active");
+  } else if(name === "detail"){
+    document.getElementById("view-detail").classList.add("active");
+  }
+}
+
+function renderFileGrid(){
+  const reviewed = getReviewed();
+  const grid = document.getElementById("file-grid");
+  grid.innerHTML = "";
+  FIGURES.forEach(fig=>{
+    const card = document.createElement("button");
+    card.className = "file-card";
+    card.innerHTML = `
+      <div class="code">${fig.code}</div>
+      <h3>${fig.name}</h3>
+      <div class="role">${fig.role}</div>
+      <div class="status ${reviewed[fig.id] ? 'reviewed' : 'open'}">${reviewed[fig.id] ? 'CASE REVIEWED' : 'CASE OPEN'}</div>
+    `;
+    card.addEventListener("click", ()=>openCaseFile(fig.id));
+    grid.appendChild(card);
+  });
+  const count = Object.values(reviewed).filter(Boolean).length;
+  document.getElementById("progress-note").textContent = `${count} of ${FIGURES.length} case files reviewed`;
+}
+
+function openCaseFile(id){
+  const fig = FIGURES.find(f=>f.id===id);
+  if(!fig) return;
+  const reviewed = getReviewed();
+  const detail = document.getElementById("view-detail");
+  detail.innerHTML = `
+    <div class="casefile">
+      <div class="casefile-top">
+        <div>
+          <div class="code">${fig.code}</div>
+          <h2>${fig.name}</h2>
+          <div class="role">${fig.role}</div>
+        </div>
+        <button class="back-btn" id="back-btn">&larr; ALL CASE FILES</button>
+      </div>
+      <div class="casefile-body">
+        <div class="field-block">
+          <h4>Field Report</h4>
+          ${fig.story.map(p=>`<p>${p}</p>`).join("")}
+          <div class="trait-stamp">VERIFIED TRAIT: ${fig.trait.toUpperCase()}</div>
+        </div>
+        <div>
+          <div class="fact-strip">
+            <div class="fact-row"><span>Born</span><span>${fig.born}</span></div>
+            <div class="fact-row"><span>Field</span><span>${fig.field}</span></div>
+            <div class="fact-row"><span>Georgia Connection</span><span>${fig.connection}</span></div>
+          </div>
+          <button class="mark-btn" id="mark-btn" ${reviewed[fig.id] ? "disabled":""}>
+            ${reviewed[fig.id] ? "Case Reviewed ✓" : "Mark Case Reviewed"}
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  showView("detail");
+  document.getElementById("back-btn").addEventListener("click", ()=>{
+    showView("files");
+    renderFileGrid();
+  });
+  document.getElementById("mark-btn").addEventListener("click", (e)=>{
+    const map = getReviewed();
+    map[fig.id] = true;
+    setReviewed(map);
+    e.target.textContent = "Case Reviewed ✓";
+    e.target.disabled = true;
+  });
+}
+
+function renderGlossary(){
+  const grid = document.getElementById("trait-grid");
+  grid.innerHTML = TRAITS.map(t=>`
+    <div class="trait-item">
+      <h4>${t.name}</h4>
+      <p>${t.desc}</p>
+    </div>
+  `).join("");
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{
+  renderFileGrid();
+  renderGlossary();
+  document.querySelectorAll("nav.tabs button").forEach(btn=>{
+    btn.addEventListener("click", ()=> showView(btn.dataset.view));
+  });
+});
+</script>
+
+</body>
+</html>
