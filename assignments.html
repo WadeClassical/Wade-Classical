@@ -138,6 +138,7 @@ const db = firebase.database();
 const WORKSHEETS = {
   "ryder-grade3-ela": {
     child: "ryder",
+    subject: "ELA",
     title: "Grade 3 ELA Mastery Check",
     subtitle: "Reading, Vocabulary, Grammar & Writing",
     intro: "This checks whether Grade 3 ELA skills are solidly in place before building on them. No time limit, no grade — just answer as best you can.",
@@ -226,6 +227,7 @@ const WORKSHEETS = {
   },
   "hadley-grade1-ela": {
     child: "hadley",
+    subject: "ELA",
     title: "Grade 1 ELA Mastery Check",
     subtitle: "Reading, Language & Writing",
     intro: "This checks whether Grade 1 ELA skills are solidly in place before building on them. No time limit, no grade — just answer as best you can.",
@@ -289,6 +291,7 @@ const WORKSHEETS = {
   },
   "ryder-lightning-thief-ch1": {
     child: "ryder",
+    subject: "ELA",
     title: "Camp Half-Blood Intake Report",
     subtitle: "The Lightning Thief \u2014 Chapter 1",
     intro: "A new case just came across your desk at Camp Half-Blood: a kid named Percy Jackson had a very strange day on a field trip. File your report below \u2014 short answers are fine, and a couple of these have no wrong answer.",
@@ -343,6 +346,7 @@ const WORKSHEETS = {
   },
   "ryder-lightning-thief-ch2": {
     child: "ryder",
+    subject: "ELA",
     title: "Camp Half-Blood Intake Report",
     subtitle: "The Lightning Thief \u2014 Chapter 2",
     intro: "Case file update: Percy's home for the summer now, but things at home are almost as strange as things at school.",
@@ -387,10 +391,11 @@ const WORKSHEETS = {
     },
     scoringNotes: "Part 1: 4-5/5 correct = solid comprehension. Parts 2-3 are about engagement, not correctness."
   },
-  "ryder-lightning-thief-ch3": {
+  "ryder-lightning-thief-ch4": {
     child: "ryder",
+    subject: "ELA",
     title: "Camp Half-Blood Intake Report",
-    subtitle: "The Lightning Thief \u2014 Chapter 3",
+    subtitle: "The Lightning Thief \u2014 Chapter 4",
     intro: "Case file update: things just got dangerous. File your report on the attack.",
     sections: [
       {
@@ -434,10 +439,11 @@ const WORKSHEETS = {
     },
     scoringNotes: "Part 1: 4-5/5 correct = solid comprehension. Part 2-3 are about engagement, not correctness."
   },
-  "ryder-lightning-thief-ch4": {
+  "ryder-lightning-thief-ch5": {
     child: "ryder",
+    subject: "ELA",
     title: "Camp Half-Blood Intake Report",
-    subtitle: "The Lightning Thief \u2014 Chapter 4",
+    subtitle: "The Lightning Thief \u2014 Chapter 5",
     intro: "Case file update: the aftermath. Percy's safe, but shaken.",
     sections: [
       {
@@ -473,10 +479,11 @@ const WORKSHEETS = {
     },
     scoringNotes: "Part 1: 3-4/4 reasonable = solid comprehension. Parts 2-3 are about engagement, not correctness."
   },
-  "ryder-lightning-thief-ch5": {
+  "ryder-lightning-thief-ch6": {
     child: "ryder",
+    subject: "ELA",
     title: "Camp Half-Blood Intake Report",
-    subtitle: "The Lightning Thief \u2014 Chapter 5",
+    subtitle: "The Lightning Thief \u2014 Chapter 6",
     intro: "Case file update: meet the camp \u2014 and the girl who's been asking a lot of questions.",
     sections: [
       {
@@ -514,10 +521,11 @@ const WORKSHEETS = {
     },
     scoringNotes: "Part 1: 4-5/5 correct = solid comprehension. Parts 2-3 are about engagement, not correctness."
   },
-  "ryder-lightning-thief-ch6": {
+  "ryder-lightning-thief-ch7": {
     child: "ryder",
+    subject: "ELA",
     title: "Camp Half-Blood Intake Report",
-    subtitle: "The Lightning Thief \u2014 Chapter 6",
+    subtitle: "The Lightning Thief \u2014 Chapter 7",
     intro: "Case file update: Percy learns how camp actually works \u2014 and a few surprising things about himself.",
     sections: [
       {
@@ -555,6 +563,7 @@ const WORKSHEETS = {
   },
   "hadley-poppy-ch1": {
     child: "hadley",
+    subject: "ELA",
     title: "Dimwood Forest Field Notes",
     subtitle: "Poppy \u2014 Chapter 1",
     intro: "Let's remember what happened in the forest today!",
@@ -583,6 +592,7 @@ const WORKSHEETS = {
   },
   "hadley-poppy-ch2": {
     child: "hadley",
+    subject: "ELA",
     title: "Dimwood Forest Field Notes",
     subtitle: "Poppy \u2014 Chapter 2",
     intro: "Let's remember what happened in the forest today!",
@@ -605,6 +615,7 @@ const WORKSHEETS = {
   },
   "hadley-poppy-ch3": {
     child: "hadley",
+    subject: "ELA",
     title: "Dimwood Forest Field Notes",
     subtitle: "Poppy \u2014 Chapter 3",
     intro: "Let's remember what happened in the forest today!",
@@ -629,6 +640,7 @@ const WORKSHEETS = {
   },
   "hadley-poppy-ch4": {
     child: "hadley",
+    subject: "ELA",
     title: "Dimwood Forest Field Notes",
     subtitle: "Poppy \u2014 Chapter 4",
     intro: "Let's remember what happened in the forest today!",
@@ -651,6 +663,7 @@ const WORKSHEETS = {
   },
   "hadley-poppy-ch5": {
     child: "hadley",
+    subject: "ELA",
     title: "Dimwood Forest Field Notes",
     subtitle: "Poppy \u2014 Chapter 5",
     intro: "Let's remember what happened in the forest today!",
@@ -677,6 +690,7 @@ const WORKSHEETS = {
   },
   "ryder-area-perimeter": {
     child: "ryder",
+    subject: "Math",
     title: "Shop Math: Measuring the Job",
     subtitle: "Area & Perimeter",
     intro: "Every job in the shop starts with measuring. Perimeter tells you how much material goes around the edge \u2014 like fencing or trim. Area tells you how much surface something covers \u2014 like a tabletop or a floor.",
@@ -752,12 +766,20 @@ const reviewMode = params.get("review") === "1";
 // ---------------------------------------------------------------------
 // RENDER: PICKER (list of assignments for the selected kid)
 // ---------------------------------------------------------------------
+const SUBJECT_ORDER = ["Math", "Science", "Social Studies", "ELA", "Other"];
+
 function renderPicker() {
   currentWorksheetId = null;
   const app = document.getElementById("app");
   document.getElementById("statusBar").style.display = "none";
 
   const list = Object.entries(WORKSHEETS).filter(([id, w]) => w.child === currentKid);
+  const bySubject = {};
+  list.forEach(([id, w]) => {
+    const subj = w.subject || "Other";
+    if (!bySubject[subj]) bySubject[subj] = [];
+    bySubject[subj].push([id, w]);
+  });
 
   let html = `
     <div class="topbar">
@@ -775,16 +797,21 @@ function renderPicker() {
   if (list.length === 0) {
     html += `<div class="card empty">No assignments yet for ${cap(currentKid)}.</div>`;
   } else {
-    list.forEach(([id, w]) => {
-      html += `
-        <div class="card assign-card" data-open="${id}">
-          <div>
-            <div class="assign-title">${w.title}</div>
-            <div class="assign-sub">${w.subtitle || ""}</div>
+    SUBJECT_ORDER.forEach(subj => {
+      const items = bySubject[subj];
+      if (!items || items.length === 0) return;
+      html += `<div class="section-label">${subj}</div>`;
+      items.forEach(([id, w]) => {
+        html += `
+          <div class="card assign-card" data-open="${id}">
+            <div>
+              <div class="assign-title">${w.title}</div>
+              <div class="assign-sub">${w.subtitle || ""}</div>
+            </div>
+            <div class="pill" id="pill-${id}">...</div>
           </div>
-          <div class="pill" id="pill-${id}">...</div>
-        </div>
-      `;
+        `;
+      });
     });
   }
 
