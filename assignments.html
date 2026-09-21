@@ -16,7 +16,7 @@
     --ink-soft:#7A6754;
     --accent:#C1592B;
     --accent-soft:#F3DCC0;
-    --line:#E3D2B8;
+    --line:#B9C99A;
     --good:#6B7F4A;
     --good-soft:#E7EDDA;
     --good-ink:#3D4E2A;
@@ -103,6 +103,25 @@
     text-align:center; margin-top:30px; font-family:sans-serif; font-size:13px;
   }
   .footer-link a{color:var(--ink-soft);}
+
+  .leaves-layer{
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    overflow:hidden; pointer-events:none; z-index:0;
+  }
+  .leaf{
+    position:absolute; top:-40px; will-change:transform;
+    animation-name:leafFall; animation-timing-function:linear; animation-iteration-count:infinite;
+    opacity:.75; filter:drop-shadow(0 1px 1px rgba(0,0,0,.08));
+  }
+  @keyframes leafFall{
+    0%   { transform:translateY(0)     translateX(0)    rotate(0deg); }
+    25%  { transform:translateY(27vh)  translateX(22px) rotate(90deg); }
+    50%  { transform:translateY(54vh)  translateX(-18px) rotate(180deg); }
+    75%  { transform:translateY(81vh)  translateX(16px)  rotate(270deg); }
+    100% { transform:translateY(112vh) translateX(-12px) rotate(360deg); }
+  }
+  .wrap{position:relative; z-index:1;}
+  .status-bar{z-index:2;}
 </style>
 </head>
 <body>
@@ -1020,7 +1039,30 @@ function reviewRowRaw(prompt, answerHtml, key) {
 // ---------------------------------------------------------------------
 // INIT
 // ---------------------------------------------------------------------
+function spawnLeaves(){
+  const layer = document.createElement("div");
+  layer.className = "leaves-layer";
+  const emojis = ["\uD83C\uDF41", "\uD83C\uDF42", "\uD83C\uDF43"]; // 🍁 🍂 🍃
+  const count = 12;
+  for (let i = 0; i < count; i++){
+    const leaf = document.createElement("span");
+    leaf.className = "leaf";
+    leaf.textContent = emojis[i % emojis.length];
+    const left = Math.random() * 100;
+    const size = 16 + Math.random() * 14;
+    const duration = 9 + Math.random() * 7;
+    const delay = Math.random() * -duration;
+    leaf.style.left = left + "%";
+    leaf.style.fontSize = size + "px";
+    leaf.style.animationDuration = duration + "s";
+    leaf.style.animationDelay = delay + "s";
+    layer.appendChild(leaf);
+  }
+  document.body.appendChild(layer);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  spawnLeaves();
   renderPicker();
 });
 </script>
