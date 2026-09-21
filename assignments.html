@@ -298,7 +298,7 @@ const WORKSHEETS = {
         intro: "Chapter 1 covers Percy's field trip to the museum \u2014 and what happened with his pre-algebra teacher.",
         questions: [
           { id: "q1", type: "short", prompt: "What is the name of the school Percy and his class are visiting the museum from?" },
-          { id: "q2", type: "short", prompt: "Percy's pre-algebra teacher turns out to actually be a monster. What kind of creature is she?" },
+          { id: "q2", type: "short", prompt: "Percy's pre-algebra teacher turns out to not be human. How does she change when she attacks him?" },
           { id: "q3", type: "long", rows: 2, prompt: "What does Mr. Brunner give Percy to defend himself, and what's unusual about it?" },
           { id: "q4", type: "short", prompt: "What happens to Mrs. Dodds at the end of the fight?" },
           { id: "q5", type: "long", rows: 3, prompt: "Afterward, something strange happens when Percy asks his friends about Mrs. Dodds. What do they say?" },
@@ -329,7 +329,7 @@ const WORKSHEETS = {
     ],
     answerKey: {
       q1: "Yancy Academy.",
-      q2: "A Fury.",
+      q2: "She turns into an old hag with talons and glowing eyes. (Chapter 1 doesn't yet name her as a Fury \u2014 that comes later.)",
       q3: "A ballpoint pen that turns into a magic sword (Riptide) when he uncaps it.",
       q4: "Percy destroys her \u2014 she turns to dust/vaporizes.",
       q5: "His friends insist there was never a teacher named Mrs. Dodds \u2014 only a substitute named Mrs. Kerr \u2014 and act like Percy is confused.",
@@ -674,6 +674,66 @@ const WORKSHEETS = {
       q5: "Open \u2014 accept reasoning like wanting to remember him or keep something of his."
     },
     scoringNotes: "Comprehension check after guided reading \u2014 not a grade."
+  },
+  "ryder-area-perimeter": {
+    child: "ryder",
+    title: "Shop Math: Measuring the Job",
+    subtitle: "Area & Perimeter",
+    intro: "Every job in the shop starts with measuring. Perimeter tells you how much material goes around the edge \u2014 like fencing or trim. Area tells you how much surface something covers \u2014 like a tabletop or a floor.",
+    sections: [
+      {
+        label: "Part 1 \u2014 Learn the Rule",
+        questions: [
+          { id: "info1", type: "static", text: `<strong>Perimeter</strong> \u2014 add up all four sides.<br><svg viewBox="0 0 260 170" width="260" height="170" xmlns="http://www.w3.org/2000/svg"><rect x="50" y="35" width="160" height="80" fill="#FFFFFF" stroke="#5B4E38" stroke-width="3"/><text x="130" y="26" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">7 ft</text><text x="130" y="132" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">7 ft</text><text x="35" y="80" text-anchor="middle" font-size="15" font-weight="bold" fill="#333" transform="rotate(-90 35 80)">4 ft</text><text x="225" y="80" text-anchor="middle" font-size="15" font-weight="bold" fill="#333" transform="rotate(-90 225 80)">4 ft</text><text x="130" y="155" text-anchor="middle" font-size="15" font-weight="bold" fill="#B8892B">7+4+7+4 = 22 ft</text></svg>` },
+          { id: "info2", type: "static", text: `<strong>Area</strong> \u2014 multiply length \u00d7 width. Think of it as counting squares.<br><svg viewBox="0 0 260 170" width="260" height="170" xmlns="http://www.w3.org/2000/svg"><text x="130" y="15" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">8 ft</text><text x="15" y="95" text-anchor="middle" font-size="15" font-weight="bold" fill="#333" transform="rotate(-90 15 95)">6 ft</text><rect x="40" y="25" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="58" y="25" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="76" y="25" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="94" y="25" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="112" y="25" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="130" y="25" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="148" y="25" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="166" y="25" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="40" y="43" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="58" y="43" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="76" y="43" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="94" y="43" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="112" y="43" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="130" y="43" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="148" y="43" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="166" y="43" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="40" y="61" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="58" y="61" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="76" y="61" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="94" y="61" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="112" y="61" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="130" y="61" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="148" y="61" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="166" y="61" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="40" y="79" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="58" y="79" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="76" y="79" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="94" y="79" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="112" y="79" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="130" y="79" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="148" y="79" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="166" y="79" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="40" y="97" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="58" y="97" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="76" y="97" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="94" y="97" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="112" y="97" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="130" y="97" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="148" y="97" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="166" y="97" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="40" y="115" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="58" y="115" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="76" y="115" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="94" y="115" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="112" y="115" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="130" y="115" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="148" y="115" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><rect x="166" y="115" width="17" height="17" fill="#EAF3EC" stroke="#8A6A46" stroke-width="0.5"/><text x="175" y="160" text-anchor="middle" font-size="15" font-weight="bold" fill="#2F5D46">8 &#215; 6 = 48 sq ft</text></svg>` }
+        ]
+      },
+      {
+        label: "Part 2 \u2014 Find the Area",
+        intro: "Multiply length \u00d7 width for each project.",
+        questions: [
+          { id: "a1_diagram", type: "static", text: `Tabletop:<br><svg viewBox="0 0 260 150" width="220" height="127" xmlns="http://www.w3.org/2000/svg"><rect x="60" y="35" width="140" height="80" fill="#FFFFFF" stroke="#5B4E38" stroke-width="3"/><text x="130" y="25" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">7 ft</text><text x="45" y="75" text-anchor="middle" font-size="15" font-weight="bold" fill="#333" transform="rotate(-90 45 75)">8 ft</text></svg>` },
+          { id: "a1", type: "short", prompt: "Area of the tabletop = ___ sq ft" },
+          { id: "a2_diagram", type: "static", text: `Fence panel:<br><svg viewBox="0 0 260 150" width="220" height="127" xmlns="http://www.w3.org/2000/svg"><rect x="60" y="35" width="140" height="80" fill="#FFFFFF" stroke="#5B4E38" stroke-width="3"/><text x="130" y="25" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">9 ft</text><text x="45" y="75" text-anchor="middle" font-size="15" font-weight="bold" fill="#333" transform="rotate(-90 45 75)">6 ft</text></svg>` },
+          { id: "a2", type: "short", prompt: "Area of the fence panel = ___ sq ft" },
+          { id: "a3_diagram", type: "static", text: `Shelf:<br><svg viewBox="0 0 260 150" width="220" height="127" xmlns="http://www.w3.org/2000/svg"><rect x="60" y="35" width="140" height="80" fill="#FFFFFF" stroke="#5B4E38" stroke-width="3"/><text x="130" y="25" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">12 in</text><text x="45" y="75" text-anchor="middle" font-size="15" font-weight="bold" fill="#333" transform="rotate(-90 45 75)">7 in</text></svg>` },
+          { id: "a3", type: "short", prompt: "Area of the shelf = ___ sq in" }
+        ]
+      },
+      {
+        label: "Part 3 \u2014 Find the Perimeter",
+        intro: "Add up all four sides for each project.",
+        questions: [
+          { id: "p1_diagram", type: "static", text: `Garden bed (how much fencing?):<br><svg viewBox="0 0 260 150" width="220" height="127" xmlns="http://www.w3.org/2000/svg"><rect x="60" y="35" width="140" height="80" fill="#FFFFFF" stroke="#5B4E38" stroke-width="3"/><text x="130" y="25" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">8 ft</text><text x="45" y="75" text-anchor="middle" font-size="15" font-weight="bold" fill="#333" transform="rotate(-90 45 75)">6 ft</text></svg>` },
+          { id: "p1", type: "short", prompt: "Perimeter of the garden bed = ___ ft" },
+          { id: "p2_diagram", type: "static", text: `Picture frame (how much trim?):<br><svg viewBox="0 0 260 150" width="220" height="127" xmlns="http://www.w3.org/2000/svg"><rect x="60" y="35" width="140" height="80" fill="#FFFFFF" stroke="#5B4E38" stroke-width="3"/><text x="130" y="25" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">9 in</text><text x="45" y="75" text-anchor="middle" font-size="15" font-weight="bold" fill="#333" transform="rotate(-90 45 75)">7 in</text></svg>` },
+          { id: "p2", type: "short", prompt: "Perimeter of the picture frame = ___ in" },
+          { id: "p3_diagram", type: "static", text: `Deck (how much railing?):<br><svg viewBox="0 0 260 150" width="220" height="127" xmlns="http://www.w3.org/2000/svg"><rect x="60" y="35" width="140" height="80" fill="#FFFFFF" stroke="#5B4E38" stroke-width="3"/><text x="130" y="25" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">12 ft</text><text x="45" y="75" text-anchor="middle" font-size="15" font-weight="bold" fill="#333" transform="rotate(-90 45 75)">9 ft</text></svg>` },
+          { id: "p3", type: "short", prompt: "Perimeter of the deck = ___ ft" }
+        ]
+      },
+      {
+        label: "Part 4 \u2014 Find the Missing Side",
+        intro: "This time you know the area and one side \u2014 use division (the reverse of multiplication) to find the other side.",
+        questions: [
+          { id: "m1", type: "short", prompt: "A board has an area of 54 sq ft. One side is 6 ft. The other side = ___ ft" },
+          { id: "m2", type: "short", prompt: "A panel has an area of 96 sq in. One side is 8 in. The other side = ___ in" },
+          { id: "m3", type: "short", prompt: "A tile has an area of 63 sq ft. One side is 9 ft. The other side = ___ ft" }
+        ]
+      }
+    ],
+    answerKey: {
+      a1: "56 sq ft (7 \u00d7 8)",
+      a2: "54 sq ft (9 \u00d7 6)",
+      a3: "84 sq in (12 \u00d7 7)",
+      p1: "28 ft (8+6+8+6)",
+      p2: "32 in (9+7+9+7)",
+      p3: "42 ft (12+9+12+9)",
+      m1: "9 ft (54 \u00f7 6)",
+      m2: "12 in (96 \u00f7 8)",
+      m3: "7 ft (63 \u00f7 9)"
+    },
+    scoringNotes: "This leans hard on the 6, 7, 8, 9, and 12 times tables \u2014 both forward (Parts 2-3) and backward as division (Part 4). If Part 4 is where he stumbles, that's a sign the multiplication facts are solid but the reverse (division) connection needs more practice \u2014 not a sign the geometry concept didn't land."
   }
 };
 
