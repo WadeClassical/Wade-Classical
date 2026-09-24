@@ -884,6 +884,107 @@ const WORKSHEETS = {
       x3: "9 + 9 = 18, same as 2 \u00d7 9 = 18."
     },
     scoringNotes: "Parts 1-2 are her existing strength \u2014 double-digit addition/subtraction should be solid. Part 3 is brand new \u2014 the goal is just recognizing that repeated addition and multiplication give the same answer, not fluency yet. Two printable practice sheets cover the same three skills with fresh numbers."
+  },
+  "ryder-geometry-diagnostic": {
+    child: "ryder",
+    subject: "Math",
+    title: "Geometry Check-In",
+    subtitle: "A Full Picture, Elementary Through 7th Grade",
+    intro: "This isn't a test to pass or fail \u2014 it's a map. Each part is labeled with the grade level where that skill is typically taught, so wherever the answers start getting shaky, that's exactly where to pick up next. No pressure, just information.",
+    sections: [
+      {
+        label: "Part 1 \u2014 Shape Basics (typically taught by Grade 3)",
+        questions: [
+          { id: "b1", type: "short", prompt: "How many sides does a hexagon have?" },
+          { id: "b2", type: "short", prompt: "What do we call a triangle with all three sides the same length?" },
+          { id: "b3", type: "short", prompt: "What makes a shape a quadrilateral?" }
+        ]
+      },
+      {
+        label: "Part 2 \u2014 Perimeter & Area of Rectangles (typically taught by Grade 4)",
+        questions: [
+          { id: "r_diagram", type: "static", text: `<svg viewBox="0 0 260 160" width="260" height="160" xmlns="http://www.w3.org/2000/svg"><rect x="50" y="35" width="160" height="80" fill="#FFFFFF" stroke="#5B4E38" stroke-width="3"/><text x="130" y="26" text-anchor="middle" font-size="16" font-weight="bold" fill="#333">9 ft</text><text x="35" y="80" text-anchor="middle" font-size="16" font-weight="bold" fill="#333" transform="rotate(-90 35 80)">6 ft</text></svg>` },
+          { id: "r1", type: "short", prompt: "What is the perimeter?" },
+          { id: "r2", type: "short", prompt: "What is the area?" }
+        ]
+      },
+      {
+        label: "Part 3 \u2014 Triangles, Parallelograms & Trapezoids (typically taught by Grade 6)",
+        questions: [
+          { id: "t_diagram", type: "static", text: `Area of a triangle = \u00bd \u00d7 base \u00d7 height<br><svg viewBox="0 0 260 170" width="260" height="170" xmlns="http://www.w3.org/2000/svg"><polygon points="60,140 220,140 140,30" fill="#FFFFFF" stroke="#5B4E38" stroke-width="3"/><line x1="140" y1="30" x2="140" y2="140" stroke="#B9C99A" stroke-width="2" stroke-dasharray="5,4"/><text x="140" y="155" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">base = 10 cm</text><text x="150" y="85" font-size="15" font-weight="bold" fill="#6B7F4A">height = 6 cm</text></svg>` },
+          { id: "t1", type: "short", prompt: "What is the area of this triangle?" },
+          { id: "p_diagram", type: "static", text: `Area of a parallelogram = base \u00d7 height<br><svg viewBox="0 0 260 160" width="260" height="160" xmlns="http://www.w3.org/2000/svg"><polygon points="70,120 210,120 170,30 30,30" fill="#FFFFFF" stroke="#5B4E38" stroke-width="3"/><line x1="70" y1="120" x2="70" y2="30" stroke="#B9C99A" stroke-width="2" stroke-dasharray="5,4"/><text x="140" y="140" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">base = 8 in</text><text x="15" y="80" font-size="15" font-weight="bold" fill="#6B7F4A" transform="rotate(-90 15 80)">height = 5 in</text></svg>` },
+          { id: "p1", type: "short", prompt: "What is the area of this parallelogram?" },
+          { id: "z_diagram", type: "static", text: `Area of a trapezoid = \u00bd \u00d7 (b1 + b2) \u00d7 height<br><svg viewBox="0 0 260 160" width="260" height="160" xmlns="http://www.w3.org/2000/svg"><polygon points="40,120 220,120 170,30 90,30" fill="#FFFFFF" stroke="#5B4E38" stroke-width="3"/><text x="130" y="140" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">b1 = 10 m</text><text x="130" y="22" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">b2 = 6 m</text><line x1="90" y1="30" x2="90" y2="120" stroke="#B9C99A" stroke-width="2" stroke-dasharray="5,4"/><text x="60" y="80" font-size="15" font-weight="bold" fill="#6B7F4A">h = 4m</text></svg>` },
+          { id: "z1", type: "short", prompt: "What is the area of this trapezoid?" }
+        ]
+      },
+      {
+        label: "Part 4 \u2014 Angles (typically taught by Grade 7)",
+        questions: [
+          { id: "a_diagram", type: "static", text: `<svg viewBox="0 0 300 140" width="300" height="140" xmlns="http://www.w3.org/2000/svg"><g transform="translate(40,110)">  <line x1="0" y1="0" x2="70" y2="0" stroke="#5B4E38" stroke-width="3"/>  <line x1="0" y1="0" x2="55" y2="-55" stroke="#5B4E38" stroke-width="3"/>  <path d="M 20 0 A 20 20 0 0 0 14.1 -14.1" fill="none" stroke="#C1592B" stroke-width="2"/>  <text x="15" y="15" font-size="13" font-weight="bold" fill="#333">A</text></g><g transform="translate(150,110)">  <line x1="0" y1="0" x2="70" y2="0" stroke="#5B4E38" stroke-width="3"/>  <line x1="0" y1="0" x2="0" y2="-70" stroke="#5B4E38" stroke-width="3"/>  <rect x="0" y="-16" width="16" height="16" fill="none" stroke="#C1592B" stroke-width="2"/>  <text x="15" y="15" font-size="13" font-weight="bold" fill="#333">B</text></g><g transform="translate(240,110)">  <line x1="0" y1="0" x2="60" y2="0" stroke="#5B4E38" stroke-width="3"/>  <line x1="0" y1="0" x2="-35" y2="-58" stroke="#5B4E38" stroke-width="3"/>  <path d="M 20 0 A 20 20 0 0 0 -8.6 -17.9" fill="none" stroke="#C1592B" stroke-width="2"/>  <text x="10" y="15" font-size="13" font-weight="bold" fill="#333">C</text></g></svg>` },
+          { id: "a1", type: "short", prompt: "Which angle (A, B, or C) is acute? Which is right? Which is obtuse?" },
+          { id: "a2", type: "short", prompt: "Two angles are complementary. One measures 35\u00b0. What does the other measure?" },
+          { id: "v_diagram", type: "static", text: `<svg viewBox="0 0 260 200" width="260" height="200" xmlns="http://www.w3.org/2000/svg"><line x1="30" y1="30" x2="230" y2="170" stroke="#5B4E38" stroke-width="3"/><line x1="230" y1="30" x2="30" y2="170" stroke="#5B4E38" stroke-width="3"/><text x="180" y="55" font-size="16" font-weight="bold" fill="#C1592B">50&#176;</text><text x="65" y="150" font-size="16" font-weight="bold" fill="#6B7F4A">?</text></svg>` },
+          { id: "a3", type: "short", prompt: "These two lines cross, forming vertical angles. If one angle is 50\u00b0, what is the angle marked with the ?" }
+        ]
+      },
+      {
+        label: "Part 5 \u2014 Circles (typically taught by Grade 7)",
+        questions: [
+          { id: "c_diagram", type: "static", text: `<svg viewBox="0 0 220 220" width="220" height="220" xmlns="http://www.w3.org/2000/svg"><circle cx="110" cy="110" r="80" fill="#FFFFFF" stroke="#5B4E38" stroke-width="3"/><line x1="110" y1="110" x2="190" y2="110" stroke="#C1592B" stroke-width="2.5"/><text x="150" y="102" text-anchor="middle" font-size="15" font-weight="bold" fill="#C1592B">r = 7 cm</text><circle cx="110" cy="110" r="2.5" fill="#333"/></svg>` },
+          { id: "c1", type: "short", prompt: "What is the diameter of this circle?" },
+          { id: "c2", type: "short", prompt: "What is the circumference? (use \u03c0 \u2248 3.14)" },
+          { id: "c3", type: "short", prompt: "What is the area? (use \u03c0 \u2248 3.14)" }
+        ]
+      },
+      {
+        label: "Part 6 \u2014 Volume & Surface Area (typically taught by Grade 6)",
+        questions: [
+          { id: "pr_diagram", type: "static", text: `<svg viewBox="0 0 260 200" width="260" height="200" xmlns="http://www.w3.org/2000/svg"><polygon points="60,90 160,90 160,170 60,170" fill="#FFFFFF" stroke="#5B4E38" stroke-width="3"/><polygon points="60,90 100,50 200,50 160,90" fill="#F3DCC0" stroke="#5B4E38" stroke-width="3"/><polygon points="160,90 200,50 200,130 160,170" fill="#E8C9A0" stroke="#5B4E38" stroke-width="3"/><text x="110" y="190" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">l = 8 in</text><text x="30" y="130" text-anchor="middle" font-size="14" font-weight="bold" fill="#333" transform="rotate(-90 30 130)">w = 4 in</text><text x="215" y="95" font-size="14" font-weight="bold" fill="#333">h = 3 in</text></svg>` },
+          { id: "v1", type: "short", prompt: "What is the volume of this rectangular prism?" },
+          { id: "v2", type: "short", prompt: "What is the total surface area? (there are 6 faces \u2014 remember opposite faces match)" }
+        ]
+      },
+      {
+        label: "Part 7 \u2014 Coordinate Plane (typically taught by Grade 6)",
+        questions: [
+          { id: "co_diagram", type: "static", text: `<svg viewBox="0 0 260 260" width="260" height="260" xmlns="http://www.w3.org/2000/svg"><defs>  <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#E3D2B8" stroke-width="1"/>  </pattern></defs><rect x="20" y="20" width="220" height="220" fill="url(#grid)"/><line x1="20" y1="220" x2="240" y2="220" stroke="#333" stroke-width="2"/><line x1="20" y1="20" x2="20" y2="240" stroke="#333" stroke-width="2"/><circle cx="100" cy="160" r="5" fill="#C1592B"/><text x="105" y="150" font-size="14" font-weight="bold" fill="#C1592B">A</text><circle cx="180" cy="80" r="5" fill="#6B7F4A"/><text x="185" y="75" font-size="14" font-weight="bold" fill="#6B7F4A">B</text><text x="20" y="235" font-size="11" fill="#666">0</text></svg>` },
+          { id: "co1", type: "short", prompt: "What are the coordinates of point A?" },
+          { id: "co2", type: "short", prompt: "What are the coordinates of point B?" }
+        ]
+      },
+      {
+        label: "Part 8 \u2014 7th Grade Specific: Scale & Cross-Sections",
+        questions: [
+          { id: "s1", type: "short", prompt: "A scale drawing uses a scale of 1 inch = 4 feet. If a wall measures 3 inches on the drawing, how long is the real wall?" },
+          { id: "s2", type: "short", prompt: "If you slice straight across a rectangular prism, parallel to its base, what shape is the cross-section?" }
+        ]
+      }
+    ],
+    answerKey: {
+      b1: "6 sides.",
+      b2: "Equilateral triangle.",
+      b3: "It has exactly 4 sides (and 4 angles).",
+      r1: "Perimeter = 9+6+9+6 = 30 ft.",
+      r2: "Area = 9 \u00d7 6 = 54 sq ft.",
+      t1: "\u00bd \u00d7 10 \u00d7 6 = 30 sq cm.",
+      p1: "8 \u00d7 5 = 40 sq in.",
+      z1: "\u00bd \u00d7 (10+6) \u00d7 4 = 32 sq m.",
+      a1: "A = acute, B = right, C = obtuse.",
+      a2: "55\u00b0 (90 \u2212 35).",
+      a3: "50\u00b0 \u2014 vertical angles are always equal.",
+      c1: "Diameter = 14 cm (2 \u00d7 radius).",
+      c2: "Circumference = 2 \u00d7 3.14 \u00d7 7 = 43.96 cm.",
+      c3: "Area = 3.14 \u00d7 7\u00b2 = 153.86 sq cm.",
+      v1: "Volume = 8 \u00d7 4 \u00d7 3 = 96 cu in.",
+      v2: "Surface area = 2(8\u00d74) + 2(8\u00d73) + 2(4\u00d73) = 64+48+24 = 136 sq in.",
+      co1: "(4, 3)",
+      co2: "(8, 7)",
+      s1: "12 feet (3 \u00d7 4).",
+      s2: "A rectangle \u2014 the same shape as the base."
+    },
+    scoringNotes: "Read this by SECTION, not by overall score \u2014 the point is finding exactly where things get shaky, not a percentage. Part 2 should be an easy confirmation (already covered via Shop Math). If Parts 1-3 and 6-7 are solid but Part 4 (angles) or Part 5 (circles) and Part 8 are where he struggles, that's not a gap \u2014 that's just genuinely newer, harder material most kids meet in 7th grade. Treat those as 'not yet taught' rather than 'behind.'"
   }
 };
 
