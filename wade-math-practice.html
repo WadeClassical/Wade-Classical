@@ -475,8 +475,20 @@
         <div class="user-grid">
             <button class="btn btn-blue" onclick="selectUser('ryder')">👦 RYDER'S PRACTICE</button>
             <button class="btn btn-pink" onclick="selectUser('hadley')">👧 HADLEY'S PRACTICE</button>
-            <button class="btn btn-purple" onclick="selectUser('audrey')">🐱 AUDREY'S PRACTICE</button>
-            <button class="btn btn-orange" onclick="selectUser('guest')">👤 GUEST PRACTICE</button>
+            <button class="btn btn-orange" onclick="showGuestNameEntry()">👤 GUEST PRACTICE</button>
+        </div>
+    </div>
+
+    <!-- GUEST NAME ENTRY -->
+    <div id="guestNameScreen" class="hidden">
+        <button class="btn btn-back btn-small" onclick="goHome()">← BACK</button>
+        <h2>What's your name?</h2>
+        <p class="subtitle">Your own scores will be saved under your name.</p>
+        <div style="text-align: center; margin: 20px 0;">
+            <input type="text" id="guestNameInput" class="answer-input" style="width: 280px; font-size: 1.3em;" placeholder="e.g. Grandma" maxlength="20" autofocus>
+        </div>
+        <div style="text-align: center;">
+            <button class="btn btn-orange btn-small" onclick="confirmGuestName()">LET'S GO 🚀</button>
         </div>
     </div>
 
@@ -814,7 +826,7 @@
     }
 
     let userData = JSON.parse(localStorage.getItem('wadeMathUsers')) || {};
-    ['ryder', 'hadley', 'audrey', 'guest'].forEach(u => { userData[u] = normalizeUser(userData[u]); });
+    ['ryder', 'hadley', 'guest'].forEach(u => { userData[u] = normalizeUser(userData[u]); });
 
     let session = {
         type: null,          // 'add' | 'sub' | 'mult' | 'flash' | 'skip' | 'div'
@@ -834,18 +846,38 @@
          'multMenuScreen', 'multTableChoiceScreen', 'multPracticeScreen', 'multFlashcardScreen',
          'skipCountChoiceScreen', 'skipCountScreen', 'divMenuScreen', 'divPracticeScreen',
          'progressScreen', 'resultsScreen',
-         'testIntroScreen', 'testScreen', 'testResultsScreen'].forEach(id => {
+         'testIntroScreen', 'testScreen', 'testResultsScreen', 'guestNameScreen'].forEach(id => {
             document.getElementById(id).classList.add('hidden');
         });
     }
 
-    function selectUser(user) {
+    function showGuestNameEntry() {
+        hideAll();
+        document.getElementById('guestNameScreen').classList.remove('hidden');
+        const input = document.getElementById('guestNameInput');
+        input.value = '';
+        input.focus();
+        input.onkeydown = (e) => { if (e.key === 'Enter') { e.preventDefault(); confirmGuestName(); } };
+    }
+
+    function confirmGuestName() {
+        const raw = document.getElementById('guestNameInput').value.trim();
+        if (!raw) {
+            selectUser('guest', 'Guest');
+            return;
+        }
+        const key = 'guest_' + raw.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+        selectUser(key, raw);
+    }
+
+    function selectUser(user, displayName) {
         currentUser = user;
         if (!userData[user]) userData[user] = normalizeUser();
 
         document.getElementById('homeScreen').classList.add('hidden');
+        document.getElementById('guestNameScreen').classList.add('hidden');
         document.getElementById('dashboardScreen').classList.remove('hidden');
-        document.getElementById('userName').textContent = user.toUpperCase() + "'S PRACTICE";
+        document.getElementById('userName').textContent = (displayName || user).toUpperCase() + "'S PRACTICE";
         updateDashboardStats();
 
         if (user !== 'guest') {
