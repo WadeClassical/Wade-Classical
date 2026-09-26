@@ -1922,17 +1922,24 @@
             el.innerHTML = '<p style="text-align:center; color:#718096;">No past tests yet.</p>';
             return;
         }
-        el.innerHTML = user.tests.slice(0, 8).map(t => {
+        el.innerHTML = user.tests.slice(0, 8).map((t, idx) => {
             const d = new Date(t.ts);
             const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             const m = Math.floor(t.secondsUsed / 60), s = t.secondsUsed % 60;
-            return `<div class="test-history-row">
+            const detailId = elId + '-detail-' + idx;
+            return `<div class="test-history-row" style="cursor:pointer;" onclick="toggleHistoryDetail('${detailId}')">
                 <span>${dateStr}</span>
                 <span>${t.correct}/${t.total} correct</span>
                 <span>${m}:${String(s).padStart(2,'0')}</span>
                 <span>$${t.money.toFixed(2)}</span>
-            </div>`;
+                <span style="opacity:0.6;">▾ tap for detail</span>
+            </div>
+            <div class="review-list hidden" id="${detailId}" style="margin: -4px 0 12px 0;">${missedChipsHtml(t.missed)}</div>`;
         }).join('');
+    }
+
+    function toggleHistoryDetail(id) {
+        document.getElementById(id).classList.toggle('hidden');
     }
 
     function openTestIntro() {
@@ -2014,14 +2021,14 @@
             if (raw === '') {
                 blank++;
                 cell.classList.add('was-blank');
-                missed.push(`${p[0]}×${p[1]}`);
+                missed.push({ p: `${p[0]}×${p[1]}`, status: 'blank', given: null, correct: answer });
             } else if (parseInt(raw) === answer) {
                 correct++;
                 cell.classList.add('was-correct');
             } else {
                 wrong++;
                 cell.classList.add('was-wrong');
-                missed.push(`${p[0]}×${p[1]}`);
+                missed.push({ p: `${p[0]}×${p[1]}`, status: 'wrong', given: parseInt(raw), correct: answer });
             }
             input.disabled = true;
         });
@@ -2036,13 +2043,23 @@
             correct, wrong, blank,
             total: testState.problems.length,
             secondsUsed,
-            money: parseFloat(money)
+            money: parseFloat(money),
+            missed
         });
         user.tests = user.tests.slice(0, 20); // keep the most recent 20
         saveData();
 
         // Show results after a beat so he can see the grid highlight first
         setTimeout(() => renderTestResults(correct, wrong, blank, secondsUsed, money, missed, previousBest), autoSubmitted ? 600 : 0);
+    }
+
+    function missedChipsHtml(missed) {
+        if (missed === undefined) return '<p style="color:#718096;">Detail wasn\'t saved for this attempt (it was taken before this feature was added).</p>';
+        if (missed.length === 0) return '<p style="color:#48bb78; font-weight:bold;">🎉 Everything attempted was correct!</p>';
+        return missed.map(m => {
+            const label = m.status === 'blank' ? `${m.p} (left blank)` : `${m.p} \u2014 said ${m.given}, it's ${m.correct}`;
+            return `<span class="review-chip">${label}</span>`;
+        }).join('');
     }
 
     function renderTestResults(correct, wrong, blank, secondsUsed, money, missed, previousBest) {
@@ -2070,12 +2087,7 @@
         }
 
         const reviewEl = document.getElementById('testReviewList');
-        if (missed.length > 0) {
-            reviewEl.innerHTML = '<h4>Worth another look:</h4>' +
-                missed.map(m => `<span class="review-chip">${m}</span>`).join('');
-        } else {
-            reviewEl.innerHTML = '<h4>🎉 Everything attempted was correct!</h4>';
-        }
+        reviewEl.innerHTML = (missed.length > 0 ? '<h4>Worth another look:</h4>' : '') + missedChipsHtml(missed);
 
         renderMiniHistory(userData[currentUser], 'testHistoryList');
     }
