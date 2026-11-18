@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wade Classical — All Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Cinzel:wght@400;600&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jost',sans-serif;background:#F4ECDA;color:#1E2A24;line-height:1.35}
+.top{background:#204B3A;color:#fff;padding:14px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.top a{color:#fff;text-decoration:none;background:rgba(255,255,255,.14);padding:7px 14px;border-radius:999px;font-size:14px}
+.top b{font-family:'Cinzel',serif;letter-spacing:.06em;font-weight:400;flex:1}
+.wrap{max-width:1050px;margin:0 auto;padding:22px 18px 60px}
+h1{font-family:'Cormorant Garamond',serif;font-size:38px}
+.lead{color:#55604F;margin:4px 0 14px}
+#q{width:100%;max-width:380px;font:400 16px Jost;padding:10px 13px;border:1px solid #E2D6BC;border-radius:10px;background:#fff}
+.grp{margin-top:24px}
+.grp h2{font-family:'Cormorant Garamond',serif;font-size:26px;color:#204B3A;border-bottom:2px solid #C9972B;padding-bottom:3px;margin-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.tool{display:flex;gap:12px;align-items:center;background:#FBF6EA;border:1px solid #E2D6BC;border-radius:12px;padding:12px 14px;text-decoration:none;color:inherit}
+.tool:hover{border-color:#C9972B}
+.tool.flag{background:#F6EFDD;border-style:dashed}
+.ic{font-size:26px}.tx{display:flex;flex-direction:column}
+.nm{font-weight:500;font-size:16px}.sb{font-size:13px;color:#55604F}
+.tag{display:inline-block;margin-left:8px;color:#fff;font-size:11px;font-weight:500;padding:1px 8px;border-radius:999px;vertical-align:middle}
+.note{margin-top:30px;font-size:13px;color:#55604F}
+</style>
+</head>
+<body>
+<div class="top"><b>WADE CLASSICAL</b><a href="wade-dashboard.html">← Dashboard</a></div>
+<div class="wrap">
+<h1>All Tools</h1>
+<p class="lead">Everything we have built, in one place. Tags mark pages to look at during cleanup.</p>
+<input id="q" placeholder="Find a tool…" oninput="f(this.value)">
+<section class="grp"><h2>Daily</h2><div class="grid">
+<a class="tool " href="wade-math-home.html"><span class="ic">🪜</span><span class="tx"><span class="nm">Math Home</span><span class="sb">Ladder · Assign · Check · Send</span></span></a>
+<a class="tool " href="wade-planner.html"><span class="ic">📋</span><span class="tx"><span class="nm">Daily Planner</span><span class="sb">Tasks · Schedule · Chores</span></span></a>
+<a class="tool " href="wade-attendance.html"><span class="ic">📅</span><span class="tx"><span class="nm">Attendance</span><span class="sb">Georgia requirement</span></span></a>
+<a class="tool " href="wade-journal.html"><span class="ic">📓</span><span class="tx"><span class="nm">Daily Journal</span><span class="sb">Prompts · Family sharing</span></span></a>
+<a class="tool " href="wade-cleaning.html"><span class="ic">🌸</span><span class="tx"><span class="nm">Cleaning Journal</span><span class="sb">Daily · Weekly · Monthly</span></span></a>
+</div></section>
+<section class="grp"><h2>Math</h2><div class="grid">
+<a class="tool flag" href="wade-math-practice.html"><span class="ic">✖️</span><span class="tx"><span class="nm">Math Practice<span class="tag" style="background:#8a5a14">Old?</span></span><span class="sb">Multiplication</span></span></a>
+</div></section>
+<section class="grp"><h2>Language Arts</h2><div class="grid">
+<a class="tool " href="wade-spelling.html"><span class="ic">✏️</span><span class="tx"><span class="nm">Spelling Arcade</span><span class="sb">Pac-Man · Mastery</span></span></a>
+<a class="tool flag" href="wade-spelling%20(1).html"><span class="ic">✏️</span><span class="tx"><span class="nm">Spelling Arcade (copy 1)<span class="tag" style="background:#8a5a14">Duplicate</span></span><span class="sb">Same as the one above</span></span></a>
+<a class="tool flag" href="wade-spelling%20(2).html"><span class="ic">✏️</span><span class="tx"><span class="nm">Spelling Arcade (copy 2)<span class="tag" style="background:#8a5a14">Duplicate</span></span><span class="sb">Same as copy 1</span></span></a>
+<a class="tool " href="wade-copywork.html"><span class="ic">🖊️</span><span class="tx"><span class="nm">Copywork</span><span class="sb">Writing worksheets</span></span></a>
+<a class="tool " href="mcguffeys-authentic.html"><span class="ic">📖</span><span class="tx"><span class="nm">McGuffey's Readers</span><span class="sb">Authentic edition</span></span></a>
+<a class="tool " href="grammar-garage.html"><span class="ic">🔧</span><span class="tx"><span class="nm">Grammar Garage</span><span class="sb">Sentence repair · Mechanics</span></span></a>
+<a class="tool " href="grimoire.html"><span class="ic">📜</span><span class="tx"><span class="nm">The Grimoire</span><span class="sb">Vocabulary · Roots · Rewards</span></span></a>
+<a class="tool " href="mythic-kin.html"><span class="ic">⚡</span><span class="tx"><span class="nm">Mythic Kin</span><span class="sb">Greek gods · Percy Jackson</span></span></a>
+<a class="tool flag" href="wade-worksheet.html"><span class="ic">📝</span><span class="tx"><span class="nm">Daily Worksheet<span class="tag" style="background:#8a5a14">Old?</span></span><span class="sb">Hadley · Grade 1</span></span></a>
+</div></section>
+<section class="grp"><h2>History and Geography</h2><div class="grid">
+<a class="tool " href="wade-ancient-history.html"><span class="ic">🏛️</span><span class="tx"><span class="nm">Ancient History</span><span class="sb">Chronicles · Examination</span></span></a>
+<a class="tool " href="wade-us-history.html"><span class="ic">🦅</span><span class="tx"><span class="nm">American History</span><span class="sb">Seven eras · Examination</span></span></a>
+<a class="tool " href="wade-states.html"><span class="ic">🗺️</span><span class="tx"><span class="nm">USA Explorer</span><span class="sb">States · Regions · Capitals</span></span></a>
+<a class="tool " href="georgia-studies.html"><span class="ic">🧭</span><span class="tx"><span class="nm">Georgia Studies</span><span class="sb">Field Research Bureau</span></span></a>
+</div></section>
+<section class="grp"><h2>Libraries</h2><div class="grid">
+<a class="tool " href="wade-library.html"><span class="ic">📚</span><span class="tx"><span class="nm">The Library</span><span class="sb">The main door</span></span></a>
+<a class="tool " href="wade-library-ryder.html"><span class="ic">📚</span><span class="tx"><span class="nm">Ryder's Library</span><span class="sb"></span></span></a>
+<a class="tool " href="wade-library-hadley.html"><span class="ic">📚</span><span class="tx"><span class="nm">Hadley's Library</span><span class="sb"></span></span></a>
+<a class="tool " href="wade-library-ava.html"><span class="ic">📚</span><span class="tx"><span class="nm">Ava's Library</span><span class="sb"></span></span></a>
+<a class="tool " href="wade-library-mom.html"><span class="ic">📚</span><span class="tx"><span class="nm">Amanda's Library</span><span class="sb"></span></span></a>
+<a class="tool " href="wade-reading-tracker.html"><span class="ic">🌑</span><span class="tx"><span class="nm">Shadow & Ink</span><span class="sb">Amanda's reading library</span></span></a>
+</div></section>
+<section class="grp"><h2>Food and Home</h2><div class="grid">
+<a class="tool " href="wade-cookbook.html"><span class="ic">🍳</span><span class="tx"><span class="nm">The Menu</span><span class="sb">Recipes the kids cook</span></span></a>
+<a class="tool flag" href="wade-meals.html"><span class="ic">🥘</span><span class="tx"><span class="nm">This Week's Menu<span class="tag" style="background:#A8323A">File not in repo</span></span><span class="sb">Meal planner</span></span></a>
+<a class="tool flag" href="wade-freezer.html"><span class="ic">🧊</span><span class="tx"><span class="nm">Freezer & Meal Prep<span class="tag" style="background:#A8323A">File not in repo</span></span><span class="sb">Inventory · Expiry</span></span></a>
+<a class="tool flag" href="wade-driversedu.html"><span class="ic">🚗</span><span class="tx"><span class="nm">Driver's Education<span class="tag" style="background:#A8323A">File not in repo</span></span><span class="sb">Ava's hours</span></span></a>
+</div></section>
+<section class="grp"><h2>Records and Teaching</h2><div class="grid">
+<a class="tool " href="wade-portfolio.html"><span class="ic">🗂️</span><span class="tx"><span class="nm">Portfolio</span><span class="sb">Benchmarks · Evidence</span></span></a>
+<a class="tool flag" href="assignments.html"><span class="ic">✅</span><span class="tx"><span class="nm">Assignments<span class="tag" style="background:#8a5a14">Old?</span></span><span class="sb">Worksheets · Mastery checks</span></span></a>
+<a class="tool " href="wade-living-lessons.html"><span class="ic">🌿</span><span class="tx"><span class="nm">Living Lessons</span><span class="sb">Hands-on · Field trips · Projects</span></span></a>
+<a class="tool " href="wade-teach.html"><span class="ic">🎓</span><span class="tx"><span class="nm">Teach With Claude</span><span class="sb"></span></span></a>
+</div></section>
+<section class="grp"><h2>Old pages</h2><div class="grid">
+<a class="tool flag" href="index.html"><span class="ic">🏠</span><span class="tx"><span class="nm">Old Homepage<span class="tag" style="background:#8a5a14">Old?</span></span><span class="sb">Replaced by the dashboard</span></span></a>
+</div></section>
+
+<p class="note">Old? = may be replaced by something newer. Duplicate = same size as another page. File not in repo = the dashboard used to link to it, but the file is not in this repository.</p>
+</div>
+<script>
+function f(v){v=v.toLowerCase();document.querySelectorAll('.tool').forEach(function(t){t.style.display=t.textContent.toLowerCase().indexOf(v)>-1?'':'none';});
+document.querySelectorAll('.grp').forEach(function(g){var any=[].some.call(g.querySelectorAll('.tool'),function(t){return t.style.display!=='none';});g.style.display=any?'':'none';});}
+</script>
+</body>
+</html>
