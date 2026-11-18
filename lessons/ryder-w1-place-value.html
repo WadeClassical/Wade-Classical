@@ -178,10 +178,28 @@ const SEC3=[
 ];
 let ST=0,SECTOTAL=0,SECBASE=0;
 const STEPS=['rule','div','rw','done'];
+
+function pinOk(){try{return localStorage.getItem('wc_math_pin')==='1';}catch(e){return false;}}
+function momGate(cb){
+  if(pinOk()){cb();return;}
+  $('stage').innerHTML='<div class="card" style="text-align:center"><h2>Mom view is locked</h2><p>Enter the Mom PIN to see the answers.</p>'
+   +'<p><input id="pinin" type="password" inputmode="numeric" autocomplete="off" maxlength="8" style="font:600 24px sans-serif;padding:8px 12px;width:160px;text-align:center;border:2px solid #ccc;border-radius:10px"></p>'
+   +'<p><button class="btn" id="pinbtn">Unlock</button></p><p id="pinerr" style="color:#c0392b;font-weight:600;min-height:22px"></p>'
+   +'<p><a href="'+location.pathname+'">Back to the lesson</a></p></div>';
+  const go=()=>{if($('pinin').value==='3024'){try{localStorage.setItem('wc_math_pin','1');}catch(e){}cb();}else{$('pinerr').textContent='That is not the PIN.';$('pinin').value='';}};
+  $('pinbtn').onclick=go;$('pinin').addEventListener('keydown',e=>{if(e.key==='Enter')go();});$('pinin').focus();
+}
 function begin(){
   const ml=$('modeLink');
   if(MOM){
     ml.textContent='Student view';ml.href=location.pathname;
+    momGate(buildMom);return;
+  }
+  ml.href=location.pathname+'?mom=1';
+  ST=0;render();
+}
+function buildMom(){
+  {
     let all='<div class="card" style="border-top-color:#C9972B"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Ryder.</p></div>';
     [rRule,rDiv,rRW].forEach(f=>{f();all+=$('stage').innerHTML;});
     all+='<div class="card"><h2>Check him on these, out loud</h2><ul>'
@@ -191,10 +209,7 @@ function begin(){
       +'<p class="small">If he does these well, tick them on his rung in Math Home. If he is solid, let him test out.</p></div>';
     $('stage').innerHTML=all;$('bar').style.width='100%';
     tryNum();slideDraw();tryRW();
-    return;
   }
-  ml.href=location.pathname+'?mom=1';
-  ST=0;render();
 }
 function bar(){$('bar').style.width=Math.round(ST/(STEPS.length-1)*100)+'%';}
 function nav(){if(MOM)return '';return '<div class="row" style="margin-top:14px"><button class="btn" id="nextbtn" onclick="nextSec()" disabled>Next</button><span class="small" id="cnt"></span></div>';}
