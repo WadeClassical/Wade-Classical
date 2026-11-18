@@ -92,6 +92,7 @@ label{font-size:13px;color:var(--muted);display:block;margin:10px 0 4px;font-wei
 .gc{width:44px;height:50px;display:flex;align-items:center;justify-content:center;font:600 30px Jost,sans-serif;color:var(--ink);flex:none}
 .gc.gs0{width:30px}
 .gc.gp{width:18px;font-size:34px}
+.gc.gm{width:14px;font-size:34px;align-items:flex-end;padding-bottom:4px;color:var(--ink)}
 .gc.go{color:var(--muted);font-weight:400}
 .gans{border-top:3px solid var(--ink);margin-top:4px;padding-top:4px}
 .gb{width:42px;height:48px;margin:0 1px;text-align:center;font:600 28px Jost,sans-serif;border:2px solid #B9C7D9;background:#EEF3FB;border-radius:7px;padding:0;flex:none;color:var(--ink)}
@@ -445,10 +446,11 @@ function gradeQ(q,resp){
   if(q.t==='mix')return x.form==='mixed'&&x.fn<x.fd;
   return false;
 }
+function fmtNum(v){v=String(v==null?'':v);return /^-?\d{4,}$/.test(v)?v.replace(/\B(?=(\d{3})+$)/g,','):v;}
 function ansText(q){
-  if(q.t==='mc')return q.o[q.a];
-  if(q.t==='rem')return q.a[0]+' r '+q.a[1];
-  return String(q.a);
+  if(q.t==='mc')return fmtNum(q.o[q.a]);
+  if(q.t==='rem')return fmtNum(q.a[0])+' r '+fmtNum(q.a[1]);
+  return fmtNum(q.a);
 }
 function giveQuiz(kid,n,kind){
   kind=kind||'test';
@@ -566,6 +568,7 @@ function gridHTML(i,g){
   const astr=Math.abs(g.a).toFixed(dec);const aInt=astr.split('.')[0].length;
   const ints=g.tk.map(t=>t.split('.')[0].length);const I=Math.max(aInt,Math.max.apply(null,ints));
   const neg=g.a<0;
+  const cm=(k,len)=>(k<I-1&&(I-1-k)%3===0)?cell(k>=I-len?',':'','gm'):'';
   if(carryOn(QZ?QZ.kid:'')){
     const ck=(k,mx)=>{const v=(QZ&&QZ.ck&&QZ.ck[i]&&QZ.ck[i][k])||'';return '<span class="gkw"><input class="gk" data-ck="'+i+'" data-k="'+k+'" maxlength="'+mx+'" autocomplete="off" inputmode="numeric" value="'+esc(v)+'" oninput="gIn(this)" onfocus="GF=this;try{this.select()}catch(e){}" aria-label="'+(g.k==='sub'?'borrow box':'carry box')+'"></span>';};
     const total=I+(dec?1+dec:0);let kk=0;
@@ -575,6 +578,7 @@ function gridHTML(i,g){
       const last=c===total-1;
       if(isDot||(g.k!=='sub'&&last))h+=(isDot?cell('','gp'):cell(''));
       else h+=ck(kk++,g.k==='sub'?2:1);
+      if(c<I-1&&(I-1-c)%3===0)h+=cell('','gm');
     }
     h+='</div>';
   }
@@ -582,15 +586,15 @@ function gridHTML(i,g){
     const ip=t.split('.')[0],fp=t.indexOf('.')<0?'':t.split('.')[1];
     h+='<div class="gr">'+(neg?cell('','gs0'):'');
     h+=cell(r===g.tk.length-1?g.op:'','go');
-    for(let k=0;k<I-ip.length;k++)h+=cell('');
-    for(const c of ip)h+=cell(c);
+    for(let k=0;k<I-ip.length;k++)h+=cell('')+cm(k,ip.length);
+    for(let x=0;x<ip.length;x++)h+=cell(ip[x])+cm(I-ip.length+x,ip.length);
     if(dec){h+=cell(fp?'.':'','gp');for(let k=0;k<dec;k++)h+=cell(fp[k]||'');}
     h+='</div>';
   });
   h+='<div class="gr gans">'+cell('','go');
   if(neg)h+=inp('s');
-  for(let k=0;k<I-aInt;k++)h+=cell('');
-  for(let k=0;k<aInt;k++)h+=inp('d');
+  for(let k=0;k<I-aInt;k++)h+=cell('')+cm(k,aInt);
+  for(let k=0;k<aInt;k++)h+=inp('d')+cm(I-aInt+k,aInt);
   if(dec){h+=cell('.','gp');for(let k=0;k<dec;k++)h+=inp('f');}
   h+='</div></div>';return h;
 }
@@ -619,7 +623,7 @@ function quizView(kid,n,kind){
       QZ.qs.forEach((q,i)=>{
         const ok=r.marks[i];const mine=q.t==='mc'?(QZ.ans[i]!=null?q.o[QZ.ans[i]]:''):(QZ.ans[i]||'');
         h+='<div class="qcard '+(ok?'good':'bad')+'"><div class="qnum">'+(i+1)+(ok?' ✓':' ✗')+'</div><div class="qtext">'+esc(q.q)+'</div>'
-          +'<div class="small">Your answer: <b>'+esc(mine||'(blank)')+'</b>'+(ok?'':' · Correct answer: <b>'+esc(ansText(q))+'</b>')+'</div></div>';
+          +'<div class="small">Your answer: <b>'+esc(fmtNum(mine)||'(blank)')+'</b>'+(ok?'':' · Correct answer: <b>'+esc(ansText(q))+'</b>')+'</div></div>';
       });
     }
     return h;
@@ -633,7 +637,7 @@ function quizView(kid,n,kind){
     }else h+='<div class="qtext">'+esc(q.q)+'</div>';
     if(g){}
     else if(q.t==='mc'){
-      q.o.forEach((o,j)=>{h+='<label class="qopt"><input type="radio" name="q'+i+'" '+(QZ.ans[i]===j?'checked':'')+' onchange="setAns('+i+','+j+')"> '+esc(o)+'</label>';});
+      q.o.forEach((o,j)=>{h+='<label class="qopt"><input type="radio" name="q'+i+'" '+(QZ.ans[i]===j?'checked':'')+' onchange="setAns('+i+','+j+')"> '+esc(fmtNum(o))+'</label>';});
     }else{
       const ph={num:'Type a number',val:'Fraction or mixed number, like 3/4 or 1 1/2',simp:'Fraction in simplest form',imp:'Like 7/4',mix:'Like 1 3/4',rem:'Like 123 r 4'}[q.t];
       h+='<input class="qans" type="text" autocomplete="off" '+(q.t==='num'?'inputmode="decimal" ':'')+'placeholder="'+ph+'" value="'+esc(QZ.ans[i]||'')+'" oninput="setAns('+i+',this.value)">';
