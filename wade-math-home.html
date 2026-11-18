@@ -749,7 +749,7 @@ function kidToday(kid,w){
   const items=assignList(kid);
   const today=items.filter(a=>a.date===tk).sort((a,b)=>a.ts-b.ts);
   const open=items.filter(a=>a.date<tk&&(!a.done||a.grade==='redo'||a.grade==='needs')&&a.grade!=='got').sort((a,b)=>a.date<b.date?-1:1);
-  h+='<div class="card"><h3 style="font-size:24px">Today</h3>';
+  h+='<div class="card"><h3 style="font-size:24px">Today</h3>'+pcFocusTag(kid,tk);
   const si=factsStage(kid);const sp=K.spine;
   const fdone=!!getIn('facts/'+kid+'/log/'+tk);
   if(si>=0){h+='<div class="row '+(fdone?'done':'')+'"><button class="chk '+(fdone?'on':'')+'" onclick="toggleFactsToday(\''+kid+'\')">'+(fdone?'✓':'')+'</button><div class="rt"><div class="t">Daily facts drill · 3–5 minutes</div><div class="small muted">'+sp[si][0]+': '+esc(sp[si][1])+'</div></div></div>';}
