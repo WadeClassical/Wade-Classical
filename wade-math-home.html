@@ -443,7 +443,7 @@ function canBlock(kid,n,mom){
 }
 function hasQuiz(kid,n){return !!(typeof QUIZ!=='undefined'&&QUIZ[kid]&&QUIZ[kid][n]);}
 function quizAttempts(kid,n,kind){const all=entries(getIn('quiz/'+kid+'/w'+n)).sort((a,b)=>a.ts-b.ts);return kind?all.filter(a=>(a.kind||'test')===kind):all;}
-const LESSONS={hadley:{1:[{t:"Hadley's Squishy Shop",u:'lessons/hadley-w1-squishy-shop.html',d:'Boxes, bags and singles: hundreds, tens and ones'}]},ryder:{1:[{t:'Place value to 1,000,000',u:'lessons/ryder-w1-place-value.html',d:'The ten-times rule, why 700 ÷ 70 = 10, reading and writing big numbers'}]}}; /* built lessons: LESSONS[kid][week]=[{t:'Title',u:'page.html',d:'one line'}] */
+const LESSONS={hadley:{1:[{t:"Hadley's Squishy Shop",u:'lessons/hadley-w1-squishy-shop.html',d:'Boxes, bags and singles: hundreds, tens and ones'}]},ryder:{1:[{t:'Place value to 1,000,000',u:'lessons/ryder-w1-place-value.html',mom:1,d:'The ten-times rule, why 700 ÷ 70 = 10, reading and writing big numbers'}]}}; /* built lessons: LESSONS[kid][week]=[{t:'Title',u:'page.html',d:'one line'}] */
 function lessonList(kid,n){return (LESSONS[kid]&&LESSONS[kid][n])||[];}
 function stageOf(kid,n){return getIn('stage/'+kid+'/w'+n)||'';}
 function setStage(kid,n,st){put('stage/'+kid+'/w'+n,st||null);}
@@ -848,7 +848,7 @@ function pathCard(kid,n,mom){
   h+='<div class="pstep"><div class="pnum">2</div><div><b>LESSON</b><div class="small">'
     +(stg==='check'?'Done.':stg==='ready'?'Practice done. Ready for the quiz.':stg==='lesson'?'In progress. Take a few days of practice.':'Not started.')
     +(lined?' · '+lined+' day'+(lined>1?'s':'')+' lined up':'')+'</div>';
-  if(built.length){h+='<div class="pbtns">'+built.map(l=>'<a class="btn sm k" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="'+esc(l.u)+'">'+esc(l.t)+'</a>').join('')+'</div>';}
+  if(built.length){h+='<div class="pbtns">'+built.map(l=>'<a class="btn sm k" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="'+esc(l.u)+'">'+esc(l.t)+'</a>'+(mom&&l.mom?'<a class="btn sm alt" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="'+esc(l.u)+'?mom=1">Mom view</a>':'')).join('')+'</div>';}
   else h+='<div class="small muted" style="margin-top:4px">No built lesson for this week yet.</div>';
   h+='<div class="pbtns">';
   if(!stg)h+='<button class="btn sm '+(mom?'alt':'k')+'" onclick="startLesson('+q()+')">Start lesson</button>';

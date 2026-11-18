@@ -68,7 +68,7 @@ ul{margin:6px 0 6px 22px}
 </head>
 <body>
 <div class="wrap">
-  <div class="top"><a class="back" href="../wade-math-home.html#/kid/ryder">← Math Home</a><div class="title">Place Value</div><span style="width:90px"></span></div>
+  <div class="top"><a class="back" href="../wade-math-home.html#/kid/ryder">← Math Home</a><div class="title">Place Value</div><a class="back" id="modeLink" href="#">Mom view</a></div>
   <div class="prog"><i id="bar"></i></div>
   <div id="stage"></div>
 </div>
@@ -105,9 +105,15 @@ function chartHTML(n){
   return h+'</div>';
 }
 /* ---------- question engine ---------- */
+const MOM=/[?&]mom=1/.test(location.search);
 let QS={};let TOTAL=0;let FIRST=0;let ANSWERED=0;
 function norm(v){return String(v==null?'':v).replace(/[,\s$]/g,'');}
 function qHTML(sec,i,q){
+  if(MOM){
+    let h='<div class="q good"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+    if(q.o)q.o.forEach((o,j)=>{h+='<div class="opt'+(j===q.c?' right':'')+'" style="cursor:default">'+o+(j===q.c?' ✓':'')+'</div>';});
+    return h+'<div class="res">Answer: '+q.show+(q.why?'. '+q.why:'')+'</div></div>';
+  }
   const id=sec+i;QS[id]={q:q,tries:0,done:false};TOTAL++;
   let h='<div class="q" id="q-'+id+'"><div class="t">'+(i+1)+'. '+q.t+'</div>';
   if(q.o){q.o.forEach((o,j)=>{h+='<button class="opt" onclick="pickQ(\''+id+'\','+j+',this)">'+o+'</button>';});}
@@ -172,9 +178,26 @@ const SEC3=[
 ];
 let ST=0,SECTOTAL=0,SECBASE=0;
 const STEPS=['rule','div','rw','done'];
-function begin(){ST=0;render();}
+function begin(){
+  const ml=$('modeLink');
+  if(MOM){
+    ml.textContent='Student view';ml.href=location.pathname;
+    let all='<div class="card" style="border-top-color:#C9972B"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Ryder.</p></div>';
+    [rRule,rDiv,rRW].forEach(f=>{f();all+=$('stage').innerHTML;});
+    all+='<div class="card"><h2>Check him on these, out loud</h2><ul>'
+      +'<li>A digit is worth 10 times the digit to its right. Can he show it with 555,555?</li>'
+      +'<li>Why does 700 ÷ 70 equal 10? (7 hundreds ÷ 7 tens, and a hundred is 10 times a ten.)</li>'
+      +'<li>Can he read and write 406,205 in digits, words and expanded form?</li></ul>'
+      +'<p class="small">If he does these well, tick them on his rung in Math Home. If he is solid, let him test out.</p></div>';
+    $('stage').innerHTML=all;$('bar').style.width='100%';
+    tryNum();slideDraw();tryRW();
+    return;
+  }
+  ml.href=location.pathname+'?mom=1';
+  ST=0;render();
+}
 function bar(){$('bar').style.width=Math.round(ST/(STEPS.length-1)*100)+'%';}
-function nav(){return '<div class="row" style="margin-top:14px"><button class="btn" id="nextbtn" onclick="nextSec()" disabled>Next</button><span class="small" id="cnt"></span></div>';}
+function nav(){if(MOM)return '';return '<div class="row" style="margin-top:14px"><button class="btn" id="nextbtn" onclick="nextSec()" disabled>Next</button><span class="small" id="cnt"></span></div>';}
 function nextSec(){ST++;render();window.scrollTo(0,0);}
 function listHTML(sec,arr){let h='';arr.forEach((q,i)=>{h+=qHTML(sec,i,q);});return h;}
 function render(){
