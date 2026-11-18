@@ -710,7 +710,8 @@ function homeView(){
 }
 
 /* ---------- plan ahead calendar ---------- */
-let PC={view:'week',anchor:null,sel:null};
+let PC={view:'week',anchor:null,sel:null,kid:'ryder'};
+function pcSetKid(k){PC.kid=k;PC.sel=null;render();}
 const MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const DOW=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 function addDays(d,n){return new Date(d.getFullYear(),d.getMonth(),d.getDate()+n);}
@@ -732,12 +733,9 @@ function pcMove(kid,id){
   const a=getIn('assign/'+kid+'/'+id);if(!a)return;
   put('assign/'+kid+'/'+id,Object.assign({},a,{date:v}));toast('Moved to '+fmtDay(parseKey(v)));
 }
-function pcKid(k){document.querySelectorAll('#pck .tab').forEach(b=>b.classList.toggle('on',b.dataset.k===k));}
 function pcAdd(){
   if(!PC.sel)return;
-  const on=document.querySelector('#pck .tab.on');const k=on?on.dataset.k:'ryder';
-  const kids=k==='both'?['ryder','hadley']:[k];
-  if(addAssign(kids,document.getElementById('pct').value,document.getElementById('pcl').value,PC.sel))toast('Added');
+  if(addAssign([PC.kid],document.getElementById('pct').value,document.getElementById('pcl').value,PC.sel))toast('Added');
 }
 function pcChip(kid,a){
   const t=esc(a.title);
@@ -746,9 +744,9 @@ function pcChip(kid,a){
 function pcWeek(m,tk){
   const mon=mondayOf(pcA());
   let h='<div class="pcscroll"><div class="pcw"><div class="pcgrid">'+DOW.map(d=>'<div class="pcdow">'+d+'</div>').join('')+'</div>';
-  [['ryder','r'],['hadley','h']].forEach(kk=>{
+  [[PC.kid,PC.kid==='ryder'?'r':'h']].forEach(kk=>{
     const kid=kk[0];
-    h+='<div class="pck '+kk[1]+'">'+KIDS[kid].name+'</div><div class="pcgrid">';
+    h+='<div class="pcgrid" style="margin-top:6px">';
     for(let i=0;i<7;i++){
       const d=addDays(mon,i),k=dkey(d);const items=(m[k]&&m[k][kid])||[];
       h+='<button class="pcd pcdw '+(i>4?'we ':'')+(k===tk?'today ':'')+(k===PC.sel?'sel':'')+'" onclick="pcPick(\''+k+'\')"><div class="pcn">'+d.getDate()+'</div>'+items.map(a=>pcChip(kid,a)).join('')+'</button>';
@@ -762,9 +760,9 @@ function pcMonth(m,tk){
   const start=mondayOf(first);const weeks=Math.ceil(((last-start)/86400000+1)/7);
   let h='<div class="pcscroll"><div class="pcw"><div class="pcgrid">'+DOW.map(d=>'<div class="pcdow">'+d+'</div>').join('')+'</div><div class="pcgrid" style="margin-top:4px">';
   for(let i=0;i<weeks*7;i++){
-    const d=addDays(start,i),k=dkey(d);const r=(m[k]&&m[k].ryder.length)||0,hh=(m[k]&&m[k].hadley.length)||0;
+    const d=addDays(start,i),k=dkey(d);const items=(m[k]&&m[k][PC.kid])||[];
     h+='<button class="pcd '+((i%7)>4?'we ':'')+(d.getMonth()!==a.getMonth()?'out ':'')+(k===tk?'today ':'')+(k===PC.sel?'sel':'')+'" onclick="pcPick(\''+k+'\')"><div class="pcn">'+d.getDate()+'</div>'
-      +(r?'<span class="pcp r">R '+r+'</span>':'')+(hh?'<span class="pcp h">H '+hh+'</span>':'')+'</button>';
+      +items.slice(0,2).map(x=>pcChip(PC.kid,x)).join('')+(items.length>2?'<span class="small muted">+'+(items.length-2)+' more</span>':'')+'</button>';
   }
   return h+'</div></div></div>';
 }
@@ -775,18 +773,18 @@ function pcYear(m,tk){
     h+='<div class="pcym"><button class="pcym-t" style="all:unset;cursor:pointer"><h4 onclick="pcOpenMonth('+y+','+mo+')">'+MON[mo]+'</h4></button><div class="pcyg">'+DOW.map(d=>'<div class="pcdow" style="font-size:10px">'+d[0]+'</div>').join('');
     for(let i=0;i<lead;i++)h+='<span class="pcyd blank"></span>';
     for(let dd=1;dd<=dim;dd++){
-      const k=y+'-'+pad(mo+1)+'-'+pad(dd);const r=m[k]&&m[k].ryder.length,hh=m[k]&&m[k].hadley.length;
-      h+='<button class="pcyd '+(r&&hh?'b':r?'r':hh?'h':'')+' '+(k===tk?'today ':'')+(k===PC.sel?'sel':'')+'" onclick="pcPick(\''+k+'\')">'+dd+'</button>';
+      const k=y+'-'+pad(mo+1)+'-'+pad(dd);const has=m[k]&&m[k][PC.kid].length;
+      h+='<button class="pcyd '+(has?(PC.kid==='ryder'?'r':'h'):'')+' '+(k===tk?'today ':'')+(k===PC.sel?'sel':'')+'" onclick="pcPick(\''+k+'\')">'+dd+'</button>';
     }
     h+='</div></div>';
   }
-  return h+'</div><div class="small muted" style="margin-top:10px"><span class="pcp r">Ryder</span><span class="pcp h">Hadley</span> Shaded days have work assigned. Split color means both.</div>';
+  return h+'</div><div class="small muted" style="margin-top:10px">Shaded days have work assigned to '+KIDS[PC.kid].name+'.</div>';
 }
 function pcDay(){
   if(!PC.sel)return '';
   const d=parseKey(PC.sel);
-  let h='<div class="card" style="margin-top:14px"><h3 style="font-size:22px">'+esc(fmtDay(d))+'</h3>';
-  ['ryder','hadley'].forEach(kid=>{
+  let h='<div class="card" style="margin-top:14px"><h3 style="font-size:22px">'+esc(KIDS[PC.kid].name)+' · '+esc(fmtDay(d))+'</h3>';
+  [PC.kid].forEach(kid=>{
     const items=assignList(kid).filter(a=>a.date===PC.sel).sort((a,b)=>(a.ts||0)-(b.ts||0));
     h+='<div class="'+KIDS[kid].cls+'"><div class="small" style="color:var(--kc);font-weight:600;margin-top:10px">'+KIDS[kid].name+'</div>';
     if(!items.length)h+='<div class="muted small">Nothing yet.</div>';
@@ -798,9 +796,8 @@ function pcDay(){
     });
     h+='</div>';
   });
-  h+='<div style="margin-top:14px;border-top:1px solid var(--line);padding-top:10px"><b>Add to this day</b>'
-    +'<div class="tog" id="pck" style="margin:8px 0"><button class="tab on" data-k="ryder" onclick="pcKid(\'ryder\')">Ryder</button><button class="tab" data-k="hadley" onclick="pcKid(\'hadley\')">Hadley</button><button class="tab" data-k="both" onclick="pcKid(\'both\')">Both</button></div>'
-    +'<input id="pct" placeholder="What (lesson, video, practice…)" style="margin-bottom:6px"><input id="pcl" placeholder="Link (optional)"><div style="margin-top:10px"><button class="btn" onclick="pcAdd()">Add</button></div></div></div>';
+  h+='<div style="margin-top:14px;border-top:1px solid var(--line);padding-top:10px"><b>Add to this day for '+KIDS[PC.kid].name+'</b>'
+    +'<div style="height:8px"></div><input id="pct" placeholder="What (lesson, video, practice…)" style="margin-bottom:6px"><input id="pcl" placeholder="Link (optional)"><div style="margin-top:10px"><button class="btn" onclick="pcAdd()">Add</button></div></div></div>';
   return h;
 }
 function planAheadView(){
@@ -808,7 +805,7 @@ function planAheadView(){
   if(PC.view==='week'){const mon=mondayOf(a),sun=addDays(mon,6);title=MON[mon.getMonth()].slice(0,3)+' '+mon.getDate()+' – '+(sun.getMonth()!==mon.getMonth()?MON[sun.getMonth()].slice(0,3)+' ':'')+sun.getDate()+', '+sun.getFullYear();}
   else if(PC.view==='month')title=MON[a.getMonth()]+' '+a.getFullYear();
   else title=String(a.getFullYear());
-  let h='<div class="card"><div class="pcbar"><div class="tog">'+['week','month','year'].map(v=>'<button class="tab '+(PC.view===v?'on':'')+'" onclick="pcView(\''+v+'\')">'+v[0].toUpperCase()+v.slice(1)+'</button>').join('')+'</div>'
+  let h='<div class="tog" style="margin-bottom:12px">'+['ryder','hadley'].map(k=>'<button class="tab '+(PC.kid===k?'on':'')+'" style="--kc:'+(k==='ryder'?'var(--teal)':'var(--rose)')+'" onclick="pcSetKid(\''+k+'\')">'+KIDS[k].name+'\'s calendar</button>').join('')+'</div><div class="card '+KIDS[PC.kid].cls+'" style="border-top:6px solid var(--kc)"><div class="pcbar"><div class="tog">'+['week','month','year'].map(v=>'<button class="tab '+(PC.view===v?'on':'')+'" onclick="pcView(\''+v+'\')">'+v[0].toUpperCase()+v.slice(1)+'</button>').join('')+'</div>'
     +'<button class="btn sm alt" onclick="pcNav(-1)" aria-label="Previous">◀</button><div class="pctitle">'+title+'</div><button class="btn sm alt" onclick="pcNav(1)" aria-label="Next">▶</button><button class="btn sm" onclick="pcToday()">Today</button></div>';
   h+=PC.view==='week'?pcWeek(m,tk):PC.view==='month'?pcMonth(m,tk):pcYear(m,tk);
   h+='</div>'+pcDay();
