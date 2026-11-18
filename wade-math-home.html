@@ -87,6 +87,26 @@ label{font-size:13px;color:var(--muted);display:block;margin:10px 0 4px;font-wei
 .qans{font-size:20px;max-width:260px}
 .score{font:700 54px 'Cormorant Garamond',serif}
 .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--forest);color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;z-index:9}
+.gwrap{margin:6px 0 4px;overflow-x:auto;padding-bottom:4px}
+.gr{display:flex;align-items:center}
+.gc{width:44px;height:50px;display:flex;align-items:center;justify-content:center;font:600 30px Jost,sans-serif;color:var(--ink);flex:none}
+.gc.gs0{width:30px}
+.gc.gp{width:18px;font-size:34px}
+.gc.go{color:var(--muted);font-weight:400}
+.gans{border-top:3px solid var(--ink);margin-top:4px;padding-top:4px}
+.gb{width:42px;height:48px;margin:0 1px;text-align:center;font:600 28px Jost,sans-serif;border:2px solid #B9C7D9;background:#EEF3FB;border-radius:7px;padding:0;flex:none;color:var(--ink)}
+.gb:focus{outline:0;border-color:#2F6FDB;background:#DCE8FB;box-shadow:0 0 0 2px #2F6FDB33}
+.gb.gs{width:30px;font-size:24px}
+.gdiv{display:flex;align-items:flex-start;gap:0}
+.gdv{height:50px;margin-top:54px;padding-right:8px;display:flex;align-items:center;font:600 30px Jost,sans-serif}
+.gdd{border-top:3px solid var(--ink);border-left:3px solid var(--ink);border-radius:8px 0 0 0;padding-left:2px;margin-top:4px}
+.grm{display:flex;align-items:center;margin:54px 0 0 14px;gap:6px;font:600 22px Jost,sans-serif;color:var(--muted)}
+.gcap{font-size:17px;color:var(--muted);margin-bottom:4px}
+#kp{position:fixed;left:0;right:0;bottom:0;background:#F3F5F8;border-top:1px solid #C9D3E0;padding:8px;display:none;z-index:8;justify-content:center}
+#kp .kg{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;max-width:460px;width:100%}
+#kp button{height:46px;font:600 22px Jost,sans-serif;border:1px solid #B9C7D9;border-radius:9px;background:#fff;cursor:pointer}
+body.kpon #kp{display:flex}
+body.kpon{padding-bottom:70px}
 .tog{display:flex;gap:8px;flex-wrap:wrap}
 .tog .tab{padding:6px 14px}
 </style>
@@ -377,12 +397,105 @@ function finishQuiz(){
   put('quiz/'+kid+'/w'+n+'/'+id,{ts:Date.now(),score:score,form:QZ.form,pass:pass,ans:JSON.stringify(QZ.ans)});
   if(pass&&weekStatus(kid,n)!=='mastered')setWeek(kid,n,'mastered');
 }
+
+/* ---------- quiz answer grid ---------- */
+let GF=null;
+function kpOn(){try{const v=localStorage.getItem('wc_math_kp');if(v!==null)return v==='1';}catch(e){}return !!(window.matchMedia&&matchMedia('(pointer:coarse)').matches);}
+function kpApply(){const on=kpOn()&&!!document.getElementById('kp');document.body.classList.toggle('kpon',on);document.querySelectorAll('.gb').forEach(b=>b.setAttribute('inputmode',on?'none':'numeric'));const t=document.getElementById('kpb');if(t){t.textContent='Number pad: '+(kpOn()?'on':'off');t.classList.toggle('on',kpOn());}}
+function toggleKP(){try{localStorage.setItem('wc_math_kp',kpOn()?'0':'1');}catch(e){}kpApply();}
+function kp(k){const el=GF;if(!el||!document.body.contains(el))return;if(k==='b'){if(el.value!==''){el.value='';gIn(el);}else gMove(el,-1);}else{el.value=k;gIn(el);}}
+function gBoxes(i){return [].slice.call(document.querySelectorAll('.gb[data-q="'+i+'"]'));}
+function gRead(i){
+  const bs=gBoxes(i);const val=r=>bs.filter(b=>b.dataset.r===r).map(b=>b.value);
+  const num=a=>{const k=a.findIndex(v=>v!=='');if(k<0)return '';return a.slice(k).map(v=>v===''?'x':v).join('');};
+  const all=(a)=>a.every(v=>v==='')?'':a.map(v=>v===''?'x':v).join('');
+  const d=val('d'),f=val('f'),q=val('q'),m=val('m'),sg=bs.find(b=>b.dataset.r==='s');
+  if(q.length){const qs=num(q);const ms=m.length?all(m):'';if(qs===''&&ms==='')return '';return (qs||'x')+(m.length?' r '+ms:'');}
+  const ds=num(d),fs=f.length?all(f):'';
+  if(ds===''&&fs==='')return '';
+  return (sg&&sg.value==='-'?'-':'')+(ds||'0')+(fs!==''?'.'+fs:'');
+}
+function gSave(i){setAns(i,gRead(i));if(QZ){QZ.bx=QZ.bx||[];QZ.bx[i]=gBoxes(i).map(b=>b.value);}}
+function gMove(el,d){const bs=gBoxes(el.dataset.q);const k=bs.indexOf(el)+d;if(bs[k]){bs[k].focus();try{bs[k].select();}catch(e){}}}
+function gIn(el){
+  let v=el.value;
+  if(el.dataset.r==='s'){v=v.replace(/[^\-−]/g,'').slice(-1);if(v)v='-';}else v=v.replace(/[^0-9]/g,'').slice(-1);
+  el.value=v;gSave(+el.dataset.q);if(v)gMove(el,1);
+}
+function gKey(e,el){
+  if(e.key==='Backspace'&&el.value===''){gMove(el,-1);e.preventDefault();}
+  else if(e.key==='ArrowLeft'){gMove(el,-1);e.preventDefault();}
+  else if(e.key==='ArrowRight'){gMove(el,1);e.preventDefault();}
+  else if(e.key==='Enter'){e.preventDefault();}
+}
+function gridSpec(q){
+  if(q.t==='rem'){
+    let m=q.q.match(/^(\d+) cookies are shared equally among (\d+) kids/);
+    if(!m)m=q.q.match(/^([\d,]+) ÷ (\d+) = \?/);
+    if(!m)return null;
+    const dv=m[1].replace(/,/g,''),dr=m[2];
+    if(Math.floor(+dv/+dr)!==q.a[0]||(+dv%+dr)!==q.a[1])return null;
+    return {k:'div',dv:dv,dr:dr,qa:String(q.a[0]),ra:String(q.a[1]),rem:true,cap:q.q};
+  }
+  if(q.t!=='num')return null;
+  const m=q.q.match(/^(.*?)(\d[\d,]*(?:\.\d+)?(?:\s*[+−×÷]\s*\d[\d,]*(?:\.\d+)?)+)\s*=\s*\?$/);
+  if(!m)return null;
+  const pre=m[1];if(/[\d\/.,(]$/.test(pre))return null;
+  const ops=m[2].match(/[+−×÷]/g);if(!ops||ops.some(o=>o!==ops[0]))return null;
+  const op=ops[0];const tk=m[2].split(/\s*[+−×÷]\s*/).map(x=>x.replace(/,/g,''));
+  const nums=tk.map(Number);let exp;
+  if(op==='+')exp=nums.reduce((a,b)=>a+b,0);
+  else if(op==='−'){if(tk.length!==2)return null;exp=nums[0]-nums[1];}
+  else if(op==='×'){if(tk.length!==2||tk.some(x=>x.indexOf('.')>=0))return null;exp=nums[0]*nums[1];}
+  else{if(tk.length!==2||tk.some(x=>x.indexOf('.')>=0))return null;exp=nums[0]/nums[1];}
+  if(Math.abs(exp-Number(q.a))>1e-9)return null;
+  const cap=pre.trim();
+  if(op==='÷'){if(!Number.isInteger(exp)||exp<0)return null;return {k:'div',dv:tk[0],dr:tk[1],qa:String(exp),ra:'',rem:false,cap:cap};}
+  return {k:op==='+'?'add':op==='−'?'sub':'mul',op:op,tk:tk,a:Number(q.a),cap:cap};
+}
+function gridHTML(i,g){
+  const bx=(QZ&&QZ.bx&&QZ.bx[i])||[];let j=0;
+  const inp=r=>{const v=bx[j]||'';j++;return '<input class="gb'+(r==='s'?' gs':'')+'" data-q="'+i+'" data-r="'+r+'" maxlength="1" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="numeric" value="'+esc(v)+'" oninput="gIn(this)" onkeydown="gKey(event,this)" onfocus="GF=this;try{this.select()}catch(e){}" aria-label="answer box">';};
+  const cell=(t,c)=>'<span class="gc'+(c?' '+c:'')+'">'+(t==null?'':t)+'</span>';
+  let h='<div class="gwrap">';
+  if(g.k==='div'){
+    const D=Math.max(g.dv.length,g.qa.length),pad=D-g.qa.length;
+    h+='<div class="gdiv"><div class="gdv">'+esc(g.dr)+'</div><div><div class="gr">';
+    for(let k=0;k<pad;k++)h+=cell('');
+    for(let k=0;k<g.qa.length;k++)h+=inp('q');
+    h+='</div><div class="gr gdd">';
+    for(let k=0;k<D-g.dv.length;k++)h+=cell('');
+    for(const c of g.dv)h+=cell(c);
+    h+='</div></div>';
+    if(g.rem){h+='<div class="grm"><span>R</span>';for(let k=0;k<Math.max(1,g.ra.length);k++)h+=inp('m');h+='</div>';}
+    h+='</div></div>';return h;
+  }
+  const dec=Math.max.apply(null,g.tk.map(t=>t.indexOf('.')<0?0:t.length-t.indexOf('.')-1));
+  const astr=Math.abs(g.a).toFixed(dec);const aInt=astr.split('.')[0].length;
+  const ints=g.tk.map(t=>t.split('.')[0].length);const I=Math.max(aInt,Math.max.apply(null,ints));
+  const neg=g.a<0;
+  g.tk.forEach((t,r)=>{
+    const ip=t.split('.')[0],fp=t.indexOf('.')<0?'':t.split('.')[1];
+    h+='<div class="gr">'+(neg?cell('','gs0'):'');
+    h+=cell(r===g.tk.length-1?g.op:'','go');
+    for(let k=0;k<I-ip.length;k++)h+=cell('');
+    for(const c of ip)h+=cell(c);
+    if(dec){h+=cell(fp?'.':'','gp');for(let k=0;k<dec;k++)h+=cell(fp[k]||'');}
+    h+='</div>';
+  });
+  h+='<div class="gr gans">'+cell('','go');
+  if(neg)h+=inp('s');
+  for(let k=0;k<I-aInt;k++)h+=cell('');
+  for(let k=0;k<aInt;k++)h+=inp('d');
+  if(dec){h+=cell('.','gp');for(let k=0;k<dec;k++)h+=inp('f');}
+  h+='</div></div>';return h;
+}
 function quizView(kid,n){
   const K=KIDS[kid];
   if(!hasQuiz(kid,n))return '<p class="muted">That quiz is not ready yet.</p>';
   if(!QZ||QZ.kid!==kid||QZ.n!==n)initQuiz(kid,n);
   const w=weekObj(kid,n);
-  let h='<div class="card focus"><div class="small muted">TEST-OUT QUIZ</div><h2 style="font-size:26px">Week '+n+': '+esc(w[1])+'</h2><div class="small muted">15 questions. You need 13 to pass. Take your time.</div></div>';
+  let h='<div class="card focus"><div class="small muted">TEST-OUT QUIZ</div><h2 style="font-size:26px">Week '+n+': '+esc(w[1])+'</h2><div class="small muted">15 questions. You need 13 to pass. Take your time.</div>'+(QZ.qs.some(q=>gridSpec(q))?'<div style="margin-top:8px"><button class="tab" id="kpb" onclick="toggleKP()">Number pad</button></div>':'')+'</div>';
   if(QZ.result){
     const r=QZ.result;
     h+='<div class="card" style="text-align:center"><div class="score" style="color:'+(r.pass?'var(--ok)':'var(--warn)')+'">'+r.score+' / 15</div>';
@@ -401,8 +514,14 @@ function quizView(kid,n){
     return h;
   }
   QZ.qs.forEach((q,i)=>{
-    h+='<div class="qcard"><div class="qnum">Question '+(i+1)+'</div><div class="qtext">'+esc(q.q)+'</div>';
-    if(q.t==='mc'){
+    const g=gridSpec(q);
+    h+='<div class="qcard"><div class="qnum">Question '+(i+1)+'</div>';
+    if(g){
+      if(g.cap)h+='<div class="gcap">'+esc(g.cap)+'</div>';
+      h+=gridHTML(i,g);
+    }else h+='<div class="qtext">'+esc(q.q)+'</div>';
+    if(g){}
+    else if(q.t==='mc'){
       q.o.forEach((o,j)=>{h+='<label class="qopt"><input type="radio" name="q'+i+'" '+(QZ.ans[i]===j?'checked':'')+' onchange="setAns('+i+','+j+')"> '+esc(o)+'</label>';});
     }else{
       const ph={num:'Type a number',val:'Fraction or mixed number, like 3/4 or 1 1/2',simp:'Fraction in simplest form',imp:'Like 7/4',mix:'Like 1 3/4',rem:'Like 123 r 4'}[q.t];
@@ -411,6 +530,8 @@ function quizView(kid,n){
     h+='</div>';
   });
   h+='<div id="qwarn" class="small" style="color:var(--bad);min-height:20px;margin:6px 0"></div><button class="btn k" onclick="finishQuiz()">Turn it in</button>';
+  h+='<div id="kp" onpointerdown="event.preventDefault()"><div class="kg">'+[1,2,3,4,5,6,7,8,9,0].map(d=>'<button onclick="kp(\''+d+'\')">'+d+'</button>').join('')+'<button onclick="kp(\'-\')">−</button><button onclick="kp(\'b\')">⌫</button></div></div>';
+  setTimeout(kpApply,0);
   return h;
 }
 
@@ -429,6 +550,7 @@ function render(force){
   const keep=document.activeElement&&document.activeElement.tagName==='TEXTAREA'&&document.activeElement.id==='sendtext';
   if(keep)return; // do not clobber typing
   if(h[0]==='kid'&&h[2]==='quiz'&&QZ&&!QZ.result&&QZ.kid===h[1]&&String(QZ.n)===h[3]&&force!==true)return; // keep quiz answers while typing
+  document.body.classList.remove('kpon');
   if(h[0]==='kid'&&KIDS[h[1]]){app.innerHTML=kidView(h[1],h[2]||'today',h[3]);window.scrollTo(0,0);return;}
   if(h[0]==='mom'){
     if(!pinOk()){app.innerHTML=pinView();setTimeout(()=>{const p=document.getElementById('pin');if(p)p.focus();},50);return;}
