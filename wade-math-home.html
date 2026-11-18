@@ -129,6 +129,11 @@ label{font-size:13px;color:var(--muted);display:block;margin:10px 0 4px;font-wei
 .pcyd.r{background:#BFDCE6}.pcyd.h{background:#EBC1D2}.pcyd.b{background:linear-gradient(135deg,#BFDCE6 50%,#EBC1D2 50%)}
 .pcyd.today{outline:2px solid var(--brass)}.pcyd.sel{outline:2px solid var(--forest)}.pcyd.blank{cursor:default}
 .pcfocus{display:block;background:var(--forest);color:#fff;border-radius:4px;padding:2px 5px;margin-bottom:3px;font-size:11px;line-height:1.25;font-weight:600;overflow-wrap:anywhere}
+.ldg{display:grid;grid-template-columns:64px repeat(5,minmax(0,1fr));gap:4px;align-items:center;margin:4px 0}
+.ldw{font:600 12px Jost;color:var(--muted)}
+.ldd{border:1px solid var(--kc);color:var(--kc);background:#fff;border-radius:8px;padding:7px 0;font:500 13px Jost;cursor:pointer}
+.ldd.on{background:var(--kc);color:#fff}
+.ldd:disabled{opacity:.35;cursor:default}
 .gcap{font-size:17px;color:var(--muted);margin-bottom:4px}
 #kp{position:fixed;left:0;right:0;bottom:0;background:#F3F5F8;border-top:1px solid #C9D3E0;padding:8px;display:none;z-index:8;justify-content:center}
 #kp .kg{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;max-width:460px;width:100%}
@@ -841,6 +846,50 @@ function planAheadView(){
   h+='</div>'+pcDay();
   return h;
 }
+
+/* ---------- add a lesson to a ladder week ---------- */
+let LD={key:'',title:'',link:'',note:'',days:{},off:0};
+function ldSync(kid,n){if(LD.key!==kid+':'+n)LD={key:kid+':'+n,title:'',link:'',note:'',days:{},off:0};}
+function ldDay(btn,k){if(LD.days[k]){delete LD.days[k];btn.classList.remove('on');}else{LD.days[k]=1;btn.classList.add('on');}const c=document.getElementById('ldcount');if(c)c.textContent=Object.keys(LD.days).length;}
+function ldOff(d){LD.off=Math.max(0,LD.off+d);render();}
+function ldAdd(kid,n){
+  const title=(LD.title||'').trim();const days=Object.keys(LD.days).sort();
+  if(!title){toast('Add a title first');return;}
+  if(!days.length){toast('Tap at least one day');return;}
+  const link=safeUrl(LD.link);
+  days.forEach((k,i)=>{const id='a'+Date.now().toString(36)+Math.random().toString(36).slice(2,5)+i;
+    put('assign/'+kid+'/'+id,{title:title,link:link,date:k,done:false,grade:'',note:(LD.note||'').trim(),ts:Date.now()+i,week:n});});
+  toast('Added to '+days.length+' day'+(days.length>1?'s':''));
+  LD={key:kid+':'+n,title:'',link:'',note:'',days:{},off:LD.off};
+}
+function lessonCard(kid,n){
+  ldSync(kid,n);
+  const K=KIDS[kid];const tk=todayKey();const mon=mondayOf(new Date());
+  let h='<div class="card" style="border-top:6px solid var(--kc)"><h3 style="font-size:22px">Add a lesson to Week '+n+'</h3>'
+   +'<div class="small muted" style="margin:2px 0 8px">A video, a practice page, or something we built. It lands on the days you tap and shows on '+K.name+'\'s Today list.</div>'
+   +'<label>What</label><input id="ldt" placeholder="e.g. Times tables trick video" value="'+esc(LD.title)+'" oninput="LD.title=this.value">'
+   +'<label>Link (optional)</label><input id="ldl" placeholder="https://… or wade-math-practice.html" value="'+esc(LD.link)+'" oninput="LD.link=this.value">'
+   +'<label>Note for '+K.name+' (optional)</label><input id="ldn" placeholder="Watch this first, then do the practice" value="'+esc(LD.note)+'" oninput="LD.note=this.value">'
+   +'<label>Which days</label><div style="display:flex;gap:8px;align-items:center;margin:4px 0"><button class="btn sm alt" onclick="ldOff(-4)">◀ Earlier</button><button class="btn sm alt" onclick="ldOff(4)">Later ▶</button></div>';
+  for(let w=0;w<4;w++){
+    const m0=addDays(mon,7*(LD.off+w));
+    h+='<div class="ldg"><div class="ldw">'+MON[m0.getMonth()].slice(0,3)+' '+m0.getDate()+'</div>';
+    for(let i=0;i<5;i++){
+      const d=addDays(m0,i),k=dkey(d);
+      h+='<button class="ldd '+(LD.days[k]?'on':'')+'" '+(k<tk?'disabled ':'')+'onclick="ldDay(this,\''+k+'\')">'+DOW[i]+' '+d.getDate()+'</button>';
+    }
+    h+='</div>';
+  }
+  h+='<div style="margin-top:12px;display:flex;gap:10px;align-items:center"><button class="btn k" onclick="ldAdd(\''+kid+'\','+n+')">Add lesson</button><span class="small muted"><span id="ldcount">'+Object.keys(LD.days).length+'</span> day(s) chosen</span></div>';
+  const lined=assignList(kid).filter(a=>a.week===n).sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:(a.ts||0)-(b.ts||0));
+  if(lined.length){
+    h+='<div style="margin-top:14px;border-top:1px solid var(--line);padding-top:8px"><b>Lined up for Week '+n+'</b>';
+    lined.forEach(a=>{h+='<div class="row"><div class="rt"><div class="t">'+esc(a.title)+(a.link?' <a class="small" href="'+esc(a.link)+'" target="_blank" rel="noopener">open link</a>':'')+badge(a)+'</div><div class="small muted">'+esc(fmtDay(parseKey(a.date)))+'</div></div>'
+      +'<button class="btn sm '+(armed===kid+a.id?'bad':'alt')+'" onclick="armDel(\''+kid+'\',\''+a.id+'\')">'+(armed===kid+a.id?'Tap to remove':'Remove')+'</button></div>';});
+    h+='</div>';
+  }
+  return h+'</div>';
+}
 function selWeek(kid){return sel[kid]||suggested(kid)||1;}
 function ladderView(kid){
   const K=KIDS[kid];const n=selWeek(kid);const cur=suggested(kid);
@@ -871,6 +920,7 @@ function ladderView(kid){
     +'<button class="btn sm warn" onclick="setWeek(\''+kid+'\','+n+',\'skipped\')">Skip for now</button>'
     +(st?'<button class="btn sm alt" onclick="setWeek(\''+kid+'\','+n+',\'\')">Reopen</button>':'')
     +'<button class="btn sm alt" onclick="planFromWeek(\''+kid+'\','+n+')">Assign to today…</button></div></div>';
+  h+=lessonCard(kid,n);
   // spine
   const si=factsStage(kid);
   h+='<div class="card"><h3 style="font-size:20px">Daily facts track</h3><div class="small muted">3–5 minutes a day. A stage is done only when answers are accurate and unhesitating.</div>';
