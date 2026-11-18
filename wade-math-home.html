@@ -903,7 +903,7 @@ function pcNav(dir){
   const a=pcA();
   if(PC.view==='week')PC.anchor=dkey(addDays(a,7*dir));
   else if(PC.view==='month')PC.anchor=dkey(new Date(a.getFullYear(),a.getMonth()+dir,1));
-  else PC.anchor=dkey(new Date(a.getFullYear()+dir,0,1));
+  else PC.anchor=dkey(new Date(a.getFullYear()+dir,a.getMonth(),1));
   render();
 }
 function pcToday(){PC.anchor=todayKey();render();}
@@ -949,8 +949,10 @@ function pcMonth(m,tk){
   return h+'</div></div></div>';
 }
 function pcYear(m,tk){
-  const y=pcA().getFullYear();let h='<div class="pcyear">';
-  for(let mo=0;mo<12;mo++){
+  const a0=pcA();const sy=a0.getMonth()>=8?a0.getFullYear():a0.getFullYear()-1; /* school year runs September to August */
+  let h='<div class="pcyear">';
+  for(let i0=0;i0<12;i0++){
+    const mo=(8+i0)%12,y=sy+(8+i0>=12?1:0);
     const first=new Date(y,mo,1),dim=new Date(y,mo+1,0).getDate(),lead=(first.getDay()+6)%7;
     h+='<div class="pcym"><button class="pcym-t" style="all:unset;cursor:pointer"><h4 onclick="pcOpenMonth('+y+','+mo+')">'+MON[mo]+'</h4></button><div class="pcyg">'+DOW.map(d=>'<div class="pcdow" style="font-size:11px">'+d+'</div>').join('');
     for(let i=0;i<lead;i++)h+='<span class="pcyd blank"></span>';
@@ -989,7 +991,7 @@ function planAheadView(){
   const tk=todayKey(),m=pcMap(),a=pcA();let title;
   if(PC.view==='week'){const mon=mondayOf(a),sun=addDays(mon,6);title=MON[mon.getMonth()].slice(0,3)+' '+mon.getDate()+' – '+(sun.getMonth()!==mon.getMonth()?MON[sun.getMonth()].slice(0,3)+' ':'')+sun.getDate()+', '+sun.getFullYear();}
   else if(PC.view==='month')title=MON[a.getMonth()]+' '+a.getFullYear();
-  else title=String(a.getFullYear());
+  else{const sy=a.getMonth()>=8?a.getFullYear():a.getFullYear()-1;title=sy+'–'+(sy+1)+' school year';}
   let h='<div class="tog" style="margin-bottom:12px">'+['ryder','hadley'].map(k=>'<button class="tab '+(PC.kid===k?'on':'')+'" style="--kc:'+(k==='ryder'?'var(--teal)':'var(--rose)')+'" onclick="pcSetKid(\''+k+'\')">'+KIDS[k].name+'\'s calendar</button>').join('')+'</div><div class="card '+KIDS[PC.kid].cls+'" style="border-top:6px solid var(--kc)"><div class="pcbar"><div class="tog">'+['week','month','year'].map(v=>'<button class="tab '+(PC.view===v?'on':'')+'" onclick="pcView(\''+v+'\')">'+v[0].toUpperCase()+v.slice(1)+'</button>').join('')+'</div>'
     +'<button class="btn sm alt" onclick="pcNav(-1)" aria-label="Previous">◀</button><div class="pctitle">'+title+'</div><button class="btn sm alt" onclick="pcNav(1)" aria-label="Next">▶</button><button class="btn sm" onclick="pcToday()">Today</button></div>';
   h+=PC.view==='week'?pcWeek(m,tk):PC.view==='month'?pcMonth(m,tk):pcYear(m,tk);
