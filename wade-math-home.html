@@ -733,8 +733,8 @@ function kidView(kid,tab,arg,kind){
   const K=KIDS[kid];
   const cur=suggested(kid);const w=cur?weekObj(kid,cur):null;
   let h='<div class="'+K.cls+'"><div class="khead"><h1>'+esc(K.name)+'\'s math</h1><div class="sub">'+esc(fmtDay(new Date()))+'</div></div>';
-  h+='<div class="tabs"><a class="tab '+(tab==='today'?'on':'')+'" href="#/kid/'+kid+'">Today</a><a class="tab '+(tab==='week'?'on':'')+'" href="#/kid/'+kid+'/week">This week</a><a class="tab '+(tab==='report'?'on':'')+'" href="#/kid/'+kid+'/report">My grades</a></div>';
-  if(tab==='quiz')h+=quizView(kid,Number(arg),kind);else if(tab==='week')h+=kidWeek(kid);else if(tab==='report')h+=kidReport(kid);else h+=kidToday(kid,w);
+  h+='<div class="tabs"><a class="tab '+(tab==='today'?'on':'')+'" href="#/kid/'+kid+'">Today</a><a class="tab '+(tab==='week'?'on':'')+'" href="#/kid/'+kid+'/week">This week</a><a class="tab '+(tab==='month'?'on':'')+'" href="#/kid/'+kid+'/month">This month</a><a class="tab '+(tab==='report'?'on':'')+'" href="#/kid/'+kid+'/report">My grades</a></div>';
+  if(tab==='quiz')h+=quizView(kid,Number(arg),kind);else if(tab==='week')h+=kidWeek(kid);else if(tab==='month')h+=kidMonth(kid);else if(tab==='report')h+=kidReport(kid);else h+=kidToday(kid,w);
   return h+'</div>';
 }
 function kidToday(kid,w){
@@ -772,6 +772,21 @@ function kidWeek(kid){
     its.forEach(a=>{h+='<div class="mini">'+(a.done?'✅ ':'⬜ ')+esc(a.title)+badge(a)+'</div>';});
     h+='</div>';}
   return h+'</div>';
+}
+let KM=null; /* kid month view: first day of the month being shown */
+function kmNav(dir){const a=KM||new Date();KM=dir===0?null:new Date(a.getFullYear(),a.getMonth()+dir,1);render(true);}
+function kidMonth(kid){
+  const tk=todayKey();const a=KM||new Date();const items=assignList(kid);
+  const first=new Date(a.getFullYear(),a.getMonth(),1),last=new Date(a.getFullYear(),a.getMonth()+1,0);
+  const start=mondayOf(first);const weeks=Math.ceil(((last-start)/86400000+1)/7);
+  let h='<div class="card"><div class="pcbar"><button class="btn sm alt" onclick="kmNav(-1)" aria-label="Previous month">◀</button><div class="pctitle">'+MON[a.getMonth()]+' '+a.getFullYear()+'</div><button class="btn sm alt" onclick="kmNav(1)" aria-label="Next month">▶</button><button class="btn sm" onclick="kmNav(0)">Today</button></div>'
+   +'<div class="pcscroll"><div class="pcw"><div class="pcgrid">'+DOW.map(d=>'<div class="pcdow">'+d+'</div>').join('')+'</div><div class="pcgrid" style="margin-top:4px">';
+  for(let i=0;i<weeks*7;i++){
+    const d=addDays(start,i),k=dkey(d);const its=items.filter(x=>x.date===k).sort((x,y)=>x.ts-y.ts);
+    h+='<div class="pcd '+((i%7)>4?'we ':'')+(d.getMonth()!==a.getMonth()?'out ':'')+(k===tk?'today':'')+'" style="cursor:default"><div class="pcn">'+d.getDate()+'</div>'+pcFocusTag(kid,k)
+     +its.slice(0,3).map(x=>'<span class="pcchip">'+(x.done?'✅ ':'⬜ ')+esc(x.title)+'</span>').join('')+(its.length>3?'<span class="small muted">+'+(its.length-3)+' more</span>':'')+'</div>';
+  }
+  return h+'</div></div></div></div>';
 }
 function kidReport(kid){
   const K=KIDS[kid];const items=assignList(kid);
