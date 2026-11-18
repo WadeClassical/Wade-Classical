@@ -357,7 +357,12 @@ function toggleDone(kid,id){
 }
 function toggleFactsToday(kid){const k='facts/'+kid+'/log/'+todayKey();put(k,getIn(k)?null:true);}
 function dismissMsg(kid,id){put('inbox/'+kid+'/'+id+'/seen',true);}
-function focusSegs(kid){return entries(getIn('focus/'+kid));}
+function focusSegs(kid){
+  const s=entries(getIn('focus/'+kid));const cur=getIn('current/'+kid);
+  /* a focus week set before focus dates existed still gets labelled, starting this Monday */
+  if(cur&&weekStatus(kid,cur)!=='mastered'&&weekStatus(kid,cur)!=='skipped'&&!s.some(x=>x.n===cur&&!x.end))s.push({id:'cur'+cur,n:cur,start:dkey(mondayOf(new Date()))});
+  return s;
+}
 function closeFocus(kid,n,endKey){
   focusSegs(kid).forEach(sg=>{if(sg.end||(n!=null&&sg.n!==n))return;
     put('focus/'+kid+'/'+sg.id,{n:sg.n,start:sg.start,end:(endKey<sg.start?sg.start:endKey)});});
