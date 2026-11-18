@@ -719,9 +719,8 @@ function landing(){
    +'<button class="who mom" onclick="go(\'#/mom\')">Mom<small>planning &amp; checking</small></button></div>';
 }
 function pinView(){
-  return '<div class="card pin"><h2 style="font-size:28px">Mom only</h2><p class="muted small">Enter your PIN. You only need to do this once on each device.</p>'
-   +'<input id="pin" type="password" inputmode="numeric" maxlength="4" onkeydown="if(event.key===\'Enter\')tryPin()"><div id="pinmsg" class="small" style="color:var(--bad);min-height:18px"></div>'
-   +'<button class="btn" onclick="tryPin()">Open</button></div>';
+  return '<div class="card pin"><h2 style="font-size:28px">Mom only</h2><p class="muted small">Enter your PIN. It opens by itself when it is right.</p>'
+   +'<input id="pin" type="password" inputmode="numeric" maxlength="4" oninput="if(this.value.length>=4)tryPin()" onkeydown="if(event.key===\'Enter\')tryPin()"><div id="pinmsg" class="small" style="color:var(--bad);min-height:18px"></div></div>';
 }
 
 /* ---------- kid views ---------- */
