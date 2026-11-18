@@ -101,6 +101,9 @@ label{font-size:13px;color:var(--muted);display:block;margin:10px 0 4px;font-wei
 .gdv{height:50px;margin-top:54px;padding-right:8px;display:flex;align-items:center;font:600 30px Jost,sans-serif}
 .gdd{border-top:3px solid var(--ink);border-left:3px solid var(--ink);border-radius:8px 0 0 0;padding-left:2px;margin-top:4px}
 .grm{display:flex;align-items:center;margin:54px 0 0 14px;gap:6px;font:600 22px Jost,sans-serif;color:var(--muted)}
+.gk{width:36px;height:30px;margin:0 4px;text-align:center;font:500 17px Jost,sans-serif;border:1.5px dashed #C9A94B;background:#FFF8E1;border-radius:6px;padding:0;flex:none;color:var(--muted)}
+.gk:focus{outline:0;border-color:#C9972B;background:#FFF0C2}
+.gkw{width:44px;height:34px;display:flex;align-items:center;justify-content:center;flex:none}
 .gcap{font-size:17px;color:var(--muted);margin-bottom:4px}
 #kp{position:fixed;left:0;right:0;bottom:0;background:#F3F5F8;border-top:1px solid #C9D3E0;padding:8px;display:none;z-index:8;justify-content:center}
 #kp .kg{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;max-width:460px;width:100%}
@@ -400,8 +403,10 @@ function finishQuiz(){
 
 /* ---------- quiz answer grid ---------- */
 let GF=null;
+function carryOn(kid){return getIn('settings/carry/'+kid)!==0;}
+function setCarry(kid,on){put('settings/carry/'+kid,on?1:0);toast(KIDS[kid].name+'\'s quizzes: carry boxes '+(on?'on':'off'));}
 function kpOn(){try{const v=localStorage.getItem('wc_math_kp');if(v!==null)return v==='1';}catch(e){}return !!(window.matchMedia&&matchMedia('(pointer:coarse)').matches);}
-function kpApply(){const on=kpOn()&&!!document.getElementById('kp');document.body.classList.toggle('kpon',on);document.querySelectorAll('.gb').forEach(b=>b.setAttribute('inputmode',on?'none':'numeric'));const t=document.getElementById('kpb');if(t){t.textContent='Number pad: '+(kpOn()?'on':'off');t.classList.toggle('on',kpOn());}}
+function kpApply(){const on=kpOn()&&!!document.getElementById('kp');document.body.classList.toggle('kpon',on);document.querySelectorAll('.gb,.gk').forEach(b=>b.setAttribute('inputmode',on?'none':'numeric'));const t=document.getElementById('kpb');if(t){t.textContent='Number pad: '+(kpOn()?'on':'off');t.classList.toggle('on',kpOn());}}
 function toggleKP(){try{localStorage.setItem('wc_math_kp',kpOn()?'0':'1');}catch(e){}kpApply();}
 function kp(k){const el=GF;if(!el||!document.body.contains(el))return;if(k==='b'){if(el.value!==''){el.value='';gIn(el);}else gMove(el,-1);}else{el.value=k;gIn(el);}}
 function gBoxes(i){return [].slice.call(document.querySelectorAll('.gb[data-q="'+i+'"]'));}
@@ -418,6 +423,7 @@ function gRead(i){
 function gSave(i){setAns(i,gRead(i));if(QZ){QZ.bx=QZ.bx||[];QZ.bx[i]=gBoxes(i).map(b=>b.value);}}
 function gMove(el,d){const bs=gBoxes(el.dataset.q);const k=bs.indexOf(el)+d;if(bs[k]){bs[k].focus();try{bs[k].select();}catch(e){}}}
 function gIn(el){
+  if(el.classList.contains('gk')){const mx=+el.getAttribute('maxlength')||1;el.value=el.value.replace(/[^0-9]/g,'').slice(-mx);if(QZ){QZ.ck=QZ.ck||{};const i=el.dataset.ck;QZ.ck[i]=QZ.ck[i]||[];QZ.ck[i][+el.dataset.k]=el.value;}return;}
   let v=el.value;
   if(el.dataset.r==='s'){v=v.replace(/[^\-−]/g,'').slice(-1);if(v)v='-';}else v=v.replace(/[^0-9]/g,'').slice(-1);
   el.value=v;gSave(+el.dataset.q);if(v)gMove(el,1);
@@ -474,6 +480,18 @@ function gridHTML(i,g){
   const astr=Math.abs(g.a).toFixed(dec);const aInt=astr.split('.')[0].length;
   const ints=g.tk.map(t=>t.split('.')[0].length);const I=Math.max(aInt,Math.max.apply(null,ints));
   const neg=g.a<0;
+  if(carryOn(QZ?QZ.kid:'')){
+    const ck=(k,mx)=>{const v=(QZ&&QZ.ck&&QZ.ck[i]&&QZ.ck[i][k])||'';return '<span class="gkw"><input class="gk" data-ck="'+i+'" data-k="'+k+'" maxlength="'+mx+'" autocomplete="off" inputmode="numeric" value="'+esc(v)+'" oninput="gIn(this)" onfocus="GF=this;try{this.select()}catch(e){}" aria-label="'+(g.k==='sub'?'borrow box':'carry box')+'"></span>';};
+    const total=I+(dec?1+dec:0);let kk=0;
+    h+='<div class="gr gkr">'+(neg?cell('','gs0'):'')+cell('')+'';
+    for(let c=0;c<total;c++){
+      const isDot=dec&&c===I;
+      const last=c===total-1;
+      if(isDot||(g.k!=='sub'&&last))h+=(isDot?cell('','gp'):cell(''));
+      else h+=ck(kk++,g.k==='sub'?2:1);
+    }
+    h+='</div>';
+  }
   g.tk.forEach((t,r)=>{
     const ip=t.split('.')[0],fp=t.indexOf('.')<0?'':t.split('.')[1];
     h+='<div class="gr">'+(neg?cell('','gs0'):'');
@@ -655,6 +673,9 @@ function homeView(){
       +'<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><a class="btn sm k" style="text-decoration:none;display:inline-block" href="#/mom/ladder/'+kid+'">Open ladder</a><a class="btn sm alt" style="text-decoration:none;display:inline-block" href="#/kid/'+kid+'">See '+K.name+'\'s screen</a></div></div>';
   });
   h+='</div>';
+  h+='<div class="card"><h3 style="font-size:22px">Quiz carry boxes</h3><div class="small muted" style="margin:4px 0 10px">Small scratch boxes above the numbers for carrying and borrowing. They are not graded.</div><div style="display:flex;gap:18px;flex-wrap:wrap">';
+  Object.keys(KIDS).forEach(k=>{const on=carryOn(k);h+='<div><div class="small" style="margin-bottom:4px"><b>'+KIDS[k].name+'</b></div><div class="tog"><button class="tab '+(on?'on':'')+'" style="--kc:'+(k==='ryder'?'var(--teal)':'var(--rose)')+'" onclick="setCarry(\''+k+'\',true)">On</button><button class="tab '+(on?'':'on')+'" style="--kc:'+(k==='ryder'?'var(--teal)':'var(--rose)')+'" onclick="setCarry(\''+k+'\',false)">Off</button></div></div>';});
+  h+='</div></div>';
   const sent=[];Object.keys(KIDS).forEach(k=>entries(getIn('inbox/'+k)).forEach(m=>sent.push(Object.assign({kid:k},m))));
   sent.sort((a,b)=>b.ts-a.ts);
   h+='<div class="card"><h3 style="font-size:22px">Sent recently</h3>';
