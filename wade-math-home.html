@@ -128,6 +128,7 @@ label{font-size:13px;color:var(--muted);display:block;margin:10px 0 4px;font-wei
 .pcyd{font:500 11px Jost;text-align:center;padding:5px 0;border-radius:5px;cursor:pointer;border:0;background:transparent;color:var(--ink);font-family:inherit}
 .pcyd.r{background:#BFDCE6}.pcyd.h{background:#EBC1D2}.pcyd.b{background:linear-gradient(135deg,#BFDCE6 50%,#EBC1D2 50%)}
 .pcyd.today{outline:2px solid var(--brass)}.pcyd.sel{outline:2px solid var(--forest)}.pcyd.blank{cursor:default}
+.pcfocus{display:block;background:var(--forest);color:#fff;border-radius:4px;padding:2px 5px;margin-bottom:3px;font-size:11px;line-height:1.25;font-weight:600;overflow-wrap:anywhere}
 .gcap{font-size:17px;color:var(--muted);margin-bottom:4px}
 #kp{position:fixed;left:0;right:0;bottom:0;background:#F3F5F8;border-top:1px solid #C9D3E0;padding:8px;display:none;z-index:8;justify-content:center}
 #kp .kg{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;max-width:460px;width:100%}
@@ -336,7 +337,35 @@ function toggleDone(kid,id){
 }
 function toggleFactsToday(kid){const k='facts/'+kid+'/log/'+todayKey();put(k,getIn(k)?null:true);}
 function dismissMsg(kid,id){put('inbox/'+kid+'/'+id+'/seen',true);}
+function focusSegs(kid){return entries(getIn('focus/'+kid));}
+function closeFocus(kid,n,endKey){
+  focusSegs(kid).forEach(sg=>{if(sg.end||(n!=null&&sg.n!==n))return;
+    put('focus/'+kid+'/'+sg.id,{n:sg.n,start:sg.start,end:(endKey<sg.start?sg.start:endKey)});});
+}
+function startFocus(kid,n){
+  const el=document.getElementById('fd'+kid);const start=(el&&el.value)||todayKey();
+  const dayBefore=dkey(addDays(parseKey(start),-1));
+  focusSegs(kid).forEach(sg=>{if(sg.end)return;if(sg.n===n)return;put('focus/'+kid+'/'+sg.id,{n:sg.n,start:sg.start,end:(dayBefore<sg.start?sg.start:dayBefore)});});
+  if(!focusSegs(kid).some(sg=>!sg.end&&sg.n===n)){
+    const id='f'+Date.now().toString(36)+Math.random().toString(36).slice(2,4);
+    put('focus/'+kid+'/'+id,{n:n,start:start});
+  }
+  setWeek(kid,n,'current');
+}
+function focusFor(kid,k){
+  const wd=parseKey(k).getDay();if(wd===0||wd===6)return null;
+  const tk=todayKey();let hit=null;
+  focusSegs(kid).forEach(sg=>{
+    if(k<sg.start)return;
+    if(sg.end){if(k>sg.end)return;}
+    else{const ref=tk>sg.start?tk:sg.start;const lim=dkey(addDays(mondayOf(parseKey(ref)),6));if(k>lim)return;}
+    if(!hit||sg.start>=hit.start)hit=sg;
+  });
+  return hit;
+}
+function focusLabel(kid,k){const sg=focusFor(kid,k);if(!sg)return '';const w=weekObj(kid,sg.n);return 'Wk '+sg.n+(w?': '+w[1]:'');}
 function setWeek(kid,n,st){
+  if(st==='mastered'||st==='skipped')closeFocus(kid,n,todayKey());
   if(st==='current'){put('current/'+kid,n);if(weekStatus(kid,n)==='mastered'||weekStatus(kid,n)==='skipped')put('progress/'+kid+'/w'+n,null);toast('Week '+n+' is '+KIDS[kid].name+'\'s focus');return;}
   put('progress/'+kid+'/w'+n,st||null);
   if(st==='mastered'&&getIn('current/'+kid)===n){put('current/'+kid,null);}
@@ -737,6 +766,7 @@ function pcAdd(){
   if(!PC.sel)return;
   if(addAssign([PC.kid],document.getElementById('pct').value,document.getElementById('pcl').value,PC.sel))toast('Added');
 }
+function pcFocusTag(kid,k){const t=focusLabel(kid,k);return t?'<span class="pcfocus">'+esc(t)+'</span>':'';}
 function pcChip(kid,a){
   const t=esc(a.title);
   return '<span class="pcchip '+KIDS[kid].cls+(a.done?' dn':'')+'">'+(a.done?'✓ ':'')+(a.quiz?'Quiz: ':'')+t+'</span>';
@@ -749,7 +779,7 @@ function pcWeek(m,tk){
     h+='<div class="pcgrid" style="margin-top:6px">';
     for(let i=0;i<7;i++){
       const d=addDays(mon,i),k=dkey(d);const items=(m[k]&&m[k][kid])||[];
-      h+='<button class="pcd pcdw '+(i>4?'we ':'')+(k===tk?'today ':'')+(k===PC.sel?'sel':'')+'" onclick="pcPick(\''+k+'\')"><div class="pcn">'+d.getDate()+'</div>'+items.map(a=>pcChip(kid,a)).join('')+'</button>';
+      h+='<button class="pcd pcdw '+(i>4?'we ':'')+(k===tk?'today ':'')+(k===PC.sel?'sel':'')+'" onclick="pcPick(\''+k+'\')"><div class="pcn">'+d.getDate()+'</div>'+pcFocusTag(kid,k)+items.map(a=>pcChip(kid,a)).join('')+'</button>';
     }
     h+='</div>';
   });
@@ -761,7 +791,7 @@ function pcMonth(m,tk){
   let h='<div class="pcscroll"><div class="pcw"><div class="pcgrid">'+DOW.map(d=>'<div class="pcdow">'+d+'</div>').join('')+'</div><div class="pcgrid" style="margin-top:4px">';
   for(let i=0;i<weeks*7;i++){
     const d=addDays(start,i),k=dkey(d);const items=(m[k]&&m[k][PC.kid])||[];
-    h+='<button class="pcd '+((i%7)>4?'we ':'')+(d.getMonth()!==a.getMonth()?'out ':'')+(k===tk?'today ':'')+(k===PC.sel?'sel':'')+'" onclick="pcPick(\''+k+'\')"><div class="pcn">'+d.getDate()+'</div>'
+    h+='<button class="pcd '+((i%7)>4?'we ':'')+(d.getMonth()!==a.getMonth()?'out ':'')+(k===tk?'today ':'')+(k===PC.sel?'sel':'')+'" onclick="pcPick(\''+k+'\')"><div class="pcn">'+d.getDate()+'</div>'+pcFocusTag(PC.kid,k)
       +items.slice(0,2).map(x=>pcChip(PC.kid,x)).join('')+(items.length>2?'<span class="small muted">+'+(items.length-2)+' more</span>':'')+'</button>';
   }
   return h+'</div></div></div>';
@@ -786,7 +816,7 @@ function pcDay(){
   let h='<div class="card" style="margin-top:14px"><h3 style="font-size:22px">'+esc(KIDS[PC.kid].name)+' · '+esc(fmtDay(d))+'</h3>';
   [PC.kid].forEach(kid=>{
     const items=assignList(kid).filter(a=>a.date===PC.sel).sort((a,b)=>(a.ts||0)-(b.ts||0));
-    h+='<div class="'+KIDS[kid].cls+'"><div class="small" style="color:var(--kc);font-weight:600;margin-top:10px">'+KIDS[kid].name+'</div>';
+    h+='<div class="'+KIDS[kid].cls+'"><div class="small" style="color:var(--kc);font-weight:600;margin-top:10px">'+KIDS[kid].name+'</div>'+(focusLabel(kid,PC.sel)?'<div class="small" style="margin-top:4px"><b>Focus:</b> '+esc(focusLabel(kid,PC.sel))+'</div>':'');
     if(!items.length)h+='<div class="muted small">Nothing yet.</div>';
     items.forEach(a=>{
       const lk=a.link?' <a href="'+esc(a.link)+'" target="_blank" rel="noopener" class="small">open link</a>':'';
@@ -836,7 +866,7 @@ function ladderView(kid){
     +'<div class="small cov-'+w[4]+'" style="margin-top:10px;font-weight:600">'+K.book+': '+covTxt+'</div>'
     +quizBlock(kid,n)
     +'<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">'
-    +'<button class="btn sm k" onclick="setWeek(\''+kid+'\','+n+',\'current\')">Make this week\'s focus</button>'
+    +'<span class="small muted" style="align-self:center">Starting</span><input type="date" id="fd'+kid+'" value="'+todayKey()+'" style="width:auto;padding:6px 8px"><button class="btn sm k" onclick="startFocus(\''+kid+'\','+n+')">Make this week\'s focus</button>'
     +'<button class="btn sm ok" onclick="setWeek(\''+kid+'\','+n+',\'mastered\')">Mark mastered</button>'
     +'<button class="btn sm warn" onclick="setWeek(\''+kid+'\','+n+',\'skipped\')">Skip for now</button>'
     +(st?'<button class="btn sm alt" onclick="setWeek(\''+kid+'\','+n+',\'\')">Reopen</button>':'')
