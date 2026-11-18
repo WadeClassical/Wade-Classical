@@ -78,6 +78,14 @@ label{font-size:13px;color:var(--muted);display:block;margin:10px 0 4px;font-wei
 .pin{max-width:340px;margin:60px auto;text-align:center}
 .pin input{text-align:center;font-size:28px;letter-spacing:.4em;margin:14px 0}
 .hide{display:none}
+.qcard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
+.qcard.bad{border-color:var(--bad);background:#FDF3F2}.qcard.good{border-color:#9CC8A9}
+.qnum{font:700 13px Jost;color:var(--kc);margin-bottom:4px}
+.qtext{font-size:18px;margin-bottom:8px}
+.qopt{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:9px;margin-bottom:6px;cursor:pointer;font-size:17px;background:#fff}
+.qopt input{width:auto}
+.qans{font-size:20px;max-width:260px}
+.score{font:700 54px 'Cormorant Garamond',serif}
 .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--forest);color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;z-index:9}
 .tog{display:flex;gap:8px;flex-wrap:wrap}
 .tog .tab{padding:6px 14px}
@@ -191,6 +199,7 @@ const KIDS = {
   ] }
 };
 
+const QUIZ={"hadley":{"16":[[{"t":"num","q":"An array has 4 rows with 5 in each row. How many are there in all?","a":20},{"t":"num","q":"An array has 4 rows with 2 in each row. How many are there in all?","a":8},{"t":"num","q":"An array has 2 rows with 3 in each row. How many are there in all?","a":6},{"t":"num","q":"An array has 4 rows with 4 in each row. How many are there in all?","a":16},{"t":"num","q":"An array has 4 rows with 3 in each row. How many are there in all?","a":12},{"t":"num","q":"2 + 2 + 2 = ?","a":6},{"t":"num","q":"3 + 3 + 3 + 3 + 3 = ?","a":15},{"t":"num","q":"5 + 5 + 5 + 5 + 5 = ?","a":25},{"t":"num","q":"Skip count to find 9 groups of 5. What is the total?","a":45},{"t":"num","q":"Skip count to find 8 groups of 2. What is the total?","a":16},{"t":"num","q":"Skip count to find 4 groups of 2. What is the total?","a":8},{"t":"num","q":"Skip count to find 5 groups of 10. What is the total?","a":50},{"t":"num","q":"Mia puts 4 stickers on each of 4 pages. How many stickers is that?","a":16},{"t":"num","q":"Ana puts 5 stickers on each of 2 pages. How many stickers is that?","a":10},{"t":"num","q":"Ava puts 5 stickers on each of 2 pages. How many stickers is that?","a":10}],[{"t":"num","q":"An array has 2 rows with 4 in each row. How many are there in all?","a":8},{"t":"num","q":"An array has 3 rows with 3 in each row. How many are there in all?","a":9},{"t":"num","q":"An array has 3 rows with 4 in each row. How many are there in all?","a":12},{"t":"num","q":"An array has 5 rows with 3 in each row. How many are there in all?","a":15},{"t":"num","q":"An array has 3 rows with 5 in each row. How many are there in all?","a":15},{"t":"num","q":"4 + 4 + 4 + 4 = ?","a":16},{"t":"num","q":"4 + 4 + 4 = ?","a":12},{"t":"num","q":"4 + 4 + 4 + 4 + 4 = ?","a":20},{"t":"num","q":"Skip count to find 7 groups of 5. What is the total?","a":35},{"t":"num","q":"Skip count to find 6 groups of 5. What is the total?","a":30},{"t":"num","q":"Skip count to find 4 groups of 5. What is the total?","a":20},{"t":"num","q":"Skip count to find 8 groups of 10. What is the total?","a":80},{"t":"num","q":"Ben puts 3 stickers on each of 2 pages. How many stickers is that?","a":6},{"t":"num","q":"Sam puts 2 stickers on each of 6 pages. How many stickers is that?","a":12},{"t":"num","q":"Eli puts 2 stickers on each of 6 pages. How many stickers is that?","a":12}]],"17":[[{"t":"num","q":"5 × 5 = ?","a":25},{"t":"num","q":"5 × 7 = ?","a":35},{"t":"num","q":"2 × 5 = ?","a":10},{"t":"num","q":"10 × 4 = ?","a":40},{"t":"num","q":"5 × 9 = ?","a":45},{"t":"num","q":"5 × 2 = ?","a":10},{"t":"num","q":"3 × 10 = ?","a":30},{"t":"num","q":"2 × 2 = ?","a":4},{"t":"num","q":"8 × 5 = ?","a":40},{"t":"num","q":"10 × 5 = ?","a":50},{"t":"num","q":"10 × ? = 80","a":8},{"t":"num","q":"2 × ? = 10","a":5},{"t":"num","q":"10 × ? = 60","a":6},{"t":"num","q":"There are 6 bags with 5 apples in each bag. How many apples are there?","a":30},{"t":"num","q":"There are 7 bags with 5 apples in each bag. How many apples are there?","a":35}],[{"t":"num","q":"7 × 10 = ?","a":70},{"t":"num","q":"10 × 2 = ?","a":20},{"t":"num","q":"10 × 10 = ?","a":100},{"t":"num","q":"5 × 1 = ?","a":5},{"t":"num","q":"5 × 3 = ?","a":15},{"t":"num","q":"7 × 5 = ?","a":35},{"t":"num","q":"2 × 10 = ?","a":20},{"t":"num","q":"2 × 7 = ?","a":14},{"t":"num","q":"4 × 10 = ?","a":40},{"t":"num","q":"5 × 10 = ?","a":50},{"t":"num","q":"2 × ? = 20","a":10},{"t":"num","q":"10 × ? = 30","a":3},{"t":"num","q":"5 × ? = 25","a":5},{"t":"num","q":"There are 6 bags with 2 apples in each bag. How many apples are there?","a":12},{"t":"num","q":"There are 5 bags with 10 apples in each bag. How many apples are there?","a":50}]],"18":[[{"t":"num","q":"14 stickers are shared equally among 2 kids. How many does each kid get?","a":7},{"t":"num","q":"80 stickers are shared equally among 10 kids. How many does each kid get?","a":8},{"t":"num","q":"21 stickers are shared equally among 3 kids. How many does each kid get?","a":7},{"t":"num","q":"4 ÷ 2 = ?","a":2},{"t":"num","q":"35 ÷ 5 = ?","a":7},{"t":"num","q":"40 ÷ 5 = ?","a":8},{"t":"num","q":"25 pencils go into groups of 5. How many groups is that?","a":5},{"t":"num","q":"15 pencils go into groups of 5. How many groups is that?","a":3},{"t":"num","q":"Start at 30 and subtract 5 each time. How many times until you reach 0?","a":6},{"t":"num","q":"Start at 28 and subtract 4 each time. How many times until you reach 0?","a":7},{"t":"rem","q":"11 cookies are shared equally among 3 kids. How many does each kid get, and how many are left? (Write it like 3 r 2)","a":[3,2]},{"t":"rem","q":"33 cookies are shared equally among 5 kids. How many does each kid get, and how many are left? (Write it like 3 r 2)","a":[6,3]},{"t":"rem","q":"22 cookies are shared equally among 4 kids. How many does each kid get, and how many are left? (Write it like 3 r 2)","a":[5,2]},{"t":"num","q":"Think multiplication: 5 × ? = 15","a":3},{"t":"num","q":"Think multiplication: 2 × ? = 8","a":4}],[{"t":"num","q":"25 stickers are shared equally among 5 kids. How many does each kid get?","a":5},{"t":"num","q":"40 stickers are shared equally among 10 kids. How many does each kid get?","a":4},{"t":"num","q":"20 stickers are shared equally among 5 kids. How many does each kid get?","a":4},{"t":"num","q":"45 ÷ 5 = ?","a":9},{"t":"num","q":"25 ÷ 5 = ?","a":5},{"t":"num","q":"10 ÷ 5 = ?","a":2},{"t":"num","q":"60 pencils go into groups of 10. How many groups is that?","a":6},{"t":"num","q":"14 pencils go into groups of 2. How many groups is that?","a":7},{"t":"num","q":"Start at 12 and subtract 2 each time. How many times until you reach 0?","a":6},{"t":"num","q":"Start at 20 and subtract 5 each time. How many times until you reach 0?","a":4},{"t":"rem","q":"9 cookies are shared equally among 4 kids. How many does each kid get, and how many are left? (Write it like 3 r 2)","a":[2,1]},{"t":"rem","q":"13 cookies are shared equally among 2 kids. How many does each kid get, and how many are left? (Write it like 3 r 2)","a":[6,1]},{"t":"rem","q":"23 cookies are shared equally among 4 kids. How many does each kid get, and how many are left? (Write it like 3 r 2)","a":[5,3]},{"t":"num","q":"Think multiplication: 2 × ? = 12","a":6},{"t":"num","q":"Think multiplication: 10 × ? = 60","a":6}]]},"ryder":{"5":[[{"t":"num","q":"35 is ___ times as many as 7.","a":5},{"t":"num","q":"48 is ___ times as many as 8.","a":6},{"t":"num","q":"72 is ___ times as many as 8.","a":9},{"t":"num","q":"49 is ___ times as many as 7.","a":7},{"t":"num","q":"Mia has 4 marbles. Sam has 4 times as many marbles as Mia. How many marbles does Sam have?","a":16},{"t":"num","q":"Eli has 6 marbles. Max has 6 times as many marbles as Eli. How many marbles does Max have?","a":36},{"t":"num","q":"Ruby has 6 marbles. Ana has 6 times as many marbles as Ruby. How many marbles does Ana have?","a":36},{"t":"num","q":"Sam has 17 cards. Max has 9 more cards than Sam. How many cards does Max have?","a":26},{"t":"num","q":"Eli has 17 cards. Ruby has 7 more cards than Eli. How many cards does Ruby have?","a":24},{"t":"mc","q":"Which sentence says the same thing as 42 = 7 × 6?","a":1,"o":["6 is 7 times as many as 42","42 is 7 times as many as 6","42 is 6 less than 7","42 is 7 more than 6"]},{"t":"mc","q":"Which sentence says the same thing as 45 = 5 × 9?","a":0,"o":["45 is 5 times as many as 9","45 is 5 more than 9","9 is 5 times as many as 45","45 is 9 less than 5"]},{"t":"num","q":"A red rope is 5 times as long as a blue rope. The blue rope is 4 m long. How many m long is the red rope?","a":20},{"t":"num","q":"A red rope is 6 times as long as a blue rope. The blue rope is 9 m long. How many m long is the red rope?","a":54},{"t":"num","q":"Noah has 36 stickers. That is 9 times as many as Ivy has. How many stickers does Ivy have?","a":4},{"t":"num","q":"Ivy has 27 stickers. That is 3 times as many as Zoe has. How many stickers does Zoe have?","a":9}],[{"t":"num","q":"32 is ___ times as many as 8.","a":4},{"t":"num","q":"56 is ___ times as many as 8.","a":7},{"t":"num","q":"28 is ___ times as many as 4.","a":7},{"t":"num","q":"9 is ___ times as many as 3.","a":3},{"t":"num","q":"Ava has 3 marbles. Ana has 5 times as many marbles as Ava. How many marbles does Ana have?","a":15},{"t":"num","q":"Zoe has 3 marbles. Mia has 6 times as many marbles as Zoe. How many marbles does Mia have?","a":18},{"t":"num","q":"Mia has 5 marbles. Ivy has 3 times as many marbles as Mia. How many marbles does Ivy have?","a":15},{"t":"num","q":"Ruby has 16 cards. Sam has 3 more cards than Ruby. How many cards does Sam have?","a":19},{"t":"num","q":"Noah has 7 cards. Sam has 8 more cards than Noah. How many cards does Sam have?","a":15},{"t":"mc","q":"Which sentence says the same thing as 36 = 6 × 6?","a":2,"o":["6 is 6 times as many as 36","36 is 6 more than 6","36 is 6 times as many as 6","36 is 6 less than 6"]},{"t":"mc","q":"Which sentence says the same thing as 42 = 6 × 7?","a":3,"o":["42 is 7 less than 6","7 is 6 times as many as 42","42 is 6 more than 7","42 is 6 times as many as 7"]},{"t":"num","q":"A red rope is 5 times as long as a blue rope. The blue rope is 9 m long. How many m long is the red rope?","a":45},{"t":"num","q":"A red rope is 6 times as long as a blue rope. The blue rope is 4 cm long. How many cm long is the red rope?","a":24},{"t":"num","q":"Sam has 63 stickers. That is 9 times as many as Ava has. How many stickers does Ava have?","a":7},{"t":"num","q":"Ana has 64 stickers. That is 8 times as many as Mia has. How many stickers does Mia have?","a":8}]],"6":[[{"t":"num","q":"63 × 8 = ?","a":504},{"t":"num","q":"91 × 8 = ?","a":728},{"t":"num","q":"43 × 3 = ?","a":129},{"t":"num","q":"88 × 8 = ?","a":704},{"t":"num","q":"581 × 8 = ?","a":4648},{"t":"num","q":"307 × 9 = ?","a":2763},{"t":"num","q":"471 × 5 = ?","a":2355},{"t":"num","q":"343 × 6 = ?","a":2058},{"t":"num","q":"5,769 × 6 = ?","a":34614},{"t":"num","q":"6,297 × 8 = ?","a":50376},{"t":"num","q":"5,145 × 9 = ?","a":46305},{"t":"num","q":"46 × 3 = (40 × 3) + (6 × 3). What is 40 × 3?","a":120},{"t":"num","q":"77 × 6 = (70 × 6) + (7 × 6). What is 70 × 6?","a":420},{"t":"num","q":"A box holds 440 stickers. How many stickers are in 6 boxes?","a":2640},{"t":"num","q":"A box holds 429 crayons. How many crayons are in 8 boxes?","a":3432}],[{"t":"num","q":"55 × 4 = ?","a":220},{"t":"num","q":"70 × 6 = ?","a":420},{"t":"num","q":"98 × 9 = ?","a":882},{"t":"num","q":"64 × 9 = ?","a":576},{"t":"num","q":"756 × 4 = ?","a":3024},{"t":"num","q":"803 × 9 = ?","a":7227},{"t":"num","q":"154 × 6 = ?","a":924},{"t":"num","q":"362 × 7 = ?","a":2534},{"t":"num","q":"2,730 × 7 = ?","a":19110},{"t":"num","q":"2,077 × 6 = ?","a":12462},{"t":"num","q":"1,620 × 5 = ?","a":8100},{"t":"num","q":"24 × 8 = (20 × 8) + (4 × 8). What is 20 × 8?","a":160},{"t":"num","q":"87 × 5 = (80 × 5) + (7 × 5). What is 80 × 5?","a":400},{"t":"num","q":"A box holds 238 stickers. How many stickers are in 7 boxes?","a":1666},{"t":"num","q":"A box holds 279 pencils. How many pencils are in 3 boxes?","a":837}]],"7":[[{"t":"num","q":"27 × 53 = ?","a":1431},{"t":"num","q":"96 × 59 = ?","a":5664},{"t":"num","q":"99 × 29 = ?","a":2871},{"t":"num","q":"27 × 57 = ?","a":1539},{"t":"num","q":"36 × 95 = ?","a":3420},{"t":"num","q":"74 × 41 = ?","a":3034},{"t":"num","q":"97 × 30 = ?","a":2910},{"t":"num","q":"49 × 42 = ?","a":2058},{"t":"num","q":"50 × 40 = ?","a":2000},{"t":"num","q":"76 × 70 = ?","a":5320},{"t":"num","q":"13 × 30 = ?","a":390},{"t":"num","q":"49 × 14 = (49 × 10) + (49 × 4). What is 49 × 10?","a":490},{"t":"num","q":"20 × 21 = (20 × 20) + (20 × 1). What is 20 × 20?","a":400},{"t":"num","q":"A bakery makes 13 trays with 12 muffins on each tray. How many muffins is that?","a":156},{"t":"num","q":"A bakery makes 41 trays with 24 muffins on each tray. How many muffins is that?","a":984}],[{"t":"num","q":"57 × 95 = ?","a":5415},{"t":"num","q":"39 × 87 = ?","a":3393},{"t":"num","q":"35 × 36 = ?","a":1260},{"t":"num","q":"78 × 65 = ?","a":5070},{"t":"num","q":"14 × 93 = ?","a":1302},{"t":"num","q":"82 × 13 = ?","a":1066},{"t":"num","q":"56 × 87 = ?","a":4872},{"t":"num","q":"40 × 26 = ?","a":1040},{"t":"num","q":"99 × 70 = ?","a":6930},{"t":"num","q":"13 × 50 = ?","a":650},{"t":"num","q":"99 × 40 = ?","a":3960},{"t":"num","q":"21 × 15 = (21 × 10) + (21 × 5). What is 21 × 10?","a":210},{"t":"num","q":"19 × 15 = (19 × 10) + (19 × 5). What is 19 × 10?","a":190},{"t":"num","q":"A library has 28 shelves with 12 books on each shelf. How many books is that?","a":336},{"t":"num","q":"A theater has 21 rows with 13 seats in each row. How many seats are there?","a":273}]],"8":[[{"t":"rem","q":"9,484 ÷ 7 = ? (Write it like 123 r 4)","a":[1354,6]},{"t":"rem","q":"2,669 ÷ 5 = ? (Write it like 123 r 4)","a":[533,4]},{"t":"rem","q":"9,346 ÷ 9 = ? (Write it like 123 r 4)","a":[1038,4]},{"t":"rem","q":"5,729 ÷ 8 = ? (Write it like 123 r 4)","a":[716,1]},{"t":"rem","q":"1,201 ÷ 3 = ? (Write it like 123 r 4)","a":[400,1]},{"t":"rem","q":"11,545 ÷ 8 = ? (Write it like 123 r 4)","a":[1443,1]},{"t":"rem","q":"4,178 ÷ 6 = ? (Write it like 123 r 4)","a":[696,2]},{"t":"num","q":"3,627 ÷ 3 = ?","a":1209},{"t":"num","q":"13,428 ÷ 9 = ?","a":1492},{"t":"num","q":"12,330 ÷ 9 = ?","a":1370},{"t":"num","q":"A number divided by 4 gives 264 remainder 3. What is the number?","a":1059},{"t":"num","q":"A number divided by 8 gives 176 remainder 7. What is the number?","a":1415},{"t":"num","q":"A bus seats 6 students. 32 students need a ride. How many buses are needed?","a":6},{"t":"num","q":"A pack holds 7 pencils. How many FULL packs can be made from 48 pencils?","a":6},{"t":"num","q":"$67 is shared equally among 8 people. How many dollars are left over?","a":3}],[{"t":"rem","q":"2,269 ÷ 6 = ? (Write it like 123 r 4)","a":[378,1]},{"t":"rem","q":"3,833 ÷ 5 = ? (Write it like 123 r 4)","a":[766,3]},{"t":"rem","q":"1,061 ÷ 3 = ? (Write it like 123 r 4)","a":[353,2]},{"t":"rem","q":"5,897 ÷ 4 = ? (Write it like 123 r 4)","a":[1474,1]},{"t":"rem","q":"7,276 ÷ 9 = ? (Write it like 123 r 4)","a":[808,4]},{"t":"rem","q":"10,786 ÷ 8 = ? (Write it like 123 r 4)","a":[1348,2]},{"t":"rem","q":"9,178 ÷ 8 = ? (Write it like 123 r 4)","a":[1147,2]},{"t":"num","q":"4,250 ÷ 5 = ?","a":850},{"t":"num","q":"2,860 ÷ 4 = ?","a":715},{"t":"num","q":"3,900 ÷ 4 = ?","a":975},{"t":"num","q":"A number divided by 5 gives 222 remainder 4. What is the number?","a":1114},{"t":"num","q":"A number divided by 9 gives 261 remainder 8. What is the number?","a":2357},{"t":"num","q":"A bus seats 8 students. 45 students need a ride. How many buses are needed?","a":6},{"t":"num","q":"A pack holds 6 pencils. How many FULL packs can be made from 38 pencils?","a":6},{"t":"num","q":"$55 is shared equally among 6 people. How many dollars are left over?","a":1}]],"9":[[{"t":"num","q":"2 + 6 × 6 = ?","a":38},{"t":"num","q":"3 + 6 × 2 = ?","a":15},{"t":"num","q":"6 + 7 × 6 = ?","a":48},{"t":"num","q":"36 − 3 × 9 = ?","a":9},{"t":"num","q":"37 − 3 × 8 = ?","a":13},{"t":"num","q":"(2 + 5) × 2 = ?","a":14},{"t":"num","q":"(9 + 6) × 2 = ?","a":30},{"t":"num","q":"23 × (7 − 3) + 3 = ?","a":95},{"t":"num","q":"Ivy buys 8 books at $9 each and a pen for $12. How much does Ivy spend in all (in dollars)?","a":84},{"t":"num","q":"Zoe has 73 stickers and gives 8 friends 6 stickers each. How many stickers are left?","a":25},{"t":"num","q":"A gym has 6 rows of 6 chairs. 24 chairs are taken away. How many chairs are left?","a":12},{"t":"num","q":"Max packs 21 cookies equally into 3 bags, then adds 5 more cookies to each bag. How many cookies are in each bag now?","a":12},{"t":"num","q":"Find n:  n × 4 + 2 = 34","a":8},{"t":"num","q":"Find n:  n × 8 + 3 = 75","a":9},{"t":"mc","q":"Which is the best estimate for 3,142 × 8?","a":1,"o":["33,000","24,000","240,000","2,400"]}],[{"t":"num","q":"7 + 7 × 6 = ?","a":49},{"t":"num","q":"9 + 3 × 3 = ?","a":18},{"t":"num","q":"6 + 8 × 8 = ?","a":70},{"t":"num","q":"31 − 2 × 6 = ?","a":19},{"t":"num","q":"14 − 2 × 2 = ?","a":10},{"t":"num","q":"(9 + 7) × 9 = ?","a":144},{"t":"num","q":"(2 + 9) × 8 = ?","a":88},{"t":"num","q":"15 × (8 − 3) + 3 = ?","a":78},{"t":"num","q":"Sam buys 8 books at $4 each and a pen for $19. How much does Sam spend in all (in dollars)?","a":51},{"t":"num","q":"Mia has 58 stickers and gives 5 friends 8 stickers each. How many stickers are left?","a":18},{"t":"num","q":"A gym has 7 rows of 12 chairs. 36 chairs are taken away. How many chairs are left?","a":48},{"t":"num","q":"Ana packs 36 cookies equally into 6 bags, then adds 7 more cookies to each bag. How many cookies are in each bag now?","a":13},{"t":"num","q":"Find n:  n × 9 + 6 = 51","a":5},{"t":"num","q":"Find n:  n × 5 + 2 = 32","a":6},{"t":"mc","q":"Which is the best estimate for 7,958 × 5?","a":0,"o":["40,000","4,000","400,000","49,000"]}]],"12":[[{"t":"num","q":"5/8 = ?/24","a":15},{"t":"num","q":"3/8 = ?/40","a":15},{"t":"num","q":"1/2 = ?/4","a":2},{"t":"num","q":"3/5 = ?/15","a":9},{"t":"num","q":"3/8 = ?/24","a":9},{"t":"num","q":"1/6 = 5/?","a":30},{"t":"num","q":"3/4 = 9/?","a":12},{"t":"num","q":"1/5 = 3/?","a":15},{"t":"simp","q":"Write 9/15 in simplest form.","a":"3/5"},{"t":"simp","q":"Write 2/12 in simplest form.","a":"1/6"},{"t":"simp","q":"Write 3/9 in simplest form.","a":"1/3"},{"t":"mc","q":"Is 5/6 equal to 16/18?","a":1,"o":["Yes","No"]},{"t":"mc","q":"Is 3/4 equal to 6/8?","a":0,"o":["Yes","No"]},{"t":"mc","q":"Which fraction is equivalent to 1/2?","a":0,"o":["2/4","1/4","2/5","3/4"]},{"t":"mc","q":"Which fraction is equivalent to 2/5?","a":2,"o":["6/9","8/9","8/20","2/20"]}],[{"t":"num","q":"5/8 = ?/32","a":20},{"t":"num","q":"3/7 = ?/21","a":9},{"t":"num","q":"2/7 = ?/28","a":8},{"t":"num","q":"1/3 = ?/15","a":5},{"t":"num","q":"5/6 = ?/18","a":15},{"t":"num","q":"2/3 = 10/?","a":15},{"t":"num","q":"3/8 = 9/?","a":24},{"t":"num","q":"1/5 = 4/?","a":20},{"t":"simp","q":"Write 3/6 in simplest form.","a":"1/2"},{"t":"simp","q":"Write 9/12 in simplest form.","a":"3/4"},{"t":"simp","q":"Write 20/25 in simplest form.","a":"4/5"},{"t":"mc","q":"Is 3/4 equal to 7/8?","a":0,"o":["No","Yes"]},{"t":"mc","q":"Is 3/8 equal to 13/32?","a":0,"o":["No","Yes"]},{"t":"mc","q":"Which fraction is equivalent to 3/8?","a":3,"o":["3/32","7/12","12/12","12/32"]},{"t":"mc","q":"Which fraction is equivalent to 5/6?","a":3,"o":["5/12","10/8","7/8","10/12"]}]],"13":[[{"t":"mc","q":"Which symbol goes in the blank?   1/2  ___  1/3","a":2,"o":["<","=",">"]},{"t":"mc","q":"Which symbol goes in the blank?   3/4  ___  2/3","a":2,"o":["=","<",">"]},{"t":"mc","q":"Which symbol goes in the blank?   2/5  ___  2/3","a":0,"o":["<",">","="]},{"t":"mc","q":"Which symbol goes in the blank?   2/5  ___  1/4","a":0,"o":[">","<","="]},{"t":"mc","q":"Which fraction is greater: 6/7 or 1/4?","a":0,"o":["6/7","1/4"]},{"t":"mc","q":"Which fraction is smaller: 8/9 or 3/4?","a":1,"o":["8/9","3/4"]},{"t":"mc","q":"Which fraction is smaller: 1/4 or 1/2?","a":1,"o":["1/2","1/4"]},{"t":"mc","q":"Is 1/3 more than 1/2 or less than 1/2?","a":0,"o":["less than 1/2","more than 1/2"]},{"t":"mc","q":"Is 8/9 more than 1/2 or less than 1/2?","a":0,"o":["more than 1/2","less than 1/2"]},{"t":"mc","q":"On a number line, 23/8 is between which two whole numbers?","a":0,"o":["2 and 3","1 and 2","3 and 4","4 and 5"]},{"t":"mc","q":"On a number line, 1 2/8 is between which two whole numbers?","a":0,"o":["1 and 2","3 and 4","2 and 3"]},{"t":"mc","q":"On a number line, 2 3/5 is between which two whole numbers?","a":3,"o":["3 and 4","4 and 5","1 and 2","2 and 3"]},{"t":"mc","q":"Which is greater, 0.69 or 0.6?","a":0,"o":["0.69","0.6"]},{"t":"mc","q":"Which is greater, 0.75 or 0.9?","a":1,"o":["0.75","0.9"]},{"t":"num","q":"Write 3/10 as a decimal.","a":0.3}],[{"t":"mc","q":"Which symbol goes in the blank?   1/4  ___  1/3","a":0,"o":["<",">","="]},{"t":"mc","q":"Which symbol goes in the blank?   1/5  ___  1/4","a":1,"o":["=","<",">"]},{"t":"mc","q":"Which symbol goes in the blank?   5/6  ___  1/4","a":1,"o":["<",">","="]},{"t":"mc","q":"Which symbol goes in the blank?   3/5  ___  1/2","a":1,"o":["=",">","<"]},{"t":"mc","q":"Which fraction is smaller: 5/6 or 2/5?","a":1,"o":["5/6","2/5"]},{"t":"mc","q":"Which fraction is greater: 1/2 or 5/8?","a":0,"o":["5/8","1/2"]},{"t":"mc","q":"Which fraction is smaller: 3/4 or 4/5?","a":0,"o":["3/4","4/5"]},{"t":"mc","q":"Is 7/12 more than 1/2 or less than 1/2?","a":0,"o":["more than 1/2","less than 1/2"]},{"t":"mc","q":"Is 3/5 more than 1/2 or less than 1/2?","a":1,"o":["less than 1/2","more than 1/2"]},{"t":"mc","q":"On a number line, 2 7/8 is between which two whole numbers?","a":3,"o":["4 and 5","3 and 4","1 and 2","2 and 3"]},{"t":"mc","q":"On a number line, 1 1/2 is between which two whole numbers?","a":2,"o":["2 and 3","3 and 4","1 and 2"]},{"t":"mc","q":"On a number line, 2 2/8 is between which two whole numbers?","a":0,"o":["2 and 3","4 and 5","1 and 2","3 and 4"]},{"t":"mc","q":"Which is greater, 0.91 or 0.9?","a":0,"o":["0.91","0.9"]},{"t":"mc","q":"Which is greater, 0.63 or 0.8?","a":1,"o":["0.63","0.8"]},{"t":"num","q":"Write 1/10 as a decimal.","a":0.1}]],"14":[[{"t":"val","q":"5/10 = 1/10 + 1/10 + ?","a":"3/10"},{"t":"val","q":"5/7 = 1/7 + 1/7 + 1/7 + ?","a":"2/7"},{"t":"val","q":"4/5 = 1/5 + ?","a":"3/5"},{"t":"val","q":"3/6 = 1/6 + ?","a":"1/3"},{"t":"num","q":"3/4 = ? × 1/4","a":3},{"t":"num","q":"4/4 = ? × 1/4","a":4},{"t":"num","q":"4/12 = ? × 1/12","a":4},{"t":"val","q":"5 pizzas are shared equally among 8 children. What fraction of a whole does each child get?","a":"5/8"},{"t":"val","q":"5 sandwiches are shared equally among 6 children. What fraction of a whole does each child get?","a":"5/6"},{"t":"val","q":"3 sandwiches are shared equally among 4 children. What fraction of a whole does each child get?","a":"3/4"},{"t":"num","q":"What is 1/3 of 6?","a":2},{"t":"num","q":"What is 1/2 of 10?","a":5},{"t":"num","q":"What is 1/2 of 6?","a":3},{"t":"mix","q":"Write 5 ÷ 2 as a mixed number.","a":"2 1/2"},{"t":"mix","q":"Write 3 ÷ 2 as a mixed number.","a":"1 1/2"}],[{"t":"val","q":"6/10 = 1/10 + 1/10 + ?","a":"2/5"},{"t":"val","q":"4/6 = 1/6 + ?","a":"1/2"},{"t":"val","q":"3/4 = 1/4 + ?","a":"1/2"},{"t":"val","q":"8/12 = 1/12 + ?","a":"7/12"},{"t":"num","q":"4/11 = ? × 1/11","a":4},{"t":"num","q":"13/11 = ? × 1/11","a":13},{"t":"num","q":"13/12 = ? × 1/12","a":13},{"t":"val","q":"5 sandwiches are shared equally among 8 children. What fraction of a whole does each child get?","a":"5/8"},{"t":"val","q":"1 sandwiches are shared equally among 4 children. What fraction of a whole does each child get?","a":"1/4"},{"t":"val","q":"4 pies are shared equally among 5 children. What fraction of a whole does each child get?","a":"4/5"},{"t":"num","q":"What is 2/3 of 12?","a":8},{"t":"num","q":"What is 2/6 of 36?","a":12},{"t":"num","q":"What is 3/5 of 15?","a":9},{"t":"mix","q":"Write 7 ÷ 2 as a mixed number.","a":"3 1/2"},{"t":"mix","q":"Write 7 ÷ 5 as a mixed number.","a":"1 2/5"}]],"15":[[{"t":"val","q":"10/12 + 5/12 = ?","a":"5/4"},{"t":"val","q":"11/12 + 4/12 = ?","a":"5/4"},{"t":"val","q":"5/6 + 5/6 = ?","a":"5/3"},{"t":"val","q":"7/10 + 3/10 = ?","a":"1"},{"t":"val","q":"9/11 + 1/11 = ?","a":"10/11"},{"t":"val","q":"1/8 + 5/8 = ?","a":"3/4"},{"t":"val","q":"2/9 − 1/9 = ?","a":"1/9"},{"t":"val","q":"2/7 − 1/7 = ?","a":"1/7"},{"t":"val","q":"4/11 − 1/11 = ?","a":"3/11"},{"t":"val","q":"4/5 − 2/5 = ?","a":"2/5"},{"t":"val","q":"2/4 − 1/4 = ?","a":"1/4"},{"t":"val","q":"Noah ate 2/5 of a pizza at lunch and 2/5 of the same pizza at dinner. How much of the pizza did Noah eat?","a":"4/5"},{"t":"val","q":"A pizza has 12/12 left. Ava eats 2/12 of it. What fraction of the pizza is left?","a":"5/6"},{"t":"val","q":"A jug is 5/6 full of juice. Ivy pours out 1/6 of the jug. What fraction of the jug is full now?","a":"2/3"},{"t":"val","q":"Ava ate 8/12 of a pizza at lunch and 1/12 of the same pizza at dinner. How much of the pizza did Ava eat?","a":"3/4"}],[{"t":"val","q":"8/9 + 1/9 = ?","a":"1"},{"t":"val","q":"5/7 + 6/7 = ?","a":"11/7"},{"t":"val","q":"3/7 + 1/7 = ?","a":"4/7"},{"t":"val","q":"1/11 + 9/11 = ?","a":"10/11"},{"t":"val","q":"4/7 + 4/7 = ?","a":"8/7"},{"t":"val","q":"3/10 + 8/10 = ?","a":"11/10"},{"t":"val","q":"11/12 − 4/12 = ?","a":"7/12"},{"t":"val","q":"3/7 − 2/7 = ?","a":"1/7"},{"t":"val","q":"8/10 − 5/10 = ?","a":"3/10"},{"t":"val","q":"9/10 − 7/10 = ?","a":"1/5"},{"t":"val","q":"3/9 − 2/9 = ?","a":"1/9"},{"t":"val","q":"A pizza has 12/12 left. Max eats 4/12 of it. What fraction of the pizza is left?","a":"2/3"},{"t":"val","q":"A pizza has 6/6 left. Ben eats 2/6 of it. What fraction of the pizza is left?","a":"2/3"},{"t":"val","q":"Ivy ate 9/12 of a pizza at lunch and 1/12 of the same pizza at dinner. How much of the pizza did Ivy eat?","a":"5/6"},{"t":"val","q":"A jug is 4/6 full of juice. Mia pours out 1/6 of the jug. What fraction of the jug is full now?","a":"1/2"}]],"16":[[{"t":"imp","q":"Write 4 1/8 as an improper fraction.","a":"33/8"},{"t":"imp","q":"Write 1 2/6 as an improper fraction.","a":"8/6"},{"t":"imp","q":"Write 5 5/6 as an improper fraction.","a":"35/6"},{"t":"mix","q":"Write 22/4 as a mixed number.","a":"5 2/4"},{"t":"mix","q":"Write 9/6 as a mixed number.","a":"1 3/6"},{"t":"mix","q":"Write 7/2 as a mixed number.","a":"3 1/2"},{"t":"val","q":"4 1/5 + 6 4/5 = ?","a":"11"},{"t":"val","q":"6 1/10 + 2 1/10 = ?","a":"8 1/5"},{"t":"val","q":"3 1/8 + 6 3/8 = ?","a":"9 1/2"},{"t":"val","q":"3 1/10 + 2 9/10 = ?","a":"6"},{"t":"val","q":"2 2/6 + 5 4/6 = ?","a":"8"},{"t":"val","q":"4 5/8 − 2 6/8 = ?","a":"1 7/8"},{"t":"val","q":"3 3/6 − 2 2/6 = ?","a":"1 1/6"},{"t":"val","q":"5 1/5 − 1 1/5 = ?","a":"4"},{"t":"val","q":"8 1/3 − 2 2/3 = ?","a":"5 2/3"}],[{"t":"imp","q":"Write 2 4/5 as an improper fraction.","a":"14/5"},{"t":"imp","q":"Write 5 2/5 as an improper fraction.","a":"27/5"},{"t":"imp","q":"Write 1 1/8 as an improper fraction.","a":"9/8"},{"t":"mix","q":"Write 22/8 as a mixed number.","a":"2 6/8"},{"t":"mix","q":"Write 4/3 as a mixed number.","a":"1 1/3"},{"t":"mix","q":"Write 25/6 as a mixed number.","a":"4 1/6"},{"t":"val","q":"2 1/6 + 5 3/6 = ?","a":"7 2/3"},{"t":"val","q":"3 1/3 + 4 1/3 = ?","a":"7 2/3"},{"t":"val","q":"5 7/8 + 1 2/8 = ?","a":"7 1/8"},{"t":"val","q":"2 4/5 + 3 4/5 = ?","a":"6 3/5"},{"t":"val","q":"1 3/8 + 4 3/8 = ?","a":"5 3/4"},{"t":"val","q":"6 2/4 − 1 2/4 = ?","a":"5"},{"t":"val","q":"3 4/8 − 2 6/8 = ?","a":"3/4"},{"t":"val","q":"7 2/8 − 2 3/8 = ?","a":"4 7/8"},{"t":"val","q":"3 4/10 − 1 3/10 = ?","a":"2 1/10"}]],"17":[[{"t":"num","q":"6/10 = 6 × 1/?","a":10},{"t":"num","q":"7/8 = 7 × 1/?","a":8},{"t":"num","q":"9/2 = 9 × 1/?","a":2},{"t":"num","q":"6 × 1/5 = ?/5","a":6},{"t":"num","q":"3 × 2/10 = ?/10","a":6},{"t":"num","q":"4 × 1/8 = ?/8","a":4},{"t":"num","q":"5 × 4/10 = ?/10","a":20},{"t":"val","q":"4 × 3/8 = ?","a":"3/2"},{"t":"val","q":"6 × 1/3 = ?","a":"2"},{"t":"val","q":"3 × 5/12 = ?","a":"5/4"},{"t":"val","q":"6 × 3/3 = ?","a":"6"},{"t":"val","q":"Each jar needs 1/4 cup of flour. Noah fills 6 jars. How many cups of flour is that?","a":"3/2"},{"t":"val","q":"Ben runs 2/5 mile each day for 3 days. How many miles is that in all?","a":"6/5"},{"t":"val","q":"Leo runs 2/3 mile each day for 3 days. How many miles is that in all?","a":"2"},{"t":"val","q":"Zoe runs 2/5 mile each day for 6 days. How many miles is that in all?","a":"12/5"}],[{"t":"num","q":"10/2 = 10 × 1/?","a":2},{"t":"num","q":"9/3 = 9 × 1/?","a":3},{"t":"num","q":"7/4 = 7 × 1/?","a":4},{"t":"num","q":"6 × 1/10 = ?/10","a":6},{"t":"num","q":"5 × 2/10 = ?/10","a":10},{"t":"num","q":"6 × 4/3 = ?/3","a":24},{"t":"num","q":"3 × 3/3 = ?/3","a":9},{"t":"val","q":"9 × 1/5 = ?","a":"9/5"},{"t":"val","q":"7 × 2/8 = ?","a":"7/4"},{"t":"val","q":"4 × 3/6 = ?","a":"2"},{"t":"val","q":"3 × 2/8 = ?","a":"3/4"},{"t":"val","q":"Each jar needs 2/4 cup of flour. Noah fills 5 jars. How many cups of flour is that?","a":"5/2"},{"t":"val","q":"Ben runs 1/8 mile each day for 8 days. How many miles is that in all?","a":"1"},{"t":"val","q":"A board is 3/8 meter long. Zoe lays 7 boards end to end. How many meters long is the row?","a":"21/8"},{"t":"val","q":"Ana runs 1/3 mile each day for 5 days. How many miles is that in all?","a":"5/3"}]]}};
 const MOM_PIN='3024';
 const FIREBASE_CONFIG={apiKey:"AIzaSyAw9V30gR9hc3WKS3zhO61IU6NeeKghyQM",authDomain:"wade-classical.firebaseapp.com",databaseURL:"https://wade-classical-default-rtdb.firebaseio.com",projectId:"wade-classical",storageBucket:"wade-classical.firebasestorage.app"};
 const LS='wc_math_home_v1';
@@ -259,6 +268,9 @@ function badge(a){
 }
 function itemHtml(kid,a,showDate){
   const u=safeUrl(a.link);
+  if(a.quiz&&!a.done&&hasQuiz(kid,a.quiz)){
+    return '<div class="row"><div class="rt"><div class="t">'+esc(a.title)+'</div><div class="small muted">15 questions · 13 to pass</div><button class="btn sm k" style="margin-top:6px" onclick="openQuiz(\''+kid+'\','+a.quiz+')">Start quiz</button></div></div>';
+  }
   return '<div class="row '+(a.done?'done':'')+'"><button class="chk '+(a.done?'on':'')+'" onclick="toggleDone(\''+kid+'\',\''+a.id+'\')" aria-label="done">'+(a.done?'✓':'')+'</button>'
    +'<div class="rt"><div class="t">'+esc(a.title)+badge(a)+'</div>'
    +(showDate?'<div class="small muted">'+esc(fmtDay(parseKey(a.date)))+'</div>':'')
@@ -300,6 +312,106 @@ function delAssign(kid,id){put('assign/'+kid+'/'+id,null);}
 let armed=null;
 function armDel(kid,id){if(armed===kid+id){armed=null;delAssign(kid,id);}else{armed=kid+id;render();setTimeout(()=>{if(armed===kid+id){armed=null;render();}},3500);}}
 
+
+/* ---------- quizzes ---------- */
+let QZ=null;
+function hasQuiz(kid,n){return !!(typeof QUIZ!=='undefined'&&QUIZ[kid]&&QUIZ[kid][n]);}
+function quizAttempts(kid,n){return entries(getIn('quiz/'+kid+'/w'+n)).sort((a,b)=>a.ts-b.ts);}
+function gcd(a,b){return b?gcd(b,a%b):Math.abs(a);}
+function parseVal(s){
+  s=String(s==null?'':s).trim().replace(/,/g,'').replace(/−/g,'-');
+  let m;
+  if((m=s.match(/^(\d+)\s+(\d+)\s*\/\s*(\d+)$/))){const w=+m[1],n=+m[2],d=+m[3];if(!d)return null;return {n:w*d+n,d:d,form:'mixed',fn:n,fd:d};}
+  if((m=s.match(/^(\d+)\s*\/\s*(\d+)$/))){const n=+m[1],d=+m[2];if(!d)return null;return {n:n,d:d,form:'frac'};}
+  if((m=s.match(/^(\d*)\.(\d+)$/))){const n=Number((m[1]||'0')+m[2]);return {n:n,d:Math.pow(10,m[2].length),form:'dec'};}
+  if(/^\d+$/.test(s))return {n:+s,d:1,form:'int'};
+  return null;
+}
+function sameVal(x,y){return x&&y&&x.n*y.d===y.n*x.d;}
+function gradeQ(q,resp){
+  if(q.t==='mc')return resp===q.a;
+  if(resp==null||String(resp).trim()==='')return false;
+  if(q.t==='rem'){const m=String(resp).trim().replace(/,/g,'').match(/^(\d+)\s*r\s*(\d+)$/i);return !!m&&+m[1]===q.a[0]&&+m[2]===q.a[1];}
+  const x=parseVal(resp),y=parseVal(String(q.a));
+  if(!x||!y)return false;
+  if(!sameVal(x,y))return false;
+  if(q.t==='num')return x.form==='int'||x.form==='dec';
+  if(q.t==='val')return true;
+  if(q.t==='simp'){if(x.form==='frac')return gcd(x.n,x.d)===1;if(x.form==='mixed')return gcd(x.fn,x.fd)===1&&x.fn<x.fd;return true;}
+  if(q.t==='imp')return x.form==='frac'&&x.n>=x.d;
+  if(q.t==='mix')return x.form==='mixed'&&x.fn<x.fd;
+  return false;
+}
+function ansText(q){
+  if(q.t==='mc')return q.o[q.a];
+  if(q.t==='rem')return q.a[0]+' r '+q.a[1];
+  return String(q.a);
+}
+function giveQuiz(kid,n){
+  const dup=assignList(kid).some(a=>a.quiz===n&&!a.done);
+  if(dup){toast('That quiz is already on '+KIDS[kid].name+'\'s list');return;}
+  const w=weekObj(kid,n);
+  const id='a'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+  put('assign/'+kid+'/'+id,{title:'Week '+n+' quiz: '+w[1],link:'',date:todayKey(),done:false,grade:'',note:'',quiz:n,ts:Date.now()});
+  toast('Quiz added to '+KIDS[kid].name+'\'s Today');
+}
+function openQuiz(kid,n){QZ=null;go('#/kid/'+kid+'/quiz/'+n);}
+function initQuiz(kid,n){
+  const at=quizAttempts(kid,n);const form=at.length%2;
+  QZ={kid:kid,n:n,form:form,qs:QUIZ[kid][n][form],ans:[],result:null,warned:false,tries:at.length};
+}
+function setAns(i,v){if(QZ)QZ.ans[i]=v;}
+function finishQuiz(){
+  if(!QZ||QZ.result)return;
+  const blanks=QZ.qs.filter((q,i)=>QZ.ans[i]==null||String(QZ.ans[i]).trim()==='').length;
+  if(blanks&&!QZ.warned){QZ.warned=true;const m=document.getElementById('qwarn');if(m)m.textContent='You skipped '+blanks+'. Tap Turn it in again to finish anyway.';return;}
+  const marks=QZ.qs.map((q,i)=>gradeQ(q,QZ.ans[i]));
+  const score=marks.filter(Boolean).length;const pass=score>=13;
+  QZ.result={score:score,marks:marks,pass:pass};
+  const kid=QZ.kid,n=QZ.n;
+  const id='q'+Date.now().toString(36);
+  const open=assignList(kid).filter(a=>a.quiz===n&&!a.done);
+  open.forEach(a=>put('assign/'+kid+'/'+a.id,Object.assign({},a,{done:true,grade:pass?'got':'needs',note:'Quiz '+score+'/15'})));
+  put('quiz/'+kid+'/w'+n+'/'+id,{ts:Date.now(),score:score,form:QZ.form,pass:pass,ans:JSON.stringify(QZ.ans)});
+  if(pass&&weekStatus(kid,n)!=='mastered')setWeek(kid,n,'mastered');
+}
+function quizView(kid,n){
+  const K=KIDS[kid];
+  if(!hasQuiz(kid,n))return '<p class="muted">That quiz is not ready yet.</p>';
+  if(!QZ||QZ.kid!==kid||QZ.n!==n)initQuiz(kid,n);
+  const w=weekObj(kid,n);
+  let h='<div class="card focus"><div class="small muted">TEST-OUT QUIZ</div><h2 style="font-size:26px">Week '+n+': '+esc(w[1])+'</h2><div class="small muted">15 questions. You need 13 to pass. Take your time.</div></div>';
+  if(QZ.result){
+    const r=QZ.result;
+    h+='<div class="card" style="text-align:center"><div class="score" style="color:'+(r.pass?'var(--ok)':'var(--warn)')+'">'+r.score+' / 15</div>';
+    if(r.pass)h+='<h3 style="font-size:26px;color:var(--ok)">You passed! Week '+n+' is mastered.</h3>';
+    else if(QZ.tries===0)h+='<h3 style="font-size:24px">Almost there. Work through this week\'s lessons with Mom, then take the retake.</h3>';
+    else h+='<h3 style="font-size:24px">This week stays open. There is no rush. Keep practicing with Mom.</h3>';
+    h+='<div style="margin-top:12px"><a class="btn k" style="text-decoration:none;display:inline-block" href="#/kid/'+kid+'" onclick="QZ=null">Back to Today</a></div></div>';
+    if(!r.pass||true){
+      h+='<h3 style="font-size:22px;margin:14px 0 8px">Your answers</h3>';
+      QZ.qs.forEach((q,i)=>{
+        const ok=r.marks[i];const mine=q.t==='mc'?(QZ.ans[i]!=null?q.o[QZ.ans[i]]:''):(QZ.ans[i]||'');
+        h+='<div class="qcard '+(ok?'good':'bad')+'"><div class="qnum">'+(i+1)+(ok?' ✓':' ✗')+'</div><div class="qtext">'+esc(q.q)+'</div>'
+          +'<div class="small">Your answer: <b>'+esc(mine||'(blank)')+'</b>'+(ok?'':' · Correct answer: <b>'+esc(ansText(q))+'</b>')+'</div></div>';
+      });
+    }
+    return h;
+  }
+  QZ.qs.forEach((q,i)=>{
+    h+='<div class="qcard"><div class="qnum">Question '+(i+1)+'</div><div class="qtext">'+esc(q.q)+'</div>';
+    if(q.t==='mc'){
+      q.o.forEach((o,j)=>{h+='<label class="qopt"><input type="radio" name="q'+i+'" '+(QZ.ans[i]===j?'checked':'')+' onchange="setAns('+i+','+j+')"> '+esc(o)+'</label>';});
+    }else{
+      const ph={num:'Type a number',val:'Fraction or mixed number, like 3/4 or 1 1/2',simp:'Fraction in simplest form',imp:'Like 7/4',mix:'Like 1 3/4',rem:'Like 123 r 4'}[q.t];
+      h+='<input class="qans" type="text" autocomplete="off" '+(q.t==='num'?'inputmode="decimal" ':'')+'placeholder="'+ph+'" value="'+esc(QZ.ans[i]||'')+'" oninput="setAns('+i+',this.value)">';
+    }
+    h+='</div>';
+  });
+  h+='<div id="qwarn" class="small" style="color:var(--bad);min-height:20px;margin:6px 0"></div><button class="btn k" onclick="finishQuiz()">Turn it in</button>';
+  return h;
+}
+
 /* ---------- routing ---------- */
 function go(h){location.hash=h;}
 function pinOk(){try{return localStorage.getItem('wc_math_pin')==='1';}catch(e){return false;}}
@@ -309,12 +421,13 @@ function tryPin(){
   else{document.getElementById('pinmsg').textContent='Not quite — try again.';document.getElementById('pin').value='';}
 }
 function lockMom(){try{localStorage.removeItem('wc_math_pin');}catch(e){}go('#/');}
-function render(){
+function render(force){
   const app=document.getElementById('app');
   const h=(location.hash||'#/').replace(/^#\/?/,'').split('/');
   const keep=document.activeElement&&document.activeElement.tagName==='TEXTAREA'&&document.activeElement.id==='sendtext';
   if(keep)return; // do not clobber typing
-  if(h[0]==='kid'&&KIDS[h[1]]){app.innerHTML=kidView(h[1],h[2]||'today');return;}
+  if(h[0]==='kid'&&h[2]==='quiz'&&QZ&&!QZ.result&&QZ.kid===h[1]&&String(QZ.n)===h[3]&&force!==true)return; // keep quiz answers while typing
+  if(h[0]==='kid'&&KIDS[h[1]]){app.innerHTML=kidView(h[1],h[2]||'today',h[3]);window.scrollTo(0,0);return;}
   if(h[0]==='mom'){
     if(!pinOk()){app.innerHTML=pinView();setTimeout(()=>{const p=document.getElementById('pin');if(p)p.focus();},50);return;}
     app.innerHTML=momView(h[1]||'home',h[2]);return;
@@ -334,12 +447,12 @@ function pinView(){
 }
 
 /* ---------- kid views ---------- */
-function kidView(kid,tab){
+function kidView(kid,tab,arg){
   const K=KIDS[kid];
   const cur=suggested(kid);const w=cur?weekObj(kid,cur):null;
   let h='<div class="'+K.cls+'"><div class="khead"><h1>'+esc(K.name)+'\'s math</h1><div class="sub">'+esc(fmtDay(new Date()))+'</div></div>';
   h+='<div class="tabs"><a class="tab '+(tab==='today'?'on':'')+'" href="#/kid/'+kid+'">Today</a><a class="tab '+(tab==='week'?'on':'')+'" href="#/kid/'+kid+'/week">This week</a><a class="tab '+(tab==='report'?'on':'')+'" href="#/kid/'+kid+'/report">My grades</a></div>';
-  if(tab==='week')h+=kidWeek(kid);else if(tab==='report')h+=kidReport(kid);else h+=kidToday(kid,w);
+  if(tab==='quiz')h+=quizView(kid,Number(arg));else if(tab==='week')h+=kidWeek(kid);else if(tab==='report')h+=kidReport(kid);else h+=kidToday(kid,w);
   return h+'</div>';
 }
 function kidToday(kid,w){
@@ -386,7 +499,10 @@ function kidReport(kid){
   h+='<div class="grid2" style="margin-top:10px"><div><div class="small muted">Work checked by Mom</div><div style="font:700 44px \'Cormorant Garamond\',serif;color:var(--kc)">'+(pct===null?'—':pct+'%')+'</div><div class="small muted">'+g+' got it · '+n+' needs work · '+r+' redo</div></div>'
     +'<div><div class="small muted">Weeks mastered</div><div style="font:700 44px \'Cormorant Garamond\',serif;color:var(--kc)">'+m+' <span style="font-size:24px" class="muted">of 30</span></div><div class="bar"><i style="width:'+(m/30*100)+'%"></i></div></div></div>';
   const done=K.spine.filter(s=>getIn('facts/'+kid+'/done/'+s[0])).length;
-  h+='<div style="margin-top:14px"><div class="small muted">Daily facts stages finished</div><b>'+done+' of '+K.spine.length+'</b></div></div>';
+  h+='<div style="margin-top:14px"><div class="small muted">Daily facts stages finished</div><b>'+done+' of '+K.spine.length+'</b></div>';
+  const qw=K.weeks.filter(w=>quizAttempts(kid,w[0]).length);
+  if(qw.length){h+='<div style="margin-top:14px"><div class="small muted">Quizzes</div>';qw.forEach(w=>{const at=quizAttempts(kid,w[0]);const best=Math.max.apply(null,at.map(a=>a.score));h+='<div class="small">Week '+w[0]+' · '+esc(w[1])+' · best '+best+'/15 '+(at.some(a=>a.pass)?'✓':'')+'</div>';});h+='</div>';}
+  h+='</div>';
   return h;
 }
 
@@ -436,7 +552,7 @@ function ladderView(kid){
     else if(st==='skipped'){cls='skipped';lab='Skipped for now';}
     else if(i===cur){cls='current';lab='This week';}
     else if(i===nxt){cls='next';lab='Suggested next';}
-    h+='<button class="rung '+cls+' '+(i===n?'sel':'')+'" onclick="selectRung(\''+kid+'\','+i+')"><span class="n">'+i+'</span><span class="f">'+esc(w[1])+'</span><span class="s">'+lab+'</span></button>';
+    h+='<button class="rung '+cls+' '+(i===n?'sel':'')+'" onclick="selectRung(\''+kid+'\','+i+')"><span class="n">'+i+'</span><span class="f">'+esc(w[1])+(hasQuiz(kid,i)?' <span class="small" style="opacity:.7">· quiz</span>':'')+'</span><span class="s">'+lab+'</span></button>';
   }
   h+='</div></div><div>';
   const w=weekObj(kid,n);const st=weekStatus(kid,n);
@@ -445,7 +561,7 @@ function ladderView(kid){
     +'<div class="small muted" style="margin-top:6px">Topics</div><div>'+esc(w[2])+'</div>'
     +'<div class="small muted" style="margin-top:10px">'+(kid==='ryder'?'He':'She')+' can</div><div>'+esc(w[3])+'</div>'
     +'<div class="small cov-'+w[4]+'" style="margin-top:10px;font-weight:600">'+K.book+': '+covTxt+'</div>'
-    +'<div class="small muted" style="margin-top:10px">Test-out quiz: 15 questions, 85% (13 of 15) to skip. One retake; a second miss keeps the week open. Quiz questions are coming in a later update — mark the week mastered yourself for now.</div>'
+    +quizBlock(kid,n)
     +'<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">'
     +'<button class="btn sm k" onclick="setWeek(\''+kid+'\','+n+',\'current\')">Make this week\'s focus</button>'
     +'<button class="btn sm ok" onclick="setWeek(\''+kid+'\','+n+',\'mastered\')">Mark mastered</button>'
@@ -461,6 +577,16 @@ function ladderView(kid){
   h+='<div class="card"><h3 style="font-size:20px">Optional extra weeks</h3><div class="small muted">Not required. Use whenever you like.</div>';
   K.extras.forEach(x=>{h+='<div class="small" style="padding:6px 0;border-bottom:1px solid var(--line)"><b>'+x[0]+' '+esc(x[1])+'</b> · '+esc(x[2])+'<br><span class="muted">'+esc(x[3])+'</span></div>';});
   h+='</div></div></div></div>';
+  return h;
+}
+function quizBlock(kid,n){
+  let h='<div class="small muted" style="margin-top:12px">Test-out quiz · 15 questions · 13 to pass · one retake, then the week stays open</div>';
+  if(!hasQuiz(kid,n))return h+'<div class="small" style="margin-top:4px">The quiz for this week is not written yet. Mark it mastered yourself if you know it.</div>';
+  const at=quizAttempts(kid,n);
+  h+='<div style="margin-top:6px">';
+  if(!at.length)h+='<span class="small">No attempts yet.</span>';
+  at.forEach((a,i)=>{h+='<div class="small">Try '+(i+1)+' · '+new Date(a.ts).toLocaleDateString(undefined,{month:'short',day:'numeric'})+' · <b>'+a.score+'/15</b> '+(a.pass?'<span style="color:var(--ok)">passed</span>':'<span style="color:var(--warn)">not yet</span>')+'</div>';});
+  h+='</div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm k" onclick="giveQuiz(\''+kid+'\','+n+')">Give quiz today</button><button class="btn sm alt" onclick="openQuiz(\''+kid+'\','+n+')">Open quiz here</button></div>';
   return h;
 }
 function selectRung(kid,n){sel[kid]=n;render();}
@@ -534,7 +660,7 @@ function submitSend(){
   toast('Sent');render();
 }
 
-window.addEventListener('hashchange',render);
+window.addEventListener('hashchange',function(){render(true);});
 document.addEventListener('DOMContentLoaded',function(){loadLocal();render();initFirebase();});
 </script>
 </body>
