@@ -56,6 +56,13 @@ table.tb th{background:var(--tint);color:var(--teal-d)}
 details{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:14px}
 summary{cursor:pointer;font-weight:600;color:var(--teal-d)}
 ul{margin:6px 0 6px 22px}
+.chain{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 6px;margin:10px 0;font-weight:700;color:var(--teal-d)}
+.chain .v{background:#fff;border:2px solid var(--teal);border-radius:8px;padding:6px 9px;font-size:18px}
+.chain .x{font-size:13px;background:var(--tint);border-radius:99px;padding:3px 8px;color:var(--teal-d)}
+.dpick{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.dpick button{width:38px;height:38px;border-radius:8px;border:2px solid var(--line);background:#fff;font:700 18px Jost,sans-serif;cursor:pointer;color:var(--ink)}
+.dpick button.on{border-color:var(--teal);background:var(--tint)}
+.eq{text-align:center;font:700 24px Jost,sans-serif;color:var(--teal-d);margin:6px 0;min-height:34px}
 @media(max-width:560px){body{font-size:17px}.cc{width:46px}.cc .dg{font-size:24px;height:42px}.cc .nm{font-size:10px}.cc .vl{font-size:10px}.cm{width:8px;font-size:24px}input.num{width:100%}}
 </style>
 </head>
@@ -179,20 +186,47 @@ function tryNum(){
   const raw=norm($('tn').value);let n=parseInt(raw||'0',10);if(isNaN(n)||n<0)n=0;if(n>1000000)n=1000000;
   $('chartbox').innerHTML=chartHTML(n)+'<p style="text-align:center" class="big">'+fmt(n)+'</p>';
 }
+let SD=3,SP=0;
+function slideMax(){return SD===1?6:5;}
+function slideDraw(){
+  const v=SD*Math.pow(10,SP);
+  $('slchart').innerHTML=chartHTML(v);
+  const place=PLACES[6-SP].toLowerCase();
+  $('sleq').innerHTML=SP===0?SD+' in the ones place is worth '+SD:SD+' in the '+place+' place is worth '+fmt(v)+'<br><span style="font-size:18px;font-weight:600">'+fmt(v)+' = 10 × '+fmt(v/10)+'</span>';
+  $('slup').disabled=SP>=slideMax();$('sldn').disabled=SP<=0;
+  [].slice.call(document.querySelectorAll('.dpick button')).forEach(b=>b.className=(+b.dataset.d===SD?'on':''));
+}
+function slideMove(d){SP=Math.max(0,Math.min(slideMax(),SP+d));slideDraw();}
+function slideDigit(d){SD=d;SP=Math.min(SP,slideMax());slideDraw();}
+function groupTable(){
+  const rows=[['ones','1','',''],['tens','10','10 ones','1'],['hundreds','100','10 tens','10'],['thousands','1,000','10 hundreds','100'],['ten thousands','10,000','10 thousands','1,000'],['hundred thousands','100,000','10 ten thousands','10,000'],['millions','1,000,000','10 hundred thousands','100,000']];
+  let h='<table class="tb"><tr><th>Place</th><th>One of them is worth</th><th>Because it is</th></tr>';
+  rows.forEach(r=>{h+='<tr><td>'+r[0]+'</td><td><b>'+r[1]+'</b></td><td>'+(r[2]?r[2]+' of the place to its right (10 × '+r[3]+')':'the smallest place')+'</td></tr>';});
+  return h+'</table>';
+}
 function rRule(){
   SECTOTAL=SEC1.length;
   $('stage').innerHTML=
    '<div class="card"><h1>Place value to 1,000,000</h1><p class="small">About 10 minutes. This is practice only. Nothing here is saved or graded.</p>'
    +'<h2 style="margin-top:12px">The rule</h2>'
    +'<div class="rule">Every place is worth 10 times the place to its right.</div>'
-   +'<p>Move one place to the left and the value gets 10 times bigger. Move one place to the right and it gets 10 times smaller (divide by 10).</p>'
-   +'<h3>Try it. Type any number up to 1,000,000.</h3>'
+   +'<h3>Why 10 times? Because we group by tens.</h3>'
+   +'<p>10 ones make 1 ten. 10 tens make 1 hundred. 10 hundreds make 1 thousand. It keeps going the same way. So one of any place is the same as <b>10 of the place just to its right</b>.</p>'
+   +groupTable()
+   +'<h3>Watch one digit move</h3>'
+   +'<p class="small">Pick a digit. Each time you move it one place left, it is worth 10 times as much.</p>'
+   +'<div class="dpick">'+[1,2,3,4,5,6,7,8,9].map(d=>'<button data-d="'+d+'" onclick="slideDigit('+d+')">'+d+'</button>').join('')+'</div>'
+   +'<div id="slchart"></div><div class="eq" id="sleq"></div>'
+   +'<div class="row" style="justify-content:center"><button class="btn alt" id="sldn" onclick="slideMove(-1)">÷ 10 (move right)</button><button class="btn" id="slup" onclick="slideMove(1)">× 10 (move left)</button></div>'
+   +'<h3>The same digit, six places</h3>'
+   +'<p>In 555,555 every digit is a 5, but each 5 is worth a different amount. Read it from the right:</p>'
+   +'<div class="chain"><span class="v">5</span><span class="x">× 10</span><span class="v">50</span><span class="x">× 10</span><span class="v">500</span><span class="x">× 10</span><span class="v">5,000</span><span class="x">× 10</span><span class="v">50,000</span><span class="x">× 10</span><span class="v">500,000</span></div>'
+   +'<p class="small">Each 5 is 10 times the 5 to its right. Going left multiplies by 10. Going right divides by 10.</p>'
+   +'<h3>Try your own. Type any number up to 1,000,000.</h3>'
    +'<div class="row"><input class="num" id="tn" inputmode="numeric" value="407,205" oninput="tryNum()" autocomplete="off"></div>'
-   +'<div id="chartbox"></div>'
-   +'<div class="arrows"><span>← each step left: × 10</span><span>each step right: ÷ 10 →</span></div>'
-   +'<p class="small" style="margin-top:10px">Look at 555,555. The first 5 is 500,000. The next is 50,000. The next is 5,000. Each one is 10 times the one to its right.</p></div>'
+   +'<div id="chartbox"></div></div>'
    +'<div class="card"><h2>Check it</h2>'+listHTML('a',SEC1)+nav()+'</div>';
-  tryNum();
+  tryNum();slideDraw();
 }
 function rDiv(){
   SECTOTAL=SEC2.length;
