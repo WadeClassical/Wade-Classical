@@ -104,6 +104,30 @@ label{font-size:13px;color:var(--muted);display:block;margin:10px 0 4px;font-wei
 .gk{width:36px;height:30px;margin:0 4px;text-align:center;font:500 17px Jost,sans-serif;border:1.5px dashed #C9A94B;background:#FFF8E1;border-radius:6px;padding:0;flex:none;color:var(--muted)}
 .gk:focus{outline:0;border-color:#C9972B;background:#FFF0C2}
 .gkw{width:44px;height:34px;display:flex;align-items:center;justify-content:center;flex:none}
+.pcbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.pctitle{font:600 26px 'Cormorant Garamond',serif;margin:0 6px;min-width:190px}
+.pcscroll{overflow-x:auto}
+.pcgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.pcw{min-width:720px}
+.pcdow{font:600 12px Jost;color:var(--muted);text-align:center;padding:2px 0}
+.pcd{background:#fff;border:1px solid var(--line);border-radius:8px;min-height:78px;padding:4px 6px;cursor:pointer;font-size:12px;text-align:left;font-family:inherit;color:var(--ink);display:block;width:100%}
+.pcd.we{background:#F6F1E4}.pcd.out{opacity:.4}
+.pcd.today{border:2px solid var(--brass)}.pcd.sel{outline:3px solid var(--forest);outline-offset:-1px}
+.pcn{font:600 14px Jost;margin-bottom:3px}
+.pcp{display:inline-block;border-radius:999px;padding:1px 8px;color:#fff;font-size:12px;margin:1px 3px 0 0;font-weight:600}
+.pcp.r{background:var(--teal)}.pcp.h{background:var(--rose)}
+.pck{font:600 15px Jost;margin:12px 0 4px}
+.pck.r{color:var(--teal)}.pck.h{color:var(--rose)}
+.pcdw{min-height:110px}
+.pcchip{display:block;border-left:4px solid var(--kc);background:#FBF6EA;border-radius:4px;padding:2px 5px;margin-bottom:3px;font-size:12px;line-height:1.25;overflow-wrap:anywhere}
+.pcchip.dn{opacity:.6;text-decoration:line-through}
+.pcyear{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.pcym{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px}
+.pcym h4{font:600 17px 'Cormorant Garamond',serif;margin-bottom:4px;cursor:pointer;background:none;border:0;padding:0;color:var(--forest);text-align:left}
+.pcyg{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.pcyd{font:500 11px Jost;text-align:center;padding:5px 0;border-radius:5px;cursor:pointer;border:0;background:transparent;color:var(--ink);font-family:inherit}
+.pcyd.r{background:#BFDCE6}.pcyd.h{background:#EBC1D2}.pcyd.b{background:linear-gradient(135deg,#BFDCE6 50%,#EBC1D2 50%)}
+.pcyd.today{outline:2px solid var(--brass)}.pcyd.sel{outline:2px solid var(--forest)}.pcyd.blank{cursor:default}
 .gcap{font-size:17px;color:var(--muted);margin-bottom:4px}
 #kp{position:fixed;left:0;right:0;bottom:0;background:#F3F5F8;border-top:1px solid #C9D3E0;padding:8px;display:none;z-index:8;justify-content:center}
 #kp .kg{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;max-width:460px;width:100%}
@@ -650,9 +674,10 @@ function kidReport(kid){
 
 /* ---------- mom views ---------- */
 function momView(tab,arg){
-  let h='<div class="tabs" style="margin-top:0"><a class="tab '+(tab==='home'?'on':'')+'" href="#/mom">Home</a><a class="tab '+(tab==='ladder'?'on':'')+'" href="#/mom/ladder/ryder">Ladder</a><a class="tab '+(tab==='plan'?'on':'')+'" href="#/mom/plan">Assign</a><a class="tab '+(tab==='check'?'on':'')+'" href="#/mom/check">Check work'+(pendingCount()?' ('+pendingCount()+')':'')+'</a><a class="tab '+(tab==='send'?'on':'')+'" href="#/mom/send">Send</a><button class="tab" onclick="lockMom()">Lock</button></div>';
+  let h='<div class="tabs" style="margin-top:0"><a class="tab '+(tab==='home'?'on':'')+'" href="#/mom">Home</a><a class="tab '+(tab==='ladder'?'on':'')+'" href="#/mom/ladder/ryder">Ladder</a><a class="tab '+(tab==='plan'?'on':'')+'" href="#/mom/plan">Assign</a><a class="tab '+(tab==='cal'?'on':'')+'" href="#/mom/cal">Plan ahead</a><a class="tab '+(tab==='check'?'on':'')+'" href="#/mom/check">Check work'+(pendingCount()?' ('+pendingCount()+')':'')+'</a><a class="tab '+(tab==='send'?'on':'')+'" href="#/mom/send">Send</a><button class="tab" onclick="lockMom()">Lock</button></div>';
   if(tab==='ladder')h+=ladderView(KIDS[arg]?arg:'ryder');
   else if(tab==='plan')h+=planView();
+  else if(tab==='cal')h+=planAheadView();
   else if(tab==='check')h+=checkView();
   else if(tab==='send')h+=sendView();
   else h+=homeView();
@@ -682,6 +707,112 @@ function homeView(){
   if(!sent.length)h+='<p class="muted small">Nothing sent yet.</p>';
   sent.slice(0,5).forEach(m=>{h+='<div class="small" style="padding:6px 0;border-bottom:1px solid var(--line)"><b>'+KIDS[m.kid].name+'</b> · '+esc(m.text).slice(0,90)+' <span class="muted">'+(m.seen?'· seen':'· not seen yet')+'</span></div>';});
   return h+'</div>';
+}
+
+/* ---------- plan ahead calendar ---------- */
+let PC={view:'week',anchor:null,sel:null};
+const MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DOW=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+function addDays(d,n){return new Date(d.getFullYear(),d.getMonth(),d.getDate()+n);}
+function pcA(){if(!PC.anchor)PC.anchor=todayKey();return parseKey(PC.anchor);}
+function pcMap(){const m={};['ryder','hadley'].forEach(k=>assignList(k).forEach(a=>{if(!a.date)return;if(!m[a.date])m[a.date]={ryder:[],hadley:[]};m[a.date][k].push(a);}));return m;}
+function pcView(v){PC.view=v;render();}
+function pcNav(dir){
+  const a=pcA();
+  if(PC.view==='week')PC.anchor=dkey(addDays(a,7*dir));
+  else if(PC.view==='month')PC.anchor=dkey(new Date(a.getFullYear(),a.getMonth()+dir,1));
+  else PC.anchor=dkey(new Date(a.getFullYear()+dir,0,1));
+  render();
+}
+function pcToday(){PC.anchor=todayKey();render();}
+function pcPick(k){PC.sel=PC.sel===k?null:k;render();}
+function pcOpenMonth(y,m){PC.anchor=dkey(new Date(y,m,1));PC.view='month';render();}
+function pcMove(kid,id){
+  const el=document.getElementById('mv'+kid+id);const v=el&&el.value;if(!v){toast('Pick a date first');return;}
+  const a=getIn('assign/'+kid+'/'+id);if(!a)return;
+  put('assign/'+kid+'/'+id,Object.assign({},a,{date:v}));toast('Moved to '+fmtDay(parseKey(v)));
+}
+function pcKid(k){document.querySelectorAll('#pck .tab').forEach(b=>b.classList.toggle('on',b.dataset.k===k));}
+function pcAdd(){
+  if(!PC.sel)return;
+  const on=document.querySelector('#pck .tab.on');const k=on?on.dataset.k:'ryder';
+  const kids=k==='both'?['ryder','hadley']:[k];
+  if(addAssign(kids,document.getElementById('pct').value,document.getElementById('pcl').value,PC.sel))toast('Added');
+}
+function pcChip(kid,a){
+  const t=esc(a.title);
+  return '<span class="pcchip '+KIDS[kid].cls+(a.done?' dn':'')+'">'+(a.done?'✓ ':'')+(a.quiz?'Quiz: ':'')+t+'</span>';
+}
+function pcWeek(m,tk){
+  const mon=mondayOf(pcA());
+  let h='<div class="pcscroll"><div class="pcw"><div class="pcgrid">'+DOW.map(d=>'<div class="pcdow">'+d+'</div>').join('')+'</div>';
+  [['ryder','r'],['hadley','h']].forEach(kk=>{
+    const kid=kk[0];
+    h+='<div class="pck '+kk[1]+'">'+KIDS[kid].name+'</div><div class="pcgrid">';
+    for(let i=0;i<7;i++){
+      const d=addDays(mon,i),k=dkey(d);const items=(m[k]&&m[k][kid])||[];
+      h+='<button class="pcd pcdw '+(i>4?'we ':'')+(k===tk?'today ':'')+(k===PC.sel?'sel':'')+'" onclick="pcPick(\''+k+'\')"><div class="pcn">'+d.getDate()+'</div>'+items.map(a=>pcChip(kid,a)).join('')+'</button>';
+    }
+    h+='</div>';
+  });
+  return h+'</div></div>';
+}
+function pcMonth(m,tk){
+  const a=pcA();const first=new Date(a.getFullYear(),a.getMonth(),1);const last=new Date(a.getFullYear(),a.getMonth()+1,0);
+  const start=mondayOf(first);const weeks=Math.ceil(((last-start)/86400000+1)/7);
+  let h='<div class="pcscroll"><div class="pcw"><div class="pcgrid">'+DOW.map(d=>'<div class="pcdow">'+d+'</div>').join('')+'</div><div class="pcgrid" style="margin-top:4px">';
+  for(let i=0;i<weeks*7;i++){
+    const d=addDays(start,i),k=dkey(d);const r=(m[k]&&m[k].ryder.length)||0,hh=(m[k]&&m[k].hadley.length)||0;
+    h+='<button class="pcd '+((i%7)>4?'we ':'')+(d.getMonth()!==a.getMonth()?'out ':'')+(k===tk?'today ':'')+(k===PC.sel?'sel':'')+'" onclick="pcPick(\''+k+'\')"><div class="pcn">'+d.getDate()+'</div>'
+      +(r?'<span class="pcp r">R '+r+'</span>':'')+(hh?'<span class="pcp h">H '+hh+'</span>':'')+'</button>';
+  }
+  return h+'</div></div></div>';
+}
+function pcYear(m,tk){
+  const y=pcA().getFullYear();let h='<div class="pcyear">';
+  for(let mo=0;mo<12;mo++){
+    const first=new Date(y,mo,1),dim=new Date(y,mo+1,0).getDate(),lead=(first.getDay()+6)%7;
+    h+='<div class="pcym"><button class="pcym-t" style="all:unset;cursor:pointer"><h4 onclick="pcOpenMonth('+y+','+mo+')">'+MON[mo]+'</h4></button><div class="pcyg">'+DOW.map(d=>'<div class="pcdow" style="font-size:10px">'+d[0]+'</div>').join('');
+    for(let i=0;i<lead;i++)h+='<span class="pcyd blank"></span>';
+    for(let dd=1;dd<=dim;dd++){
+      const k=y+'-'+pad(mo+1)+'-'+pad(dd);const r=m[k]&&m[k].ryder.length,hh=m[k]&&m[k].hadley.length;
+      h+='<button class="pcyd '+(r&&hh?'b':r?'r':hh?'h':'')+' '+(k===tk?'today ':'')+(k===PC.sel?'sel':'')+'" onclick="pcPick(\''+k+'\')">'+dd+'</button>';
+    }
+    h+='</div></div>';
+  }
+  return h+'</div><div class="small muted" style="margin-top:10px"><span class="pcp r">Ryder</span><span class="pcp h">Hadley</span> Shaded days have work assigned. Split color means both.</div>';
+}
+function pcDay(){
+  if(!PC.sel)return '';
+  const d=parseKey(PC.sel);
+  let h='<div class="card" style="margin-top:14px"><h3 style="font-size:22px">'+esc(fmtDay(d))+'</h3>';
+  ['ryder','hadley'].forEach(kid=>{
+    const items=assignList(kid).filter(a=>a.date===PC.sel).sort((a,b)=>(a.ts||0)-(b.ts||0));
+    h+='<div class="'+KIDS[kid].cls+'"><div class="small" style="color:var(--kc);font-weight:600;margin-top:10px">'+KIDS[kid].name+'</div>';
+    if(!items.length)h+='<div class="muted small">Nothing yet.</div>';
+    items.forEach(a=>{
+      const lk=a.link?' <a href="'+esc(a.link)+'" target="_blank" rel="noopener" class="small">open link</a>':'';
+      h+='<div class="row"><div class="rt"><div class="t">'+(a.quiz?'Quiz: ':'')+esc(a.title)+lk+badge(a)+'</div>'
+        +'<div style="margin-top:6px;display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input type="date" id="mv'+kid+a.id+'" value="'+esc(a.date)+'" style="width:auto"><button class="btn sm alt" onclick="pcMove(\''+kid+'\',\''+a.id+'\')">Move</button></div></div>'
+        +'<button class="btn sm '+(armed===kid+a.id?'bad':'alt')+'" onclick="armDel(\''+kid+'\',\''+a.id+'\')">'+(armed===kid+a.id?'Tap to remove':'Remove')+'</button></div>';
+    });
+    h+='</div>';
+  });
+  h+='<div style="margin-top:14px;border-top:1px solid var(--line);padding-top:10px"><b>Add to this day</b>'
+    +'<div class="tog" id="pck" style="margin:8px 0"><button class="tab on" data-k="ryder" onclick="pcKid(\'ryder\')">Ryder</button><button class="tab" data-k="hadley" onclick="pcKid(\'hadley\')">Hadley</button><button class="tab" data-k="both" onclick="pcKid(\'both\')">Both</button></div>'
+    +'<input id="pct" placeholder="What (lesson, video, practice…)" style="margin-bottom:6px"><input id="pcl" placeholder="Link (optional)"><div style="margin-top:10px"><button class="btn" onclick="pcAdd()">Add</button></div></div></div>';
+  return h;
+}
+function planAheadView(){
+  const tk=todayKey(),m=pcMap(),a=pcA();let title;
+  if(PC.view==='week'){const mon=mondayOf(a),sun=addDays(mon,6);title=MON[mon.getMonth()].slice(0,3)+' '+mon.getDate()+' – '+(sun.getMonth()!==mon.getMonth()?MON[sun.getMonth()].slice(0,3)+' ':'')+sun.getDate()+', '+sun.getFullYear();}
+  else if(PC.view==='month')title=MON[a.getMonth()]+' '+a.getFullYear();
+  else title=String(a.getFullYear());
+  let h='<div class="card"><div class="pcbar"><div class="tog">'+['week','month','year'].map(v=>'<button class="tab '+(PC.view===v?'on':'')+'" onclick="pcView(\''+v+'\')">'+v[0].toUpperCase()+v.slice(1)+'</button>').join('')+'</div>'
+    +'<button class="btn sm alt" onclick="pcNav(-1)" aria-label="Previous">◀</button><div class="pctitle">'+title+'</div><button class="btn sm alt" onclick="pcNav(1)" aria-label="Next">▶</button><button class="btn sm" onclick="pcToday()">Today</button></div>';
+  h+=PC.view==='week'?pcWeek(m,tk):PC.view==='month'?pcMonth(m,tk):pcYear(m,tk);
+  h+='</div>'+pcDay();
+  return h;
 }
 function selWeek(kid){return sel[kid]||suggested(kid)||1;}
 function ladderView(kid){
