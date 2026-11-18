@@ -56,6 +56,13 @@ p{margin:8px 0}
 .col h3{font-size:15px;font-weight:600}
 .col.h h3{color:var(--lav-d)}.col.t h3{color:var(--mint-d)}.col.o h3{color:var(--pink-d)}
 .col .sub{font-size:13px;color:var(--soft)}
+.packs{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);gap:4px;align-items:center;margin:14px 0}
+.packs .col{min-width:0;overflow:hidden;padding:8px 2px 10px;min-height:150px}
+.packs .stack svg{width:100%;max-width:84px;height:auto}
+.arr svg{width:42px;height:auto}
+@media(max-width:520px){.arr svg{width:28px}.arr .w{display:none}.arr b{font-size:15px}.packs .digit{font-size:24px!important}.packs .col{padding:8px 0 10px}}
+.arr{text-align:center;font-size:12px;font-weight:600;color:var(--pink-d);line-height:1.1;padding:0 2px}
+.arr svg{display:block;margin:2px auto}
 .stack{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;align-items:flex-end;margin-top:6px;min-height:100px}
 .stack svg{flex:none}
 .digit{font-size:46px;font-weight:700;line-height:1;margin-top:4px}
@@ -151,6 +158,10 @@ function box(size){
    +'<path d="M18 15l24 10" stroke="#FFA6C9" stroke-width="5" stroke-linecap="round"/>'
    +'<rect x="33" y="38" width="17" height="10" rx="5" fill="#fff" opacity=".95"/><text x="41.5" y="46" text-anchor="middle" font-size="8.5" font-weight="700" fill="#6F54B8" font-family="Fredoka,sans-serif">100</text></svg>';
 }
+function arrow(label){
+  const parts=label.split(' ');
+  return '<div class="arr" aria-hidden="true"><div class="al"><b>'+parts[0]+'</b><span class="w"> '+parts[1]+'</span></div><svg width="52" height="34" viewBox="0 0 52 34"><path d="M48 17H10" stroke="#E0709F" stroke-width="6" stroke-linecap="round" fill="none"/><path d="M20 5L7 17l13 12" stroke="#E0709F" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><div class="al w">go in</div></div>';
+}
 function stack(kind,n){
   let s='';
   for(let i=0;i<n;i++){
@@ -230,10 +241,12 @@ function rMeet(){
   $('stage').innerHTML=
    '<div class="card lav"><h2>Squishies come in 3 packs</h2>'
    +mochi('Hi! I\'m <b>Mochi</b>, your shop helper. We pack squishies so they are easy to count.')
-   +'<div class="mat" style="margin-top:14px">'
-   +'<div class="col o"><h3>Single</h3><div class="stack">'+blob('#FFA6C9',64)+'</div><div class="digit" style="font-size:30px">1</div></div>'
+   +'<div class="packs">'
+   +'<div class="col h"><h3>Box</h3><div class="stack">'+box(84)+'</div><div class="digit" style="font-size:30px">100</div></div>'
+   +arrow('10 bags')
    +'<div class="col t"><h3>Bag</h3><div class="stack">'+bag(80)+'</div><div class="digit" style="font-size:30px">10</div></div>'
-   +'<div class="col h"><h3>Box</h3><div class="stack">'+box(84)+'</div><div class="digit" style="font-size:30px">100</div></div></div>'
+   +arrow('10 singles')
+   +'<div class="col o"><h3>Single</h3><div class="stack">'+blob('#FFA6C9',64)+'</div><div class="digit" style="font-size:30px">1</div></div></div>'
    +'<p class="center"><b>10 singles</b> make a <b>bag</b>.<br><b>10 bags</b> make a <b>box</b>.</p>'
    +'<div class="center" style="margin-top:8px"><button class="btn lav" onclick="next()">Let\'s pack some!</button></div></div>';
 }
