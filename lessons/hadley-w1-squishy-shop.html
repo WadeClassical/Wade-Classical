@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hadley's Squishy Shop · Place Value</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF4FA;--card:#FFFFFF;--ink:#5A3A6E;--soft:#8A6FA0;
+  --pink:#FFA6C9;--pink-d:#E0709F;--lav:#CDB8FF;--lav-d:#9B7FE0;--mint:#A8EBD0;--mint-d:#4DBF92;
+  --butter:#FFE98A;--butter-d:#E8B93A;--peach:#FFC7A0;--peach-d:#E8955A;--sky:#A9DDFF;--sky-d:#5BB3EE;
+  --ok:#3BB98A;--oops:#F07A9A;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Fredoka',ui-rounded,'Trebuchet MS',system-ui,sans-serif;color:var(--ink);min-height:100vh;font-size:19px;line-height:1.35;
+  background:
+    radial-gradient(circle at 8% 12%,#FFD9EA 0 70px,transparent 71px),
+    radial-gradient(circle at 92% 18%,#E4D8FF 0 90px,transparent 91px),
+    radial-gradient(circle at 12% 88%,#D3F6E8 0 80px,transparent 81px),
+    radial-gradient(circle at 90% 85%,#FFF1B8 0 75px,transparent 76px),
+    var(--bg);
+  background-attachment:fixed}
+.wrap{max-width:780px;margin:0 auto;padding:14px 14px 60px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.back{color:var(--lav-d);text-decoration:none;font-weight:600;font-size:16px;background:#fff;border:3px solid var(--lav);border-radius:999px;padding:6px 14px}
+.title{font-weight:700;font-size:22px;color:var(--pink-d);text-align:center;flex:1}
+.prog{height:16px;background:#fff;border:3px solid var(--pink);border-radius:999px;overflow:hidden;margin-bottom:14px}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--lav),var(--mint));border-radius:999px;transition:width .4s}
+.card{background:var(--card);border:4px solid var(--pink);border-radius:30px;padding:20px 18px;box-shadow:0 8px 0 #FFD0E3;margin-bottom:16px}
+.card.lav{border-color:var(--lav);box-shadow:0 8px 0 #E6DBFF}
+.card.mint{border-color:var(--mint);box-shadow:0 8px 0 #D3F6E8}
+.card.butter{border-color:var(--butter);box-shadow:0 8px 0 #FFF4BF}
+h1{font-size:34px;line-height:1.1;color:var(--pink-d)}
+h2{font-size:26px;line-height:1.15;color:var(--lav-d);margin-bottom:6px}
+p{margin:8px 0}
+.small{font-size:15px;color:var(--soft)}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.center{text-align:center;justify-content:center}
+.btn{font-family:inherit;font-weight:700;font-size:21px;border:0;border-radius:999px;padding:13px 26px;cursor:pointer;color:#fff;background:var(--pink-d);box-shadow:0 6px 0 #B94B7B;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #B94B7B}
+.btn.lav{background:var(--lav-d);box-shadow:0 6px 0 #6F54B8}
+.btn.mint{background:var(--mint-d);box-shadow:0 6px 0 #2F8F6A}
+.btn.sky{background:var(--sky-d);box-shadow:0 6px 0 #3586BC}
+.btn.ghost{background:#fff;color:var(--lav-d);border:3px solid var(--lav);box-shadow:0 4px 0 #E6DBFF;font-size:17px;padding:8px 18px}
+.btn[disabled]{opacity:.45;cursor:default}
+.say{width:44px;height:44px;border-radius:50%;border:3px solid var(--sky);background:#fff;font-size:20px;cursor:pointer;flex:none}
+.mochi{display:flex;gap:12px;align-items:flex-start}
+.bubble{background:#FFF0F7;border:3px solid var(--pink);border-radius:22px 22px 22px 6px;padding:12px 16px;flex:1;position:relative}
+.bubble b{color:var(--pink-d)}
+.who{font-size:44px;flex:none;line-height:1}
+/* packs + mat */
+.mat{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.col{border-radius:22px;padding:8px 6px 10px;text-align:center;min-height:170px;border:3px dashed}
+.col.h{background:#F1EAFF;border-color:var(--lav)}.col.t{background:#E6FAF1;border-color:var(--mint)}.col.o{background:#FFEDF5;border-color:var(--pink)}
+.col h3{font-size:15px;font-weight:600}
+.col.h h3{color:var(--lav-d)}.col.t h3{color:var(--mint-d)}.col.o h3{color:var(--pink-d)}
+.col .sub{font-size:13px;color:var(--soft)}
+.stack{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;align-items:flex-end;margin-top:6px;min-height:100px}
+.stack svg{flex:none}
+.digit{font-size:46px;font-weight:700;line-height:1;margin-top:4px}
+.col.h .digit{color:var(--lav-d)}.col.t .digit{color:var(--mint-d)}.col.o .digit{color:var(--pink-d)}
+.stepper{display:flex;gap:8px;justify-content:center;margin-top:8px}
+.stepper button{width:46px;height:46px;border-radius:50%;border:0;font-size:26px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit}
+.col.h .stepper button{background:var(--lav-d)}.col.t .stepper button{background:var(--mint-d)}.col.o .stepper button{background:var(--pink-d)}
+.total{font-size:20px;text-align:center}
+.total b{font-size:34px;letter-spacing:3px}
+.dgin{display:flex;gap:8px;justify-content:center;margin:8px 0}
+.dgin input{width:62px;height:72px;text-align:center;font-family:inherit;font-weight:700;font-size:38px;border-radius:18px;border:4px solid var(--sky);background:#F3FAFF;color:var(--ink)}
+.dgin input:focus{outline:0;border-color:var(--sky-d);background:#E3F4FF}
+.dgin.h input{border-color:var(--lav)}.dgin.t input{border-color:var(--mint)}.dgin.o input{border-color:var(--pink)}
+.lbls{display:flex;gap:8px;justify-content:center;font-size:13px;color:var(--soft)}
+.lbls span{width:62px;text-align:center}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-top:10px}
+.opt{font-family:inherit;font-weight:700;font-size:28px;padding:14px 8px;border-radius:20px;border:4px solid var(--sky);background:#F3FAFF;color:var(--ink);cursor:pointer}
+.opt.w{font-size:20px}
+.opt.right{background:#DFF8EC;border-color:var(--ok)}
+.opt.wrong{background:#FFE3EB;border-color:var(--oops)}
+.tag{display:inline-block;background:var(--butter);border:4px solid var(--butter-d);border-radius:18px;padding:6px 26px;font-size:54px;font-weight:700;letter-spacing:6px;transform:rotate(-2deg);color:#8A5B12}
+.fb{min-height:52px;margin-top:10px;font-weight:600;text-align:center}
+.fb.good{color:var(--ok)}.fb.bad{color:var(--oops)}
+.expand{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;font-weight:700;font-size:30px;margin:8px 0}
+.expand input{width:54px;height:64px;text-align:center;font-family:inherit;font-weight:700;font-size:32px;border-radius:16px;border:4px solid var(--sky);background:#F3FAFF;color:var(--ink)}
+.expand input:focus{outline:0;border-color:var(--sky-d);background:#E3F4FF}
+.stars{font-size:40px;letter-spacing:4px}
+.badge{display:inline-block;background:linear-gradient(135deg,var(--pink),var(--lav));color:#fff;border-radius:26px;padding:12px 26px;font-weight:700;font-size:24px;border:4px solid #fff;box-shadow:0 0 0 4px var(--pink)}
+details{background:#fff;border:3px solid var(--sky);border-radius:20px;padding:10px 16px;margin-top:6px}
+summary{font-weight:600;color:var(--sky-d);cursor:pointer}
+details p,details li{font-size:16px;color:var(--ink)}
+details ul{margin:6px 0 6px 20px}
+@keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.12)}100%{transform:scale(1)}}
+.pop{animation:pop .35s}
+@keyframes wob{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+.wob{animation:wob .4s}
+@media(max-width:520px){body{font-size:17px}h1{font-size:28px}.tag{font-size:42px}.dgin input,.lbls span{width:54px}.opt{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="back" href="../wade-math-home.html#/kid/hadley">← Math Home</a>
+    <div class="title">Hadley's Squishy Shop</div>
+    <span style="width:90px"></span>
+  </div>
+  <div class="prog"><i id="bar"></i></div>
+  <main id="stage"></main>
+</div>
+
+<script>
+/* ===== helpers ===== */
+const COLORS=['#FFA6C9','#CDB8FF','#A8EBD0','#FFE98A','#FFC7A0','#A9DDFF'];
+const ONES=['','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const TENS=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+function words(n){
+  const h=Math.floor(n/100),r=n%100;let s='';
+  if(h)s+=ONES[h]+' hundred';
+  if(r){if(s)s+=' ';if(r<20)s+=ONES[r];else{s+=TENS[Math.floor(r/10)];if(r%10)s+='-'+ONES[r%10];}}
+  return s||'zero';
+}
+function speak(t){try{window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.88;u.pitch=1.15;window.speechSynthesis.speak(u);}catch(e){}}
+function spk(t){return '<button class="say" aria-label="Read to me" onclick="speak(this.dataset.t)" data-t="'+t.replace(/"/g,'&quot;')+'">🔊</button>';}
+function $(id){return document.getElementById(id);}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+/* ===== art ===== */
+function blob(color,size,seed){
+  const w=size,eye=size*.06;
+  return '<svg width="'+w+'" height="'+w+'" viewBox="0 0 60 60" aria-hidden="true">'
+   +'<path d="M30 6c14 0 25 9 25 24s-10 24-25 24S5 45 5 30 16 6 30 6z" fill="'+color+'" stroke="#fff" stroke-width="3"/>'
+   +'<ellipse cx="22" cy="24" rx="6" ry="3.4" fill="#fff" opacity=".55"/>'
+   +'<circle cx="22" cy="32" r="3" fill="#5A3A6E"/><circle cx="38" cy="32" r="3" fill="#5A3A6E"/>'
+   +'<circle cx="21" cy="31" r="1" fill="#fff"/><circle cx="37" cy="31" r="1" fill="#fff"/>'
+   +'<ellipse cx="15" cy="39" rx="4" ry="2.6" fill="#FF8FB5" opacity=".7"/><ellipse cx="45" cy="39" rx="4" ry="2.6" fill="#FF8FB5" opacity=".7"/>'
+   +'<path d="M26 40q4 4 8 0" fill="none" stroke="#5A3A6E" stroke-width="2.4" stroke-linecap="round"/></svg>';
+}
+function bag(size){
+  let dots='';
+  for(let r=0;r<2;r++)for(let c=0;c<5;c++){const cx=13+c*9.5,cy=34+r*11;dots+='<circle cx="'+cx+'" cy="'+cy+'" r="4.4" fill="'+COLORS[(r*5+c)%6]+'" stroke="#fff" stroke-width="1.2"/>';}
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 60 60" aria-hidden="true">'
+   +'<path d="M10 18h40l4 34q0 5-5 5H11q-5 0-5-5z" fill="#E6FAF1" stroke="#4DBF92" stroke-width="3" stroke-linejoin="round"/>'
+   +dots
+   +'<path d="M14 18q16-8 32 0" fill="#FFA6C9" stroke="#E0709F" stroke-width="2.5"/>'
+   +'<circle cx="30" cy="14" r="4" fill="#FFA6C9" stroke="#E0709F" stroke-width="2.5"/>'
+   +'<rect x="21" y="23" width="18" height="8" rx="4" fill="#fff" opacity=".92"/><text x="30" y="30" text-anchor="middle" font-size="8" font-weight="700" fill="#2F8F6A" font-family="Fredoka,sans-serif">10</text></svg>';
+}
+function box(size){
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 60 60" aria-hidden="true">'
+   +'<path d="M6 20l24-10 24 10v28l-24 10L6 48z" fill="#E6DBFF" stroke="#9B7FE0" stroke-width="3" stroke-linejoin="round"/>'
+   +'<path d="M6 20l24 10 24-10" fill="none" stroke="#9B7FE0" stroke-width="3" stroke-linejoin="round"/>'
+   +'<path d="M30 30v28" stroke="#9B7FE0" stroke-width="3"/>'
+   +'<path d="M18 15l24 10" stroke="#FFA6C9" stroke-width="5" stroke-linecap="round"/>'
+   +'<rect x="33" y="38" width="17" height="10" rx="5" fill="#fff" opacity=".95"/><text x="41.5" y="46" text-anchor="middle" font-size="8.5" font-weight="700" fill="#6F54B8" font-family="Fredoka,sans-serif">100</text></svg>';
+}
+function stack(kind,n){
+  let s='';
+  for(let i=0;i<n;i++){
+    if(kind==='h')s+=box(64);
+    else if(kind==='t')s+=bag(54);
+    else s+=blob(COLORS[i%6],38);
+  }
+  return s;
+}
+function mat(m,opts){
+  opts=opts||{};
+  const col=(k,name,sub,n)=>'<div class="col '+k+'"><h3>'+name+'</h3><div class="sub">'+sub+'</div><div class="stack" id="stk'+k+'">'+stack(k,n)+'</div>'
+    +(opts.digits?'<div class="digit" id="dg'+k+'">'+n+'</div>':'')
+    +(opts.steppers?'<div class="stepper"><button aria-label="fewer" onclick="step(\''+k+'\',-1)">−</button><button aria-label="more" onclick="step(\''+k+'\',1)">+</button></div>':'')+'</div>';
+  return '<div class="mat">'+col('h','Boxes','hundreds',m.h)+col('t','Bags','tens',m.t)+col('o','Singles','ones',m.o)+'</div>';
+}
+
+/* ===== lesson plan ===== */
+const ORDERS=[
+  {mode:'packs',who:'🐰',name:'Bunny',m:{h:3,t:2,o:4}},
+  {mode:'packs',who:'🐻',name:'Bear',m:{h:1,t:5,o:7}},
+  {mode:'num',who:'🐱',name:'Kitty',n:246},
+  {mode:'packs',who:'🦊',name:'Fox',m:{h:2,t:0,o:8}},
+  {mode:'num',who:'🐼',name:'Panda',n:305},
+  {mode:'num',who:'🐸',name:'Froggy',n:120}
+];
+const DIGITS=[
+  {n:582,p:'t',q:'Which digit is in the tens place, the bags?'},
+  {n:764,p:'h',q:'Which digit is in the hundreds place, the boxes?'},
+  {n:309,p:'o',q:'Which digit is in the ones place, the singles?'},
+  {n:431,p:'h',q:'How many boxes are in 431? Which digit tells you?'}
+];
+const SAYS=[
+  {k:'expand',n:628},
+  {k:'w2n',n:207,opts:[27,207,270]},
+  {k:'n2w',n:462,opts:[462,426,642]},
+  {k:'expand',n:405}
+];
+const STEPS=[{k:'welcome'},{k:'meet'},{k:'trade',f:'o'},{k:'trade',f:'t'}]
+  .concat(ORDERS.map((o,i)=>({k:'order',i:i})))
+  .concat(DIGITS.map((d,i)=>({k:'digit',i:i})))
+  .concat(SAYS.map((d,i)=>({k:'say',i:i})))
+  .concat([{k:'done'}]);
+const GRADED=ORDERS.length+DIGITS.length+SAYS.length;
+let S={i:0,stars:0,tries:0,m:{h:0,t:0,o:0}};
+
+function go(i){S.i=i;S.tries=0;render();window.scrollTo(0,0);}
+function next(){go(Math.min(S.i+1,STEPS.length-1));}
+function award(){if(S.tries===0)S.stars++;}
+function bar(){$('bar').style.width=Math.round(S.i/(STEPS.length-1)*100)+'%';}
+
+/* ===== renderers ===== */
+function render(){
+  bar();
+  const st=STEPS[S.i];
+  ({welcome:rWelcome,meet:rMeet,trade:rTrade,order:rOrder,digit:rDigit,say:rSay,done:rDone})[st.k](st);
+}
+function mochi(text,who){
+  return '<div class="mochi"><div class="who">'+(who||blob('#FFA6C9',56))+'</div><div class="bubble">'+text+'</div>'+spk(text.replace(/<[^>]+>/g,''))+'</div>';
+}
+
+function rWelcome(){
+  $('stage').innerHTML=
+   '<div class="card center"><div style="display:flex;justify-content:center;gap:6px;margin-bottom:6px">'+[0,1,2,3,4].map(i=>blob(COLORS[i],i===2?78:58)).join('')+'</div>'
+   +'<h1>Hadley\'s Squishy Shop</h1><p>You are the shopkeeper!<br>Customers come in and ask for squishies. You fill their orders.</p>'
+   +'<p class="small">About 10 minutes. You can tap 🔊 to hear any words read out loud.</p>'
+   +'<div style="margin-top:12px"><button class="btn" onclick="next()">Open the shop!</button></div></div>'
+   +'<details><summary>For Mom</summary>'
+   +'<p><b>Week 1 · Place value.</b> Hadley builds, reads, names the digits in, and writes numbers to 1,000 as numerals, words and expanded form.</p>'
+   +'<ul><li>Boxes = hundreds, bags = tens, singles = ones. 10 singles make a bag; 10 bags make a box.</li>'
+   +'<li>Practice only. Nothing is graded or saved. Stars show first-try answers.</li>'
+   +'<li>Ask her to explain out loud: "How do you know 305 is 3 boxes and 5 singles with no bags?"</li>'
+   +'<li>Hands-on extension: use cups for boxes, bags or rubber bands for tens, and beans for singles. Make 10 beans into a bundle.</li></ul></details>';
+}
+
+function rMeet(){
+  $('stage').innerHTML=
+   '<div class="card lav"><h2>Squishies come in 3 packs</h2>'
+   +mochi('Hi! I\'m <b>Mochi</b>, your shop helper. We pack squishies so they are easy to count.')
+   +'<div class="mat" style="margin-top:14px">'
+   +'<div class="col o"><h3>Single</h3><div class="stack">'+blob('#FFA6C9',64)+'</div><div class="digit" style="font-size:30px">1</div></div>'
+   +'<div class="col t"><h3>Bag</h3><div class="stack">'+bag(80)+'</div><div class="digit" style="font-size:30px">10</div></div>'
+   +'<div class="col h"><h3>Box</h3><div class="stack">'+box(84)+'</div><div class="digit" style="font-size:30px">100</div></div></div>'
+   +'<p class="center"><b>10 singles</b> make a <b>bag</b>.<br><b>10 bags</b> make a <b>box</b>.</p>'
+   +'<div class="center" style="margin-top:8px"><button class="btn lav" onclick="next()">Let\'s pack some!</button></div></div>';
+}
+
+function rTrade(st){
+  const from=st.f;S.m={h:0,t:0,o:0};
+  const ones=from==='o';
+  $('stage').innerHTML=
+   '<div class="card mint"><h2>'+(ones?'Pack 10 singles into a bag':'Pack 10 bags into a box')+'</h2>'
+   +mochi(ones?'Tap <b>+1 squishy</b> to add squishies to the tray. When you have <b>10</b>, they are ready to pack!':'Tap <b>+1 bag</b> to add bags. When you have <b>10 bags</b>, they fit in one big box!')
+   +'<div id="trmat"></div>'
+   +'<div class="row center" style="margin-top:10px"><button class="btn mint" id="addb" onclick="tradeAdd(\''+from+'\')">'+(ones?'+1 squishy':'+1 bag')+'</button>'
+   +'<button class="btn" id="packb" style="display:none" onclick="tradePack(\''+from+'\')">'+(ones?'Pack them into a bag!':'Pack them into a box!')+'</button></div>'
+   +'<div class="fb" id="fb"></div><div class="center"><button class="btn lav" id="nx" style="display:none" onclick="next()">Next</button></div></div>';
+  drawTrade(from);
+}
+function drawTrade(from){
+  const m=S.m;
+  $('trmat').innerHTML=mat(m,{digits:true});
+  const n=from==='o'?m.o:m.t;
+  $('packb').style.display=n>=10?'inline-block':'none';
+  $('addb').disabled=n>=10;
+}
+function tradeAdd(from){
+  if(from==='o')S.m.o++;else S.m.t++;
+  drawTrade(from);
+  const n=from==='o'?S.m.o:S.m.t;
+  $('fb').textContent=n===10?'That is 10! Time to pack them.':'';
+  $('fb').className='fb good';
+}
+function tradePack(from){
+  if(from==='o'){S.m.o=0;S.m.t++;}else{S.m.t=0;S.m.h++;}
+  drawTrade(from);
+  $('addb').style.display='none';$('packb').style.display='none';
+  $('fb').className='fb good pop';
+  $('fb').innerHTML=from==='o'?'Ta-da! 10 singles became <b>1 bag</b>. The ones went back to <b>0</b> and the tens went up to <b>1</b>.':'Ta-da! 10 bags became <b>1 box</b>. The tens went back to <b>0</b> and the hundreds went up to <b>1</b>.';
+  $('nx').style.display='inline-block';
+}
+
+/* orders */
+function rOrder(st){
+  const o=ORDERS[st.i];
+  if(o.mode==='packs'){
+    S.m={h:o.m.h,t:o.m.t,o:o.m.o};
+    const say=o.name+' says: I have '+o.m.h+' '+(o.m.h===1?'box':'boxes')+', '+o.m.t+' '+(o.m.t===1?'bag':'bags')+' and '+o.m.o+' '+(o.m.o===1?'single':'singles')+'. How many squishies is that? Write the number.';
+    $('stage').innerHTML='<div class="card"><h2>Order '+(st.i+1)+': read the packs</h2>'
+     +mochi('<b>'+o.name+'</b> picked these packs. How many squishies is that all together? Type the number in the boxes.',o.who)
+     +mat(S.m)
+     +'<div class="lbls"><span>hundreds</span><span>tens</span><span>ones</span></div>'
+     +'<div class="dgin" id="dgin"><input inputmode="numeric" maxlength="1" aria-label="hundreds"><input inputmode="numeric" maxlength="1" aria-label="tens"><input inputmode="numeric" maxlength="1" aria-label="ones"></div>'
+     +'<div class="center"><button class="btn sky" onclick="checkPacks('+st.i+')">Check</button></div><div class="fb" id="fb"></div><div class="center"><button class="btn lav" id="nx" style="display:none" onclick="next()">Next customer</button></div></div>';
+    bindDigits('dgin');
+  }else{
+    S.m={h:0,t:0,o:0};
+    const sayN=o.name+' wants '+o.n+' squishies. Build the order with boxes, bags and singles.';
+    $('stage').innerHTML='<div class="card"><h2>Order '+(st.i+1)+': fill the order</h2>'
+     +mochi('<b>'+o.name+'</b> wants <b style="font-size:26px">'+o.n+'</b> squishies. Use the <b>+</b> and <b>−</b> buttons to pack the order.',o.who)
+     +'<div id="bmat">'+mat(S.m,{digits:true,steppers:true})+'</div>'
+     +'<div class="total" id="tot"></div>'
+     +'<div class="center" style="margin-top:8px"><button class="btn sky" onclick="checkBuild('+st.i+')">Check</button></div><div class="fb" id="fb"></div><div class="center"><button class="btn lav" id="nx" style="display:none" onclick="next()">Next customer</button></div></div>';
+    drawBuild();
+  }
+}
+function bindDigits(id){
+  const ins=[].slice.call($(id).querySelectorAll('input'));
+  ins.forEach((el,k)=>{
+    el.addEventListener('input',()=>{el.value=el.value.replace(/\D/g,'').slice(-1);if(el.value&&ins[k+1])ins[k+1].focus();});
+    el.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!el.value&&ins[k-1]){ins[k-1].focus();}});
+    el.addEventListener('focus',()=>{try{el.select();}catch(e){}});
+  });
+  if(ins[0])ins[0].focus();
+}
+function drawBuild(){
+  $('bmat').innerHTML=mat(S.m,{digits:true,steppers:true});
+  const n=S.m.h*100+S.m.t*10+S.m.o;
+  $('tot').innerHTML='Your order so far: <b>'+n+'</b>';
+}
+function step(k,d){
+  S.m[k]=Math.max(0,Math.min(9,S.m[k]+d));
+  drawBuild();
+}
+function good(msg){const f=$('fb');f.className='fb good pop';f.innerHTML=msg;}
+function bad(msg){const f=$('fb');f.className='fb bad wob';f.innerHTML=msg;}
+function checkPacks(i){
+  const o=ORDERS[i],ins=[].slice.call($('dgin').querySelectorAll('input')).map(x=>x.value);
+  if(ins.some(v=>v==='')){bad('Fill all three boxes. Use 0 if there are none.');return;}
+  const want=[o.m.h,o.m.t,o.m.o];const got=ins.map(Number);
+  if(want.every((v,k)=>v===got[k])){award();good('Yes! '+(o.m.h*100+o.m.t*10+o.m.o)+' squishies. Ding ding!');$('nx').style.display='inline-block';}
+  else{
+    S.tries++;
+    const names=['boxes (hundreds)','bags (tens)','singles (ones)'];
+    const k=want.findIndex((v,j)=>v!==got[j]);
+    if(S.tries>=3){const n=o.m.h*100+o.m.t*10+o.m.o;bad('Here is the answer: <b>'+n+'</b>. '+o.m.h+' boxes, '+o.m.t+' bags, '+o.m.o+' singles. Let\'s keep going!');$('nx').style.display='inline-block';}
+    else bad('Not quite. Count the '+names[k]+' again. How many are there?');
+  }
+}
+function checkBuild(i){
+  const o=ORDERS[i];const want=[Math.floor(o.n/100),Math.floor(o.n/10)%10,o.n%10];const got=[S.m.h,S.m.t,S.m.o];
+  if(want.every((v,k)=>v===got[k])){award();good('Order filled! '+o.n+' is '+want[0]+' '+(want[0]===1?'box':'boxes')+', '+want[1]+' '+(want[1]===1?'bag':'bags')+' and '+want[2]+' '+(want[2]===1?'single':'singles')+'.');$('nx').style.display='inline-block';}
+  else{
+    S.tries++;
+    const names=['boxes (hundreds)','bags (tens)','singles (ones)'];
+    const k=want.findIndex((v,j)=>v!==got[j]);
+    if(S.tries>=3){bad('Here is how: '+want[0]+' boxes, '+want[1]+' bags, '+want[2]+' singles makes '+o.n+'. Let\'s keep going!');$('nx').style.display='inline-block';}
+    else bad('Not yet. Look at the '+['hundreds','tens','ones'][k]+' digit in '+o.n+'. How many '+names[k]+' do you need?');
+  }
+}
+
+/* name the digit */
+function rDigit(st){
+  const d=DIGITS[st.i];
+  const digs=String(d.n).split('');const idx={h:0,t:1,o:2}[d.p];const ans=digs[idx];
+  let opts=digs.slice();while(opts.length<4){const r=String(Math.floor(Math.random()*10));if(opts.indexOf(r)<0)opts.push(r);}
+  opts=shuffle(opts.filter((v,k)=>opts.indexOf(v)===k)).slice(0,4);if(opts.indexOf(ans)<0)opts[0]=ans;
+  opts=shuffle(opts);
+  $('stage').innerHTML='<div class="card butter"><h2>Price tag '+(st.i+1)+' of '+DIGITS.length+'</h2>'
+   +'<div class="center" style="margin:6px 0"><span class="tag">'+d.n+'</span></div>'
+   +'<div class="row" style="justify-content:center;margin:6px 0"><b>'+d.q+'</b> '+spk(d.q)+'</div>'
+   +'<div class="opts">'+opts.map(v=>'<button class="opt" onclick="pickDigit(this,\''+v+'\','+st.i+')">'+v+'</button>').join('')+'</div>'
+   +'<div class="fb" id="fb"></div>'
+   +'<details><summary>Peek at the packs</summary>'+mat({h:Math.floor(d.n/100),t:Math.floor(d.n/10)%10,o:d.n%10})+'</details>'
+   +'<div class="center" style="margin-top:10px"><button class="btn lav" id="nx" style="display:none" onclick="next()">Next</button></div></div>';
+}
+function pickDigit(btn,v,i){
+  const d=DIGITS[i];const ans=String(d.n).split('')[{h:0,t:1,o:2}[d.p]];
+  if(btn.disabled)return;
+  if(v===ans){btn.classList.add('right');award();good('Yes! The '+({h:'hundreds',t:'tens',o:'ones'}[d.p])+' digit is <b>'+ans+'</b>.');
+    document.querySelectorAll('.opt').forEach(b=>b.disabled=true);$('nx').style.display='inline-block';}
+  else{btn.classList.add('wrong');btn.disabled=true;S.tries++;bad('Try again. Peek at the packs if you need help.');}
+}
+
+/* say it three ways */
+function rSay(st){
+  const d=SAYS[st.i];
+  if(d.k==='expand'){
+    const n=d.n;
+    $('stage').innerHTML='<div class="card lav"><h2>Write it in pieces</h2>'
+     +mochi('The sign says <b>'+n+'</b>. Say it: <b>'+words(n)+'</b>. Now write it as boxes + bags + singles. Type the missing digits.')
+     +'<div class="center" style="margin:10px 0"><span class="tag">'+n+'</span></div>'
+     +'<div class="expand"><input id="e0" inputmode="numeric" maxlength="1" aria-label="hundreds digit">00 <span>+</span> <input id="e1" inputmode="numeric" maxlength="1" aria-label="tens digit">0 <span>+</span> <input id="e2" inputmode="numeric" maxlength="1" aria-label="ones digit"></div>'
+     +'<div class="center"><button class="btn sky" onclick="checkExpand('+st.i+')">Check</button></div><div class="fb" id="fb"></div>'
+     +'<div class="center"><button class="btn lav" id="nx" style="display:none" onclick="next()">Next</button></div></div>';
+    ['e0','e1','e2'].forEach((id,k,arr)=>{const el=$(id);el.addEventListener('input',()=>{el.value=el.value.replace(/\D/g,'').slice(-1);if(el.value&&arr[k+1])$(arr[k+1]).focus();});el.addEventListener('focus',()=>{try{el.select();}catch(e){}});});
+    $('e0').focus();
+  }else if(d.k==='w2n'){
+    const q='Which number is '+words(d.n)+'?';
+    $('stage').innerHTML='<div class="card lav"><h2>Words to numbers</h2>'
+     +'<div class="row" style="justify-content:center;margin:8px 0"><div class="tag" style="font-size:30px;letter-spacing:1px;padding:10px 20px">'+words(d.n)+'</div>'+spk(words(d.n))+'</div>'
+     +'<p class="center"><b>'+q+'</b></p>'
+     +'<div class="opts">'+shuffle(d.opts).map(v=>'<button class="opt" onclick="pickSay(this,'+v+','+d.n+')">'+v+'</button>').join('')+'</div>'
+     +'<div class="fb" id="fb"></div><div class="center"><button class="btn lav" id="nx" style="display:none" onclick="next()">Next</button></div></div>';
+  }else{
+    $('stage').innerHTML='<div class="card lav"><h2>Numbers to words</h2>'
+     +'<div class="center" style="margin:8px 0"><span class="tag">'+d.n+'</span></div>'
+     +'<p class="center"><b>Which words match this number?</b></p>'
+     +'<div class="opts" style="grid-template-columns:1fr">'+shuffle(d.opts).map(v=>'<button class="opt w" onclick="pickSay(this,'+v+','+d.n+')">'+words(v)+'</button>').join('')+'</div>'
+     +'<div class="fb" id="fb"></div><div class="center"><button class="btn lav" id="nx" style="display:none" onclick="next()">Next</button></div></div>';
+  }
+}
+function checkExpand(i){
+  const n=SAYS[i].n,want=[Math.floor(n/100),Math.floor(n/10)%10,n%10];
+  const got=['e0','e1','e2'].map(id=>$(id).value);
+  if(got.some(v=>v==='')){bad('Fill in all three. Use 0 if there are none.');return;}
+  if(want.every((v,k)=>v===Number(got[k]))){award();good('Yes! '+n+' = '+(want[0]*100)+' + '+(want[1]*10)+' + '+want[2]+'. '+words(n)+'!');$('nx').style.display='inline-block';}
+  else{S.tries++;
+    if(S.tries>=3){bad('Here it is: <b>'+(want[0]*100)+' + '+(want[1]*10)+' + '+want[2]+'</b>. Let\'s keep going!');$('nx').style.display='inline-block';}
+    else bad('Not yet. Look at each digit of '+n+' and say what place it is in.');}
+}
+function pickSay(btn,v,n){
+  if(btn.disabled)return;
+  if(v===n){btn.classList.add('right');award();good('Yes! '+n+' is '+words(n)+'.');document.querySelectorAll('.opt').forEach(b=>b.disabled=true);$('nx').style.display='inline-block';}
+  else{btn.classList.add('wrong');btn.disabled=true;S.tries++;bad('Try again. Read each digit and say its place.');}
+}
+
+function rDone(){
+  const s=S.stars;
+  const msg=s>=GRADED-2?'You are an amazing shopkeeper!':s>=Math.ceil(GRADED*.6)?'Great work, shopkeeper!':'You kept trying. That is how shopkeepers get great!';
+  $('stage').innerHTML='<div class="card center"><div style="margin-bottom:8px"><span class="badge">Squishy Shop Manager</span></div>'
+   +'<h1>The shop is closed for today!</h1>'
+   +'<div class="stars">⭐ '+s+' / '+GRADED+'</div><p>'+msg+'</p><p class="small">Stars are for answers right on the first try.</p></div>'
+   +'<div class="card mint"><h2>Show Mom</h2>'+mochi('Tell Mom how you know that <b>305</b> is 3 boxes, 0 bags and 5 singles. Why do we need the <b>0</b>?')
+   +'<div class="center" style="margin-top:12px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn" onclick="S.stars=0;go(0)">Play again</button><a class="btn lav" style="text-decoration:none;display:inline-block" href="../wade-math-home.html#/kid/hadley">Back to Math Home</a></div></div>';
+}
+render();
+</script>
+</body>
+</html>

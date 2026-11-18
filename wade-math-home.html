@@ -405,7 +405,7 @@ function armDel(kid,id){if(armed===kid+id){armed=null;delAssign(kid,id);}else{ar
 let QZ=null;
 function hasQuiz(kid,n){return !!(typeof QUIZ!=='undefined'&&QUIZ[kid]&&QUIZ[kid][n]);}
 function quizAttempts(kid,n,kind){const all=entries(getIn('quiz/'+kid+'/w'+n)).sort((a,b)=>a.ts-b.ts);return kind?all.filter(a=>(a.kind||'test')===kind):all;}
-const LESSONS={hadley:{},ryder:{}}; /* built lessons: LESSONS[kid][week]=[{t:'Title',u:'page.html',d:'one line'}] */
+const LESSONS={hadley:{1:[{t:"Hadley's Squishy Shop",u:'lessons/hadley-w1-squishy-shop.html',d:'Boxes, bags and singles: hundreds, tens and ones'}]},ryder:{}}; /* built lessons: LESSONS[kid][week]=[{t:'Title',u:'page.html',d:'one line'}] */
 function lessonList(kid,n){return (LESSONS[kid]&&LESSONS[kid][n])||[];}
 function stageOf(kid,n){return getIn('stage/'+kid+'/w'+n)||'';}
 function setStage(kid,n,st){put('stage/'+kid+'/w'+n,st||null);}
