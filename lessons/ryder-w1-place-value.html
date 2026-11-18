@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ryder · Week 1 · Place Value</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--parch:#F4ECDA;--card:#FBF6EA;--forest:#204B3A;--ink:#1E2A24;--muted:#55604F;--line:#E2D6BC;--teal:#17607A;--teal-d:#0F4A5F;--ok:#2E7D4F;--bad:#A8323A;--tint:#E3F0F4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jost',system-ui,sans-serif;background:var(--parch);color:var(--ink);font-size:18px;line-height:1.45;min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:14px 14px 70px}
+.top{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:10px}
+.back{color:var(--teal);text-decoration:none;font-weight:600;font-size:15px;border:1px solid var(--teal);border-radius:10px;padding:6px 12px;background:#fff}
+.title{font-weight:700;font-size:20px;color:var(--teal-d);flex:1;text-align:center}
+.prog{height:8px;background:#fff;border:1px solid var(--line);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.prog i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+.card{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--teal);border-radius:14px;padding:18px;margin-bottom:16px}
+h1{font-size:30px;line-height:1.15;color:var(--teal-d)}
+h2{font-size:23px;line-height:1.2;color:var(--teal-d);margin-bottom:6px}
+h3{font-size:17px;color:var(--teal-d);margin:14px 0 6px}
+p{margin:8px 0}
+.small{font-size:15px;color:var(--muted)}
+.rule{background:var(--tint);border-left:5px solid var(--teal);border-radius:8px;padding:10px 14px;margin:10px 0;font-weight:500}
+.btn{font-family:inherit;font-weight:600;font-size:17px;border:0;border-radius:10px;padding:11px 20px;cursor:pointer;color:#fff;background:var(--teal)}
+.btn.alt{background:#fff;color:var(--teal);border:1px solid var(--teal)}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+input.num{font:600 22px Jost,sans-serif;padding:9px 12px;border:2px solid var(--line);border-radius:10px;width:190px;background:#fff;color:var(--ink)}
+input.num:focus{outline:none;border-color:var(--teal)}
+/* chart */
+.chart{display:flex;justify-content:center;gap:0;margin:12px 0 6px;overflow-x:auto;padding-bottom:4px}
+.cc{width:68px;flex:none;text-align:center}
+.cc .nm{font-size:12px;color:var(--muted);min-height:30px;line-height:1.1;display:flex;align-items:flex-end;justify-content:center;padding:0 2px}
+.cc .dg{font:700 34px Jost,sans-serif;background:#fff;border:2px solid var(--teal);border-radius:8px;margin:3px 2px;height:52px;display:flex;align-items:center;justify-content:center;color:var(--teal-d)}
+.cc .dg.z{color:#B9C7CC;border-color:#C9D6DA}
+.cc .vl{font-size:13px;font-weight:600;color:var(--ink);min-height:18px}
+.cm{width:14px;flex:none;font:700 34px Jost,sans-serif;align-self:center;margin-top:12px;color:var(--ink);text-align:center}
+.arrows{display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:var(--teal-d);margin:6px 8px 0;gap:10px;flex-wrap:wrap}
+.arrows span{background:var(--tint);border-radius:99px;padding:4px 12px}
+/* questions */
+.q{border-top:1px solid var(--line);padding:12px 0}
+.q:first-of-type{border-top:0}
+.q .t{font-weight:500;margin-bottom:6px}
+.q .res{margin-top:6px;font-size:16px;font-weight:600}
+.q.good .res{color:var(--ok)}.q.bad .res{color:var(--bad)}
+.q.good input{border-color:var(--ok);background:#EEF7F1}
+.opt{display:block;width:100%;text-align:left;font:500 17px Jost,sans-serif;padding:9px 12px;margin:5px 0;background:#fff;border:2px solid var(--line);border-radius:10px;cursor:pointer;color:var(--ink)}
+.opt:hover{border-color:var(--teal)}
+.opt.right{border-color:var(--ok);background:#EEF7F1}.opt.wrong{border-color:var(--bad);background:#FAEBEC}
+table.tb{border-collapse:collapse;width:100%;margin:8px 0;font-size:16px}
+table.tb td,table.tb th{border:1px solid var(--line);padding:7px 10px;text-align:left;background:#fff}
+table.tb th{background:var(--tint);color:var(--teal-d)}
+.big{font:700 28px Jost,sans-serif;color:var(--teal-d)}
+.score{font:700 44px Jost,sans-serif;color:var(--teal-d)}
+details{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:14px}
+summary{cursor:pointer;font-weight:600;color:var(--teal-d)}
+ul{margin:6px 0 6px 22px}
+@media(max-width:560px){body{font-size:17px}.cc{width:46px}.cc .dg{font-size:24px;height:42px}.cc .nm{font-size:10px}.cc .vl{font-size:10px}.cm{width:8px;font-size:24px}input.num{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="back" href="../wade-math-home.html#/kid/ryder">← Math Home</a><div class="title">Place Value</div><span style="width:90px"></span></div>
+  <div class="prog"><i id="bar"></i></div>
+  <div id="stage"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const PLACES=['Millions','Hundred thousands','Ten thousands','Thousands','Hundreds','Tens','Ones'];
+const ONES=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const TENS=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+function fmt(n){return String(n).replace(/\B(?=(\d{3})+$)/g,',');}
+function w999(n){let s=[];if(n>=100){s.push(ONES[Math.floor(n/100)]+' hundred');n%=100;}if(n>=20){s.push(TENS[Math.floor(n/10)]+(n%10?'-'+ONES[n%10]:''));}else if(n>0||!s.length)s.push(ONES[n]);return s.join(' ');}
+function toWords(n){
+  if(n===0)return 'zero';
+  if(n===1000000)return 'one million';
+  const th=Math.floor(n/1000),r=n%1000;let out=[];
+  if(th)out.push(w999(th)+' thousand');
+  if(r)out.push(w999(r));
+  return out.join(', ');
+}
+function expanded(n){
+  const s=String(n),L=s.length,parts=[];
+  for(let i=0;i<L;i++){if(s[i]!=='0')parts.push(fmt(s[i]+'0'.repeat(L-1-i)));}
+  return parts.join(' + ');
+}
+function chartHTML(n){
+  const s=String(n).padStart(7,'0');let h='<div class="chart">';
+  let lead=true;
+  for(let i=0;i<7;i++){
+    if(s[i]!=='0')lead=false;
+    const show=!lead||i===6;
+    const val=s[i]==='0'?'':fmt(s[i]+'0'.repeat(6-i));
+    h+='<div class="cc"><div class="nm">'+PLACES[i]+'</div><div class="dg'+(show?'':' z')+'">'+(show?s[i]:'0')+'</div><div class="vl">'+(show?val:'')+'</div></div>';
+    if(i===0||i===3)h+='<div class="cm">'+((i===3||n>=1000000)?',':'')+'</div>';
+  }
+  return h+'</div>';
+}
+/* ---------- question engine ---------- */
+let QS={};let TOTAL=0;let FIRST=0;let ANSWERED=0;
+function norm(v){return String(v==null?'':v).replace(/[,\s$]/g,'');}
+function qHTML(sec,i,q){
+  const id=sec+i;QS[id]={q:q,tries:0,done:false};TOTAL++;
+  let h='<div class="q" id="q-'+id+'"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+  if(q.o){q.o.forEach((o,j)=>{h+='<button class="opt" onclick="pickQ(\''+id+'\','+j+',this)">'+o+'</button>';});}
+  else h+='<div class="row"><input class="num" id="in-'+id+'" inputmode="numeric" autocomplete="off" placeholder="Your answer" onkeydown="if(event.key===\'Enter\')checkQ(\''+id+'\')"><button class="btn" onclick="checkQ(\''+id+'\')">Check</button></div>';
+  return h+'<div class="res" id="res-'+id+'"></div></div>';
+}
+function finishQ(id,ok){
+  const s=QS[id];if(s.done)return;
+  s.tries++;
+  const el=$('q-'+id),res=$('res-'+id);
+  if(ok){
+    s.done=true;ANSWERED++;if(s.tries===1)FIRST++;
+    el.className='q good';res.textContent='✓ Correct'+(s.q.why?'. '+s.q.why:'');
+  }else{
+    el.className='q bad';
+    if(s.tries>=2){s.done=true;ANSWERED++;res.textContent='The answer is '+s.q.show+'. '+(s.q.why||'')+' Ask Mom if you are not sure why.';
+      const i=$('in-'+id);if(i)i.disabled=true;
+    }else res.textContent='Not quite. '+(s.q.hint||'Look at the rule above and try again.');
+  }
+  upd();
+}
+function checkQ(id){
+  const s=QS[id];if(s.done)return;
+  const v=norm($('in-'+id).value);if(!v)return;
+  finishQ(id,v===norm(s.q.a));
+}
+function pickQ(id,j,btn){
+  const s=QS[id];if(s.done)return;
+  const ok=j===s.q.c;
+  btn.className='opt '+(ok?'right':'wrong');
+  finishQ(id,ok);
+  if(s.done&&!ok){[].slice.call($('q-'+id).querySelectorAll('.opt'))[s.q.c].className='opt right';}
+}
+function upd(){const b=$('nextbtn');if(b)b.disabled=ANSWERED-SECBASE<SECTOTAL;const c=$('cnt');if(c)c.textContent=ANSWERED-SECBASE+' of '+SECTOTAL+' answered';}
+
+/* ---------- sections ---------- */
+const SEC1=[
+  {t:'In 555,555, the 5 in the ten thousands place is worth ___ times as much as the 5 in the thousands place.',a:'10',show:'10',hint:'Move one place to the left. What happens to the value?',why:'Each place is worth 10 times the place to its right.'},
+  {t:'The 7 in 7,000 is worth ___ times as much as the 7 in 700.',a:'10',show:'10',hint:'Compare 7,000 with 700.'},
+  {t:'10 × 4,000 = ___',a:'40000',show:'40,000',hint:'Ten times a number moves every digit one place to the left.'},
+  {t:'1,000,000 is 10 times what number?',a:'100000',show:'100,000',hint:'Go one place to the right.',why:'1,000,000 is 10 × 100,000.'},
+  {t:'In 3,300, the first 3 is worth ___ times as much as the second 3.',a:'10',show:'10',hint:'3,000 and 300. How many 300s fit in 3,000?'},
+  {t:'In 846,460, what is the value of the digit 8?',a:'800000',show:'800,000',hint:'Name the place first. The 8 is in the hundred thousands place.'}
+];
+const SEC2=[
+  {t:'700 ÷ 70 = ___',a:'10',show:'10',hint:'7 hundreds ÷ 7 tens. Hundreds are 10 times tens.'},
+  {t:'6,000 ÷ 600 = ___',a:'10',show:'10',hint:'Thousands are 10 times hundreds.'},
+  {t:'80,000 ÷ 8,000 = ___',a:'10',show:'10',hint:'Ten thousands are 10 times thousands.'},
+  {t:'500,000 ÷ 50,000 = ___',a:'10',show:'10',hint:'Same idea. How many places apart?'},
+  {t:'900 ÷ ___ = 10',a:'90',show:'90',hint:'Something times 10 is 900.'},
+  {t:'Stretch: 3,000 ÷ 30 = ___',a:'100',show:'100',hint:'3,000 and 30 are two places apart, not one.',why:'Two places apart means 10 × 10 = 100.'}
+];
+const SEC3=[
+  {t:'Write in digits: two hundred five thousand, sixteen',a:'205016',show:'205,016',hint:'Thousands group first, then the ones group. Use 0 for an empty place.'},
+  {t:'Write in digits: sixty thousand, seven',a:'60007',show:'60,007',hint:'There are no hundreds and no tens.'},
+  {t:'Write in digits: nine hundred thousand, four hundred',a:'900400',show:'900,400'},
+  {t:'Which is 406,205 in words?',o:['four hundred six thousand, two hundred five','four hundred sixty thousand, two hundred five','four hundred six thousand, twenty-five'],c:0,hint:'The comma is where you say "thousand".',show:'four hundred six thousand, two hundred five'},
+  {t:'Which is 830,070 in words?',o:['eight hundred three thousand, seventy','eight hundred thirty thousand, seventy','eight hundred thirty thousand, seven hundred'],c:1,hint:'Say the thousands group, then the ones group.',show:'eight hundred thirty thousand, seventy'},
+  {t:'700,000 + 2,000 + 90 + 4 = ___',a:'702094',show:'702,094',hint:'Put each part in its own place. Use 0 where nothing is added.'},
+  {t:'58,300 = 50,000 + 8,000 + ___',a:'300',show:'300'},
+  {t:'620,015 = 600,000 + 20,000 + 10 + ___',a:'5',show:'5',hint:'The tens digit is 1, so the ones digit is what is left.'}
+];
+let ST=0,SECTOTAL=0,SECBASE=0;
+const STEPS=['rule','div','rw','done'];
+function begin(){ST=0;render();}
+function bar(){$('bar').style.width=Math.round(ST/(STEPS.length-1)*100)+'%';}
+function nav(){return '<div class="row" style="margin-top:14px"><button class="btn" id="nextbtn" onclick="nextSec()" disabled>Next</button><span class="small" id="cnt"></span></div>';}
+function nextSec(){ST++;render();window.scrollTo(0,0);}
+function listHTML(sec,arr){let h='';arr.forEach((q,i)=>{h+=qHTML(sec,i,q);});return h;}
+function render(){
+  bar();QS={};SECBASE=ANSWERED;
+  ({rule:rRule,div:rDiv,rw:rRW,done:rDone})[STEPS[ST]]();
+  upd();
+}
+function tryNum(){
+  const raw=norm($('tn').value);let n=parseInt(raw||'0',10);if(isNaN(n)||n<0)n=0;if(n>1000000)n=1000000;
+  $('chartbox').innerHTML=chartHTML(n)+'<p style="text-align:center" class="big">'+fmt(n)+'</p>';
+}
+function rRule(){
+  SECTOTAL=SEC1.length;
+  $('stage').innerHTML=
+   '<div class="card"><h1>Place value to 1,000,000</h1><p class="small">About 10 minutes. This is practice only. Nothing here is saved or graded.</p>'
+   +'<h2 style="margin-top:12px">The rule</h2>'
+   +'<div class="rule">Every place is worth 10 times the place to its right.</div>'
+   +'<p>Move one place to the left and the value gets 10 times bigger. Move one place to the right and it gets 10 times smaller (divide by 10).</p>'
+   +'<h3>Try it. Type any number up to 1,000,000.</h3>'
+   +'<div class="row"><input class="num" id="tn" inputmode="numeric" value="407,205" oninput="tryNum()" autocomplete="off"></div>'
+   +'<div id="chartbox"></div>'
+   +'<div class="arrows"><span>← each step left: × 10</span><span>each step right: ÷ 10 →</span></div>'
+   +'<p class="small" style="margin-top:10px">Look at 555,555. The first 5 is 500,000. The next is 50,000. The next is 5,000. Each one is 10 times the one to its right.</p></div>'
+   +'<div class="card"><h2>Check it</h2>'+listHTML('a',SEC1)+nav()+'</div>';
+  tryNum();
+}
+function rDiv(){
+  SECTOTAL=SEC2.length;
+  $('stage').innerHTML=
+   '<div class="card"><h2>Why 700 ÷ 70 = 10</h2>'
+   +'<table class="tb"><tr><th>700</th><td>7 hundreds</td></tr><tr><th>70</th><td>7 tens</td></tr></table>'
+   +'<p>Both are 7 of something. So the answer depends on the <b>something</b>. A hundred is 10 times a ten, so 7 hundreds is 10 times 7 tens.</p>'
+   +'<div class="rule">700 = 10 × 70, so 700 ÷ 70 = 10.</div>'
+   +'<p>Same pattern: 6,000 ÷ 600 = 10 and 80,000 ÷ 8,000 = 10. The big number is always one place left of the small one.</p>'
+   +'<p class="small">Be ready to say this out loud to Mom in your own words.</p></div>'
+   +'<div class="card"><h2>Check it</h2>'+listHTML('b',SEC2)+nav()+'</div>';
+}
+function tryRW(){
+  const raw=norm($('rw').value);let n=parseInt(raw||'0',10);if(isNaN(n)||n<0)n=0;if(n>1000000)n=1000000;
+  $('rwout').innerHTML='<table class="tb"><tr><th>Digits</th><td>'+fmt(n)+'</td></tr><tr><th>Words</th><td>'+toWords(n)+'</td></tr><tr><th>Expanded</th><td>'+(n?expanded(n):'0')+'</td></tr></table>';
+}
+function rRW(){
+  SECTOTAL=SEC3.length;
+  $('stage').innerHTML=
+   '<div class="card"><h2>Reading and writing big numbers</h2>'
+   +'<p>Every number can be written three ways.</p>'
+   +'<table class="tb"><tr><th>Digits</th><td>406,205</td></tr><tr><th>Words</th><td>four hundred six thousand, two hundred five</td></tr><tr><th>Expanded</th><td>400,000 + 6,000 + 200 + 5</td></tr></table>'
+   +'<ul><li>Read each group of three digits, then say its name: thousand, or nothing for the last group.</li><li>A 0 means that place is empty. Do not say it, and do not skip it when you write.</li><li>Do not say "and" inside a whole number.</li></ul>'
+   +'<h3>Try your own. Type a number to see all three.</h3>'
+   +'<div class="row"><input class="num" id="rw" inputmode="numeric" value="830,070" oninput="tryRW()" autocomplete="off"></div><div id="rwout"></div></div>'
+   +'<div class="card"><h2>Check it</h2>'+listHTML('c',SEC3)+nav().replace('Next','Finish')+'</div>';
+  tryRW();
+}
+function rDone(){
+  const pct=Math.round(FIRST/TOTAL*100);
+  $('stage').innerHTML=
+   '<div class="card"><h1>Done</h1><p>First-try correct: <span class="score">'+FIRST+' of '+TOTAL+'</span></p>'
+   +'<p>'+(pct>=85?'That is strong. Tell Mom you may be ready to test out of Week 1.':pct>=60?'Good start. Look again at anything you missed, then tell Mom.':'Go back through the rule with Mom before you test out.')+'</p>'
+   +'<h3>Now say these to Mom, out loud</h3><ul>'
+   +'<li>A digit is worth 10 times the digit to its right. Show it with 555,555.</li>'
+   +'<li>Why does 700 ÷ 70 equal 10?</li>'
+   +'<li>Read and write 406,205 in digits, words and expanded form.</li></ul>'
+   +'<div class="row" style="margin-top:14px"><a class="btn" style="text-decoration:none" href="../wade-math-home.html#/kid/ryder">Back to Math Home</a><button class="btn alt" onclick="location.reload()">Do it again</button></div></div>'
+   +'<details><summary>For Mom</summary><p><b>Week 1 · Place value.</b> Short and functional on purpose, since Ryder is a candidate to test out.</p><ul>'
+   +'<li>Screen 1 covers "a digit is worth ten times the digit to its right." Screen 2 covers why 700 ÷ 70 = 10. Screen 3 covers reading and writing to 1,000,000 in digits, words and expanded form.</li>'
+   +'<li>Practice only. Nothing is saved. Each question allows two tries and then shows the answer.</li>'
+   +'<li>The explain-aloud items above match the I can lines. Tick them on his rung when he does them well.</li></ul></details>';
+}
+begin();
+</script>
+</body>
+</html>
