@@ -690,13 +690,13 @@ function quizView(kid,n,kind){
 
 /* ---------- routing ---------- */
 function go(h){location.hash=h;}
-function pinOk(){try{return localStorage.getItem('wc_math_pin')==='1';}catch(e){return false;}}
+let momOK=false; /* PIN is asked every time Mom's area is opened; leaving it locks again */
+function pinOk(){return momOK;}
 function tryPin(){
   const v=document.getElementById('pin').value;
-  if(v===MOM_PIN){try{localStorage.setItem('wc_math_pin','1');}catch(e){}render();}
+  if(v===MOM_PIN){momOK=true;render();}
   else{document.getElementById('pinmsg').textContent='Not quite — try again.';document.getElementById('pin').value='';}
 }
-function lockMom(){try{localStorage.removeItem('wc_math_pin');}catch(e){}go('#/');}
 function render(force){
   const app=document.getElementById('app');
   const h=(location.hash||'#/').replace(/^#\/?/,'').split('/');
@@ -704,6 +704,7 @@ function render(force){
   if(keep)return; // do not clobber typing
   if(h[0]==='kid'&&h[2]==='quiz'&&QZ&&!QZ.result&&QZ.kid===h[1]&&String(QZ.n)===h[3]&&force!==true)return; // keep quiz answers while typing
   document.body.classList.remove('kpon');
+  if(h[0]!=='mom')momOK=false;
   if(h[0]==='kid'&&KIDS[h[1]]){app.innerHTML=kidView(h[1],h[2]||'today',h[3],h[4]);window.scrollTo(0,0);return;}
   if(h[0]==='mom'){
     if(!pinOk()){app.innerHTML=pinView();setTimeout(()=>{const p=document.getElementById('pin');if(p)p.focus();},50);return;}
@@ -788,7 +789,7 @@ function kidReport(kid){
 
 /* ---------- mom views ---------- */
 function momView(tab,arg){
-  let h='<div class="tabs" style="margin-top:0"><a class="tab '+(tab==='home'?'on':'')+'" href="#/mom">Home</a><a class="tab '+(tab==='ladder'?'on':'')+'" href="#/mom/ladder/ryder">Ladder</a><a class="tab '+(tab==='plan'?'on':'')+'" href="#/mom/plan">Assign</a><a class="tab '+(tab==='cal'?'on':'')+'" href="#/mom/cal">Plan ahead</a><a class="tab '+(tab==='check'?'on':'')+'" href="#/mom/check">Check work'+(pendingCount()?' ('+pendingCount()+')':'')+'</a><a class="tab '+(tab==='send'?'on':'')+'" href="#/mom/send">Send</a><button class="tab" onclick="lockMom()">Lock</button></div>';
+  let h='<div class="tabs" style="margin-top:0"><a class="tab '+(tab==='home'?'on':'')+'" href="#/mom">Home</a><a class="tab '+(tab==='ladder'?'on':'')+'" href="#/mom/ladder/ryder">Ladder</a><a class="tab '+(tab==='plan'?'on':'')+'" href="#/mom/plan">Assign</a><a class="tab '+(tab==='cal'?'on':'')+'" href="#/mom/cal">Plan ahead</a><a class="tab '+(tab==='check'?'on':'')+'" href="#/mom/check">Check work'+(pendingCount()?' ('+pendingCount()+')':'')+'</a><a class="tab '+(tab==='send'?'on':'')+'" href="#/mom/send">Send</a></div>';
   if(tab==='ladder')h+=ladderView(KIDS[arg]?arg:'ryder');
   else if(tab==='plan')h+=planView();
   else if(tab==='cal')h+=planAheadView();
