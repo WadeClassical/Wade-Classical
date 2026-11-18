@@ -107,7 +107,7 @@ details ul{margin:6px 0 6px 20px}
   <div class="top">
     <a class="back" href="../wade-math-home.html#/kid/hadley">← Math Home</a>
     <div class="title">Hadley's Squishy Shop</div>
-    <span style="width:90px"></span>
+    <a class="back" id="modeLink" href="#">Mom view</a>
   </div>
   <div class="prog"><i id="bar"></i></div>
   <main id="stage"></main>
@@ -430,7 +430,40 @@ function rDone(){
    +'<div class="card mint"><h2>Show Mom</h2>'+mochi('Tell Mom how you know that <b>305</b> is 3 boxes, 0 bags and 5 singles. Why do we need the <b>0</b>?')
    +'<div class="center" style="margin-top:12px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn" onclick="S.stars=0;go(0)">Play again</button><a class="btn lav" style="text-decoration:none;display:inline-block" href="../wade-math-home.html#/kid/hadley">Back to Math Home</a></div></div>';
 }
-render();
+const MOM=/[?&]mom=1/.test(location.search);
+function momView(){
+  const pk=(m)=>m.h+' '+(m.h===1?'box':'boxes')+', '+m.t+' '+(m.t===1?'bag':'bags')+', '+m.o+' '+(m.o===1?'single':'singles');
+  let h='<div class="card butter"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Hadley.</p>'
+   +'<p class="small"><b>Week 1 · Place value.</b> Boxes = hundreds, bags = tens, singles = ones. 10 singles make a bag; 10 bags make a box.</p></div>';
+  rMeet();h+=$('stage').innerHTML.replace(/<div[^>]*>\s*<button[^>]*onclick="next\(\)"[^>]*>[^<]*<\/button>\s*<\/div>/,'');
+  h+='<div class="card mint"><h2>Trading screens</h2><p>She taps <b>+1 squishy</b> until she has 10, then packs them into 1 bag (ones go back to 0, tens go up to 1). Then she does the same with 10 bags into 1 box.</p></div>';
+  h+='<div class="card"><h2>Orders (answer key)</h2>';
+  ORDERS.forEach((o,i)=>{
+    const m=o.mode==='packs'?o.m:{h:Math.floor(o.n/100),t:Math.floor(o.n/10)%10,o:o.n%10};
+    const n=m.h*100+m.t*10+m.o;
+    h+='<div style="border-top:1px solid #eee;padding:8px 0"><b>Order '+(i+1)+' · '+o.name+'</b> '+(o.mode==='packs'?'(reads the packs, types the number)':'(is asked for '+o.n+', builds it with + and −)')
+      +'<div style="margin-top:4px"><b>'+n+'</b> = '+pk(m)+'</div>'+mat(m)+'</div>';
+  });
+  h+='</div><div class="card butter"><h2>Price tags (name the digit)</h2>';
+  DIGITS.forEach((d,i)=>{const dg=String(d.n).split('')[{h:0,t:1,o:2}[d.p]];h+='<div style="padding:4px 0"><b>'+d.n+'</b> · '+d.q+' <b>Answer: '+dg+'</b></div>';});
+  h+='</div><div class="card lav"><h2>Say it three ways</h2>';
+  SAYS.forEach((d,i)=>{
+    const n=d.n,a=Math.floor(n/100),b=Math.floor(n/10)%10,c=n%10;
+    if(d.k==='expand')h+='<div style="padding:4px 0"><b>'+n+'</b> in pieces: <b>'+a+'00 + '+b+'0 + '+c+'</b> ('+words(n)+')</div>';
+    else if(d.k==='w2n')h+='<div style="padding:4px 0">'+words(n)+' → <b>'+n+'</b> (the traps are '+d.opts.filter(v=>v!==n).join(' and ')+')</div>';
+    else h+='<div style="padding:4px 0"><b>'+n+'</b> → <b>'+words(n)+'</b> (the traps are '+d.opts.filter(v=>v!==n).map(words).join(' and ')+')</div>';
+  });
+  h+='</div><div class="card"><h2>Check her out loud</h2><ul>'
+   +'<li>"How do you know 305 is 3 boxes and 5 singles with no bags?"</li>'
+   +'<li>Can she say what 10 singles make, and what 10 bags make?</li>'
+   +'<li>Can she write 345 as a numeral, in words and in pieces (300 + 40 + 5)?</li></ul>'
+   +'<p class="small">If she does these well, tick them on her rung in Math Home. Hands-on extension: cups for boxes, bags or rubber bands for tens, beans for singles.</p></div>';
+  $('stage').innerHTML=h;$('bar').style.width='100%';
+}
+(function(){const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momView();}
+  else{ml.href=location.pathname+'?mom=1';render();}
+})();
 </script>
 </body>
 </html>
