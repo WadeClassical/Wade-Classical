@@ -767,7 +767,7 @@ function kidWeek(kid){
   h+='<div class="week">';
   for(let i=0;i<5;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);const k=dkey(d);
     const its=items.filter(a=>a.date===k).sort((a,b)=>a.ts-b.ts);
-    h+='<div class="day '+(k===tk?'today':'')+'"><h4>'+d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'})+'</h4>';
+    h+='<div class="day '+(k===tk?'today':'')+'"><h4>'+d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'})+'</h4>'+pcFocusTag(kid,k);
     if(!its.length)h+='<div class="small muted">—</div>';
     its.forEach(a=>{h+='<div class="mini">'+(a.done?'✅ ':'⬜ ')+esc(a.title)+badge(a)+'</div>';});
     h+='</div>';}
