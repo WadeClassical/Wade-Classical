@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wade Classical — Math Home</title>
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Cinzel:wght@400;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--parch:#F4ECDA;--card:#FBF6EA;--forest:#204B3A;--brass:#C9972B;--ink:#1E2A24;--muted:#55604F;--line:#E2D6BC;
+ --teal:#17607A;--teal-d:#0F4A5F;--rose:#A8325E;--rose-d:#7A1F45;--ok:#2E7D4F;--warn:#B7791F;--bad:#A8323A;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jost',sans-serif;background:var(--parch);color:var(--ink);min-height:100vh;font-size:16px;line-height:1.4}
+h1,h2,h3{font-family:'Cormorant Garamond',serif;font-weight:700}
+a{color:inherit}
+.top{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--forest);color:#fff;flex-wrap:wrap}
+.top .brand{font-family:'Cinzel',serif;letter-spacing:.06em;font-size:15px;cursor:pointer}
+.top .sp{flex:1}
+.top a.pill,.top button.pill{background:rgba(255,255,255,.14);color:#fff;border:0;border-radius:999px;padding:7px 14px;font:500 14px Jost;text-decoration:none;cursor:pointer}
+.wrap{max-width:1100px;margin:0 auto;padding:22px 18px 70px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.btn{border:0;border-radius:10px;padding:10px 16px;font:500 15px Jost;cursor:pointer;background:var(--forest);color:#fff}
+.btn.alt{background:#fff;color:var(--forest);border:1px solid var(--forest)}
+.btn.sm{padding:6px 11px;font-size:13px;border-radius:8px}
+.btn.ok{background:var(--ok)}.btn.warn{background:var(--warn)}.btn.bad{background:var(--bad)}
+.btn.k{background:var(--kc)}
+input,textarea,select{font:400 15px Jost;border:1px solid var(--line);border-radius:9px;padding:9px 11px;background:#fff;width:100%;color:var(--ink)}
+textarea{min-height:90px;resize:vertical}
+label{font-size:13px;color:var(--muted);display:block;margin:10px 0 4px;font-weight:500}
+.muted{color:var(--muted)}.small{font-size:13px}
+.hero{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
+@media(max-width:760px){.hero{grid-template-columns:1fr}}
+.who{border:0;border-radius:18px;padding:34px 18px;color:#fff;cursor:pointer;font:700 32px 'Cormorant Garamond',serif;text-align:center}
+.who small{display:block;font:400 14px Jost;opacity:.85;margin-top:6px}
+.who.ryder{background:var(--teal)}.who.hadley{background:var(--rose)}.who.mom{background:var(--forest)}
+.ryder{--kc:var(--teal);--kd:var(--teal-d)}.hadley{--kc:var(--rose);--kd:var(--rose-d)}
+.khead{background:var(--kc);color:#fff;border-radius:16px;padding:20px 22px;margin-bottom:16px}
+.khead h1{font-size:34px}.khead .sub{opacity:.9;font-size:15px}
+.tabs{display:flex;gap:8px;margin:14px 0 6px;flex-wrap:wrap}
+.tab{border:1px solid var(--kc,var(--forest));color:var(--kc,var(--forest));background:#fff;border-radius:999px;padding:7px 16px;font:500 14px Jost;cursor:pointer;text-decoration:none}
+.tab.on{background:var(--kc,var(--forest));color:#fff}
+.focus{border-left:6px solid var(--kc);background:#fff}
+.row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.chk{width:30px;height:30px;border-radius:8px;border:2px solid var(--kc,var(--forest));background:#fff;flex:none;cursor:pointer;display:grid;place-items:center;font-size:19px;color:#fff;margin-top:1px}
+.chk.on{background:var(--kc,var(--forest))}
+.rt{flex:1}.rt .t{font-weight:500;font-size:17px}.done .t{text-decoration:line-through;opacity:.55}
+.badge{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600;color:#fff;margin-left:6px;vertical-align:middle}
+.b-got{background:var(--ok)}.b-needs{background:var(--warn)}.b-redo{background:var(--bad)}.b-wait{background:#8a8f7a}
+.linkchip{display:inline-block;margin-top:5px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px;text-decoration:none;color:var(--kc,var(--forest))}
+.msg{background:#FFF6D8;border:1px solid var(--brass);border-radius:14px;padding:14px 16px;margin-bottom:14px}
+.msg .from{font:700 13px Jost;color:#8a6414;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.week{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+@media(max-width:860px){.week{grid-template-columns:1fr}}
+.day{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;min-height:120px}
+.day.today{border:2px solid var(--kc)}
+.day h4{font:700 15px Jost;margin-bottom:6px;color:var(--kc)}
+.mini{font-size:14px;padding:5px 0;border-bottom:1px dashed var(--line)}.mini:last-child{border:0}
+.bar{height:10px;border-radius:6px;background:#e7dec7;overflow:hidden}.bar>i{display:block;height:100%;background:var(--kc,var(--forest))}
+/* ladder */
+.ladder{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+@media(max-width:860px){.ladder{grid-template-columns:1fr}}
+.rungs{display:flex;flex-direction:column;gap:6px}
+.rung{display:flex;gap:10px;align-items:center;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;text-align:left;font:400 15px Jost;width:100%}
+.rung .n{font:700 16px 'Cormorant Garamond',serif;width:30px;color:var(--muted)}
+.rung .f{flex:1}.rung .s{font-size:12px;font-weight:600}
+.rung.mastered{background:#E5F1E8;border-color:#9CC8A9}.rung.mastered .s{color:var(--ok)}
+.rung.current{background:var(--kc);color:#fff;border-color:var(--kc)}.rung.current .n,.rung.current .s{color:#fff}
+.rung.next{border:2px dashed var(--kc)}.rung.next .s{color:var(--kc)}
+.rung.skipped{background:#F1EBDC;opacity:.8}.rung.skipped .s{color:var(--warn)}
+.rung.sel{outline:3px solid var(--brass)}
+.cov-w{color:var(--ok)}.cov-p{color:var(--warn)}.cov-n{color:var(--bad)}
+.stage{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
+.stage b{font-family:'Cinzel',serif;width:34px}
+.pin{max-width:340px;margin:60px auto;text-align:center}
+.pin input{text-align:center;font-size:28px;letter-spacing:.4em;margin:14px 0}
+.hide{display:none}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--forest);color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;z-index:9}
+.tog{display:flex;gap:8px;flex-wrap:wrap}
+.tog .tab{padding:6px 14px}
+</style>
+</head>
+<body>
+<div class="top">
+  <span class="brand" onclick="go('#/')">WADE CLASSICAL · MATH HOME</span>
+  <span class="sp"></span>
+  <span id="sync" class="small" style="opacity:.8"></span>
+  <a class="pill" href="wade-attendance.html">Attendance</a>
+  <a class="pill" href="index.html">All apps</a>
+</div>
+<div class="wrap" id="app"></div>
+<script>
+const KIDS = {
+ ryder: { name:'Ryder', grade:'Grade 4', book:'Masterbooks Level 4', cls:'ryder',
+  weeks:[
+  [1,'Place value','1.1 Ten times the place to the right; 1.2 Reading and writing big numbers','Explain that a digit is worth ten times the digit to its right; show why 700 ÷ 70 = 10; read and write numbers to 1,000,000 in digits, words and expanded form','p'],
+  [2,'Comparing and rounding','1.3 Comparing numbers; 1.4 Rounding whole numbers','Compare multi-digit numbers with <, = and >; round to any place up to hundred thousand; say when a rounded answer is called for and why','p'],
+  [3,'Adding and subtracting big numbers','1.5 Adding and subtracting multi-digit numbers','Add and subtract numbers to 1,000,000 fluently with the standard algorithm','p'],
+  [4,'Negative numbers','1.6 Negative numbers','Use negative numbers on a number line and in settings like temperature, counting down and owing money','n'],
+  [5,'Multiplication as comparison','2.1 Multiplication as comparison','Read 35 = 5 × 7 as "35 is 5 times as many as 7"; tell "times as many" problems from "more than" problems','n'],
+  [6,'Multiplying by one digit','2.2 Multiplying by one digit','Multiply up to four digits by one digit with place value strategies, an area model and the standard algorithm','w'],
+  [7,'Multiplying by two digits','2.3 Multiplying by two digits','Multiply two two-digit numbers with an area model and the standard algorithm','w'],
+  [8,'Dividing and remainders','2.4 Dividing by one digit; 2.5 Meaning of a remainder','Divide up to four digits by one digit with remainders and check by multiplying; decide whether to round up, round down or keep the remainder, and explain why','w'],
+  [9,'Multi-step problems','2.6 Multi-step word problems; 2.7 Parentheses and order of operations','Solve problems with all four operations, write equations with a letter for the unknown and check by estimating; use parentheses and evaluate expressions with more than two terms','n'],
+  [10,'Factors and multiples','3.1 Factor pairs; 3.2 Multiples','Find all factor pairs of a number from 1 to 100; tell whether a number to 100 is a multiple of a given one-digit number','n'],
+  [11,'Primes and patterns','3.3 Prime and composite numbers; 3.4 Patterns by rule','Tell whether a number to 100 is prime or composite and explain why; generate a pattern from a rule like "add 3" and describe features the rule does not state','n'],
+  [12,'Equivalent fractions','4.1 Equivalent fractions','Explain with models why a/b equals (n × a)/(n × b), and generate equivalent fractions','w'],
+  [13,'Comparing fractions and the number line','4.2 Comparing unlike fractions; 4.3 Fractions and mixed numbers on a number line','Compare fractions with different denominators using common denominators or benchmarks like 1/2; place fractions, mixed numbers and decimals to two places on a number line','n'],
+  [14,'Building fractions','4.4 Fractions as sums of unit fractions; 4.8 Fractions as division','Write 3/8 as a sum of unit fractions in more than one way; explain a fraction as parts of a whole, parts of a set and a division','p'],
+  [15,'Like-denominator fractions','4.5 Adding and subtracting like fractions','Add and subtract fractions with the same denominator and solve word problems about the same whole','w'],
+  [16,'Mixed numbers','4.6 Mixed numbers','Add and subtract mixed numbers with like denominators by changing them to fractions or by using properties of operations','w'],
+  [17,'Fraction times a whole number','4.7 Multiplying a fraction by a whole number','Show 5/4 as 5 × 1/4 and find 3 × 2/5 as 6/5, including word problems','n'],
+  [18,'Tenths and hundredths','5.1 Tenths and hundredths; 5.2 Adding tenths and hundredths','Write tenths and hundredths as fractions and decimals, like 0.62 = 62/100, and place them on a number line; rename 3/10 as 30/100 and add 3/10 + 4/100 = 34/100','w'],
+  [19,'Equivalents and comparing','5.3 Fraction and decimal equivalents; 5.4 Comparing and ordering decimals','Know that 1/2 = 0.5, 1/4 = 0.25, 3/4 = 0.75 and 7/4 = 1.75; compare and order decimals to hundredths and justify with a model','p'],
+  [20,'Decimal arithmetic','5.5 Adding and subtracting decimals; 5.6 Rounding decimals','Estimate and compute sums and differences to two places; round a two-place decimal to one place or the nearest whole number and judge whether the answer is reasonable','p'],
+  [21,'Converting units','6.1 Converting units','Know the relative sizes of km, m and cm, kg and g, lb and oz, l and ml, and hours, minutes and seconds; express a larger unit as a smaller one in a two-column table','p'],
+  [22,'Measurement problems','6.2 Measurement word problems','Use the four operations on distance, time, liquid volume, mass and money, including simple fractions and decimals, and draw them on a number line','n'],
+  [23,'Data and line plots','6.3 Line plots with fractions; 6.4 Collecting and showing data','Make a line plot of measurements in halves, fourths and eighths and add and subtract fractions with it; write a survey question, collect answers and show them in a table or graph','p'],
+  [24,'Averages and chance','6.5 Mode, median and outliers; 6.6 Chance and possible outcomes','Find the mode of categories and the mode, median and any outlier of numbers; list all outcomes of a simple chance situation and say results as 3 out of 4 or 3/4','p'],
+  [25,'Lines and angles','7.1 Points, lines and rays; 7.2 Kinds of angles','Draw and identify points, lines, segments, rays, and parallel and perpendicular lines; name right, acute and obtuse angles and link 90, 180, 270 and 360 degrees to turns','p'],
+  [26,'Measuring angles','7.3 Measuring angles; 7.4 Adding angles','Explain a one-degree angle as 1/360 of a circle, measure with a protractor and sketch a given angle; find an unknown angle by adding or subtracting its parts','p'],
+  [27,'Classifying shapes','7.5 Classifying shapes; 7.6 Symmetry','Sort two-dimensional figures by parallel or perpendicular sides and angle size, and name triangles and quadrilaterals; find and draw lines of symmetry and tell line from rotational symmetry','p'],
+  [28,'Circles, congruence and solids','7.7 Circles; 7.8 Congruent figures; 7.9 Faces, edges, vertices and nets','Name the radius and diameter; tell whether two figures are congruent; describe solids by faces, edges and vertices and draw a net','p'],
+  [29,'Area and perimeter','8.1 Area and perimeter formulas; 8.2 Same area or same perimeter','Use A = l × w and the perimeter formula for rectangles and squares, and find a missing side; show that rectangles with the same area can have different perimeters, and the reverse','p'],
+  [30,'Complex figures and volume','8.3 Area of complex figures; 8.4 Volume by counting cubes','Split a complex figure into rectangles and add their areas; find the volume of a solid figure by counting unit cubes','n']
+  ],
+  extras:[
+  ['X1','Roman numerals','Book lesson 6','Read and write Roman numerals'],
+  ['X2','Percents','Book lesson 24','Move between a fraction, a decimal and a percent'],
+  ['X3','Averaging','Book lesson 30','Find the average of a set of numbers']
+  ],
+  spine:[
+  ['S1','Keep the full times tables and division facts through 10 × 10 instant, then add the 11s and 12s','Weeks 6, 7, 8','Instant recall of every product and quotient through 12 × 12'],
+  ['S2','Multiply and divide by 10, 100 and 1,000 using place value','Weeks 1, 6','He gives 47 × 100 and 6,300 ÷ 10 without writing'],
+  ['S3','Multiply a one-digit number by a multiple of 10 or 100, and a two-digit number by a one-digit number with partial products','Weeks 6, 7','He gives 6 × 700 and 4 × 36 in his head'],
+  ['S4','Add and subtract by making a friendly number, and keep number bonds to 1,000 and 10,000 fresh','Week 3','He gives 698 + 247 and the partner of 3,400 to make 10,000 in his head'],
+  ['S5','Spot factors and multiples quickly, and the tests for dividing by 2, 5, 10, 3 and 9','Weeks 10, 11','He says at once whether 135 divides by 3, 5 or 9'],
+  ['S6','Benchmark fractions and decimals: halves, fourths, fifths, tenths and hundredths and their decimals','Weeks 13, 19','He says which of 3/5 and 0.55 is larger without writing'],
+  ['S7','Estimate by rounding to check a multi-digit answer','Weeks 2, 9','He estimates 3,894 × 6 and says whether 23,364 is reasonable']
+  ] },
+ hadley: { name:'Hadley', grade:'Grade 2', book:'Masterbooks Level 2', cls:'hadley',
+  weeks:[
+  [1,'Place value','1.1 Hundreds, tens and ones; 1.3 Reading and writing to 1,000','Name the digit in each place; write 345 as a numeral, in words and in expanded form','w'],
+  [2,'Counting patterns','1.2 Counting within 1,000; 1.5 Skip counting by 3s and 4s','Skip count by 5s, 10s and 100s from any start; count by 3s and 4s past 100','p'],
+  [3,'Comparing numbers','1.4 Comparing and ordering','Use <, = and > on three-digit numbers; order a set of three','n'],
+  [4,'Adding within 100','2.1 Adding within 100','Add two-digit numbers with regrouping; explain the method on one item','w'],
+  [5,'Subtracting within 100','2.2 Subtracting within 100','Subtract two-digit numbers with regrouping','w'],
+  [6,'Checking and why it works','2.5 Inverse operations; 2.7 Why strategies work','Write the related subtraction from an addition fact; check an answer by working backward; explain a regrouping step','p'],
+  [7,'Mental strategies','2.3 Mental two-digit math; 2.6 Properties','Do 47 + 25 and 63 − 38 without writing; reorder 17 + 8 + 3 to make it easier','n'],
+  [8,'Adding a column','2.4 Adding up to four two-digit numbers','Add a column of two-digit numbers with a place value strategy','n'],
+  [9,'Number bonds','2.8 Bonds to 20; 2.9 Bonds to 100 and 1,000','Give the partner to make 20 instantly; partner of a multiple of 10 to make 100; of a multiple of 100 to make 1,000','p'],
+  [10,'Adding within 1,000','3.1 Adding within 1,000','Add three-digit numbers with a written method, composing tens and hundreds','p'],
+  [11,'Subtracting within 1,000','3.2 Subtracting within 1,000; 3.3 Mentally adding and subtracting 10 and 100','Subtract three-digit numbers, decomposing as needed; find 10 more, 10 less, 100 more and 100 less than any number from 100 to 900','p'],
+  [12,'Estimating','3.4 Estimating sums and differences; 3.5 Estimating quantities','Round to the nearest 10 or 100 to estimate and check; judge whether a group is about 10, 20, 50 or 100','n'],
+  [13,'Story problems','4.1 One-step word problems within 100; 4.3 Stories and number sentences','Solve add to, take from, put together, take apart and compare stories; write a number sentence for a story and a story for a number sentence','w'],
+  [14,'Two-step problems','4.2 Two-step word problems within 100','Solve a story that needs two operations and show the number sentences','p'],
+  [15,'Odd, even and patterns','4.4 Odd and even; 4.9 Number patterns','Tell odd from even up to 20 by pairing; write an even number as two equal addends; extend a pattern like 4, 8, 12','p'],
+  [16,'Equal groups and arrays','4.5 Repeated addition and arrays; 4.6 Counting by multiples to multiply','Find the total in an array up to 5 by 5; find 6 groups of 5 by skip counting','n'],
+  [17,'Times tables of 2s, 5s and 10s','4.7 Times tables of 2s, 5s and 10s','Recall the 2s, 5s and 10s facts to times 10, in any order','n'],
+  [18,'Sharing and dividing','4.8 Equal sharing and division','Divide by sharing equally, repeated subtraction and forming equal groups, including leftovers','n'],
+  [19,'Measuring length','5.1 Measuring length with tools; 5.3 Nearest inch and centimeter','Choose a ruler, yardstick, meter stick or tape for a job; measure to the nearest whole unit and record it','w'],
+  [20,'Units and estimating','5.2 Different units, same object; 5.4 Estimating length','Measure one object in two units and say why the number changes; estimate a length and judge whether the estimate is reasonable','p'],
+  [21,'Comparing lengths','5.5 How much longer; 5.6 Length word problems; 5.7 The number line','State the difference in length of two objects; solve add and subtract length stories within 100; show sums and differences on a number line','p'],
+  [22,'Telling time','5.8 Time to five minutes','Read and write time on analog and digital clocks to the nearest five minutes, with a.m. and p.m.','w'],
+  [23,'Time relationships','5.9 Time relationships; 5.10 Elapsed time in hours','Know 60 minutes in an hour and 24 hours in a day; read quarter hours; find hours elapsed, like 11:00 a.m. to 4:00 p.m.','p'],
+  [24,'Money','6.1 Same value, different coins; 6.2 Money word problems; 6.3 Decimal notation for money','Show different coin combinations for one amount; solve stories with bills and coins; write amounts like $1.25 and 75¢','w'],
+  [25,'Collecting data and graphs','6.4 Collecting and recording data; 6.5 Picture graphs and bar graphs','Record data with tally marks; draw picture and bar graphs from up to four categories','w'],
+  [26,'Reading graphs','6.6 Questions from graphs and charts; 6.8 Range and mode','Answer how many, how many more and how many fewer from a graph; solve add and subtract problems from it; find the range and mode of a small set','p'],
+  [27,'Line plots','6.7 Line plots','Measure several objects to the nearest whole unit and show the data on a line plot','n'],
+  [28,'Plane shapes','7.1 Plane shapes by their parts; 7.3 Rows and columns of squares','Name triangles, quadrilaterals, pentagons and hexagons by sides and angles; split a rectangle into rows and columns of squares and count the total','p'],
+  [29,'Solid shapes','7.2 Solid shapes','Describe and classify cubes, spheres, pyramids and rectangular prisms by faces, edges and vertices','n'],
+  [30,'Equal shares','7.4 Halves, thirds and fourths; 7.5 Unit fractions to 1/12','Split shapes into 2, 3 or 4 equal shares; know four fourths make a whole; compare 1/3 and 1/6','p']
+  ],
+  extras:[
+  ['X1','Temperature','Book lessons 21, 22, 35','Read a thermometer; graph temperature over several days'],
+  ['X2','Weight','Book lesson 23','Choose ounces or pounds for an object; compare weights'],
+  ['X3','Perimeter','Book lesson 12','Find the perimeter of a shape by adding its sides'],
+  ['X4','Calendar','Book lessons 2, 29','Put days, months and seasons in order']
+  ],
+  spine:[
+  ['T1','Number bonds to 20, then every sum to 20 and its subtraction fact in mixed review','Weeks 4, 5, 9','Instant recall of all sums of two one-digit numbers'],
+  ['T2','Number bonds to 100 in tens, then any two-digit number, and to 1,000 in hundreds','Week 9','Partner of any multiple of 10 is instant; other two-digit numbers take a quick strategy'],
+  ['T3','Mental two-digit strategies: add tens then ones, make a ten, count up to subtract','Week 7','She does 47 + 25 or 63 − 38 without writing'],
+  ['T4','Mental 10 more, 10 less, 100 more and 100 less','Week 11','Answers without counting or writing'],
+  ['T5','Skip counting by 2s, 3s, 4s, 5s, 10s and 100s, forward and backward from any start','Weeks 2, 16','Fluent from any starting number without a number line'],
+  ['T6','Multiplication tables of 2s, 5s and 10s, built from skip counting and arrays','Weeks 16, 17','Recall to times 10, in any order'],
+  ['T7','Division facts for 2s, 5s and 10s as the inverse of multiplication','Week 18','She answers 35 ÷ 5 by thinking 5 times what makes 35']
+  ] }
+};
+
+const MOM_PIN='3024';
+const FIREBASE_CONFIG={apiKey:"AIzaSyAw9V30gR9hc3WKS3zhO61IU6NeeKghyQM",authDomain:"wade-classical.firebaseapp.com",databaseURL:"https://wade-classical-default-rtdb.firebaseio.com",projectId:"wade-classical",storageBucket:"wade-classical.firebasestorage.app"};
+const LS='wc_math_home_v1';
+let S={}; let db=null; let online=false; let sel={}; let msgFilter='both';
+
+/* ---------- storage ---------- */
+function loadLocal(){try{S=JSON.parse(localStorage.getItem(LS)||'{}')||{};}catch(e){S={};}}
+function saveLocal(){try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){}}
+function getIn(path){return path.split('/').reduce((o,k)=>o==null?undefined:o[k],S);}
+function put(path,val){
+  const keys=path.split('/');let o=S;
+  for(let i=0;i<keys.length-1;i++){if(typeof o[keys[i]]!=='object'||o[keys[i]]===null)o[keys[i]]={};o=o[keys[i]];}
+  const last=keys[keys.length-1];
+  if(val===null||val===undefined)delete o[last];else o[last]=val;
+  saveLocal();
+  if(db){db.ref('home/'+path).set(val===undefined?null:val).catch(e=>console.warn(e));}
+  render();
+}
+function initFirebase(){
+  try{
+    if(typeof firebase==='undefined')throw new Error('no firebase');
+    if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);
+    db=firebase.database();
+    db.ref('home').on('value',snap=>{S=snap.val()||{};saveLocal();online=true;setSync();render();},err=>{console.warn(err);online=false;setSync();});
+  }catch(e){console.warn(e);db=null;setSync();}
+}
+function setSync(){document.getElementById('sync').textContent=online?'● synced':'● offline copy';}
+
+/* ---------- helpers ---------- */
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const dkey=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const todayKey=()=>dkey(new Date());
+function mondayOf(d){const x=new Date(d);const wd=(x.getDay()+6)%7;x.setDate(x.getDate()-wd);x.setHours(0,0,0,0);return x;}
+function parseKey(k){const p=k.split('-');return new Date(+p[0],+p[1]-1,+p[2]);}
+const fmtDay=d=>d.toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});
+function toast(t){const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2200);}
+function safeUrl(u){u=String(u||'').trim();if(!u)return'';if(!/^https?:\/\//i.test(u)&&!/^[\w\-./]+\.(html|pdf)$/i.test(u))u='https://'+u;return /^(https?:\/\/|[\w\-./]+\.(html|pdf)$)/i.test(u)?u:'';}
+function linkLabel(u){if(/youtu\.?be/i.test(u))return '▶ Watch video';if(/\.pdf(\?|$)/i.test(u))return '📄 Open PDF';return '🔗 Open link';}
+function entries(o){return o?Object.keys(o).map(k=>Object.assign({id:k},o[k])):[];}
+function weekStatus(kid,n){return getIn('progress/'+kid+'/w'+n)||'';}
+function suggested(kid){
+  const cur=getIn('current/'+kid);
+  const ws=KIDS[kid].weeks;
+  if(cur&&weekStatus(kid,cur)!=='mastered')return cur;
+  for(const w of ws){const st=weekStatus(kid,w[0]);if(st!=='mastered'&&st!=='skipped')return w[0];}
+  for(const w of ws){if(weekStatus(kid,w[0])!=='mastered')return w[0];}
+  return null;
+}
+function nextAfter(kid,cur){
+  const ws=KIDS[kid].weeks;
+  for(const w of ws){if(w[0]===cur)continue;const st=weekStatus(kid,w[0]);if(st!=='mastered'&&st!=='skipped'&&w[0]>cur)return w[0];}
+  for(const w of ws){if(w[0]===cur)continue;const st=weekStatus(kid,w[0]);if(st!=='mastered'&&st!=='skipped')return w[0];}
+  return null;
+}
+function weekObj(kid,n){return KIDS[kid].weeks.find(w=>w[0]===n);}
+function masteredCount(kid){return KIDS[kid].weeks.filter(w=>weekStatus(kid,w[0])==='mastered').length;}
+function factsStage(kid){const sp=KIDS[kid].spine;for(let i=0;i<sp.length;i++){if(!getIn('facts/'+kid+'/done/'+sp[i][0]))return i;}return -1;}
+function assignList(kid){return entries(getIn('assign/'+kid));}
+function badge(a){
+  if(a.grade==='got')return '<span class="badge b-got">Got it</span>';
+  if(a.grade==='needs')return '<span class="badge b-needs">Needs work</span>';
+  if(a.grade==='redo')return '<span class="badge b-redo">Redo</span>';
+  if(a.done)return '<span class="badge b-wait">Waiting for Mom</span>';
+  return '';
+}
+function itemHtml(kid,a,showDate){
+  const u=safeUrl(a.link);
+  return '<div class="row '+(a.done?'done':'')+'"><button class="chk '+(a.done?'on':'')+'" onclick="toggleDone(\''+kid+'\',\''+a.id+'\')" aria-label="done">'+(a.done?'✓':'')+'</button>'
+   +'<div class="rt"><div class="t">'+esc(a.title)+badge(a)+'</div>'
+   +(showDate?'<div class="small muted">'+esc(fmtDay(parseKey(a.date)))+'</div>':'')
+   +(a.note?'<div class="small muted">Mom: '+esc(a.note)+'</div>':'')
+   +(u?'<a class="linkchip" target="_blank" rel="noopener" href="'+esc(u)+'">'+linkLabel(u)+'</a>':'')+'</div></div>';
+}
+
+/* ---------- actions ---------- */
+function toggleDone(kid,id){
+  const a=getIn('assign/'+kid+'/'+id);if(!a)return;
+  const nd=!a.done;
+  const upd=Object.assign({},a,{done:nd});
+  if(nd&&a.grade==='redo')upd.grade='';
+  if(!nd)upd.grade='';
+  put('assign/'+kid+'/'+id,upd);
+}
+function toggleFactsToday(kid){const k='facts/'+kid+'/log/'+todayKey();put(k,getIn(k)?null:true);}
+function dismissMsg(kid,id){put('inbox/'+kid+'/'+id+'/seen',true);}
+function setWeek(kid,n,st){
+  if(st==='current'){put('current/'+kid,n);if(weekStatus(kid,n)==='mastered'||weekStatus(kid,n)==='skipped')put('progress/'+kid+'/w'+n,null);toast('Week '+n+' is '+KIDS[kid].name+'\'s focus');return;}
+  put('progress/'+kid+'/w'+n,st||null);
+  if(st==='mastered'&&getIn('current/'+kid)===n){put('current/'+kid,null);}
+}
+function grade(kid,id,g){
+  const a=getIn('assign/'+kid+'/'+id);if(!a)return;
+  const upd=Object.assign({},a,{grade:g});
+  if(g==='redo')upd.done=false;
+  put('assign/'+kid+'/'+id,upd);
+}
+function setNote(kid,id,v){const a=getIn('assign/'+kid+'/'+id);if(!a)return;put('assign/'+kid+'/'+id,Object.assign({},a,{note:v}));}
+function toggleStage(kid,code){const k='facts/'+kid+'/done/'+code;put(k,getIn(k)?null:true);}
+function addAssign(kids,title,link,date){
+  title=(title||'').trim();if(!title){toast('Add a title first');return false;}
+  kids.forEach(kid=>{const id='a'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+    put('assign/'+kid+'/'+id,{title:title,link:safeUrl(link),date:date,done:false,grade:'',note:'',ts:Date.now()});});
+  return true;
+}
+function delAssign(kid,id){put('assign/'+kid+'/'+id,null);}
+let armed=null;
+function armDel(kid,id){if(armed===kid+id){armed=null;delAssign(kid,id);}else{armed=kid+id;render();setTimeout(()=>{if(armed===kid+id){armed=null;render();}},3500);}}
+
+/* ---------- routing ---------- */
+function go(h){location.hash=h;}
+function pinOk(){try{return localStorage.getItem('wc_math_pin')==='1';}catch(e){return false;}}
+function tryPin(){
+  const v=document.getElementById('pin').value;
+  if(v===MOM_PIN){try{localStorage.setItem('wc_math_pin','1');}catch(e){}render();}
+  else{document.getElementById('pinmsg').textContent='Not quite — try again.';document.getElementById('pin').value='';}
+}
+function lockMom(){try{localStorage.removeItem('wc_math_pin');}catch(e){}go('#/');}
+function render(){
+  const app=document.getElementById('app');
+  const h=(location.hash||'#/').replace(/^#\/?/,'').split('/');
+  const keep=document.activeElement&&document.activeElement.tagName==='TEXTAREA'&&document.activeElement.id==='sendtext';
+  if(keep)return; // do not clobber typing
+  if(h[0]==='kid'&&KIDS[h[1]]){app.innerHTML=kidView(h[1],h[2]||'today');return;}
+  if(h[0]==='mom'){
+    if(!pinOk()){app.innerHTML=pinView();setTimeout(()=>{const p=document.getElementById('pin');if(p)p.focus();},50);return;}
+    app.innerHTML=momView(h[1]||'home',h[2]);return;
+  }
+  app.innerHTML=landing();
+}
+function landing(){
+  return '<div class="card" style="text-align:center;margin-top:20px"><h1 style="font-size:40px">Whose screen is it?</h1><p class="muted">Tap a name.</p></div>'
+   +'<div class="hero"><button class="who ryder" onclick="go(\'#/kid/ryder\')">Ryder<small>'+KIDS.ryder.grade+' math</small></button>'
+   +'<button class="who hadley" onclick="go(\'#/kid/hadley\')">Hadley<small>'+KIDS.hadley.grade+' math</small></button>'
+   +'<button class="who mom" onclick="go(\'#/mom\')">Mom<small>planning &amp; checking</small></button></div>';
+}
+function pinView(){
+  return '<div class="card pin"><h2 style="font-size:28px">Mom only</h2><p class="muted small">Enter your PIN. You only need to do this once on each device.</p>'
+   +'<input id="pin" type="password" inputmode="numeric" maxlength="4" onkeydown="if(event.key===\'Enter\')tryPin()"><div id="pinmsg" class="small" style="color:var(--bad);min-height:18px"></div>'
+   +'<button class="btn" onclick="tryPin()">Open</button></div>';
+}
+
+/* ---------- kid views ---------- */
+function kidView(kid,tab){
+  const K=KIDS[kid];
+  const cur=suggested(kid);const w=cur?weekObj(kid,cur):null;
+  let h='<div class="'+K.cls+'"><div class="khead"><h1>'+esc(K.name)+'\'s math</h1><div class="sub">'+esc(fmtDay(new Date()))+'</div></div>';
+  h+='<div class="tabs"><a class="tab '+(tab==='today'?'on':'')+'" href="#/kid/'+kid+'">Today</a><a class="tab '+(tab==='week'?'on':'')+'" href="#/kid/'+kid+'/week">This week</a><a class="tab '+(tab==='report'?'on':'')+'" href="#/kid/'+kid+'/report">My grades</a></div>';
+  if(tab==='week')h+=kidWeek(kid);else if(tab==='report')h+=kidReport(kid);else h+=kidToday(kid,w);
+  return h+'</div>';
+}
+function kidToday(kid,w){
+  const K=KIDS[kid];const tk=todayKey();
+  let h='';
+  const msgs=entries(getIn('inbox/'+kid)).filter(m=>!m.seen||m.pin).sort((a,b)=>b.ts-a.ts);
+  msgs.forEach(m=>{const u=safeUrl(m.link);
+    h+='<div class="msg"><div class="from">From Mom</div><div>'+esc(m.text).replace(/\n/g,'<br>')+'</div>'+(u?'<a class="linkchip" target="_blank" rel="noopener" href="'+esc(u)+'">'+linkLabel(u)+'</a>':'')
+     +(m.pin?'':' <button class="btn sm alt" style="margin-top:8px" onclick="dismissMsg(\''+kid+'\',\''+m.id+'\')">Got it</button>')+'</div>';});
+  if(w)h+='<div class="card focus"><div class="small muted">THIS WEEK</div><h2 style="font-size:26px">Week '+w[0]+': '+esc(w[1])+'</h2><div class="small muted">'+esc(w[2])+'</div></div>';
+  const items=assignList(kid);
+  const today=items.filter(a=>a.date===tk).sort((a,b)=>a.ts-b.ts);
+  const open=items.filter(a=>a.date<tk&&(!a.done||a.grade==='redo'||a.grade==='needs')&&a.grade!=='got').sort((a,b)=>a.date<b.date?-1:1);
+  h+='<div class="card"><h3 style="font-size:24px">Today</h3>';
+  const si=factsStage(kid);const sp=K.spine;
+  const fdone=!!getIn('facts/'+kid+'/log/'+tk);
+  if(si>=0){h+='<div class="row '+(fdone?'done':'')+'"><button class="chk '+(fdone?'on':'')+'" onclick="toggleFactsToday(\''+kid+'\')">'+(fdone?'✓':'')+'</button><div class="rt"><div class="t">Daily facts drill · 3–5 minutes</div><div class="small muted">'+sp[si][0]+': '+esc(sp[si][1])+'</div></div></div>';}
+  if(!today.length)h+='<p class="muted" style="padding:10px 0">Nothing else assigned for today.</p>';
+  today.forEach(a=>h+=itemHtml(kid,a));
+  h+='</div>';
+  if(open.length){h+='<div class="card"><h3 style="font-size:22px">Still open</h3>';open.forEach(a=>h+=itemHtml(kid,a,true));h+='</div>';}
+  return h;
+}
+function kidWeek(kid){
+  const mon=mondayOf(new Date());const tk=todayKey();const items=assignList(kid);
+  const cur=suggested(kid);const w=cur?weekObj(kid,cur):null;
+  let h='';
+  if(w)h+='<div class="card focus"><div class="small muted">THIS WEEK</div><h2 style="font-size:24px">Week '+w[0]+': '+esc(w[1])+'</h2></div>';
+  h+='<div class="week">';
+  for(let i=0;i<5;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);const k=dkey(d);
+    const its=items.filter(a=>a.date===k).sort((a,b)=>a.ts-b.ts);
+    h+='<div class="day '+(k===tk?'today':'')+'"><h4>'+d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'})+'</h4>';
+    if(!its.length)h+='<div class="small muted">—</div>';
+    its.forEach(a=>{h+='<div class="mini">'+(a.done?'✅ ':'⬜ ')+esc(a.title)+badge(a)+'</div>';});
+    h+='</div>';}
+  return h+'</div>';
+}
+function kidReport(kid){
+  const K=KIDS[kid];const items=assignList(kid);
+  const g=items.filter(a=>a.grade==='got').length,n=items.filter(a=>a.grade==='needs').length,r=items.filter(a=>a.grade==='redo').length;
+  const tot=g+n+r;const pct=tot?Math.round(g/tot*100):null;
+  const m=masteredCount(kid);
+  let h='<div class="card"><h3 style="font-size:26px">Math report card</h3>';
+  h+='<div class="grid2" style="margin-top:10px"><div><div class="small muted">Work checked by Mom</div><div style="font:700 44px \'Cormorant Garamond\',serif;color:var(--kc)">'+(pct===null?'—':pct+'%')+'</div><div class="small muted">'+g+' got it · '+n+' needs work · '+r+' redo</div></div>'
+    +'<div><div class="small muted">Weeks mastered</div><div style="font:700 44px \'Cormorant Garamond\',serif;color:var(--kc)">'+m+' <span style="font-size:24px" class="muted">of 30</span></div><div class="bar"><i style="width:'+(m/30*100)+'%"></i></div></div></div>';
+  const done=K.spine.filter(s=>getIn('facts/'+kid+'/done/'+s[0])).length;
+  h+='<div style="margin-top:14px"><div class="small muted">Daily facts stages finished</div><b>'+done+' of '+K.spine.length+'</b></div></div>';
+  return h;
+}
+
+/* ---------- mom views ---------- */
+function momView(tab,arg){
+  let h='<div class="tabs" style="margin-top:0"><a class="tab '+(tab==='home'?'on':'')+'" href="#/mom">Home</a><a class="tab '+(tab==='ladder'?'on':'')+'" href="#/mom/ladder/ryder">Ladder</a><a class="tab '+(tab==='plan'?'on':'')+'" href="#/mom/plan">Assign</a><a class="tab '+(tab==='check'?'on':'')+'" href="#/mom/check">Check work'+(pendingCount()?' ('+pendingCount()+')':'')+'</a><a class="tab '+(tab==='send'?'on':'')+'" href="#/mom/send">Send</a><button class="tab" onclick="lockMom()">Lock</button></div>';
+  if(tab==='ladder')h+=ladderView(KIDS[arg]?arg:'ryder');
+  else if(tab==='plan')h+=planView();
+  else if(tab==='check')h+=checkView();
+  else if(tab==='send')h+=sendView();
+  else h+=homeView();
+  return h;
+}
+function pendingCount(){let c=0;Object.keys(KIDS).forEach(k=>assignList(k).forEach(a=>{if(a.done&&!a.grade)c++;}));return c;}
+function homeView(){
+  const tk=todayKey();
+  let h='<div class="grid2">';
+  Object.keys(KIDS).forEach(kid=>{
+    const K=KIDS[kid];const cur=suggested(kid);const w=cur?weekObj(kid,cur):null;
+    const items=assignList(kid);const t=items.filter(a=>a.date===tk);const td=t.filter(a=>a.done).length;
+    const pend=items.filter(a=>a.done&&!a.grade).length;const m=masteredCount(kid);
+    h+='<div class="card '+K.cls+'" style="border-top:6px solid var(--kc)"><h2 style="font-size:30px;color:var(--kc)">'+K.name+' <span class="muted small" style="font-family:Jost">'+K.grade+'</span></h2>'
+      +(w?'<div class="small muted" style="margin-top:8px">THIS WEEK</div><div style="font-weight:600;font-size:18px">Week '+w[0]+': '+esc(w[1])+'</div><div class="small muted">'+esc(w[2])+'</div>':'<p class="muted">All 30 weeks are mastered or skipped.</p>')
+      +'<div style="margin:12px 0 4px" class="small muted">Ladder · '+m+' of 30 mastered</div><div class="bar"><i style="width:'+(m/30*100)+'%"></i></div>'
+      +'<div class="small" style="margin-top:12px">Today: '+td+' of '+t.length+' done · '+pend+' waiting for you to check</div>'
+      +'<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><a class="btn sm k" style="text-decoration:none;display:inline-block" href="#/mom/ladder/'+kid+'">Open ladder</a><a class="btn sm alt" style="text-decoration:none;display:inline-block" href="#/kid/'+kid+'">See '+K.name+'\'s screen</a></div></div>';
+  });
+  h+='</div>';
+  const sent=[];Object.keys(KIDS).forEach(k=>entries(getIn('inbox/'+k)).forEach(m=>sent.push(Object.assign({kid:k},m))));
+  sent.sort((a,b)=>b.ts-a.ts);
+  h+='<div class="card"><h3 style="font-size:22px">Sent recently</h3>';
+  if(!sent.length)h+='<p class="muted small">Nothing sent yet.</p>';
+  sent.slice(0,5).forEach(m=>{h+='<div class="small" style="padding:6px 0;border-bottom:1px solid var(--line)"><b>'+KIDS[m.kid].name+'</b> · '+esc(m.text).slice(0,90)+' <span class="muted">'+(m.seen?'· seen':'· not seen yet')+'</span></div>';});
+  return h+'</div>';
+}
+function selWeek(kid){return sel[kid]||suggested(kid)||1;}
+function ladderView(kid){
+  const K=KIDS[kid];const n=selWeek(kid);const cur=suggested(kid);
+  const nxt=cur?nextAfter(kid,cur):null;
+  let h='<div class="'+K.cls+'"><div class="tog" style="margin-bottom:12px">'
+   +Object.keys(KIDS).map(k=>'<a class="tab '+(k===kid?'on':'')+'" style="--kc:'+(k==='ryder'?'var(--teal)':'var(--rose)')+'" href="#/mom/ladder/'+k+'">'+KIDS[k].name+'</a>').join('')+'</div>';
+  h+='<div class="ladder"><div class="card"><h3 style="font-size:22px;margin-bottom:4px">'+K.name+'\'s ladder</h3><div class="small muted" style="margin-bottom:10px">Bottom is Week 1. Climb up. Tap a rung.</div><div class="rungs">';
+  for(let i=30;i>=1;i--){
+    const w=weekObj(kid,i);const st=weekStatus(kid,i);
+    let cls='',lab='Open';
+    if(st==='mastered'){cls='mastered';lab='Mastered ✓';}
+    else if(st==='skipped'){cls='skipped';lab='Skipped for now';}
+    else if(i===cur){cls='current';lab='This week';}
+    else if(i===nxt){cls='next';lab='Suggested next';}
+    h+='<button class="rung '+cls+' '+(i===n?'sel':'')+'" onclick="selectRung(\''+kid+'\','+i+')"><span class="n">'+i+'</span><span class="f">'+esc(w[1])+'</span><span class="s">'+lab+'</span></button>';
+  }
+  h+='</div></div><div>';
+  const w=weekObj(kid,n);const st=weekStatus(kid,n);
+  const covTxt={w:'Covered well in the book',p:'Partly covered in the book',n:'Not in the book — add supplemental practice'}[w[4]];
+  h+='<div class="card" style="border-top:6px solid var(--kc)"><div class="small muted">WEEK '+n+'</div><h2 style="font-size:28px">'+esc(w[1])+'</h2>'
+    +'<div class="small muted" style="margin-top:6px">Topics</div><div>'+esc(w[2])+'</div>'
+    +'<div class="small muted" style="margin-top:10px">'+(kid==='ryder'?'He':'She')+' can</div><div>'+esc(w[3])+'</div>'
+    +'<div class="small cov-'+w[4]+'" style="margin-top:10px;font-weight:600">'+K.book+': '+covTxt+'</div>'
+    +'<div class="small muted" style="margin-top:10px">Test-out quiz: 15 questions, 85% (13 of 15) to skip. One retake; a second miss keeps the week open. Quiz questions are coming in a later update — mark the week mastered yourself for now.</div>'
+    +'<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">'
+    +'<button class="btn sm k" onclick="setWeek(\''+kid+'\','+n+',\'current\')">Make this week\'s focus</button>'
+    +'<button class="btn sm ok" onclick="setWeek(\''+kid+'\','+n+',\'mastered\')">Mark mastered</button>'
+    +'<button class="btn sm warn" onclick="setWeek(\''+kid+'\','+n+',\'skipped\')">Skip for now</button>'
+    +(st?'<button class="btn sm alt" onclick="setWeek(\''+kid+'\','+n+',\'\')">Reopen</button>':'')
+    +'<button class="btn sm alt" onclick="planFromWeek(\''+kid+'\','+n+')">Assign to today…</button></div></div>';
+  // spine
+  const si=factsStage(kid);
+  h+='<div class="card"><h3 style="font-size:20px">Daily facts track</h3><div class="small muted">3–5 minutes a day. A stage is done only when answers are accurate and unhesitating.</div>';
+  K.spine.forEach((s,i)=>{const d=!!getIn('facts/'+kid+'/done/'+s[0]);
+    h+='<div class="stage"><button class="chk '+(d?'on':'')+'" style="--kc:var(--forest)" onclick="toggleStage(\''+kid+'\',\''+s[0]+'\')">'+(d?'✓':'')+'</button><div><b>'+s[0]+'</b> '+(i===si?'<span class="badge b-wait" style="background:var(--kc)">Now</span>':'')+esc(s[1])+'<div class="small muted">Done when: '+esc(s[3])+' · '+esc(s[2])+'</div></div></div>';});
+  h+='</div>';
+  h+='<div class="card"><h3 style="font-size:20px">Optional extra weeks</h3><div class="small muted">Not required. Use whenever you like.</div>';
+  K.extras.forEach(x=>{h+='<div class="small" style="padding:6px 0;border-bottom:1px solid var(--line)"><b>'+x[0]+' '+esc(x[1])+'</b> · '+esc(x[2])+'<br><span class="muted">'+esc(x[3])+'</span></div>';});
+  h+='</div></div></div></div>';
+  return h;
+}
+function selectRung(kid,n){sel[kid]=n;render();}
+let planPrefill=null;
+function planFromWeek(kid,n){const w=weekObj(kid,n);planPrefill={kid:kid,title:'Week '+n+': '+w[1]};go('#/mom/plan');}
+function planView(){
+  const pf=planPrefill;planPrefill=null;
+  const tk=todayKey();
+  let h='<div class="card"><h3 style="font-size:24px">Assign work</h3>'
+   +'<label>Who</label><div class="tog" id="pk"><button class="tab on" data-k="ryder">Ryder</button><button class="tab" data-k="hadley">Hadley</button><button class="tab" data-k="both">Both</button></div>'
+   +'<label>What</label><input id="pt" placeholder="e.g. Masterbooks lesson 12, or Khan Academy: fractions" value="'+esc(pf?pf.title:'')+'">'
+   +'<label>Link (optional — website, PDF or video)</label><input id="pl" placeholder="https://…">'
+   +'<label>Which day</label><input id="pd" type="date" value="'+tk+'">'
+   +'<div style="margin-top:14px"><button class="btn" onclick="submitAssign()">Add to their list</button></div></div>';
+  ['ryder','hadley'].forEach(kid=>{
+    const items=assignList(kid).filter(a=>a.date>=tk).sort((a,b)=>a.date<b.date?-1:a.ts-b.ts);
+    h+='<div class="card '+KIDS[kid].cls+'"><h3 style="font-size:20px;color:var(--kc)">Coming up for '+KIDS[kid].name+'</h3>';
+    if(!items.length)h+='<p class="muted small">Nothing assigned yet.</p>';
+    items.forEach(a=>{h+='<div class="row"><div class="rt"><div class="t">'+esc(a.title)+'</div><div class="small muted">'+esc(fmtDay(parseKey(a.date)))+'</div></div><button class="btn sm '+(armed===kid+a.id?'bad':'alt')+'" onclick="armDel(\''+kid+'\',\''+a.id+'\')">'+(armed===kid+a.id?'Tap again to delete':'Delete')+'</button></div>';});
+    h+='</div>';});
+  setTimeout(bindPlan,0);
+  if(pf){setTimeout(()=>{const b=document.querySelector('#pk [data-k="'+pf.kid+'"]');if(b)b.click();},0);}
+  return h;
+}
+function bindPlan(){document.querySelectorAll('#pk .tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('#pk .tab').forEach(x=>x.classList.remove('on'));b.classList.add('on');});}
+function submitAssign(){
+  const on=document.querySelector('#pk .tab.on');const k=on?on.dataset.k:'ryder';
+  const kids=k==='both'?['ryder','hadley']:[k];
+  const ok=addAssign(kids,document.getElementById('pt').value,document.getElementById('pl').value,document.getElementById('pd').value||todayKey());
+  if(ok)toast('Added');
+}
+function checkView(){
+  let h='';
+  Object.keys(KIDS).forEach(kid=>{
+    const K=KIDS[kid];const items=assignList(kid);
+    const pend=items.filter(a=>a.done&&!a.grade).sort((a,b)=>a.date<b.date?-1:1);
+    const g=items.filter(a=>a.grade==='got').length,n=items.filter(a=>a.grade==='needs').length,r=items.filter(a=>a.grade==='redo').length;const tot=g+n+r;
+    h+='<div class="card '+K.cls+'" style="border-top:6px solid var(--kc)"><h3 style="font-size:24px;color:var(--kc)">'+K.name+'</h3>';
+    if(!pend.length)h+='<p class="muted small">Nothing waiting to be checked.</p>';
+    pend.forEach(a=>{const u=safeUrl(a.link);
+      h+='<div class="row"><div class="rt"><div class="t">'+esc(a.title)+'</div><div class="small muted">'+esc(fmtDay(parseKey(a.date)))+'</div>'+(u?'<a class="linkchip" target="_blank" rel="noopener" href="'+esc(u)+'">'+linkLabel(u)+'</a>':'')
+       +'<input style="margin-top:8px" placeholder="Note for '+K.name+' (optional)" value="'+esc(a.note||'')+'" onchange="setNote(\''+kid+'\',\''+a.id+'\',this.value)"></div>'
+       +'<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm ok" onclick="grade(\''+kid+'\',\''+a.id+'\',\'got\')">Got it</button><button class="btn sm warn" onclick="grade(\''+kid+'\',\''+a.id+'\',\'needs\')">Needs work</button><button class="btn sm bad" onclick="grade(\''+kid+'\',\''+a.id+'\',\'redo\')">Redo</button></div></div>';});
+    h+='<div class="small muted" style="margin-top:10px">Report card · '+(tot?Math.round(g/tot*100)+'% got it':'no checked work yet')+' ('+g+' got it, '+n+' needs work, '+r+' redo) · '+masteredCount(kid)+' of 30 weeks mastered</div></div>';
+  });
+  return h;
+}
+function sendView(){
+  let h='<div class="card"><h3 style="font-size:24px">Send to a screen</h3><p class="muted small">It shows up as a “From Mom” card at the top of their Today screen the next time it is open. No email.</p>'
+   +'<label>To</label><div class="tog" id="sk"><button class="tab '+(msgFilter==='ryder'?'on':'')+'" data-k="ryder">Ryder</button><button class="tab '+(msgFilter==='hadley'?'on':'')+'" data-k="hadley">Hadley</button><button class="tab '+(msgFilter==='both'?'on':'')+'" data-k="both">Both</button></div>'
+   +'<label>Message</label><textarea id="sendtext" placeholder="Try this one after lunch…"></textarea>'
+   +'<label>Link (optional)</label><input id="sendlink" placeholder="https://…">'
+   +'<label style="display:flex;gap:8px;align-items:center;font-size:14px;color:var(--ink)"><input type="checkbox" id="sendpin" style="width:auto"> Keep at the top of Today until I remove it</label>'
+   +'<div style="margin-top:14px"><button class="btn" onclick="submitSend()">Send</button></div></div>';
+  const sent=[];Object.keys(KIDS).forEach(k=>entries(getIn('inbox/'+k)).forEach(m=>sent.push(Object.assign({kid:k},m))));
+  sent.sort((a,b)=>b.ts-a.ts);
+  h+='<div class="card"><h3 style="font-size:20px">Sent recently</h3>';
+  if(!sent.length)h+='<p class="muted small">Nothing sent yet.</p>';
+  sent.slice(0,10).forEach(m=>{h+='<div class="row"><div class="rt"><div class="small"><b>'+KIDS[m.kid].name+'</b> '+(m.pin?'· pinned ':'')+'<span class="muted">'+(m.seen?'· seen':'· not seen yet')+'</span></div><div>'+esc(m.text)+'</div></div><button class="btn sm alt" onclick="put(\'inbox/'+m.kid+'/'+m.id+'\',null)">Remove</button></div>';});
+  setTimeout(()=>document.querySelectorAll('#sk .tab').forEach(b=>b.onclick=()=>{msgFilter=b.dataset.k;document.querySelectorAll('#sk .tab').forEach(x=>x.classList.remove('on'));b.classList.add('on');}),0);
+  return h+'</div>';
+}
+function submitSend(){
+  const text=document.getElementById('sendtext').value.trim();const link=safeUrl(document.getElementById('sendlink').value);
+  if(!text&&!link){toast('Write a message or add a link');return;}
+  const pin=document.getElementById('sendpin').checked;
+  const kids=msgFilter==='both'?['ryder','hadley']:[msgFilter];
+  kids.forEach(k=>{const id='m'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+    put('inbox/'+k+'/'+id,{text:text||'A link for you',link:link,pin:pin,seen:false,ts:Date.now()});});
+  document.getElementById('sendtext').value='';document.getElementById('sendlink').value='';
+  toast('Sent');render();
+}
+
+window.addEventListener('hashchange',render);
+document.addEventListener('DOMContentLoaded',function(){loadLocal();render();initFirebase();});
+</script>
+</body>
+</html>
