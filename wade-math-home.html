@@ -140,6 +140,13 @@ label{font-size:13px;color:var(--muted);display:block;margin:10px 0 4px;font-wei
 .pnum{width:30px;height:30px;flex:none;border-radius:50%;background:var(--kc);color:#fff;display:flex;align-items:center;justify-content:center;font:700 15px Jost}
 .pstep.lock .pnum{background:#B8B29E}.pstep.lock{opacity:.8}
 .pstep.dn .pnum{background:var(--ok)}
+.canbox{margin-top:12px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.canrow{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);padding:9px 0;font:500 16px Jost,sans-serif;color:var(--ink);cursor:default;margin:0}
+button.canrow{cursor:pointer}
+.canbox>.canrow:first-of-type{margin-top:6px}
+.canrow .cb{width:24px;height:24px;flex:none;border:2px solid #B8B29E;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;background:#fff}
+.canrow.on .cb{background:var(--ok);border-color:var(--ok)}
+.gapwk{padding:10px 0;border-top:1px solid var(--line)}
 .pbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .gcap{font-size:17px;color:var(--muted);margin-bottom:4px}
 #kp{position:fixed;left:0;right:0;bottom:0;background:#F3F5F8;border-top:1px solid #C9D3E0;padding:8px;display:none;z-index:8;justify-content:center}
@@ -381,7 +388,7 @@ function setWeek(kid,n,st){
   if(st==='mastered'||st==='skipped')closeFocus(kid,n,todayKey());
   if(st==='current'){put('current/'+kid,n);if(weekStatus(kid,n)==='mastered'||weekStatus(kid,n)==='skipped'){put('progress/'+kid+'/w'+n,null);put('grade/'+kid+'/w'+n,null);}toast('Week '+n+' is '+KIDS[kid].name+'\'s focus');return;}
   put('progress/'+kid+'/w'+n,st||null);
-  if(st===''){put('grade/'+kid+'/w'+n,null);put('stage/'+kid+'/w'+n,null);}
+  if(st===''){put('grade/'+kid+'/w'+n,null);put('stage/'+kid+'/w'+n,null);put('can/'+kid+'/w'+n,null);}
   if(st==='mastered'&&getIn('current/'+kid)===n){put('current/'+kid,null);}
 }
 function grade(kid,id,g){
@@ -405,6 +412,35 @@ function armDel(kid,id){if(armed===kid+id){armed=null;delAssign(kid,id);}else{ar
 
 /* ---------- quizzes ---------- */
 let QZ=null;
+function canList(kid,n){const w=weekObj(kid,n);return w?String(w[3]).split(';').map(x=>x.trim()).filter(Boolean):[];}
+function canDone(kid,n,i){const r=getIn('can/'+kid+'/w'+n);return r?!!r[i]:weekStatus(kid,n)==='mastered';}
+function canAll(kid,n){const L=canList(kid,n);return L.length>0&&L.every((x,i)=>canDone(kid,n,i));}
+function canGaps(kid,n){return canList(kid,n).map((x,i)=>[i,x]).filter(x=>!canDone(kid,n,x[0]));}
+function canSetAll(kid,n){const o={};canList(kid,n).forEach((x,i)=>{o[i]=1;});put('can/'+kid+'/w'+n,o);}
+function canMaybeMaster(kid,n){
+  if(weekStatus(kid,n)==='mastered'||!canAll(kid,n))return false;
+  if(hasQuiz(kid,n)&&stageOf(kid,n)!=='check')return false;
+  setWeek(kid,n,'mastered');put('stage/'+kid+'/w'+n,null);toast('Every I can is checked. Week '+n+' is mastered!');return true;
+}
+function canToggle(kid,n,i){
+  if(weekStatus(kid,n)==='mastered')return;
+  put('can/'+kid+'/w'+n+'/'+i,canDone(kid,n,i)?null:1);
+  canMaybeMaster(kid,n);
+}
+function canText(x){return 'I can '+(/^[A-Z][a-z]/.test(x)?x[0].toLowerCase()+x.slice(1):x);}
+function canBlock(kid,n,mom){
+  const L=canList(kid,n);if(!L.length)return '';
+  const locked=weekStatus(kid,n)==='mastered';
+  const done=L.filter((x,i)=>canDone(kid,n,i)).length;
+  let h='<div class="canbox"><b>I CAN</b> <span class="small muted">'+done+' of '+L.length+' checked</span>';
+  if(mom&&!locked)h+='<div class="small muted">Tap each one you have seen '+esc(KIDS[kid].name)+' do. Every one must be checked to master the week.</div>';
+  L.forEach((x,i)=>{
+    const on=canDone(kid,n,i);
+    const inner='<span class="cb">'+(on?'✓':'')+'</span><span>'+esc(canText(x))+'</span>';
+    h+=(mom&&!locked)?'<button class="canrow'+(on?' on':'')+'" onclick="canToggle(\''+kid+'\','+n+','+i+')">'+inner+'</button>':'<div class="canrow'+(on?' on':'')+'">'+inner+'</div>';
+  });
+  return h+'</div>';
+}
 function hasQuiz(kid,n){return !!(typeof QUIZ!=='undefined'&&QUIZ[kid]&&QUIZ[kid][n]);}
 function quizAttempts(kid,n,kind){const all=entries(getIn('quiz/'+kid+'/w'+n)).sort((a,b)=>a.ts-b.ts);return kind?all.filter(a=>(a.kind||'test')===kind):all;}
 const LESSONS={hadley:{1:[{t:"Hadley's Squishy Shop",u:'lessons/hadley-w1-squishy-shop.html',d:'Boxes, bags and singles: hundreds, tens and ones'}]},ryder:{}}; /* built lessons: LESSONS[kid][week]=[{t:'Title',u:'page.html',d:'one line'}] */
@@ -483,9 +519,10 @@ function finishQuiz(){
   open.forEach(a=>put('assign/'+kid+'/'+a.id,Object.assign({},a,{done:true,grade:pass?'got':'needs',note:(kind==='test'?'Test-out ':'Quiz ')+score+'/15'})));
   put('quiz/'+kid+'/w'+n+'/'+id,{ts:Date.now(),score:score,form:QZ.form,pass:pass,kind:kind,ans:JSON.stringify(QZ.ans)});
   if(pass){
-    if(weekStatus(kid,n)!=='mastered')setWeek(kid,n,'mastered');
     put('grade/'+kid+'/w'+n,{letter:letter,how:kind,score:score,ts:Date.now()});
-    put('stage/'+kid+'/w'+n,null);
+    if(kind==='test')canSetAll(kid,n);
+    if(canAll(kid,n)){if(weekStatus(kid,n)!=='mastered')setWeek(kid,n,'mastered');put('stage/'+kid+'/w'+n,null);}
+    else put('stage/'+kid+'/w'+n,'check');
   }else{
     put('stage/'+kid+'/w'+n,'lesson');
   }
@@ -795,7 +832,7 @@ function pathCard(kid,n,mom){
   const q=(x)=>'\''+kid+'\','+n+(x?','+x:'');
   let h='<div class="'+K.cls+'" style="margin-top:12px">';
   if(st==='mastered'){
-    h+='<div class="pstep dn"><div class="pnum">✓</div><div><b>Week '+n+' is mastered</b>'+(g?'<div>Grade <b>'+g.letter+'</b> · '+(g.how==='test'?'tested out':'quiz '+g.score+'/15')+'</div>':'<div class="small muted">Marked mastered by Mom.</div>')+'</div></div></div>';
+    h+='<div class="pstep dn"><div class="pnum">✓</div><div><b>Week '+n+' is mastered</b>'+(g?'<div>Grade <b>'+g.letter+'</b> · '+(g.how==='test'?'tested out':'quiz '+g.score+'/15')+'</div>':'<div class="small muted">Marked mastered by Mom.</div>')+'</div></div>'+canBlock(kid,n,mom)+'</div>';
     return h;
   }
   // 1 test out
@@ -809,7 +846,7 @@ function pathCard(kid,n,mom){
   const built=lessonList(kid,n);
   const lined=assignList(kid).filter(a=>a.week===n).length;
   h+='<div class="pstep"><div class="pnum">2</div><div><b>LESSON</b><div class="small">'
-    +(stg==='ready'?'Practice done. Ready for the quiz.':stg==='lesson'?'In progress. Take a few days of practice.':'Not started.')
+    +(stg==='check'?'Done.':stg==='ready'?'Practice done. Ready for the quiz.':stg==='lesson'?'In progress. Take a few days of practice.':'Not started.')
     +(lined?' · '+lined+' day'+(lined>1?'s':'')+' lined up':'')+'</div>';
   if(built.length){h+='<div class="pbtns">'+built.map(l=>'<a class="btn sm k" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="'+esc(l.u)+'">'+esc(l.t)+'</a>').join('')+'</div>';}
   else h+='<div class="small muted" style="margin-top:4px">No built lesson for this week yet.</div>';
@@ -820,11 +857,11 @@ function pathCard(kid,n,mom){
   h+='</div></div></div>';
   // 3 quiz
   const open=stg==='ready';
-  h+='<div class="pstep '+(open?'':'lock')+'"><div class="pnum">'+(open?'3':'🔒')+'</div><div><b>QUIZ</b><div class="small">'
-    +(!hq?'No quiz written for this week yet. Mom marks the week mastered.':open?'Open. 15 questions, 13 to pass. A pass is graded.':mom?'Locked until you tap Ready for quiz.':'Locked until Mom says you are ready.')+'</div>';
+  h+='<div class="pstep '+(open||stg==='check'?'':'lock')+'"><div class="pnum">'+(open?'3':stg==='check'?'✓':'🔒')+'</div><div><b>QUIZ</b><div class="small">'
+    +(stg==='check'?'Passed'+(g?' · Grade '+g.letter:'')+'. Check off every I can below to master the week.':!hq?'No quiz written for this week yet. Mom marks the week mastered.':open?'Open. 15 questions, 13 to pass. A pass is graded.':mom?'Locked until you tap Ready for quiz.':'Locked until Mom says you are ready.')+'</div>';
   if(quizzes.length)h+='<div class="small">'+quizzes.map((a,i)=>'Try '+(i+1)+' · '+dt(a.ts)+' · <b>'+a.score+'/15</b> '+(a.pass?'passed':'not yet')).join('<br>')+'</div>';
   if(hq&&open)h+='<div class="pbtns">'+(mom?'<button class="btn sm k" onclick="giveQuiz('+q("'quiz'")+')">Give quiz today</button><button class="btn sm alt" onclick="openQuiz('+q("'quiz'")+')">Open here</button>':'<button class="btn sm k" onclick="openQuiz('+q("'quiz'")+')">Take the quiz</button>')+'</div>';
-  h+='</div></div></div>';
+  h+='</div></div>'+canBlock(kid,n,mom)+'</div>';
   return h;
 }
 
@@ -928,10 +965,27 @@ function planAheadView(){
   let h='<div class="tog" style="margin-bottom:12px">'+['ryder','hadley'].map(k=>'<button class="tab '+(PC.kid===k?'on':'')+'" style="--kc:'+(k==='ryder'?'var(--teal)':'var(--rose)')+'" onclick="pcSetKid(\''+k+'\')">'+KIDS[k].name+'\'s calendar</button>').join('')+'</div><div class="card '+KIDS[PC.kid].cls+'" style="border-top:6px solid var(--kc)"><div class="pcbar"><div class="tog">'+['week','month','year'].map(v=>'<button class="tab '+(PC.view===v?'on':'')+'" onclick="pcView(\''+v+'\')">'+v[0].toUpperCase()+v.slice(1)+'</button>').join('')+'</div>'
     +'<button class="btn sm alt" onclick="pcNav(-1)" aria-label="Previous">◀</button><div class="pctitle">'+title+'</div><button class="btn sm alt" onclick="pcNav(1)" aria-label="Next">▶</button><button class="btn sm" onclick="pcToday()">Today</button></div>';
   h+=PC.view==='week'?pcWeek(m,tk):PC.view==='month'?pcMonth(m,tk):pcYear(m,tk);
-  h+='</div>'+pcDay();
+  h+='</div>'+pcDay()+gapsView(PC.kid);
   return h;
 }
 
+/* ---------- I can gaps (what to teach) ---------- */
+function planGap(kid,n,i){const t=canList(kid,n)[i]||'';sel[kid]=n;ldSync(kid,n);LD.title=t;go('#/mom/ladder/'+kid);}
+function gapsView(kid){
+  const K=KIDS[kid];const cur=getIn('current/'+kid);
+  const wk=K.weeks.map(w=>w[0]).filter(n=>{const st=weekStatus(kid,n);if(st==='mastered'||st==='skipped')return false;
+    return n===cur||!!stageOf(kid,n)||!!getIn('can/'+kid+'/w'+n)||assignList(kid).some(a=>a.week===n);});
+  let h='<div class="card '+K.cls+'" style="border-top:6px solid var(--kc);margin-top:14px"><h3 style="font-size:22px">Still to teach · '+esc(K.name)+'</h3><div class="small muted" style="margin:2px 0 6px">Every "I can" not checked yet, for the focus week and any week in progress. Tap Plan a lesson to put it on a day.</div>';
+  if(!wk.length)return h+'<div class="small muted">Nothing in progress. Pick a focus week on the ladder to start.</div></div>';
+  wk.forEach(n=>{
+    const w=weekObj(kid,n),L=canList(kid,n),gp=canGaps(kid,n);
+    h+='<div class="gapwk"><b>Week '+n+' · '+esc(w[1])+'</b> <span class="small muted">'+(L.length-gp.length)+' of '+L.length+' checked</span>';
+    if(!gp.length)h+='<div class="small" style="color:var(--ok)">Every I can is checked.</div>';
+    gp.forEach(x=>{h+='<div class="row"><div class="rt"><div class="t">'+esc(canText(x[1]))+'</div></div><button class="btn sm alt" onclick="planGap(\''+kid+'\','+n+','+x[0]+')">Plan a lesson</button></div>';});
+    h+='</div>';
+  });
+  return h+'</div>';
+}
 /* ---------- add a lesson to a ladder week ---------- */
 let LD={key:'',title:'',link:'',note:'',days:{},off:0};
 function ldSync(kid,n){if(LD.key!==kid+':'+n)LD={key:kid+':'+n,title:'',link:'',note:'',days:{},off:0};}
@@ -988,8 +1042,8 @@ function ladderView(kid){
     const gg=gradeOf(kid,i),sg=stageOf(kid,i);
     if(st==='mastered'){cls='mastered';lab='Mastered ✓'+(gg?' · '+gg.letter:'');}
     else if(st==='skipped'){cls='skipped';lab='Skipped for now';}
-    else if(i===cur){cls='current';lab='This week'+(sg==='lesson'?' · lesson':sg==='ready'?' · ready for quiz':'');}
-    else if(sg){cls='next';lab=sg==='ready'?'Ready for quiz':'In lesson';}
+    else if(i===cur){cls='current';lab='This week'+(sg==='lesson'?' · lesson':sg==='ready'?' · ready for quiz':sg==='check'?' · check I cans':'');}
+    else if(sg){cls='next';lab=sg==='ready'?'Ready for quiz':sg==='check'?'Check I cans':'In lesson';}
     else if(i===nxt){cls='next';lab='Suggested next';}
     h+='<button class="rung '+cls+' '+(i===n?'sel':'')+'" onclick="selectRung(\''+kid+'\','+i+')"><span class="n">'+i+'</span><span class="f">'+esc(w[1])+(hasQuiz(kid,i)?' <span class="small" style="opacity:.7">· quiz</span>':'')+'</span><span class="s">'+lab+'</span></button>';
   }
