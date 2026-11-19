@@ -195,6 +195,7 @@ function fstr(n,d){const g=gcdf(n,d);n/=g;d/=g;if(d===1)return ''+n;return n+'/'
 function mstr(n,d){const g=gcdf(n,d);n/=g;d/=g;const w=Math.floor(n/d),r=n%d;if(!r)return ''+w;return (w?w+' ':'')+r+'/'+d;}
 
 function opTool(){
+  $('od2').value=gv('od',2,16);
   const d=gv('od',2,16),a=gv('oa',0,3*d),b=gv('ob',0,3*d),sg=$('op').value;
   let r=sg==='+'?a+b:a-b;
   if(r<0){$('or').innerHTML='<div class="out2">The answer would be less than 0. Try a first fraction that is at least as big as the second.</div>';return;}
@@ -202,7 +203,7 @@ function opTool(){
    +'<div class="out2"><b>'+a+'/'+d+' '+sg+' '+b+'/'+d+' = '+r+'/'+d+'</b> (keep the denominator '+d+')<br>Simplest form: <b>'+fstr(r,d)+'</b>'+(r>d?'<br>As a mixed number: <b>'+mstr(r,d)+'</b>':'')+'</div>';
 }
 function rA(){secPage('a','<div class="card"><h1>Adding and subtracting fractions</h1><p class="small">About 15 minutes. Practice only. Nothing here is saved or graded.</p><div class="rule">When the denominators are the same, the pieces are the same size. <b>Add or subtract the numerators and keep the denominator.</b> Then simplify. Write answers in simplest form, and write answers greater than 1 as mixed numbers when asked.</div>'
- +'<h3>Try it</h3><div class="row"><input class="num" id="oa" value="5" oninput="opTool()" inputmode="numeric"><select id="op" onchange="opTool()" style="font:600 18px Jost,sans-serif;padding:6px"><option>+</option><option>−</option></select><input class="num" id="ob" value="2" oninput="opTool()" inputmode="numeric"><span>over</span><input class="num" id="od" value="8" oninput="opTool()" inputmode="numeric"></div><div id="or"></div></div>',SECA);}
+ +'<h3>Try it</h3><p class="small">The bottom number is the same for both fractions.</p><div class="row"><span class="fin"><input class="num" id="oa" value="5" oninput="opTool()" inputmode="numeric"><i></i><input class="num" id="od" value="8" oninput="opTool()" inputmode="numeric"></span><select id="op" onchange="opTool()" style="font:600 18px Jost,sans-serif;padding:6px"><option>+</option><option>−</option></select><span class="fin"><input class="num" id="ob" value="2" oninput="opTool()" inputmode="numeric"><i></i><input class="num" id="od2" disabled></span></div><div id="or"></div></div>',SECA);}
 function rB(){secPage('b','<div class="card"><h2>Same whole, word problems</h2><div class="rule">In a word problem, check that every fraction is a part of the <b>same whole</b>. Then add if parts are joined and subtract if parts are taken away. Remember that 1 whole can be written as 8/8 or 12/12 or any fraction with the same top and bottom.</div></div>',SECB);}
 function rC(){secPage('c','<div class="card"><h2>Putting it together</h2><div class="rule">Keep the denominator, work with the numerators, then simplify.</div></div>',SECC,true);}
 
@@ -251,5 +252,6 @@ begin();
 (function(){if(/[?&]mom=1/.test(location.search)){var b=document.querySelector('a.back');if(b){b.href=b.getAttribute('href').replace(/#\/kid\/(\w+)/,'#/mom/ladder/$1');b.textContent='\u2190 Lessons';}}})();
 </script>
 <script src="momnav.js?v=20261118"></script>
+<script src="fractions.js?v=1"></script>
 </body>
 </html>

@@ -207,7 +207,7 @@ function cmpTool(){
   $('cr').innerHTML='<div class="out2">With the same number of places: '+a.toFixed(dp)+' and '+b.toFixed(dp)+'<br><b>'+a+' '+(a>b?'>':a<b?'<':'=')+' '+b+'</b></div>';
 }
 function rA(){secPage('a','<div class="card"><h1>Fractions and decimals that match</h1><p class="small">About 15 minutes. Practice only. Nothing here is saved or graded.</p><div class="rule">Know these: <b>1/2 = 0.5</b>, <b>1/4 = 0.25</b>, <b>3/4 = 0.75</b>, <b>1/5 = 0.2</b>, <b>1/10 = 0.1</b>. To change a fraction to a decimal, make the denominator 10 or 100: 3/5 = 6/10 = 0.6. Write simplest-form fractions when a question asks for a fraction.</div>'
- +'<h3>Try it</h3><div class="row"><input class="num" id="fn" value="3" oninput="f2dTool()" inputmode="numeric"><span>/</span><input class="num" id="fd" value="4" oninput="f2dTool()" inputmode="numeric"></div><div id="fr"></div></div>',SECA);}
+ +'<h3>Try it</h3><div class="row"><span class="fin"><input class="num" id="fn" value="3" oninput="f2dTool()" inputmode="numeric"><i></i><input class="num" id="fd" value="4" oninput="f2dTool()" inputmode="numeric"></span></div><div id="fr"></div></div>',SECA);}
 function rB(){secPage('b','<div class="card"><h2>Comparing decimals</h2><div class="rule">To compare decimals, line up the decimal points and compare place by place from the left. <b>0.4 = 0.40</b>, so 0.4 is greater than 0.36. A longer decimal is not always bigger.</div>'
  +'<h3>Try it</h3><div class="row"><input class="num" id="ca" value="0.4" oninput="cmpTool()" inputmode="decimal"><span>and</span><input class="num" id="cb" value="0.36" oninput="cmpTool()" inputmode="decimal"></div><div id="cr"></div></div>',SECB);}
 function rC(){secPage('c','<div class="card"><h2>Putting it together</h2><div class="rule">Rename fractions as decimals so you can compare them, and use 0.5 as a benchmark.</div></div>',SECC,true);}
@@ -257,5 +257,6 @@ begin();
 (function(){if(/[?&]mom=1/.test(location.search)){var b=document.querySelector('a.back');if(b){b.href=b.getAttribute('href').replace(/#\/kid\/(\w+)/,'#/mom/ladder/$1');b.textContent='\u2190 Lessons';}}})();
 </script>
 <script src="momnav.js?v=20261118"></script>
+<script src="fractions.js?v=1"></script>
 </body>
 </html>

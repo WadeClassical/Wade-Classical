@@ -206,9 +206,9 @@ function nlTool(){
   $('nr').innerHTML=s+'<div class="out2"><b>'+n+'/'+d+'</b> is '+(n===0?'at 0.':(r===0?'the whole number <b>'+w+'</b>.':(w===0?'between 0 and 1.':'the mixed number <b>'+w+' '+r+'/'+d+'</b>, between '+w+' and '+(w+1)+'.')))+'<br>Each whole is cut into '+d+' equal parts, and the point is '+n+' parts from 0.'+(g>1&&n>0?'<br>It equals '+n/g+'/'+d/g+' in simplest form.':'')+'</div>';
 }
 function rA(){secPage('a','<div class="card"><h1>Comparing fractions</h1><p class="small">About 15 minutes. Practice only. Nothing here is saved or graded.</p><div class="rule">To compare fractions with different denominators, rename them with a <b>common denominator</b>. Then the one with the bigger numerator is greater. You can also compare each one to <b>1/2</b>.</div>'
- +'<h3>Try it</h3><div class="row"><input class="num" id="ca" value="2" oninput="cmpTool()" inputmode="numeric"><span>/</span><input class="num" id="cb" value="3" oninput="cmpTool()" inputmode="numeric"></div><div class="row"><input class="num" id="cc" value="3" oninput="cmpTool()" inputmode="numeric"><span>/</span><input class="num" id="cd" value="4" oninput="cmpTool()" inputmode="numeric"></div><div id="cr"></div></div>',SECA);}
+ +'<h3>Try it</h3><div class="row"><span class="fin"><input class="num" id="ca" value="2" oninput="cmpTool()" inputmode="numeric"><i></i><input class="num" id="cb" value="3" oninput="cmpTool()" inputmode="numeric"></span></div><div class="row"><span class="fin"><input class="num" id="cc" value="3" oninput="cmpTool()" inputmode="numeric"><i></i><input class="num" id="cd" value="4" oninput="cmpTool()" inputmode="numeric"></span></div><div id="cr"></div></div>',SECA);}
 function rB(){secPage('b','<div class="card"><h2>Fractions on a number line</h2><div class="rule">A <b>mixed number</b> like 1 3/4 is a whole number plus a fraction. An improper fraction like 7/4 names the same point. Enter mixed numbers like 1 3/4 with a space.</div>'
- +'<h3>Place a point</h3><div class="row"><input class="num" id="nn" value="7" oninput="nlTool()" inputmode="numeric"><span>/</span><input class="num" id="nd" value="4" oninput="nlTool()" inputmode="numeric"></div><div id="nr"></div></div>',SECB);}
+ +'<h3>Place a point</h3><div class="row"><span class="fin"><input class="num" id="nn" value="7" oninput="nlTool()" inputmode="numeric"><i></i><input class="num" id="nd" value="4" oninput="nlTool()" inputmode="numeric"></span></div><div id="nr"></div></div>',SECB);}
 function rC(){secPage('c','<div class="card"><h2>Putting it together</h2><div class="rule">Compare with a common denominator or with 1/2. A larger denominator means smaller pieces.</div></div>',SECC,true);}
 
 const SECFNS=[rA,rB,rC];
@@ -256,5 +256,6 @@ begin();
 (function(){if(/[?&]mom=1/.test(location.search)){var b=document.querySelector('a.back');if(b){b.href=b.getAttribute('href').replace(/#\/kid\/(\w+)/,'#/mom/ladder/$1');b.textContent='\u2190 Lessons';}}})();
 </script>
 <script src="momnav.js?v=20261118"></script>
+<script src="fractions.js?v=1"></script>
 </body>
 </html>

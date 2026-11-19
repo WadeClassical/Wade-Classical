@@ -202,9 +202,9 @@ function smTool(){
   $('sr').innerHTML='<div class="out2">'+(n>=d?'Try a fraction less than 1 (top smaller than bottom).':'The biggest number that divides both '+n+' and '+d+' is <b>'+g+'</b>.<br>'+n+' ÷ '+g+' = '+n/g+' and '+d+' ÷ '+g+' = '+d/g+'.<br><b>'+(g===1?n+'/'+d+' is already in simplest form.':n+'/'+d+' = '+n/g+'/'+d/g+' in simplest form.')+'</b>')+'</div>';
 }
 function rA(){secPage('a','<div class="card"><h1>Equivalent fractions</h1><p class="small">About 15 minutes. Practice only. Nothing here is saved or graded.</p><div class="rule">Equivalent fractions name the <b>same amount</b>. To make one, multiply the top and the bottom by the <b>same number</b>: a/b = (n × a)/(n × b).</div>'
- +'<h3>Try it</h3><div class="row"><input class="num" id="en" value="2" oninput="eqTool()" inputmode="numeric"><span>/</span><input class="num" id="ed" value="3" oninput="eqTool()" inputmode="numeric"><span>times</span><input class="num" id="ek" value="3" oninput="eqTool()" inputmode="numeric"></div><div id="er"></div></div>',SECA);}
+ +'<h3>Try it</h3><div class="row"><span class="fin"><input class="num" id="en" value="2" oninput="eqTool()" inputmode="numeric"><i></i><input class="num" id="ed" value="3" oninput="eqTool()" inputmode="numeric"></span><span>times</span><input class="num" id="ek" value="3" oninput="eqTool()" inputmode="numeric"></div><div id="er"></div></div>',SECA);}
 function rB(){secPage('b','<div class="card"><h2>Simplest form</h2><div class="rule">To write a fraction in <b>simplest form</b>, divide the top and the bottom by the same number until only 1 divides both. Enter simplest-form answers, like 3/4.</div>'
- +'<h3>Try it</h3><div class="row"><input class="num" id="sn" value="12" oninput="smTool()" inputmode="numeric"><span>/</span><input class="num" id="sd" value="18" oninput="smTool()" inputmode="numeric"></div><div id="sr"></div></div>',SECB);}
+ +'<h3>Try it</h3><div class="row"><span class="fin"><input class="num" id="sn" value="12" oninput="smTool()" inputmode="numeric"><i></i><input class="num" id="sd" value="18" oninput="smTool()" inputmode="numeric"></span></div><div id="sr"></div></div>',SECB);}
 function rC(){secPage('c','<div class="card"><h2>Putting it together</h2><div class="rule">Use equivalent fractions to answer questions about parts of a whole, like slices of a pizza. Find what the bottom was multiplied by, then do the same to the top.</div></div>',SECC,true);}
 
 const SECFNS=[rA,rB,rC];
@@ -252,5 +252,6 @@ begin();
 (function(){if(/[?&]mom=1/.test(location.search)){var b=document.querySelector('a.back');if(b){b.href=b.getAttribute('href').replace(/#\/kid\/(\w+)/,'#/mom/ladder/$1');b.textContent='\u2190 Lessons';}}})();
 </script>
 <script src="momnav.js?v=20261118"></script>
+<script src="fractions.js?v=1"></script>
 </body>
 </html>

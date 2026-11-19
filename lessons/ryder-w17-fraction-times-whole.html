@@ -200,7 +200,7 @@ function mulTool(){
   $('ur').innerHTML=bars+'<div class="out2"><b>'+n+' × '+a+'/'+b+'</b> means '+n+' groups of '+a+'/'+b+'.<br>'+Array(n).fill(a+'/'+b).join(' + ')+' = '+tn+'/'+b+'<br>Simplest form: <b>'+fstr(tn,b)+'</b>'+(tn>b?'<br>As a mixed number: <b>'+mstr(tn,b)+'</b>':'')+'</div>';
 }
 function rA(){secPage('a','<div class="card"><h1>A fraction times a whole number</h1><p class="small">About 15 minutes. Practice only. Nothing here is saved or graded.</p><div class="rule">A fraction like 5/4 is <b>5 × 1/4</b>. So a whole number times a fraction, like 3 × 2/5, is 3 groups of 2/5. <b>Multiply the whole number by the numerator and keep the denominator:</b> 3 × 2/5 = 6/5.</div>'
- +'<h3>Try it</h3><div class="row"><input class="num" id="un" value="3" oninput="mulTool()" inputmode="numeric"><span>×</span><input class="num" id="ua" value="2" oninput="mulTool()" inputmode="numeric"><span>/</span><input class="num" id="ub" value="5" oninput="mulTool()" inputmode="numeric"></div><div id="ur"></div></div>',SECA);}
+ +'<h3>Try it</h3><div class="row"><input class="num" id="un" value="3" oninput="mulTool()" inputmode="numeric"><span>×</span><span class="fin"><input class="num" id="ua" value="2" oninput="mulTool()" inputmode="numeric"><i></i><input class="num" id="ub" value="5" oninput="mulTool()" inputmode="numeric"></span></div><div id="ur"></div></div>',SECA);}
 function rB(){secPage('b','<div class="card"><h2>Mixed-number answers</h2><div class="rule">When the product is greater than 1, change it to a mixed number: 3 × 2/5 = 6/5 = 1 1/5. Enter answers like 2 1/4 with a space. A whole-number answer is just the number.</div></div>',SECB);}
 function rC(){secPage('c','<div class="card"><h2>Putting it together</h2><div class="rule">Word problems with equal groups: how many groups, and how much is in each group? Multiply, and keep the denominator.</div></div>',SECC,true);}
 
@@ -249,5 +249,6 @@ begin();
 (function(){if(/[?&]mom=1/.test(location.search)){var b=document.querySelector('a.back');if(b){b.href=b.getAttribute('href').replace(/#\/kid\/(\w+)/,'#/mom/ladder/$1');b.textContent='\u2190 Lessons';}}})();
 </script>
 <script src="momnav.js?v=20261118"></script>
+<script src="fractions.js?v=1"></script>
 </body>
 </html>

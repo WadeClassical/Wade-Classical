@@ -200,15 +200,16 @@ function mfTool(){
   $('mr').innerHTML='<div class="out2"><b>'+n+'/'+d+'</b> = '+(r?(w?w+' '+r+'/'+d:r+'/'+d):w)+'<br>'+n+' ÷ '+d+' = '+w+' remainder '+r+'<br>So '+w+' whole'+(w===1?'':'s')+' ('+w*d+'/'+d+') and '+r+'/'+d+' left over.'+(r&&gcdf(r,d)>1?'<br>Simplest form: <b>'+w+' '+r/gcdf(r,d)+'/'+d/gcdf(r,d)+'</b>':'')+'</div>';
 }
 function mxTool(){
+  $('xd2').value=gv('xd',2,12);
   const w1=gv('x1',0,9),n1=gv('x2',0,11),w2=gv('x3',0,9),n2=gv('x4',0,11),d=gv('xd',2,12);const a=w1*d+n1,b=w2*d+n2,sg=$('xo').value;
   const r=sg==='+'?a+b:a-b;
   if(r<0){$('xr').innerHTML='<div class="out2">The answer would be less than 0. Try a larger first number.</div>';return;}
   $('xr').innerHTML='<div class="out2">'+w1+' '+n1+'/'+d+' = '+a+'/'+d+'<br>'+w2+' '+n2+'/'+d+' = '+b+'/'+d+'<br>'+a+'/'+d+' '+sg+' '+b+'/'+d+' = '+r+'/'+d+'<br><b>Answer: '+mstr(r,d)+'</b></div>';
 }
 function rA(){secPage('a','<div class="card"><h1>Mixed numbers</h1><p class="small">About 15 minutes. Practice only. Nothing here is saved or graded.</p><div class="rule">A <b>mixed number</b> has a whole number and a fraction, like 2 3/4. To change to a fraction, <b>multiply the whole by the denominator, then add the numerator</b>: 2 3/4 = (2 × 4 + 3)/4 = 11/4. To change back, divide the numerator by the denominator.</div>'
- +'<h3>Try it: fraction to mixed number</h3><div class="row"><input class="num" id="mn" value="11" oninput="mfTool()" inputmode="numeric"><span>/</span><input class="num" id="md" value="4" oninput="mfTool()" inputmode="numeric"></div><div id="mr"></div></div>',SECA);}
+ +'<h3>Try it: fraction to mixed number</h3><div class="row"><span class="fin"><input class="num" id="mn" value="11" oninput="mfTool()" inputmode="numeric"><i></i><input class="num" id="md" value="4" oninput="mfTool()" inputmode="numeric"></span></div><div id="mr"></div></div>',SECA);}
 function rB(){secPage('b','<div class="card"><h2>Adding and subtracting mixed numbers</h2><div class="rule">Two ways. <b>1.</b> Change both to fractions greater than 1, add or subtract the numerators, then change back. <b>2.</b> Add the wholes and the fractions separately, and regroup if the fractions make more than 1. Enter answers like 3 7/8 with a space. Use simplest form.</div>'
- +'<h3>Try it</h3><div class="row"><input class="num" id="x1" value="2" oninput="mxTool()" inputmode="numeric"><input class="num" id="x2" value="3" oninput="mxTool()" inputmode="numeric"><span>over</span><input class="num" id="xd" value="4" oninput="mxTool()" inputmode="numeric"></div><div class="row"><select id="xo" onchange="mxTool()" style="font:600 18px Jost,sans-serif;padding:6px"><option>+</option><option>−</option></select><input class="num" id="x3" value="1" oninput="mxTool()" inputmode="numeric"><input class="num" id="x4" value="3" oninput="mxTool()" inputmode="numeric"><span>over the same denominator</span></div><p class="small">Boxes: whole, numerator, denominator. Both numbers use the same denominator.</p><div id="xr"></div></div>',SECB);}
+ +'<h3>Try it</h3><p class="small">Each mixed number has a whole number box, then a fraction box. Both use the same bottom number.</p><div class="row"><input class="num whole" id="x1" value="2" oninput="mxTool()" inputmode="numeric"><span class="fin"><input class="num" id="x2" value="3" oninput="mxTool()" inputmode="numeric"><i></i><input class="num" id="xd" value="4" oninput="mxTool()" inputmode="numeric"></span><select id="xo" onchange="mxTool()" style="font:600 18px Jost,sans-serif;padding:6px"><option>+</option><option>−</option></select><input class="num whole" id="x3" value="1" oninput="mxTool()" inputmode="numeric"><span class="fin"><input class="num" id="x4" value="3" oninput="mxTool()" inputmode="numeric"><i></i><input class="num" id="xd2" disabled></span></div><div id="xr"></div></div>',SECB);}
 function rC(){secPage('c','<div class="card"><h2>Putting it together</h2><div class="rule">Change to fractions greater than 1, work with the numerators, then change back to a mixed number in simplest form.</div></div>',SECC,true);}
 
 const SECFNS=[rA,rB,rC];
@@ -256,5 +257,6 @@ begin();
 (function(){if(/[?&]mom=1/.test(location.search)){var b=document.querySelector('a.back');if(b){b.href=b.getAttribute('href').replace(/#\/kid\/(\w+)/,'#/mom/ladder/$1');b.textContent='\u2190 Lessons';}}})();
 </script>
 <script src="momnav.js?v=20261118"></script>
+<script src="fractions.js?v=1"></script>
 </body>
 </html>

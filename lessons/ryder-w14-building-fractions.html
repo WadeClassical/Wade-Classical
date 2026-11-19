@@ -201,7 +201,7 @@ function divTool(){
   $('vr').innerHTML='<div class="out2"><b>'+a+' ÷ '+b+' = '+a+'/'+b+'</b>'+(g>1?'<br>In simplest form that is '+a/g+'/'+b/g+'.':'')+(a>b?'<br>As a mixed number: '+(r?q+' '+r+'/'+b:q)+'.':'')+'<br>Share '+a+' whole things equally among '+b+' people, and each person gets '+a+'/'+b+' of one thing.</div>';
 }
 function rA(){secPage('a','<div class="card"><h1>Building fractions</h1><p class="small">About 15 minutes. Practice only. Nothing here is saved or graded.</p><div class="rule">A fraction like 3/8 is made of <b>unit fractions</b>: 3/8 = 1/8 + 1/8 + 1/8. You can also split it other ways, like 3/8 = 1/8 + 2/8, as long as the denominator stays the same.</div>'
- +'<h3>Try it</h3><div class="row"><input class="num" id="dn" value="5" oninput="decTool()" inputmode="numeric"><span>/</span><input class="num" id="dd" value="8" oninput="decTool()" inputmode="numeric"></div><div id="dr"></div></div>',SECA);}
+ +'<h3>Try it</h3><div class="row"><span class="fin"><input class="num" id="dn" value="5" oninput="decTool()" inputmode="numeric"><i></i><input class="num" id="dd" value="8" oninput="decTool()" inputmode="numeric"></span></div><div id="dr"></div></div>',SECA);}
 function rB(){secPage('b','<div class="card"><h2>A fraction is a division</h2><div class="rule">The fraction bar means divide: <b>a ÷ b = a/b</b>. 3 pies shared among 4 people is 3 ÷ 4 = 3/4 of a pie each. A fraction can also name parts of a set: 3/4 of 12 is 3 × (12 ÷ 4). Write fractions in simplest form.</div>'
  +'<h3>Try it</h3><div class="row"><input class="num" id="va" value="3" oninput="divTool()" inputmode="numeric"><span>÷</span><input class="num" id="vb" value="4" oninput="divTool()" inputmode="numeric"></div><div id="vr"></div></div>',SECB);}
 function rC(){secPage('c','<div class="card"><h2>Putting it together</h2><div class="rule">Fractions can be sums of unit fractions, a division, or part of a set. They all name the same amounts.</div></div>',SECC,true);}
@@ -251,5 +251,6 @@ begin();
 (function(){if(/[?&]mom=1/.test(location.search)){var b=document.querySelector('a.back');if(b){b.href=b.getAttribute('href').replace(/#\/kid\/(\w+)/,'#/mom/ladder/$1');b.textContent='\u2190 Lessons';}}})();
 </script>
 <script src="momnav.js?v=20261118"></script>
+<script src="fractions.js?v=1"></script>
 </body>
 </html>
