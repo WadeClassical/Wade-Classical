@@ -949,6 +949,11 @@ function aheadCard(kid,n){
   if(!stg&&!built.length)h+='';
   return h+'</div></div></div>';
 }
+function pastTries(kid,n){
+  const all=quizAttempts(kid,n);if(!all.length)return '';
+  const dt=ts=>new Date(ts).toLocaleDateString(undefined,{month:'short',day:'numeric'});
+  return '<div style="margin:10px 0"><div class="small muted"><b>Tries</b></div>'+all.map(a=>'<div class="small">'+((a.kind||'test')==='test'?'Test-out':'Quiz')+' · '+dt(a.ts)+' · <b>'+a.score+'/15</b> '+(a.pass?'passed':'not yet')+attLink(a)+(openAtt[a.id]?attemptReview(kid,n,a):'')+'</div>').join('')+'</div>';
+}
 function pathCard(kid,n,mom){
   const K=KIDS[kid];const st=weekStatus(kid,n),g=gradeOf(kid,n),stg=stageOf(kid,n),hq=hasQuiz(kid,n);
   const dt=ts=>new Date(ts).toLocaleDateString(undefined,{month:'short',day:'numeric'});
@@ -956,7 +961,7 @@ function pathCard(kid,n,mom){
   const q=(x)=>'\''+kid+'\','+n+(x?','+x:'');
   let h='<div class="'+K.cls+'" style="margin-top:12px">';
   if(st==='mastered'){
-    h+='<div class="pstep dn"><div class="pnum">✓</div><div><b>Week '+n+' is mastered</b>'+(g?'<div>Grade <b>'+g.letter+'</b> · '+(g.how==='test'?'tested out':'quiz '+g.score+'/15')+'</div>':'<div class="small muted">Marked mastered by Mom.</div>')+'</div></div>'+canBlock(kid,n,mom)+(mom?'':aheadCard(kid,n))+'</div>';
+    h+='<div class="pstep dn"><div class="pnum">✓</div><div><b>Week '+n+' is mastered</b>'+(g?'<div>Grade <b>'+g.letter+'</b> · '+(g.how==='test'?'tested out':'quiz '+g.score+'/15')+'</div>':'<div class="small muted">Marked mastered by Mom.</div>')+'</div></div>'+(mom?pastTries(kid,n):'')+canBlock(kid,n,mom)+(mom?'':aheadCard(kid,n))+'</div>';
     return h;
   }
   // 1 test out
