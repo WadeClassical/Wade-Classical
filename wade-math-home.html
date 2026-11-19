@@ -1212,13 +1212,35 @@ function ladderView(kid){
   h+='</div></div></div></div>';
   return h;
 }
+
+let openAtt={};
+function toggleAtt(kid,n,i){const k=kid+'/'+n+'/'+i;openAtt[k]=!openAtt[k];render();}
+function attemptReview(kid,n,a){
+  const form=a.form||0,qs=QUIZ[kid]&&QUIZ[kid][n]&&QUIZ[kid][n][form];
+  if(!qs)return '<div class="small muted" style="margin:6px 0 10px">This try was saved without its questions, so it cannot be shown.</div>';
+  let ans=[];try{ans=JSON.parse(a.ans||'[]')||[];}catch(e){}
+  if(!a.ans)return '<div class="small muted" style="margin:6px 0 10px">This try was saved before answers were recorded, so only the score is available.</div>';
+  const pro=KIDS[kid].name+'’s';let right=0,miss='';
+  const rows=qs.map((q,i)=>{
+    const resp=ans[i],ok=gradeQ(q,resp);if(ok)right++;
+    let mine;
+    if(resp==null||String(resp).trim()==='')mine='(left blank)';
+    else if(q.t==='mc')mine=q.o[resp]!=null?String(q.o[resp]):'(unknown)';
+    else if(q.t==='rem')mine=String(resp);
+    else mine=fmtNum(resp);
+    if(!ok)miss+=(miss?', ':'')+(i+1);
+    return '<div style="padding:8px 10px;margin:6px 0;border-radius:10px;border:1px solid '+(ok?'#cfe3d3':'#e8b9b0')+';background:'+(ok?'#f4faf5':'#fdf1ee')+'"><div class="small"><b>'+(i+1)+'. '+(ok?'<span style="color:var(--ok)">✓</span>':'<span style="color:var(--warn)">✗</span>')+'</b> '+esc(q.q||q.p||'')+'</div>'
+      +'<div class="small" style="margin-top:3px">'+esc(pro)+' answer: <b>'+esc(mine)+'</b>'+(ok?'':' · Correct answer: <b>'+esc(ansText(q))+'</b>')+'</div></div>';
+  }).join('');
+  return '<div class="fx" style="margin:6px 0 12px"><div class="small"><b>'+right+' of '+qs.length+' marked right</b>'+(a.score!==right?' (the score saved at the time was '+a.score+')':'')+(miss?' · Missed: '+miss:' · None missed')+'</div>'+rows+'</div>';
+}
 function quizBlock(kid,n){
   let h='<div class="small muted" style="margin-top:12px">Test-out quiz · 15 questions · 13 to pass · one retake, then the week stays open</div>';
   if(!hasQuiz(kid,n))return h+'<div class="small" style="margin-top:4px">The quiz for this week is not written yet. Mark it mastered yourself if you know it.</div>';
   const at=quizAttempts(kid,n);
   h+='<div style="margin-top:6px">';
   if(!at.length)h+='<span class="small">No attempts yet.</span>';
-  at.forEach((a,i)=>{h+='<div class="small">Try '+(i+1)+' · '+new Date(a.ts).toLocaleDateString(undefined,{month:'short',day:'numeric'})+' · <b>'+a.score+'/15</b> '+(a.pass?'<span style="color:var(--ok)">passed</span>':'<span style="color:var(--warn)">not yet</span>')+'</div>';});
+  at.forEach((a,i)=>{h+='<div class="small">Try '+(i+1)+' · '+new Date(a.ts).toLocaleDateString(undefined,{month:'short',day:'numeric'})+' · <b>'+a.score+'/15</b> '+(a.pass?'<span style="color:var(--ok)">passed</span>':'<span style="color:var(--warn)">not yet</span>')+' · <a href="javascript:void(0)" onclick="toggleAtt(\''+kid+'\','+n+','+i+')">'+(openAtt[kid+'/'+n+'/'+i]?'Hide answers':'See answers')+'</a></div>'+(openAtt[kid+'/'+n+'/'+i]?attemptReview(kid,n,a):'');});
   h+='</div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm k" onclick="giveQuiz(\''+kid+'\','+n+')">Give quiz today</button><button class="btn sm alt" onclick="openQuiz(\''+kid+'\','+n+')">Open quiz here</button></div>';
   return h;
 }
