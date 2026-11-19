@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ryder · Week 2 · Comparing and Rounding</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--parch:#F4ECDA;--card:#FBF6EA;--forest:#204B3A;--ink:#1E2A24;--muted:#55604F;--line:#E2D6BC;--teal:#17607A;--teal-d:#0F4A5F;--ok:#2E7D4F;--bad:#A8323A;--tint:#E3F0F4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jost',system-ui,sans-serif;background:var(--parch);color:var(--ink);font-size:18px;line-height:1.45;min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:14px 14px 70px}
+.top{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:10px}
+.back{color:var(--teal);text-decoration:none;font-weight:600;font-size:15px;border:1px solid var(--teal);border-radius:10px;padding:6px 12px;background:#fff}
+.title{font-weight:700;font-size:20px;color:var(--teal-d);flex:1;text-align:center}
+.prog{height:8px;background:#fff;border:1px solid var(--line);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.prog i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+.card{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--teal);border-radius:14px;padding:18px;margin-bottom:16px}
+h1{font-size:30px;line-height:1.15;color:var(--teal-d)}
+h2{font-size:23px;line-height:1.2;color:var(--teal-d);margin-bottom:6px}
+h3{font-size:17px;color:var(--teal-d);margin:14px 0 6px}
+p{margin:8px 0}
+.small{font-size:15px;color:var(--muted)}
+.rule{background:var(--tint);border-left:5px solid var(--teal);border-radius:8px;padding:10px 14px;margin:10px 0;font-weight:500}
+.btn{font-family:inherit;font-weight:600;font-size:17px;border:0;border-radius:10px;padding:11px 20px;cursor:pointer;color:#fff;background:var(--teal)}
+.btn.alt{background:#fff;color:var(--teal);border:1px solid var(--teal)}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+input.num{font:600 22px Jost,sans-serif;padding:9px 12px;border:2px solid var(--line);border-radius:10px;width:190px;background:#fff;color:var(--ink)}
+input.num:focus{outline:none;border-color:var(--teal)}
+/* chart */
+.chart{display:flex;justify-content:center;gap:0;margin:12px 0 6px;overflow-x:auto;padding-bottom:4px}
+.cc{width:68px;flex:none;text-align:center}
+.cc .nm{font-size:12px;color:var(--muted);min-height:30px;line-height:1.1;display:flex;align-items:flex-end;justify-content:center;padding:0 2px}
+.cc .dg{font:700 34px Jost,sans-serif;background:#fff;border:2px solid var(--teal);border-radius:8px;margin:3px 2px;height:52px;display:flex;align-items:center;justify-content:center;color:var(--teal-d)}
+.cc .dg.z{color:#B9C7CC;border-color:#C9D6DA}
+.cc .vl{font-size:13px;font-weight:600;color:var(--ink);min-height:18px}
+.cm{width:14px;flex:none;font:700 34px Jost,sans-serif;align-self:center;margin-top:12px;color:var(--ink);text-align:center}
+.arrows{display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:var(--teal-d);margin:6px 8px 0;gap:10px;flex-wrap:wrap}
+.arrows span{background:var(--tint);border-radius:99px;padding:4px 12px}
+/* questions */
+.q{border-top:1px solid var(--line);padding:12px 0}
+.q:first-of-type{border-top:0}
+.q .t{font-weight:500;margin-bottom:6px}
+.q .res{margin-top:6px;font-size:16px;font-weight:600}
+.q.good .res{color:var(--ok)}.q.bad .res{color:var(--bad)}
+.q.good input{border-color:var(--ok);background:#EEF7F1}
+.opt{display:block;width:100%;text-align:left;font:500 17px Jost,sans-serif;padding:9px 12px;margin:5px 0;background:#fff;border:2px solid var(--line);border-radius:10px;cursor:pointer;color:var(--ink)}
+.opt:hover{border-color:var(--teal)}
+.opt.sym{display:inline-block;width:auto;min-width:76px;text-align:center;font-size:28px;font-weight:700;margin-right:8px}
+.opt.right{border-color:var(--ok);background:#EEF7F1}.opt.wrong{border-color:var(--bad);background:#FAEBEC}
+table.cmp{border-collapse:separate;border-spacing:3px;margin:10px auto}
+table.cmp td{width:42px;height:46px;text-align:center;font:700 26px Jost,sans-serif;background:#fff;border:2px solid var(--line);border-radius:7px}
+table.cmp td.cm{width:12px;border:0;background:none;padding:0}
+table.cmp td.hl{border-color:var(--teal);background:var(--tint);color:var(--teal-d)}
+table.cmp td.pl{height:auto;border:0;background:none;font:600 11px Jost,sans-serif;color:var(--muted);vertical-align:bottom;line-height:1.1}
+table.cmp td.lb{width:auto;border:0;background:none;font:600 14px Jost,sans-serif;color:var(--muted);text-align:right;padding-right:6px}
+.pbtn{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.pbtn button{font:600 15px Jost,sans-serif;padding:7px 11px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}.pbtn button.on{border-color:var(--teal);background:var(--tint)}
+.nl{width:100%;max-width:560px;display:block;margin:6px auto}
+table.tb{border-collapse:collapse;width:100%;margin:8px 0;font-size:16px}
+table.tb td,table.tb th{border:1px solid var(--line);padding:7px 10px;text-align:left;background:#fff}
+table.tb th{background:var(--tint);color:var(--teal-d)}
+.big{font:700 28px Jost,sans-serif;color:var(--teal-d)}
+.score{font:700 44px Jost,sans-serif;color:var(--teal-d)}
+details{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:14px}
+summary{cursor:pointer;font-weight:600;color:var(--teal-d)}
+ul{margin:6px 0 6px 22px}
+.chain{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 6px;margin:10px 0;font-weight:700;color:var(--teal-d)}
+.chain .v{background:#fff;border:2px solid var(--teal);border-radius:8px;padding:6px 9px;font-size:18px}
+.chain .x{font-size:13px;background:var(--tint);border-radius:99px;padding:3px 8px;color:var(--teal-d)}
+.dpick{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.dpick button{width:38px;height:38px;border-radius:8px;border:2px solid var(--line);background:#fff;font:700 18px Jost,sans-serif;cursor:pointer;color:var(--ink)}
+.dpick button.on{border-color:var(--teal);background:var(--tint)}
+.eq{text-align:center;font:700 24px Jost,sans-serif;color:var(--teal-d);margin:6px 0;min-height:34px}
+@media(max-width:560px){body{font-size:17px}.cc{width:46px}.cc .dg{font-size:24px;height:42px}.cc .nm{font-size:10px}.cc .vl{font-size:10px}.cm{width:8px;font-size:24px}input.num{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="back" href="../wade-math-home.html#/kid/ryder">← Math Home</a><div class="title">Comparing and Rounding</div><a class="back" id="modeLink" href="#">Mom view</a></div>
+  <div class="prog"><i id="bar"></i></div>
+  <div id="stage"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const PLACES=['Millions','Hundred thousands','Ten thousands','Thousands','Hundreds','Tens','Ones'];
+const ONES=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const TENS=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+function fmt(n){return String(n).replace(/\B(?=(\d{3})+$)/g,',');}
+function w999(n){let s=[];if(n>=100){s.push(ONES[Math.floor(n/100)]+' hundred');n%=100;}if(n>=20){s.push(TENS[Math.floor(n/10)]+(n%10?'-'+ONES[n%10]:''));}else if(n>0||!s.length)s.push(ONES[n]);return s.join(' ');}
+function toWords(n){
+  if(n===0)return 'zero';
+  if(n===1000000)return 'one million';
+  const th=Math.floor(n/1000),r=n%1000;let out=[];
+  if(th)out.push(w999(th)+' thousand');
+  if(r)out.push(w999(r));
+  return out.join(', ');
+}
+function expanded(n){
+  const s=String(n),L=s.length,parts=[];
+  for(let i=0;i<L;i++){if(s[i]!=='0')parts.push(fmt(s[i]+'0'.repeat(L-1-i)));}
+  return parts.join(' + ');
+}
+function chartHTML(n){
+  const s=String(n).padStart(7,'0');let h='<div class="chart">';
+  let lead=true;
+  for(let i=0;i<7;i++){
+    if(s[i]!=='0')lead=false;
+    const show=!lead||i===6;
+    const val=s[i]==='0'?'':fmt(s[i]+'0'.repeat(6-i));
+    h+='<div class="cc"><div class="nm">'+PLACES[i]+'</div><div class="dg'+(show?'':' z')+'">'+(show?s[i]:'0')+'</div><div class="vl">'+(show?val:'')+'</div></div>';
+    if(i===0||i===3)h+='<div class="cm">'+((i===3||n>=1000000)?',':'')+'</div>';
+  }
+  return h+'</div>';
+}
+/* ---------- question engine ---------- */
+const MOM=/[?&]mom=1/.test(location.search);
+let QS={};let TOTAL=0;let FIRST=0;let ANSWERED=0;
+function norm(v){return String(v==null?'':v).replace(/[,\s$]/g,'');}
+function qHTML(sec,i,q){
+  if(MOM){
+    let h='<div class="q good"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+    if(q.o)q.o.forEach((o,j)=>{h+='<div class="opt'+(q.sym?' sym':'')+(j===q.c?' right':'')+'" style="cursor:default">'+o+(j===q.c?' ✓':'')+'</div>';});
+    return h+'<div class="res">Answer: '+q.show+(q.why?'. '+q.why:'')+'</div></div>';
+  }
+  const id=sec+i;QS[id]={q:q,tries:0,done:false};TOTAL++;
+  let h='<div class="q" id="q-'+id+'"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+  if(q.o){q.o.forEach((o,j)=>{h+='<button class="opt'+(q.sym?' sym':'')+'" onclick="pickQ(\''+id+'\','+j+',this)">'+o+'</button>';});}
+  else h+='<div class="row"><input class="num" id="in-'+id+'" inputmode="numeric" autocomplete="off" placeholder="Your answer" onkeydown="if(event.key===\'Enter\')checkQ(\''+id+'\')"><button class="btn" onclick="checkQ(\''+id+'\')">Check</button></div>';
+  return h+'<div class="res" id="res-'+id+'"></div></div>';
+}
+function finishQ(id,ok){
+  const s=QS[id];if(s.done)return;
+  s.tries++;
+  const el=$('q-'+id),res=$('res-'+id);
+  if(ok){
+    s.done=true;ANSWERED++;if(s.tries===1)FIRST++;
+    el.className='q good';res.textContent='✓ Correct'+(s.q.why?'. '+s.q.why:'');
+  }else{
+    el.className='q bad';
+    if(s.tries>=2){s.done=true;ANSWERED++;res.textContent='The answer is '+s.q.show+'. '+(s.q.why||'')+' Ask Mom if you are not sure why.';
+      const i=$('in-'+id);if(i)i.disabled=true;
+    }else res.textContent='Not quite. '+(s.q.hint||'Look at the rule above and try again.');
+  }
+  upd();
+}
+function checkQ(id){
+  const s=QS[id];if(s.done)return;
+  const v=norm($('in-'+id).value);if(!v)return;
+  finishQ(id,v===norm(s.q.a));
+}
+function pickQ(id,j,btn){
+  const s=QS[id];if(s.done)return;
+  const ok=j===s.q.c;
+  btn.className='opt '+(ok?'right':'wrong');
+  finishQ(id,ok);
+  if(s.done&&!ok){[].slice.call($('q-'+id).querySelectorAll('.opt'))[s.q.c].className='opt right';}
+}
+function upd(){const b=$('nextbtn');if(b)b.disabled=ANSWERED-SECBASE<SECTOTAL;const c=$('cnt');if(c)c.textContent=ANSWERED-SECBASE+' of '+SECTOTAL+' answered';}
+
+/* ---------- sections ---------- */
+const PS=['one','ten','hundred','thousand','ten thousand','hundred thousand','million'];
+const PL=['ones','tens','hundreds','thousands','ten thousands','hundred thousands','millions'];
+function sym(a,b,hint){return {sym:1,t:fmt(a)+' &nbsp;___&nbsp; '+fmt(b),o:['&lt;','=','&gt;'],c:a<b?0:a===b?1:2,show:a<b?'<':a===b?'=':'>',hint:hint||'Start at the left. Find the first place where the digits are different.',why:fmt(a)+(a<b?' < ':a===b?' = ':' > ')+fmt(b)+'.'};}
+const SEC1=[
+  sym(45672,45627),sym(309455,309545),sym(8090,8009),sym(120000,12000),sym(76543,76543,'Every digit matches.'),sym(99999,100000,'Count the digits first. More digits means a bigger number here.'),sym(450300,450030),
+  {t:'Which is the greatest: 34,508 &nbsp; 34,580 &nbsp; 33,999?',a:'34580',show:'34,580',hint:'Compare the thousands first, then the hundreds.'}
+];
+const SEC2=[
+  {t:'Round 4,687 to the nearest hundred.',a:'4700',show:'4,700',hint:'The digit to the right of the hundreds is the tens digit, 8. 5 or more rounds up.'},
+  {t:'Round 52,349 to the nearest thousand.',a:'52000',show:'52,000',hint:'Look at the hundreds digit, 3. 4 or less stays.'},
+  {t:'Round 365,820 to the nearest ten thousand.',a:'370000',show:'370,000',hint:'Look at the thousands digit, 5. 5 rounds up.'},
+  {t:'Round 849,500 to the nearest hundred thousand.',a:'800000',show:'800,000',hint:'Look at the ten thousands digit, 4.'},
+  {t:'Round 2,950 to the nearest hundred.',a:'3000',show:'3,000',hint:'The tens digit is 5, so round up. 29 hundreds plus 1 is 30 hundreds.',why:'29 hundreds rounds up to 30 hundreds, which is 3,000.'},
+  {t:'Round 8,996 to the nearest ten.',a:'9000',show:'9,000',hint:'The ones digit is 6, so round up. The 9s carry over.'},
+  {t:'Round 71,499 to the nearest thousand.',a:'71000',show:'71,000',hint:'The hundreds digit is 4. Do not look at the 99 after it.',why:'Only the digit right next to the place matters.'}
+];
+const SEC3=[
+  {t:'A stadium holds 48,712 people. The news says "about 50,000 fans." Why is rounding fine here?',o:['Nobody needs the exact number for a headline','Rounding makes the number more correct','The stadium changes its seats'],c:0,show:'Nobody needs the exact number for a headline',hint:'Ask: does anyone need the exact number?'},
+  {t:'Which job needs the EXACT answer?',o:['Telling a friend about how far the trip is','Counting out the money you owe a store','Guessing how many people are at a game'],c:1,show:'Counting out the money you owe a store',hint:'An exact amount is owed.'},
+  {t:'You have $47. Things cost $18, $22 and $9. Which quick check works?',o:['Round to 20 + 20 + 10 = 50. That is about $50, so $47 is not enough','Add 47 to every price','Round the $47 to $100'],c:0,show:'Round to 20 + 20 + 10 = 50. That is about $50, so $47 is not enough',hint:'Round each price, then add.',why:'18 + 22 + 9 is really 49, so the estimate was right.'},
+  {t:'Which sentence says WHY we round?',o:['To make a number simpler when an exact one is not needed','To make answers wrong on purpose','Because numbers with zeros are easier to spell'],c:0,show:'To make a number simpler when an exact one is not needed',hint:'Think about when you would not use the exact number.'}
+];
+let ST=0,SECTOTAL=0,SECBASE=0;
+const STEPS=['cmp','rnd','why','done'];
+function momGate(cb){
+  $('stage').innerHTML='<div class="card" style="text-align:center"><h2>Mom view is locked</h2><p>Enter the Mom PIN to see the answers. It opens by itself when it is right.</p>'
+   +'<p><input id="pinin" type="password" inputmode="numeric" autocomplete="off" maxlength="4" style="font:600 24px sans-serif;padding:8px 12px;width:160px;text-align:center;border:2px solid #ccc;border-radius:10px"></p>'
+   +'<p id="pinerr" style="color:#c0392b;font-weight:600;min-height:22px"></p>'
+   +'<p><a href="'+location.pathname+'">Back to the lesson</a></p></div>';
+  const go=()=>{if($('pinin').value==='3024'){cb();}else{$('pinerr').textContent='That is not the PIN.';$('pinin').value='';}};
+  $('pinin').addEventListener('input',()=>{if($('pinin').value.length>=4)go();});$('pinin').addEventListener('keydown',e=>{if(e.key==='Enter')go();});$('pinin').focus();
+}
+function begin(){
+  const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(buildMom);return;}
+  ml.href=location.pathname+'?mom=1';ST=0;render();
+}
+function buildMom(){
+  let all='<div class="card" style="border-top-color:#C9972B"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Ryder.</p></div>';
+  [rCmp,rRnd,rWhy].forEach(f=>{f();all+=$('stage').innerHTML;});
+  all+='<div class="card"><h2>Check him on these, out loud</h2><ul>'
+   +'<li>How do you decide which number is bigger? (Start at the left and find the first place where the digits differ.)</li>'
+   +'<li>What does the digit to the right tell you when you round? Why does 2,950 round to 3,000?</li>'
+   +'<li>Give one time you would round and one time you would not, and say why.</li></ul>'
+   +'<p class="small">If he does these well, tick them on his rung in Math Home. If he is solid, let him test out.</p></div>';
+  $('stage').innerHTML=all;$('bar').style.width='100%';cmpTool();rndTool();
+}
+function bar(){$('bar').style.width=Math.round(ST/(STEPS.length-1)*100)+'%';}
+function nav(){if(MOM)return '';return '<div class="row" style="margin-top:14px"><button class="btn" id="nextbtn" onclick="nextSec()" disabled>Next</button><span class="small" id="cnt"></span></div>';}
+function nextSec(){ST++;render();window.scrollTo(0,0);}
+function listHTML(sec,arr){let h='';arr.forEach((q,i)=>{h+=qHTML(sec,i,q);});return h;}
+function render(){bar();QS={};SECBASE=ANSWERED;({cmp:rCmp,rnd:rRnd,why:rWhy,done:rDone})[STEPS[ST]]();upd();}
+function num(v){let n=parseInt(norm(v)||'0',10);return isNaN(n)||n<0?0:Math.min(n,9999999);}
+/* compare tool */
+function cmpTool(){
+  const A=num($('ca').value),B=num($('cb').value);
+  let sa=String(A),sb=String(B);const L=Math.max(sa.length,sb.length);sa=sa.padStart(L,' ');sb=sb.padStart(L,' ');
+  let d=-1;for(let i=0;i<L;i++)if(sa[i]!==sb[i]){d=i;break;}
+  const cells=(s,row)=>{let h='<td class="lb">'+row+'</td>';for(let i=0;i<L;i++){h+='<td class="'+(i===d?'hl':'')+'">'+(s[i]===' '?'':s[i])+'</td>';const r=L-1-i;if(r>0&&r%3===0)h+='<td class="cm">'+(i>=L-Math.max(String(A).length,1)||true?',':'')+'</td>';}return '<tr>'+h+'</tr>';};
+  let pl='<tr><td class="lb"></td>';for(let i=0;i<L;i++){pl+='<td class="pl">'+PL[L-1-i]+'</td>';const r=L-1-i;if(r>0&&r%3===0)pl+='<td class="cm"></td>';}pl+='</tr>';
+  let msg;
+  if(d<0)msg='Every digit matches, so '+fmt(A)+' = '+fmt(B)+'.';
+  else{const x=+sa[d]||0,y=+sb[d]||0;msg='Start at the left. The first digits that differ are in the <b>'+PL[L-1-d]+'</b> place: '+x+' and '+y+'. '+(x>y?x+' is more than '+y:x+' is less than '+y)+', so <b>'+fmt(A)+(A>B?' &gt; ':' &lt; ')+fmt(B)+'</b>.';}
+  $('cmpout').innerHTML='<table class="cmp">'+pl+cells(sa,'')+cells(sb,'')+'</table><p>'+msg+'</p>';
+}
+function rCmp(){
+  SECTOTAL=SEC1.length;
+  $('stage').innerHTML=
+   '<div class="card"><h1>Comparing and rounding</h1><p class="small">About 10 minutes. This is practice only. Nothing here is saved or graded.</p>'
+   +'<h2 style="margin-top:12px">Comparing big numbers</h2>'
+   +'<div class="rule">Line up the places. Start at the left. The first place where the digits are different decides which number is bigger.</div>'
+   +'<table class="tb"><tr><th>&lt;</th><td>less than</td></tr><tr><th>=</th><td>equal to</td></tr><tr><th>&gt;</th><td>greater than</td></tr></table>'
+   +'<p class="small">The open side of the symbol faces the bigger number: 7 &gt; 3 and 3 &lt; 7.</p>'
+   +'<p class="small">A number with more digits is bigger, as long as it does not start with zeros.</p>'
+   +'<h3>Try it. Type two numbers.</h3>'
+   +'<div class="row"><input class="num" id="ca" inputmode="numeric" value="45,672" oninput="cmpTool()" autocomplete="off"><input class="num" id="cb" inputmode="numeric" value="45,627" oninput="cmpTool()" autocomplete="off"></div>'
+   +'<div id="cmpout"></div></div>'
+   +'<div class="card"><h2>Check it</h2>'+listHTML('a',SEC1)+nav()+'</div>';
+  cmpTool();
+}
+/* rounding tool */
+let RP=2;
+function rndSet(p){RP=p;rndTool();}
+function rndTool(){
+  const n=num($('rn').value),p=RP,u=Math.pow(10,p),h=u/10;
+  const r=Math.floor((n+u/2)/u)*u,lo=Math.floor(n/u)*u,hi=lo+u;
+  const dg=Math.floor(n/h)%10;
+  [].slice.call(document.querySelectorAll('.pbtn button')).forEach(b=>b.className=(+b.dataset.p===p?'on':''));
+  const up=dg>=5;
+  const pct=Math.max(2,Math.min(98,((n-lo)/u)*100));
+  const nl='<svg class="nl" viewBox="0 0 560 90"><line x1="30" y1="40" x2="530" y2="40" stroke="#17607A" stroke-width="4"/>'
+   +'<line x1="30" y1="28" x2="30" y2="52" stroke="#17607A" stroke-width="4"/><line x1="530" y1="28" x2="530" y2="52" stroke="#17607A" stroke-width="4"/><line x1="280" y1="30" x2="280" y2="50" stroke="#55604F" stroke-width="2" stroke-dasharray="3 3"/>'
+   +'<text x="30" y="75" text-anchor="middle" font-size="16" font-weight="700" fill="#0F4A5F" font-family="Jost,sans-serif">'+fmt(lo)+'</text><text x="530" y="75" text-anchor="middle" font-size="16" font-weight="700" fill="#0F4A5F" font-family="Jost,sans-serif">'+fmt(hi)+'</text>'
+   +'<text x="280" y="20" text-anchor="middle" font-size="12" fill="#55604F" font-family="Jost,sans-serif">halfway</text>'
+   +'<circle cx="'+(30+5*pct)+'" cy="40" r="9" fill="#C9972B" stroke="#fff" stroke-width="2"/></svg>';
+  $('rndout').innerHTML=nl+'<p>'+(p===0?'':'Round '+fmt(n)+' to the nearest <b>'+PS[p]+'</b>. ')+'The digit to the right is <b>'+dg+'</b>. '+(up?'5 or more, so round <b>up</b>':'4 or less, so it <b>stays</b>')+': <span class="big">'+fmt(r)+'</span></p>';
+}
+function rRnd(){
+  SECTOTAL=SEC2.length;
+  $('stage').innerHTML=
+   '<div class="card"><h2>Rounding whole numbers</h2>'
+   +'<div class="rule">Find the place you are rounding to. Look at the digit right next to it, on the right. 5 or more: round up. 4 or less: stay.</div>'
+   +'<p>Everything to the right of the place turns into zeros. The dot on the number line shows which benchmark is closer.</p>'
+   +'<h3>Try it. Type a number and pick a place.</h3>'
+   +'<div class="row"><input class="num" id="rn" inputmode="numeric" value="365,820" oninput="rndTool()" autocomplete="off"></div>'
+   +'<div class="pbtn">'+[1,2,3,4,5].map(p=>'<button data-p="'+p+'" onclick="rndSet('+p+')">'+PL[p]+'</button>').join('')+'</div>'
+   +'<div id="rndout"></div></div>'
+   +'<div class="card"><h2>Check it</h2>'+listHTML('b',SEC2)+nav()+'</div>';
+  rndTool();
+}
+function rWhy(){
+  SECTOTAL=SEC3.length;
+  $('stage').innerHTML=
+   '<div class="card"><h2>When do we round, and why?</h2>'
+   +'<p>A rounded number is a simpler number that is close to the real one. It is called an <b>estimate</b>.</p>'
+   +'<table class="tb"><tr><th>Round when</th><th>Do not round when</th></tr>'
+   +'<tr><td>You only need a close idea: crowds, distances, "about how many"</td><td>An exact amount matters: money you owe, measuring a dose, counting what is really there</td></tr>'
+   +'<tr><td>You are checking if an answer makes sense</td><td>The problem says to find the exact answer</td></tr></table>'
+   +'<div class="rule">Round to make a number simpler when an exact one is not needed.</div>'
+   +'<p class="small">Be ready to give Mom one example of each in your own words.</p></div>'
+   +'<div class="card"><h2>Check it</h2>'+listHTML('c',SEC3)+nav().replace('Next','Finish')+'</div>';
+}
+function rDone(){
+  const pct=Math.round(FIRST/TOTAL*100);
+  $('stage').innerHTML=
+   '<div class="card"><h1>Done</h1><p>First-try correct: <span class="score">'+FIRST+' of '+TOTAL+'</span></p>'
+   +'<p>'+(pct>=85?'That is strong. Tell Mom you may be ready to test out of Week 2.':pct>=60?'Good start. Look again at anything you missed, then tell Mom.':'Go back through the rules with Mom before you test out.')+'</p>'
+   +'<h3>Now say these to Mom, out loud</h3><ul>'
+   +'<li>How do you decide which number is bigger?</li>'
+   +'<li>What does the digit to the right tell you when you round? Why does 2,950 round to 3,000?</li>'
+   +'<li>Give one time you would round and one time you would not, and say why.</li></ul>'
+   +'<div class="row" style="margin-top:14px"><a class="btn" style="text-decoration:none" href="../wade-math-home.html#/kid/ryder">Back to Math Home</a><button class="btn alt" onclick="location.reload()">Do it again</button></div></div>';
+}
+begin();
+</script>
+</body>
+</html>

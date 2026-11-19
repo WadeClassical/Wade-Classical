@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hadley's Squishy Shop · Counting Patterns</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF4FA;--card:#FFFFFF;--ink:#5A3A6E;--soft:#8A6FA0;
+  --pink:#FFA6C9;--pink-d:#E0709F;--lav:#CDB8FF;--lav-d:#9B7FE0;--mint:#A8EBD0;--mint-d:#4DBF92;
+  --butter:#FFE98A;--butter-d:#E8B93A;--peach:#FFC7A0;--peach-d:#E8955A;--sky:#A9DDFF;--sky-d:#5BB3EE;
+  --ok:#3BB98A;--oops:#F07A9A;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Fredoka',ui-rounded,'Trebuchet MS',system-ui,sans-serif;color:var(--ink);min-height:100vh;font-size:19px;line-height:1.35;
+  background:
+    radial-gradient(circle at 8% 12%,#FFD9EA 0 70px,transparent 71px),
+    radial-gradient(circle at 92% 18%,#E4D8FF 0 90px,transparent 91px),
+    radial-gradient(circle at 12% 88%,#D3F6E8 0 80px,transparent 81px),
+    radial-gradient(circle at 90% 85%,#FFF1B8 0 75px,transparent 76px),
+    var(--bg);
+  background-attachment:fixed}
+.wrap{max-width:780px;margin:0 auto;padding:14px 14px 60px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.back{color:var(--lav-d);text-decoration:none;font-weight:600;font-size:16px;background:#fff;border:3px solid var(--lav);border-radius:999px;padding:6px 14px}
+.title{font-weight:700;font-size:22px;color:var(--pink-d);text-align:center;flex:1}
+.prog{height:16px;background:#fff;border:3px solid var(--pink);border-radius:999px;overflow:hidden;margin-bottom:14px}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--lav),var(--mint));border-radius:999px;transition:width .4s}
+.card{background:var(--card);border:4px solid var(--pink);border-radius:30px;padding:20px 18px;box-shadow:0 8px 0 #FFD0E3;margin-bottom:16px}
+.card.lav{border-color:var(--lav);box-shadow:0 8px 0 #E6DBFF}
+.card.mint{border-color:var(--mint);box-shadow:0 8px 0 #D3F6E8}
+.card.butter{border-color:var(--butter);box-shadow:0 8px 0 #FFF4BF}
+h1{font-size:34px;line-height:1.1;color:var(--pink-d)}
+h2{font-size:26px;line-height:1.15;color:var(--lav-d);margin-bottom:6px}
+p{margin:8px 0}
+.small{font-size:15px;color:var(--soft)}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.center{text-align:center;justify-content:center}
+.btn{font-family:inherit;font-weight:700;font-size:21px;border:0;border-radius:999px;padding:13px 26px;cursor:pointer;color:#fff;background:var(--pink-d);box-shadow:0 6px 0 #B94B7B;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #B94B7B}
+.btn.lav{background:var(--lav-d);box-shadow:0 6px 0 #6F54B8}
+.btn.mint{background:var(--mint-d);box-shadow:0 6px 0 #2F8F6A}
+.btn.sky{background:var(--sky-d);box-shadow:0 6px 0 #3586BC}
+.btn.ghost{background:#fff;color:var(--lav-d);border:3px solid var(--lav);box-shadow:0 4px 0 #E6DBFF;font-size:17px;padding:8px 18px}
+.btn[disabled]{opacity:.45;cursor:default}
+.say{width:44px;height:44px;border-radius:50%;border:3px solid var(--sky);background:#fff;font-size:20px;cursor:pointer;flex:none}
+.mochi{display:flex;gap:12px;align-items:flex-start}
+.bubble{background:#FFF0F7;border:3px solid var(--pink);border-radius:22px 22px 22px 6px;padding:12px 16px;flex:1;position:relative}
+.bubble b{color:var(--pink-d)}
+.who{font-size:44px;flex:none;line-height:1}
+/* packs + mat */
+.mat{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.col{border-radius:22px;padding:8px 6px 10px;text-align:center;min-height:170px;border:3px dashed}
+.col.h{background:#F1EAFF;border-color:var(--lav)}.col.t{background:#E6FAF1;border-color:var(--mint)}.col.o{background:#FFEDF5;border-color:var(--pink)}
+.col h3{font-size:15px;font-weight:600}
+.col.h h3{color:var(--lav-d)}.col.t h3{color:var(--mint-d)}.col.o h3{color:var(--pink-d)}
+.col .sub{font-size:13px;color:var(--soft)}
+.packs{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);gap:4px;align-items:center;margin:14px 0}
+.packs .col{min-width:0;overflow:hidden;padding:8px 2px 10px;min-height:150px}
+.packs .stack svg{width:100%;max-width:84px;height:auto}
+.arr svg{width:42px;height:auto}
+@media(max-width:520px){.arr svg{width:28px}.arr .w{display:none}.arr b{font-size:15px}.packs .digit{font-size:24px!important}.packs .col{padding:8px 0 10px}}
+.arr{text-align:center;font-size:12px;font-weight:600;color:var(--pink-d);line-height:1.1;padding:0 2px}
+.arr svg{display:block;margin:2px auto}
+.stack{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;align-items:flex-end;margin-top:6px;min-height:100px}
+.stack svg{flex:none}
+.digit{font-size:46px;font-weight:700;line-height:1;margin-top:4px}
+.col.h .digit{color:var(--lav-d)}.col.t .digit{color:var(--mint-d)}.col.o .digit{color:var(--pink-d)}
+.stepper{display:flex;gap:8px;justify-content:center;margin-top:8px}
+.stepper button{width:46px;height:46px;border-radius:50%;border:0;font-size:26px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit}
+.col.h .stepper button{background:var(--lav-d)}.col.t .stepper button{background:var(--mint-d)}.col.o .stepper button{background:var(--pink-d)}
+.total{font-size:20px;text-align:center}
+.total b{font-size:34px;letter-spacing:3px}
+.dgin{display:flex;gap:8px;justify-content:center;margin:8px 0}
+.dgin input{width:62px;height:72px;text-align:center;font-family:inherit;font-weight:700;font-size:38px;border-radius:18px;border:4px solid var(--sky);background:#F3FAFF;color:var(--ink)}
+.dgin input:focus{outline:0;border-color:var(--sky-d);background:#E3F4FF}
+.dgin.h input{border-color:var(--lav)}.dgin.t input{border-color:var(--mint)}.dgin.o input{border-color:var(--pink)}
+.lbls{display:flex;gap:8px;justify-content:center;font-size:13px;color:var(--soft)}
+.lbls span{width:62px;text-align:center}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-top:10px}
+.opt{font-family:inherit;font-weight:700;font-size:28px;padding:14px 8px;border-radius:20px;border:4px solid var(--sky);background:#F3FAFF;color:var(--ink);cursor:pointer}
+.opt.w{font-size:20px}
+.opt.right{background:#DFF8EC;border-color:var(--ok)}
+.opt.wrong{background:#FFE3EB;border-color:var(--oops)}
+.tag{display:inline-block;background:var(--butter);border:4px solid var(--butter-d);border-radius:18px;padding:6px 26px;font-size:54px;font-weight:700;letter-spacing:6px;transform:rotate(-2deg);color:#8A5B12}
+.fb{min-height:52px;margin-top:10px;font-weight:600;text-align:center}
+.fb.good{color:var(--ok)}.fb.bad{color:var(--oops)}
+.expand{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;font-weight:700;font-size:30px;margin:8px 0}
+.expand input{width:54px;height:64px;text-align:center;font-family:inherit;font-weight:700;font-size:32px;border-radius:16px;border:4px solid var(--sky);background:#F3FAFF;color:var(--ink)}
+.expand input:focus{outline:0;border-color:var(--sky-d);background:#E3F4FF}
+.stars{font-size:40px;letter-spacing:4px}
+.badge{display:inline-block;background:linear-gradient(135deg,var(--pink),var(--lav));color:#fff;border-radius:26px;padding:12px 26px;font-weight:700;font-size:24px;border:4px solid #fff;box-shadow:0 0 0 4px var(--pink)}
+details{background:#fff;border:3px solid var(--sky);border-radius:20px;padding:10px 16px;margin-top:6px}
+summary{font-weight:600;color:var(--sky-d);cursor:pointer}
+details p,details li{font-size:16px;color:var(--ink)}
+details ul{margin:6px 0 6px 20px}
+@keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.12)}100%{transform:scale(1)}}
+.pop{animation:pop .35s}
+@keyframes wob{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+.wob{animation:wob .4s}
+@media(max-width:520px){body{font-size:17px}h1{font-size:28px}.tag{font-size:42px}.dgin input,.lbls span{width:54px}.opt{font-size:24px}}
+.tray{display:inline-flex;gap:1px;padding:3px 5px;border:3px solid var(--sky);border-radius:14px;background:#F3FAFF;align-items:center}
+.packrow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:flex-end;margin:12px 0;min-height:70px}
+.numrow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0}
+.nchip{font-weight:700;font-size:26px;background:#F1EAFF;border:3px solid var(--lav);color:var(--lav-d);border-radius:16px;padding:6px 12px;min-width:56px;text-align:center}
+.nchip.last{background:var(--butter);border-color:var(--butter-d);color:#8A5B12;font-size:32px;transform:rotate(-2deg)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:6px 0}
+.chips button{font-family:inherit;font-weight:700;font-size:18px;padding:8px 16px;border-radius:999px;border:3px solid var(--lav);background:#fff;color:var(--lav-d);cursor:pointer}
+.chips button.on{background:var(--lav-d);color:#fff;border-color:var(--lav-d)}
+.seq{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:14px 0}
+.seq input{width:104px;height:64px;text-align:center;font-family:inherit;font-weight:700;font-size:30px;border-radius:16px;border:4px solid var(--sky);background:#F3FAFF;color:var(--ink)}
+.seq input:focus{outline:0;border-color:var(--sky-d);background:#E3F4FF}
+.seq .gap{font-size:22px;color:var(--soft);font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="back" href="../wade-math-home.html#/kid/hadley">← Math Home</a>
+    <div class="title">Hadley's Squishy Shop</div>
+    <a class="back" id="modeLink" href="#">Mom view</a>
+  </div>
+  <div class="prog"><i id="bar"></i></div>
+  <main id="stage"></main>
+</div>
+
+<script>
+/* ===== helpers ===== */
+const COLORS=['#FFA6C9','#CDB8FF','#A8EBD0','#FFE98A','#FFC7A0','#A9DDFF'];
+const ONES=['','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const TENS=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+function words(n){
+  const h=Math.floor(n/100),r=n%100;let s='';
+  if(h)s+=ONES[h]+' hundred';
+  if(r){if(s)s+=' ';if(r<20)s+=ONES[r];else{s+=TENS[Math.floor(r/10)];if(r%10)s+='-'+ONES[r%10];}}
+  return s||'zero';
+}
+function speak(t){try{window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.88;u.pitch=1.15;window.speechSynthesis.speak(u);}catch(e){}}
+function spk(t){return '<button class="say" aria-label="Read to me" onclick="speak(this.dataset.t)" data-t="'+t.replace(/"/g,'&quot;')+'">🔊</button>';}
+function $(id){return document.getElementById(id);}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+/* ===== art ===== */
+function blob(color,size,seed){
+  const w=size,eye=size*.06;
+  return '<svg width="'+w+'" height="'+w+'" viewBox="0 0 60 60" aria-hidden="true">'
+   +'<path d="M30 6c14 0 25 9 25 24s-10 24-25 24S5 45 5 30 16 6 30 6z" fill="'+color+'" stroke="#fff" stroke-width="3"/>'
+   +'<ellipse cx="22" cy="24" rx="6" ry="3.4" fill="#fff" opacity=".55"/>'
+   +'<circle cx="22" cy="32" r="3" fill="#5A3A6E"/><circle cx="38" cy="32" r="3" fill="#5A3A6E"/>'
+   +'<circle cx="21" cy="31" r="1" fill="#fff"/><circle cx="37" cy="31" r="1" fill="#fff"/>'
+   +'<ellipse cx="15" cy="39" rx="4" ry="2.6" fill="#FF8FB5" opacity=".7"/><ellipse cx="45" cy="39" rx="4" ry="2.6" fill="#FF8FB5" opacity=".7"/>'
+   +'<path d="M26 40q4 4 8 0" fill="none" stroke="#5A3A6E" stroke-width="2.4" stroke-linecap="round"/></svg>';
+}
+function bag(size){
+  let dots='';
+  for(let r=0;r<2;r++)for(let c=0;c<5;c++){const cx=13+c*9.5,cy=34+r*11;dots+='<circle cx="'+cx+'" cy="'+cy+'" r="4.4" fill="'+COLORS[(r*5+c)%6]+'" stroke="#fff" stroke-width="1.2"/>';}
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 60 60" aria-hidden="true">'
+   +'<path d="M10 18h40l4 34q0 5-5 5H11q-5 0-5-5z" fill="#E6FAF1" stroke="#4DBF92" stroke-width="3" stroke-linejoin="round"/>'
+   +dots
+   +'<path d="M14 18q16-8 32 0" fill="#FFA6C9" stroke="#E0709F" stroke-width="2.5"/>'
+   +'<circle cx="30" cy="14" r="4" fill="#FFA6C9" stroke="#E0709F" stroke-width="2.5"/>'
+   +'<rect x="21" y="23" width="18" height="8" rx="4" fill="#fff" opacity=".92"/><text x="30" y="30" text-anchor="middle" font-size="8" font-weight="700" fill="#2F8F6A" font-family="Fredoka,sans-serif">10</text></svg>';
+}
+function box(size){
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 60 60" aria-hidden="true">'
+   +'<path d="M6 20l24-10 24 10v28l-24 10L6 48z" fill="#E6DBFF" stroke="#9B7FE0" stroke-width="3" stroke-linejoin="round"/>'
+   +'<path d="M6 20l24 10 24-10" fill="none" stroke="#9B7FE0" stroke-width="3" stroke-linejoin="round"/>'
+   +'<path d="M30 30v28" stroke="#9B7FE0" stroke-width="3"/>'
+   +'<path d="M18 15l24 10" stroke="#FFA6C9" stroke-width="5" stroke-linecap="round"/>'
+   +'<rect x="33" y="38" width="17" height="10" rx="5" fill="#fff" opacity=".95"/><text x="41.5" y="46" text-anchor="middle" font-size="8.5" font-weight="700" fill="#6F54B8" font-family="Fredoka,sans-serif">100</text></svg>';
+}
+function arrow(label){
+  const parts=label.split(' ');
+  return '<div class="arr" aria-hidden="true"><div class="al"><b>'+parts[0]+'</b><span class="w"> '+parts[1]+'</span></div><svg width="52" height="34" viewBox="0 0 52 34"><path d="M48 17H10" stroke="#E0709F" stroke-width="6" stroke-linecap="round" fill="none"/><path d="M20 5L7 17l13 12" stroke="#E0709F" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><div class="al w">go in</div></div>';
+}
+function stack(kind,n){
+  let s='';
+  for(let i=0;i<n;i++){
+    if(kind==='h')s+=box(64);
+    else if(kind==='t')s+=bag(54);
+    else s+=blob(COLORS[i%6],38);
+  }
+  return s;
+}
+function mat(m,opts){
+  opts=opts||{};
+  const col=(k,name,sub,n)=>'<div class="col '+k+'"><h3>'+name+'</h3><div class="sub">'+sub+'</div><div class="stack" id="stk'+k+'">'+stack(k,n)+'</div>'
+    +(opts.digits?'<div class="digit" id="dg'+k+'">'+n+'</div>':'')
+    +(opts.steppers?'<div class="stepper"><button aria-label="fewer" onclick="step(\''+k+'\',-1)">−</button><button aria-label="more" onclick="step(\''+k+'\',1)">+</button></div>':'')+'</div>';
+  return '<div class="mat">'+col('h','Boxes','hundreds',m.h)+col('t','Bags','tens',m.t)+col('o','Singles','ones',m.o)+'</div>';
+}
+
+/* ===== lesson plan ===== */
+const STARTS={5:[0,35,65],10:[0,70,250],100:[0,300,650],3:[90,99],4:[92,96]};
+const TEACH=[{by:[5]},{by:[10,100]},{by:[3,4]}];
+const SEQS=[
+  {by:5,start:35,len:5,blank:[2,4]},{by:5,start:65,len:5,blank:[3]},
+  {by:10,start:120,len:5,blank:[2,4]},{by:10,start:470,len:4,blank:[2]},
+  {by:100,start:300,len:4,blank:[2]},{by:100,start:700,len:4,blank:[2]},
+  {by:3,start:99,len:5,blank:[2,4]},{by:4,start:96,len:5,blank:[2,4]}
+];
+const MCS=[
+  {t:'15, 20, 25, 30. What are we counting by?',o:[3,5,10],c:1,why:'Each number is 5 more.'},
+  {t:'230, 330, 430. What are we counting by?',o:[10,100,3],c:1,why:'Each number is 100 more.'},
+  {t:'100, 104, 108. Which number comes next?',o:[110,112,116],c:1,why:'108 + 4 = 112.'}
+];
+const STEPS=[{k:'welcome'},{k:'teach',t:0},{k:'seq',i:0},{k:'seq',i:1},{k:'teach',t:1},{k:'seq',i:2},{k:'seq',i:3},{k:'seq',i:4},{k:'seq',i:5},{k:'teach',t:2},{k:'seq',i:6},{k:'seq',i:7},{k:'mc',i:0},{k:'mc',i:1},{k:'mc',i:2},{k:'done'}];
+const GRADED=SEQS.length+MCS.length;
+let S={i:0,stars:0,tries:0},T={by:5,start:0,k:0};
+function go(i){S.i=i;S.tries=0;render();window.scrollTo(0,0);}
+function next(){go(Math.min(S.i+1,STEPS.length-1));}
+function award(){if(S.tries===0)S.stars++;}
+function bar(){$('bar').style.width=Math.round(S.i/(STEPS.length-1)*100)+'%';}
+function good(msg){const f=$('fb');f.className='fb good pop';f.innerHTML=msg;}
+function bad(msg){const f=$('fb');f.className='fb bad wob';f.innerHTML=msg;}
+function render(){bar();const st=STEPS[S.i];({welcome:rWelcome,teach:rTeach,seq:rSeq,mc:rMC,done:rDone})[st.k](st);}
+function mochi(text,who){return '<div class="mochi"><div class="who">'+(who||blob('#FFA6C9',56))+'</div><div class="bubble">'+text+'</div>'+spk(text.replace(/<[^>]+>/g,''))+'</div>';}
+function pack(by,size){
+  if(by===10)return bag(size||50);
+  if(by===100)return box(size||58);
+  let s='<span class="tray">';for(let i=0;i<by;i++)s+=blob(COLORS[i%6],by>=5?26:32);return s+'</span>';
+}
+function seqNums(it){const a=[];for(let i=0;i<it.len;i++)a.push(it.start+it.by*i);return a;}
+function rWelcome(){
+  $('stage').innerHTML=
+   '<div class="card center"><div style="display:flex;justify-content:center;gap:6px;margin-bottom:6px">'+[0,1,2,3,4].map(i=>blob(COLORS[i],i===2?78:58)).join('')+'</div>'
+   +'<h1>Stock the Shelves</h1><p>Today we fill the shelves in the squishy shop. We count by jumping, not one at a time.</p>'
+   +'<p class="small">About 10 minutes. You can tap 🔊 to hear any words read out loud.</p>'
+   +'<div style="margin-top:12px"><button class="btn" onclick="next()">Let\'s stock up!</button></div></div>'
+   +'<details><summary>For Mom</summary>'
+   +'<p><b>Week 2 · Counting patterns.</b> Hadley skip counts by 5s, 10s and 100s from any start, and by 3s and 4s past 100.</p>'
+   +'<ul><li>Each pack is a jump: a tray of 5, a bag of 10, a box of 100, trays of 3 and 4.</li>'
+   +'<li>Practice only. Nothing is graded or saved. Stars show first-try answers.</li>'
+   +'<li>Ask her to count by 3s out loud from 99 and tell you what she notices.</li>'
+   +'<li>Hands-on extension: a hundred chart, or jumping on a number line made with tape on the floor.</li></ul></details>';
+}
+function teachDraw(){
+  const by=T.by;
+  let packs='';for(let i=0;i<T.k;i++)packs+=pack(by);
+  const nums=[T.start];for(let i=1;i<=T.k;i++)nums.push(T.start+by*i);
+  $('tpacks').innerHTML=packs||'<span class="small">Tap the big button to add a pack.</span>';
+  $('tnums').innerHTML=nums.map((n,i)=>'<div class="nchip'+(i===nums.length-1&&T.k>0?' last':'')+'">'+n+'</div>').join('');
+  $('tadd').disabled=T.k>=12;
+  [].slice.call(document.querySelectorAll('[data-by]')).forEach(b=>b.className=(+b.dataset.by===T.by?'on':''));
+  [].slice.call(document.querySelectorAll('[data-st]')).forEach(b=>b.className=(+b.dataset.st===T.start?'on':''));
+}
+function teachAdd(){T.k++;teachDraw();speak(String(T.start+T.by*T.k));}
+function teachBy(b){T.by=b;T.start=STARTS[b][0];T.k=0;rStartChips();teachDraw();}
+function teachStart(s){T.start=s;T.k=0;teachDraw();}
+function rStartChips(){$('tstarts').innerHTML=STARTS[T.by].map(s=>'<button data-st="'+s+'" onclick="teachStart('+s+')">start at '+s+'</button>').join('');}
+function rTeach(st){
+  const cfg=TEACH[st.t];T={by:cfg.by[0],start:STARTS[cfg.by[0]][0],k:0};
+  const msgs=['Squishies on trays come in <b>5</b>. Every tray adds 5 more. Count by 5s!','Bags hold <b>10</b> and boxes hold <b>100</b>. Pick one and count the jumps.','Some trays hold <b>3</b> and some hold <b>4</b>. Count past 100 too!'];
+  $('stage').innerHTML='<div class="card lav"><h2>'+['Counting by 5s','Counting by 10s and 100s','Counting by 3s and 4s'][st.t]+'</h2>'
+   +mochi(msgs[st.t])
+   +(cfg.by.length>1?'<div class="chips">'+cfg.by.map(b=>'<button data-by="'+b+'" onclick="teachBy('+b+')">by '+b+'s</button>').join('')+'</div>':'')
+   +'<div class="chips" id="tstarts"></div>'
+   +'<div class="packrow" id="tpacks"></div><div class="numrow" id="tnums"></div>'
+   +'<div class="center"><button class="btn mint" id="tadd" onclick="teachAdd()">Add a pack!</button></div>'
+   +'<p class="small center" style="margin-top:8px">You can start at any number. Pick a start and add packs.</p>'
+   +'<div class="center" style="margin-top:8px"><button class="btn lav" onclick="next()">Ready to practice</button></div></div>';
+  rStartChips();teachDraw();
+}
+function rSeq(st){
+  const it=SEQS[st.i],nums=seqNums(it);
+  let cells='';nums.forEach((n,i)=>{cells+=it.blank.indexOf(i)>=0?'<input inputmode="numeric" maxlength="4" aria-label="missing number">':'<div class="nchip">'+n+'</div>';if(i<nums.length-1)cells+='<span class="gap">→</span>';});
+  $('stage').innerHTML='<div class="card"><h2>Fill the shelf '+(st.i+1)+' of '+SEQS.length+'</h2>'
+   +mochi('We are counting by <b>'+it.by+'s</b>. Type the missing numbers.')
+   +'<div class="center" style="margin-top:6px">'+pack(it.by,44)+' <b style="font-size:24px;color:var(--pink-d)">+ '+it.by+'</b></div>'
+   +'<div class="seq" id="seq">'+cells+'</div>'
+   +'<div class="center"><button class="btn sky" onclick="checkSeq('+st.i+')">Check</button></div><div class="fb" id="fb"></div><div class="center"><button class="btn lav" id="nx" style="display:none" onclick="next()">Next shelf</button></div></div>';
+  const ins=[].slice.call($('seq').querySelectorAll('input'));
+  ins.forEach((el,k)=>{el.addEventListener('input',()=>{el.value=el.value.replace(/\D/g,'').slice(0,4);});el.addEventListener('keydown',e=>{if(e.key==='Enter'){if(ins[k+1])ins[k+1].focus();else checkSeq(st.i);}});});
+  if(ins[0])ins[0].focus();
+}
+function checkSeq(i){
+  const it=SEQS[i],nums=seqNums(it),ins=[].slice.call($('seq').querySelectorAll('input'));
+  if(ins.some(x=>x.value==='')){bad('Fill every empty box.');return;}
+  const ok=it.blank.every((bi,k)=>+ins[k].value===nums[bi]);
+  if(ok){award();good('Yes! '+nums.join(', ')+'.');$('nx').style.display='inline-block';ins.forEach(x=>x.disabled=true);return;}
+  S.tries++;
+  if(S.tries>=3){bad('Here it is: <b>'+nums.join(', ')+'</b>. Each number is '+it.by+' more. On we go!');$('nx').style.display='inline-block';ins.forEach(x=>x.disabled=true);return;}
+  const k=it.blank.findIndex((bi,j)=>+ins[j].value!==nums[bi]);const before=nums[it.blank[k]-1];
+  bad('Not quite. Start from '+before+' and add '+it.by+'. What do you get?');
+}
+function rMC(st){
+  const q=MCS[st.i];
+  $('stage').innerHTML='<div class="card butter"><h2>Pattern detective '+(st.i+1)+' of '+MCS.length+'</h2>'
+   +mochi(q.t)+'<div class="opts">'+q.o.map((v,j)=>'<button class="opt" onclick="pickMC(this,'+j+','+st.i+')">'+v+'</button>').join('')+'</div>'
+   +'<div class="fb" id="fb"></div><div class="center"><button class="btn lav" id="nx" style="display:none" onclick="next()">Next</button></div></div>';
+}
+function pickMC(btn,j,i){
+  const q=MCS[i];
+  if(j===q.c){btn.className='opt right';award();good('Yes! '+q.why);$('nx').style.display='inline-block';[].slice.call(document.querySelectorAll('.opt')).forEach(b=>b.disabled=true);}
+  else{btn.className='opt wrong';S.tries++;btn.disabled=true;
+    if(S.tries>=2){[].slice.call(document.querySelectorAll('.opt'))[q.c].className='opt right';bad('The answer is <b>'+q.o[q.c]+'</b>. '+q.why);$('nx').style.display='inline-block';[].slice.call(document.querySelectorAll('.opt')).forEach(b=>b.disabled=true);}
+    else bad('Not quite. Look at how much each number goes up by.');}
+}
+function rDone(){
+  const s=S.stars;
+  const msg=s>=GRADED-1?'You are an amazing shopkeeper!':s>=Math.ceil(GRADED*.6)?'Great work, shopkeeper!':'You kept trying. That is how shopkeepers get great!';
+  $('stage').innerHTML='<div class="card center"><div style="margin-bottom:8px"><span class="badge">Shelf Stocking Star</span></div>'
+   +'<h1>The shelves are full!</h1>'
+   +'<div class="stars">⭐ '+s+' / '+GRADED+'</div><p>'+msg+'</p><p class="small">Stars are for answers right on the first try.</p></div>'
+   +'<div class="card mint"><h2>Show Mom</h2>'+mochi('Count by <b>3s</b> out loud, starting at <b>99</b>. What do you notice when you pass 100?')
+   +'<div class="center" style="margin-top:12px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn" onclick="S.stars=0;go(0)">Play again</button><a class="btn lav" style="text-decoration:none;display:inline-block" href="../wade-math-home.html#/kid/hadley">Back to Math Home</a></div></div>';
+}
+const MOM=/[?&]mom=1/.test(location.search);
+function momView(){
+  let h='<div class="card butter"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Hadley.</p>'
+   +'<p class="small"><b>Week 2 · Counting patterns.</b> Skip count by 5s, 10s and 100s from any start; count by 3s and 4s past 100. Each pack is a jump: a tray of 5, a bag of 10, a box of 100, and trays of 3 or 4.</p></div>';
+  h+='<div class="card mint"><h2>Teaching screens</h2><p>She picks a pack size and a start number, then taps <b>Add a pack</b> and watches the count jump. Starts to try: 5s from 35 or 65, 10s from 70 or 250, 100s from 300 or 650, 3s from 99, 4s from 96.</p><div class="row center">'+[5,10,100,3,4].map(b=>'<div class="center">'+pack(b,44)+'<div class="small">by '+b+'</div></div>').join('')+'</div></div>';
+  h+='<div class="card"><h2>Shelves (answer key)</h2>';
+  SEQS.forEach((it,i)=>{const nums=seqNums(it);h+='<div style="border-top:1px solid #eee;padding:8px 0"><b>'+(i+1)+'. Count by '+it.by+'s</b><div style="margin-top:4px">'+nums.map((n,k)=>it.blank.indexOf(k)>=0?'<b style="color:#3BB98A">'+n+'</b>':n).join(' → ')+'</div><div class="small">Blank answers shown in green.</div></div>';});
+  h+='</div><div class="card butter"><h2>Pattern detectives (answer key)</h2>';
+  MCS.forEach((q,i)=>{h+='<div style="padding:6px 0"><b>'+(i+1)+'.</b> '+q.t+' <b style="color:#3BB98A">Answer: '+q.o[q.c]+'</b> <span class="small">'+q.why+'</span></div>';});
+  h+='</div><div class="card"><h2>Check her out loud</h2><ul>'
+   +'<li>Count by 5s from 35, by 10s from 120 and by 100s from 300.</li>'
+   +'<li>Count by 3s from 99 and by 4s from 96. What happens when she passes 100?</li>'
+   +'<li>Can she say how she knows what comes next (add the jump size)?</li></ul>'
+   +'<p class="small">If she does these well, tick them on her rung in Math Home.</p></div>';
+  $('stage').innerHTML=h;$('bar').style.width='100%';
+}
+function momGate(cb){
+  $('stage').innerHTML='<div class="card" style="text-align:center"><h2>Mom view is locked</h2><p>Enter the Mom PIN to see the answers. It opens by itself when it is right.</p>'
+   +'<p><input id="pinin" type="password" inputmode="numeric" autocomplete="off" maxlength="4" style="font:600 24px sans-serif;padding:8px 12px;width:160px;text-align:center;border:2px solid #ccc;border-radius:10px"></p>'
+   +'<p id="pinerr" style="color:#c0392b;font-weight:600;min-height:22px"></p>'
+   +'<p><a href="'+location.pathname+'">Back to the lesson</a></p></div>';
+  const go=()=>{if($('pinin').value==='3024'){cb();}else{$('pinerr').textContent='That is not the PIN.';$('pinin').value='';}};
+  $('pinin').addEventListener('input',()=>{if($('pinin').value.length>=4)go();});$('pinin').addEventListener('keydown',e=>{if(e.key==='Enter')go();});$('pinin').focus();
+}
+
+(function(){const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(momView);}
+  else{ml.href=location.pathname+'?mom=1';render();}
+})();
+</script>
+</body>
+</html>
