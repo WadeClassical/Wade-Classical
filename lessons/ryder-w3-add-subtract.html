@@ -325,6 +325,9 @@ function rDone(){
    +'<div class="row" style="margin-top:14px"><a class="btn" style="text-decoration:none" href="../wade-math-home.html#/kid/ryder">Back to Math Home</a><button class="btn alt" onclick="location.reload()">Do it again</button></div></div>';
 }
 begin();
+
+/* Mom view: back goes to Mom's lesson list */
+(function(){if(/[?&]mom=1/.test(location.search)){var b=document.querySelector('a.back');if(b){b.href=b.getAttribute('href').replace(/#\/kid\/(\w+)/,'#/mom/ladder/$1');b.textContent='\u2190 Lessons';}}})();
 </script>
 </body>
 </html>

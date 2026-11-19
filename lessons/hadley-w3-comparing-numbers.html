@@ -338,6 +338,9 @@ function momGate(cb){
   if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(momView);}
   else{ml.href=location.pathname+'?mom=1';render();}
 })();
+
+/* Mom view: back goes to Mom's lesson list */
+(function(){if(/[?&]mom=1/.test(location.search)){var b=document.querySelector('a.back');if(b){b.href=b.getAttribute('href').replace(/#\/kid\/(\w+)/,'#/mom/ladder/$1');b.textContent='\u2190 Lessons';}}})();
 </script>
 </body>
 </html>
