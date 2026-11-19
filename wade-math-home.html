@@ -1089,8 +1089,8 @@ function ladderView(kid){
     const gg=gradeOf(kid,i),sg=stageOf(kid,i);
     if(st==='mastered'){cls='mastered';lab='Mastered ✓'+(gg?' · '+gg.letter:'');}
     else if(st==='skipped'){cls='skipped';lab='Skipped for now';}
-    else if(i===cur){cls='current';lab='This week'+(sg==='lesson'?' · lesson':sg==='ready'?' · ready for quiz':sg==='check'?' · check I cans':'');}
-    else if(sg){cls='next';lab=sg==='ready'?'Ready for quiz':sg==='check'?'Check I cans':'In lesson';}
+    else if(i===cur){cls='current';lab='This week'+(sg==='lesson'?' · in progress':sg==='ready'?' · ready for quiz':sg==='check'?' · check I cans':'');}
+    else if(sg){cls='next';lab=sg==='ready'?'Ready for quiz':sg==='check'?'Check I cans':'In progress';}
     else if(i===nxt){cls='next';lab='Suggested next';}
     h+='<button class="rung '+cls+' '+(i===n?'sel':'')+'" onclick="selectRung(\''+kid+'\','+i+')"><span class="n">'+i+'</span><span class="f">'+esc(w[1])+(hasQuiz(kid,i)?' <span class="small" style="opacity:.7">· quiz</span>':'')+(lessonList(kid,i).length?' <span class="small" style="opacity:.7">· lesson</span>':'')+'</span><span class="s">'+lab+'</span></button>';
   }
