@@ -1161,12 +1161,17 @@ function lessonCard(kid,n){
   return h+'</div>';
 }
 function selWeek(kid){return sel[kid]||suggested(kid)||1;}
+const PACE={
+ ryder:[0,5,4,6,4,5,6,7,8,7,5,4,6,5,5,5,5,6,5,6,8,4,5,4,5,4,5,5,4,6,6],
+ hadley:[0,3,3,3,5,5,3,5,5,5,6,6,4,5,5,3,5,6,5,4,4,3,5,4,6,4,4,3,3,3,4]};
+function paceDays(kid,n){return (PACE[kid]||[])[n]||5;}
+function paceTxt(d){return d+' school days'+(d>=5?' (about '+(Math.round(d/5*2)/2)+' week'+(d>5?'s':'')+')':'');}
 function ladderView(kid){
   const K=KIDS[kid];const n=selWeek(kid);const cur=suggested(kid);
   const nxt=cur?nextAfter(kid,cur):null;
   let h='<div class="'+K.cls+'"><div class="tog" style="margin-bottom:12px">'
    +Object.keys(KIDS).map(k=>'<a class="tab '+(k===kid?'on':'')+'" style="--kc:'+(k==='ryder'?'var(--teal)':'var(--rose)')+'" href="#/mom/ladder/'+k+'">'+KIDS[k].name+'</a>').join('')+'</div>';
-  h+='<div class="ladder"><div class="card"><h3 style="font-size:22px;margin-bottom:4px">'+K.name+'\'s ladder</h3><div class="small muted" style="margin-bottom:10px">Bottom is Week 1. Climb up. Tap a rung.</div><div class="rungs">';
+  h+='<div class="ladder"><div class="card"><h3 style="font-size:22px;margin-bottom:4px">'+K.name+'\'s ladder</h3><div class="small muted" style="margin-bottom:10px">Bottom is Week 1. Climb up. Tap a rung. "~5d" is the suggested number of school days.</div><div class="rungs">';
   for(let i=30;i>=1;i--){
     const w=weekObj(kid,i);const st=weekStatus(kid,i);
     let cls='',lab='Open';
@@ -1176,7 +1181,7 @@ function ladderView(kid){
     else if(i===cur){cls='current';lab='This week'+(sg==='lesson'?' · in progress':sg==='ready'?' · ready for quiz':sg==='check'?' · check I cans':'');}
     else if(sg){cls='next';lab=sg==='ready'?'Ready for quiz':sg==='check'?'Check I cans':'In progress';}
     else if(i===nxt){cls='next';lab='Suggested next';}
-    h+='<button class="rung '+cls+' '+(i===n?'sel':'')+'" onclick="selectRung(\''+kid+'\','+i+')"><span class="n">'+i+'</span><span class="f">'+esc(w[1])+(hasQuiz(kid,i)?' <span class="small" style="opacity:.7">· quiz</span>':'')+(lessonList(kid,i).length?' <span class="small" style="opacity:.7">· lesson</span>':'')+'</span><span class="s">'+lab+'</span></button>';
+    h+='<button class="rung '+cls+' '+(i===n?'sel':'')+'" onclick="selectRung(\''+kid+'\','+i+')"><span class="n">'+i+'</span><span class="f">'+esc(w[1])+(hasQuiz(kid,i)?' <span class="small" style="opacity:.7">· quiz</span>':'')+(lessonList(kid,i).length?' <span class="small" style="opacity:.7">· lesson</span>':'')+' <span class="small" style="opacity:.7">· ~'+paceDays(kid,i)+'d</span>'+'</span><span class="s">'+lab+'</span></button>';
   }
   h+='</div></div><div>';
   const w=weekObj(kid,n);const st=weekStatus(kid,n);
@@ -1184,6 +1189,7 @@ function ladderView(kid){
   h+='<div class="card" style="border-top:6px solid var(--kc)"><div class="small muted">WEEK '+n+'</div><h2 style="font-size:28px">'+esc(w[1])+'</h2>'
     +'<div class="small muted" style="margin-top:6px">Topics</div><div>'+esc(w[2])+'</div>'
     +'<div class="small muted" style="margin-top:10px">'+(kid==='ryder'?'He':'She')+' can</div><div>'+esc(w[3])+'</div>'
+    +'<div class="small" style="margin-top:10px"><b>Suggested pace:</b> '+paceTxt(paceDays(kid,n))+'. A best guess: lesson, practice days, then the quiz. Go faster if '+(kid==='ryder'?'he':'she')+' tests out or is breezing through.</div>'
     +'<div class="small cov-'+w[4]+'" style="margin-top:10px;font-weight:600">'+K.book+': '+covTxt+'</div>'
     +pathCard(kid,n,true)
     +'<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">'
