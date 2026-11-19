@@ -329,6 +329,6 @@ function momGate(cb){cb();} /* PIN turned off for now */
 /* Mom view: back goes to Mom's lesson list */
 (function(){if(/[?&]mom=1/.test(location.search)){var b=document.querySelector('a.back');if(b){b.href=b.getAttribute('href').replace(/#\/kid\/(\w+)/,'#/mom/ladder/$1');b.textContent='\u2190 Lessons';}}})();
 </script>
-<script src="momnav.js"></script>
+<script src="momnav.js?v=20261118"></script>
 </body>
 </html>
