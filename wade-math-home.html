@@ -771,7 +771,8 @@ function kidToday(kid,w){
   h+='<div class="card"><h3 style="font-size:24px">Today</h3>'+pcFocusTag(kid,tk);
   const si=factsStage(kid);const sp=K.spine;
   const fdone=!!getIn('facts/'+kid+'/log/'+tk);
-  if(si>=0){h+='<div class="row '+(fdone?'done':'')+'"><button class="chk '+(fdone?'on':'')+'" onclick="toggleFactsToday(\''+kid+'\')">'+(fdone?'✓':'')+'</button><div class="rt"><div class="t">Daily facts drill · 3–5 minutes</div><div class="small muted">'+sp[si][0]+': '+esc(sp[si][1])+'</div></div></div>';}
+  {h+='<div class="row '+(fdone?'done':'')+'"><button class="chk '+(fdone?'on':'')+'" onclick="toggleFactsToday(\''+kid+'\')">'+(fdone?'✓':'')+'</button><div class="rt"><div class="t">Daily facts drill · 3–5 minutes</div><div class="small muted">'+(si>=0?sp[si][0]+': '+esc(sp[si][1]):'Review of every stage')+'</div>'
+    +'<div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap"><a class="btn sm k" style="text-decoration:none;display:inline-block" href="wade-math-practice.html?kid='+kid+'&daily=1">'+(fdone?'Drill again':'Start drill')+'</a><a class="btn sm alt" style="text-decoration:none;display:inline-block" href="wade-math-practice.html?kid='+kid+'">Free practice</a></div></div></div>';}
   if(!today.length)h+='<p class="muted" style="padding:10px 0">Nothing else assigned for today.</p>';
   today.forEach(a=>h+=itemHtml(kid,a));
   h+='</div>';
