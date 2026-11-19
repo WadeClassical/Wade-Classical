@@ -1166,12 +1166,13 @@ const PACE={
  hadley:[0,3,3,3,5,5,3,5,5,5,6,6,4,5,5,3,5,6,5,4,4,3,5,4,6,4,4,3,3,3,4]};
 function paceDays(kid,n){return (PACE[kid]||[])[n]||5;}
 function paceTxt(d){return d+' school days'+(d>=5?' (about '+(Math.round(d/5*2)/2)+' week'+(d>5?'s':'')+')':'');}
+function paceLeft(kid){let d=0,c=0;for(let i=1;i<=30;i++){const st=weekStatus(kid,i);if(st==='mastered'||st==='skipped')continue;d+=paceDays(kid,i);c++;}return {d:d,c:c};}
 function ladderView(kid){
   const K=KIDS[kid];const n=selWeek(kid);const cur=suggested(kid);
   const nxt=cur?nextAfter(kid,cur):null;
   let h='<div class="'+K.cls+'"><div class="tog" style="margin-bottom:12px">'
    +Object.keys(KIDS).map(k=>'<a class="tab '+(k===kid?'on':'')+'" style="--kc:'+(k==='ryder'?'var(--teal)':'var(--rose)')+'" href="#/mom/ladder/'+k+'">'+KIDS[k].name+'</a>').join('')+'</div>';
-  h+='<div class="ladder"><div class="card"><h3 style="font-size:22px;margin-bottom:4px">'+K.name+'\'s ladder</h3><div class="small muted" style="margin-bottom:10px">Bottom is Week 1. Climb up. Tap a rung. "~5d" is the suggested number of school days.</div><div class="rungs">';
+  h+='<div class="ladder"><div class="card"><h3 style="font-size:22px;margin-bottom:4px">'+K.name+'\'s ladder</h3><div class="small muted" style="margin-bottom:10px">Bottom is Week 1. Climb up. Tap a rung. "~5d" is the suggested number of school days.</div><div class="small" style="margin-bottom:10px"><b>Still to go:</b> '+(function(){const L=paceLeft(kid);return L.c?L.c+' weeks, about '+L.d+' school days (roughly '+(Math.round(L.d/5*2)/2)+' weeks) at this pace.':'Nothing. Every week is done.';})()+'</div><div class="rungs">';
   for(let i=30;i>=1;i--){
     const w=weekObj(kid,i);const st=weekStatus(kid,i);
     let cls='',lab='Open';
