@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ryder · Week 7 · Multiplying by Two Digits</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--parch:#C8D0D8;--card:#F6F8FB;--forest:#204B3A;--ink:#1E2A24;--muted:#55604F;--line:#C3CCD7;--teal:#17607A;--teal-d:#0F4A5F;--ok:#2E7D4F;--bad:#A8323A;--tint:#E3F0F4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jost',system-ui,sans-serif;background:var(--parch);color:var(--ink);font-size:18px;line-height:1.45;min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:14px 14px 70px}
+.top{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:10px}
+.back{color:var(--teal);text-decoration:none;font-weight:600;font-size:15px;border:1px solid var(--teal);border-radius:10px;padding:6px 12px;background:#fff}
+.title{font-weight:700;font-size:20px;color:var(--teal-d);flex:1;text-align:center}
+.prog{height:8px;background:#fff;border:1px solid var(--line);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.prog i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+.card{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--teal);border-radius:14px;padding:18px;margin-bottom:16px}
+h1{font-size:30px;line-height:1.15;color:var(--teal-d)}
+h2{font-size:23px;line-height:1.2;color:var(--teal-d);margin-bottom:6px}
+h3{font-size:17px;color:var(--teal-d);margin:14px 0 6px}
+p{margin:8px 0}
+.small{font-size:15px;color:var(--muted)}
+.rule{background:var(--tint);border-left:5px solid var(--teal);border-radius:8px;padding:10px 14px;margin:10px 0;font-weight:500}
+.btn{font-family:inherit;font-weight:600;font-size:17px;border:0;border-radius:10px;padding:11px 20px;cursor:pointer;color:#fff;background:var(--teal)}
+.btn.alt{background:#fff;color:var(--teal);border:1px solid var(--teal)}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+input.num{font:600 22px Jost,sans-serif;padding:9px 12px;border:2px solid var(--line);border-radius:10px;width:190px;background:#fff;color:var(--ink)}
+input.num:focus{outline:none;border-color:var(--teal)}
+/* chart */
+.chart{display:flex;justify-content:center;gap:0;margin:12px 0 6px;overflow-x:auto;padding-bottom:4px}
+.cc{width:68px;flex:none;text-align:center}
+.cc .nm{font-size:12px;color:var(--muted);min-height:30px;line-height:1.1;display:flex;align-items:flex-end;justify-content:center;padding:0 2px}
+.cc .dg{font:700 34px Jost,sans-serif;background:#fff;border:2px solid var(--teal);border-radius:8px;margin:3px 2px;height:52px;display:flex;align-items:center;justify-content:center;color:var(--teal-d)}
+.cc .dg.z{color:#B9C7CC;border-color:#C9D6DA}
+.cc .vl{font-size:13px;font-weight:600;color:var(--ink);min-height:18px}
+.cm{width:14px;flex:none;font:700 34px Jost,sans-serif;align-self:center;margin-top:12px;color:var(--ink);text-align:center}
+.arrows{display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:var(--teal-d);margin:6px 8px 0;gap:10px;flex-wrap:wrap}
+.arrows span{background:var(--tint);border-radius:99px;padding:4px 12px}
+/* questions */
+.q{border-top:1px solid var(--line);padding:12px 0}
+.q:first-of-type{border-top:0}
+.q .t{font-weight:500;margin-bottom:6px}
+.q .res{margin-top:6px;font-size:16px;font-weight:600}
+.q.good .res{color:var(--ok)}.q.bad .res{color:var(--bad)}
+.q.good input{border-color:var(--ok);background:#EEF7F1}
+.opt{display:block;width:100%;text-align:left;font:500 17px Jost,sans-serif;padding:9px 12px;margin:5px 0;background:#fff;border:2px solid var(--line);border-radius:10px;cursor:pointer;color:var(--ink)}
+.opt:hover{border-color:var(--teal)}
+.opt.sym{display:inline-block;width:auto;min-width:76px;text-align:center;font-size:28px;font-weight:700;margin-right:8px}
+.opt.right{border-color:var(--ok);background:#EEF7F1}.opt.wrong{border-color:var(--bad);background:#FAEBEC}
+table.cmp{border-collapse:separate;border-spacing:3px;margin:10px auto}
+table.cmp td{width:42px;height:46px;text-align:center;font:700 26px Jost,sans-serif;background:#fff;border:2px solid var(--line);border-radius:7px}
+table.cmp td.cm{width:12px;border:0;background:none;padding:0}
+table.cmp td.hl{border-color:var(--teal);background:var(--tint);color:var(--teal-d)}
+table.cmp td.pl{height:auto;border:0;background:none;font:600 11px Jost,sans-serif;color:var(--muted);vertical-align:bottom;line-height:1.1}
+table.cmp td.lb{width:auto;border:0;background:none;font:600 14px Jost,sans-serif;color:var(--muted);text-align:right;padding-right:6px}
+.pbtn{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.pbtn button{font:600 15px Jost,sans-serif;padding:7px 11px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}.pbtn button.on{border-color:var(--teal);background:var(--tint)}
+.nl{width:100%;max-width:560px;display:block;margin:6px auto}
+table.tb{border-collapse:collapse;width:100%;margin:8px 0;font-size:16px}
+table.tb td,table.tb th{border:1px solid var(--line);padding:7px 10px;text-align:left;background:#fff}
+table.tb th{background:var(--tint);color:var(--teal-d)}
+.big{font:700 28px Jost,sans-serif;color:var(--teal-d)}
+.score{font:700 44px Jost,sans-serif;color:var(--teal-d)}
+details{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:14px}
+summary{cursor:pointer;font-weight:600;color:var(--teal-d)}
+ul{margin:6px 0 6px 22px}
+.chain{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 6px;margin:10px 0;font-weight:700;color:var(--teal-d)}
+.chain .v{background:#fff;border:2px solid var(--teal);border-radius:8px;padding:6px 9px;font-size:18px}
+.chain .x{font-size:13px;background:var(--tint);border-radius:99px;padding:3px 8px;color:var(--teal-d)}
+.dpick{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.dpick button{width:38px;height:38px;border-radius:8px;border:2px solid var(--line);background:#fff;font:700 18px Jost,sans-serif;cursor:pointer;color:var(--ink)}
+.dpick button.on{border-color:var(--teal);background:var(--tint)}
+.eq{text-align:center;font:700 24px Jost,sans-serif;color:var(--teal-d);margin:6px 0;min-height:34px}
+.nlw{width:100%;overflow-x:auto}
+.tbtn{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.tbtn button{font:600 15px Jost,sans-serif;padding:7px 11px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+.am{border-collapse:collapse;margin:8px auto;font-size:18px}.am td,.am th{border:2px solid var(--line);padding:8px 12px;text-align:center;min-width:64px}.am th{background:#E3EAF0;color:var(--main-d)}.am td.hl{background:#EAF3F7;font-weight:700}
+.steps{margin:8px 0;padding-left:22px}.steps li{margin:4px 0}
+.out2{background:#F3F7FA;border:2px solid var(--line);border-radius:12px;padding:10px 14px;margin:10px 0}
+.sv{display:block;margin:8px auto;max-width:100%}
+
+@media(max-width:560px){body{font-size:17px}.cc{width:46px}.cc .dg{font-size:24px;height:42px}.cc .nm{font-size:10px}.cc .vl{font-size:10px}.cm{width:8px;font-size:24px}input.num{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="back" href="../wade-math-home.html#/kid/ryder">← Math Home</a><div class="title">Multiplying by Two Digits</div><a class="back" id="modeLink" href="#">Mom view</a></div>
+  <div class="prog"><i id="bar"></i></div>
+  <div id="stage"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const PLACES=['Millions','Hundred thousands','Ten thousands','Thousands','Hundreds','Tens','Ones'];
+const ONES=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const TENS=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+function fmt(n){return String(n).replace(/\B(?=(\d{3})+$)/g,',');}
+function w999(n){let s=[];if(n>=100){s.push(ONES[Math.floor(n/100)]+' hundred');n%=100;}if(n>=20){s.push(TENS[Math.floor(n/10)]+(n%10?'-'+ONES[n%10]:''));}else if(n>0||!s.length)s.push(ONES[n]);return s.join(' ');}
+function toWords(n){
+  if(n===0)return 'zero';
+  if(n===1000000)return 'one million';
+  const th=Math.floor(n/1000),r=n%1000;let out=[];
+  if(th)out.push(w999(th)+' thousand');
+  if(r)out.push(w999(r));
+  return out.join(', ');
+}
+function expanded(n){
+  const s=String(n),L=s.length,parts=[];
+  for(let i=0;i<L;i++){if(s[i]!=='0')parts.push(fmt(s[i]+'0'.repeat(L-1-i)));}
+  return parts.join(' + ');
+}
+function chartHTML(n){
+  const s=String(n).padStart(7,'0');let h='<div class="chart">';
+  let lead=true;
+  for(let i=0;i<7;i++){
+    if(s[i]!=='0')lead=false;
+    const show=!lead||i===6;
+    const val=s[i]==='0'?'':fmt(s[i]+'0'.repeat(6-i));
+    h+='<div class="cc"><div class="nm">'+PLACES[i]+'</div><div class="dg'+(show?'':' z')+'">'+(show?s[i]:'0')+'</div><div class="vl">'+(show?val:'')+'</div></div>';
+    if(i===0||i===3)h+='<div class="cm">'+((i===3||n>=1000000)?',':'')+'</div>';
+  }
+  return h+'</div>';
+}
+/* ---------- question engine ---------- */
+const MOM=/[?&]mom=1/.test(location.search);
+let QS={};let TOTAL=0;let FIRST=0;let ANSWERED=0;
+function norm(v){return String(v==null?'':v).replace(/[−–]/g,'-').replace(/[,\s$]/g,'');}
+function qHTML(sec,i,q){
+  if(MOM){
+    let h='<div class="q good"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+    if(q.o)q.o.forEach((o,j)=>{h+='<div class="opt'+(q.sym?' sym':'')+(j===q.c?' right':'')+'" style="cursor:default">'+o+(j===q.c?' ✓':'')+'</div>';});
+    return h+'<div class="res">Answer: '+q.show+(q.why?'. '+q.why:'')+'</div></div>';
+  }
+  const id=sec+i;QS[id]={q:q,tries:0,done:false};TOTAL++;
+  let h='<div class="q" id="q-'+id+'"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+  if(q.o){q.o.forEach((o,j)=>{h+='<button class="opt'+(q.sym?' sym':'')+'" onclick="pickQ(\''+id+'\','+j+',this)">'+o+'</button>';});}
+  else h+='<div class="row"><input class="num" id="in-'+id+'" inputmode="numeric" autocomplete="off" placeholder="Your answer" onkeydown="if(event.key===\'Enter\')checkQ(\''+id+'\')"><button class="btn" onclick="checkQ(\''+id+'\')">Check</button></div>';
+  return h+'<div class="res" id="res-'+id+'"></div></div>';
+}
+function finishQ(id,ok){
+  const s=QS[id];if(s.done)return;
+  s.tries++;
+  const el=$('q-'+id),res=$('res-'+id);
+  if(ok){
+    s.done=true;ANSWERED++;if(s.tries===1)FIRST++;
+    el.className='q good';res.textContent='✓ Correct'+(s.q.why?'. '+s.q.why:'');
+  }else{
+    el.className='q bad';
+    if(s.tries>=2){s.done=true;ANSWERED++;res.textContent='The answer is '+s.q.show+'. '+(s.q.why||'')+' Ask Mom if you are not sure why.';
+      const i=$('in-'+id);if(i)i.disabled=true;
+    }else res.textContent='Not quite. '+(s.q.hint||'Look at the rule above and try again.');
+  }
+  upd();
+}
+function checkQ(id){
+  const s=QS[id];if(s.done)return;
+  const v=norm($('in-'+id).value);if(!v)return;
+  finishQ(id,v===norm(s.q.a));
+}
+function pickQ(id,j,btn){
+  const s=QS[id];if(s.done)return;
+  const ok=j===s.q.c;
+  btn.className='opt '+(ok?'right':'wrong');
+  finishQ(id,ok);
+  if(s.done&&!ok){[].slice.call($('q-'+id).querySelectorAll('.opt'))[s.q.c].className='opt right';}
+}
+function upd(){const b=$('nextbtn');if(b)b.disabled=ANSWERED-SECBASE<SECTOTAL;const c=$('cnt');if(c)c.textContent=ANSWERED-SECBASE+' of '+SECTOTAL+' answered';}
+
+/* ---------- sections ---------- */
+const SECA=[{"t": "In 23 × 14, what is the partial product 20 × 10?", "a": "200", "show": "200", "hint": "2 × 1 = 2, then two zeros.", "why": "20 × 10 = 200."}, {"t": "In 36 × 42, what is the partial product 30 × 40?", "a": "1200", "show": "1,200", "hint": "3 × 4 = 12, then two zeros.", "why": "30 × 40 = 1,200."}, {"t": "In 52 × 17, what is the partial product 2 × 7?", "a": "14", "show": "14", "hint": "Ones times ones.", "why": "2 × 7 = 14."}, {"t": "47 × 63 = 2,400 + 120 + 420 + 21. What is the total?", "a": "2961", "show": "2,961", "hint": "Add the four partial products.", "why": "2,400 + 120 + 420 + 21 = 2,961."}, {"t": "How many partial products does a two-digit by two-digit area model have?", "o": ["2", "4", "3"], "c": 1, "show": "4", "hint": "Tens and ones of one number, times tens and ones of the other.", "why": "2 parts × 2 parts = 4 partial products."}, {"t": "To find 34 × 25, you can find 34 × 20 and 34 × 5. What is 34 × 20?", "a": "680", "show": "680", "hint": "34 × 2 = 68, then a zero.", "why": "34 × 20 = 680."}];const SECB=[{"t": "23 × 14 = ?", "a": "322", "show": "322", "hint": "Area model: 20×10 = 200, 20×4 = 80, 3×10 = 30, 3×4 = 12. Add them.", "why": "23 × 14 = 322."}, {"t": "36 × 42 = ?", "a": "1512", "show": "1,512", "hint": "Area model: 30×40 = 1,200, 30×2 = 60, 6×40 = 240, 6×2 = 12. Add them.", "why": "36 × 42 = 1,512."}, {"t": "58 × 27 = ?", "a": "1566", "show": "1,566", "hint": "Area model: 50×20 = 1,000, 50×7 = 350, 8×20 = 160, 8×7 = 56. Add them.", "why": "58 × 27 = 1,566."}, {"t": "74 × 36 = ?", "a": "2664", "show": "2,664", "hint": "Area model: 70×30 = 2,100, 70×6 = 420, 4×30 = 120, 4×6 = 24. Add them.", "why": "74 × 36 = 2,664."}, {"t": "49 × 85 = ?", "a": "4165", "show": "4,165", "hint": "Area model: 40×80 = 3,200, 40×5 = 200, 9×80 = 720, 9×5 = 45. Add them.", "why": "49 × 85 = 4,165."}, {"t": "62 × 93 = ?", "a": "5766", "show": "5,766", "hint": "Area model: 60×90 = 5,400, 60×3 = 180, 2×90 = 180, 2×3 = 6. Add them.", "why": "62 × 93 = 5,766."}, {"t": "88 × 45 = ?", "a": "3960", "show": "3,960", "hint": "Area model: 80×40 = 3,200, 80×5 = 400, 8×40 = 320, 8×5 = 40. Add them.", "why": "88 × 45 = 3,960."}, {"t": "99 × 99 = ?", "a": "9801", "show": "9,801", "hint": "Area model: 90×90 = 8,100, 90×9 = 810, 9×90 = 810, 9×9 = 81. Add them.", "why": "99 × 99 = 9,801."}];const SECC=[{"t": "An auditorium has 24 rows with 35 seats in each row. How many seats in all?", "a": "840", "show": "840", "hint": "Area model: 20×30 = 600, 20×5 = 100, 4×30 = 120, 4×5 = 20. Add them.", "why": "24 × 35 = 840."}, {"t": "A baker makes 48 trays with 12 muffins on each tray. How many muffins?", "a": "576", "show": "576", "hint": "Area model: 40×10 = 400, 40×2 = 80, 8×10 = 80, 8×2 = 16. Add them.", "why": "48 × 12 = 576."}, {"t": "A school buys 65 packs of 24 pencils. How many pencils?", "a": "1560", "show": "1,560", "hint": "Area model: 60×20 = 1,200, 60×4 = 240, 5×20 = 100, 5×4 = 20. Add them.", "why": "65 × 24 = 1,560."}, {"t": "About how much is 39 × 61? Round both numbers first.", "o": ["About 2,400", "About 240", "About 24,000"], "c": 0, "show": "About 2,400", "hint": "39 is about 40. 61 is about 60. 40 × 60 = ?", "why": "40 × 60 = 2,400."}, {"t": "Which is greater: 25 × 40 or 30 × 35?", "o": ["25 × 40 (1,000)", "30 × 35 (1,050)", "They are equal"], "c": 1, "show": "30 × 35 (1,050)", "hint": "Work out both products.", "why": "25 × 40 = 1,000 and 30 × 35 = 1,050."}, {"t": "Each of 18 classes collects 27 cans. How many cans in all?", "a": "486", "show": "486", "hint": "Area model: 10×20 = 200, 10×7 = 70, 8×20 = 160, 8×7 = 56. Add them.", "why": "18 × 27 = 486."}];
+function gridTool(){
+  const a=gv('ga',10,99),b=gv('gb',10,99),ta=Math.floor(a/10)*10,oa=a%10,tb=Math.floor(b/10)*10,ob=b%10;
+  const c1=ta*tb,c2=oa*tb,c3=ta*ob,c4=oa*ob;
+  $('gr').innerHTML='<table class="am"><tr><th>'+a+' × '+b+'</th><th>'+ta+'</th><th>'+oa+'</th></tr>'
+   +'<tr><th>'+tb+'</th><td class="hl">'+fmt(c1)+'<div class="small">'+ta+' × '+tb+'</div></td><td class="hl">'+fmt(c2)+'<div class="small">'+oa+' × '+tb+'</div></td></tr>'
+   +'<tr><th>'+ob+'</th><td class="hl">'+fmt(c3)+'<div class="small">'+ta+' × '+ob+'</div></td><td class="hl">'+fmt(c4)+'<div class="small">'+oa+' × '+ob+'</div></td></tr></table>'
+   +'<div class="out2">'+fmt(c1)+' + '+fmt(c2)+' + '+fmt(c3)+' + '+fmt(c4)+' = <b>'+fmt(a*b)+'</b></div>';
+}
+function stdTool(){
+  const a=gv('sa',10,99),b=gv('sb',10,99),ob=b%10,tb=Math.floor(b/10);
+  $('sr').innerHTML='<table class="am" style="text-align:right"><tr><td></td><td>'+a+'</td></tr><tr><td>×</td><td>'+b+'</td></tr><tr><td class="small">'+a+' × '+ob+'</td><td class="hl">'+fmt(a*ob)+'</td></tr><tr><td class="small">'+a+' × '+tb+'0</td><td class="hl">'+fmt(a*tb*10)+'</td></tr><tr><td>total</td><td class="hl">'+fmt(a*b)+'</td></tr></table>'
+   +'<p class="small center">The second line is '+a+' × '+tb+' tens, so it is '+a+' × '+tb+'0, which is '+fmt(a*tb*10)+'. That is why we write a zero on the end.</p>';
+}
+function rA(){secPage('a','<div class="card"><h1>Multiplying by two digits</h1><p class="small">About 15 minutes. This is practice only. Nothing here is saved or graded.</p><h2 style="margin-top:12px">The area model</h2>'
+ +'<div class="rule">Split each number into tens and ones. Multiply every part by every part: that is 4 partial products. Add them.</div>'
+ +'<h3>Try it. Type two two-digit numbers.</h3><div class="row"><input class="num" id="ga" value="47" oninput="gridTool()" inputmode="numeric"><span>×</span><input class="num" id="gb" value="63" oninput="gridTool()" inputmode="numeric"></div><div id="gr"></div></div>',SECA);}
+function rB(){secPage('b','<div class="card"><h2>The standard algorithm</h2>'
+ +'<div class="rule">Multiply by the ones digit first. Then multiply by the tens digit and write a zero in the ones place, because you are multiplying by tens. Add the two lines.</div>'
+ +'<h3>Try it. Watch the two lines.</h3><div class="row"><input class="num" id="sa" value="58" oninput="stdTool()" inputmode="numeric"><span>×</span><input class="num" id="sb" value="27" oninput="stdTool()" inputmode="numeric"></div><div id="sr"></div></div>',SECB);}
+function rC(){secPage('c','<div class="card"><h2>Problems and estimating</h2><div class="rule">Round both numbers to the nearest ten to estimate: 39 × 61 is about 40 × 60. Your exact answer should be near the estimate.</div></div>',SECC,true);}
+
+const SECFNS=[rA,rB,rC];
+function INITS(){if($('ga'))gridTool();if($('sa'))stdTool();}
+const ORAL=["Show 47 × 63 with the area model. What are the four partial products?", "In the standard algorithm, why do we write a zero on the second line?", "How do you estimate 39 × 61?"];
+const WEEKNO=7;
+
+let SECBASE=0,SECTOTAL=0,ST=0;
+const MOM2=MOM;
+function momGate(cb){cb();} /* PIN turned off for now */
+function begin(){
+  const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(buildMom);return;}
+  ml.href=location.pathname+'?mom=1';ST=0;render();
+}
+
+function begin(){
+  const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(buildMom);return;}
+  ml.href=location.pathname+'?mom=1';ST=0;render();
+}
+function buildMom(){
+  let all='<div class="card" style="border-top-color:#C9972B"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Ryder.</p></div>';
+  SECFNS.forEach(fn=>{fn();all+=$('stage').innerHTML;});
+  all+='<div class="card"><h2>Check him on these, out loud</h2><ul>'+ORAL.map(x=>'<li>'+x+'</li>').join('')+'</ul><p class="small">If he does these well, tick them on his rung in Math Home. If he is solid, let him test out.</p></div>';
+  $('stage').innerHTML=all;$('bar').style.width='100%';INITS();
+}
+function bar(){$('bar').style.width=Math.round(ST/(SECFNS.length)*100)+'%';}
+function nav(last){if(MOM)return '';return '<div class="row" style="margin-top:14px"><button class="btn" id="nextbtn" onclick="nextSec()" disabled>'+(last?'Finish':'Next')+'</button><span class="small" id="cnt"></span></div>';}
+function nextSec(){ST++;render();window.scrollTo(0,0);}
+function listHTML(sec,arr){let h='';arr.forEach((q,i)=>{h+=qHTML(sec,i,q);});return h;}
+function render(){bar();QS={};SECBASE=ANSWERED;if(ST>=SECFNS.length){rDone();return;}SECFNS[ST]();INITS();upd();}
+function secPage(id,intro,items,last){SECTOTAL=items.length;$('stage').innerHTML=intro+'<div class="card"><h2>Check it</h2>'+listHTML(id,items)+nav(last)+'</div>';}
+function rDone(){
+  const pct=Math.round(FIRST/TOTAL*100);
+  $('stage').innerHTML='<div class="card"><h1>Done</h1><p>First-try correct: <span class="score">'+FIRST+' of '+TOTAL+'</span></p>'
+   +'<p>'+(pct>=85?'That is strong. Tell Mom you may be ready to test out of Week '+WEEKNO+'.':pct>=60?'Good start. Look again at anything you missed, then tell Mom.':'Go back through the rules with Mom before you test out.')+'</p>'
+   +'<h3>Now say these to Mom, out loud</h3><ul>'+ORAL.map(x=>'<li>'+x+'</li>').join('')+'</ul>'
+   +'<div class="row" style="margin-top:14px"><a class="btn" style="text-decoration:none" href="../wade-math-home.html#/kid/ryder">Back to Math Home</a><button class="btn alt" onclick="location.reload()">Do it again</button></div></div>';
+}
+function gv(id,lo,hi){let v=parseInt(norm($(id).value),10);return isNaN(v)?lo:Math.max(lo,Math.min(hi,v));}
+function fmt(n){return Number(n).toLocaleString('en-US');}
+begin();
+/* Mom view: back goes to Mom's lesson list */
+(function(){if(/[?&]mom=1/.test(location.search)){var b=document.querySelector('a.back');if(b){b.href=b.getAttribute('href').replace(/#\/kid\/(\w+)/,'#/mom/ladder/$1');b.textContent='\u2190 Lessons';}}})();
+</script>
+</body>
+</html>

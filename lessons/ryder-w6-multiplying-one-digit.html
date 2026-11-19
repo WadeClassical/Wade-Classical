@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ryder · Week 6 · Multiplying by One Digit</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--parch:#C8D0D8;--card:#F6F8FB;--forest:#204B3A;--ink:#1E2A24;--muted:#55604F;--line:#C3CCD7;--teal:#17607A;--teal-d:#0F4A5F;--ok:#2E7D4F;--bad:#A8323A;--tint:#E3F0F4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jost',system-ui,sans-serif;background:var(--parch);color:var(--ink);font-size:18px;line-height:1.45;min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:14px 14px 70px}
+.top{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:10px}
+.back{color:var(--teal);text-decoration:none;font-weight:600;font-size:15px;border:1px solid var(--teal);border-radius:10px;padding:6px 12px;background:#fff}
+.title{font-weight:700;font-size:20px;color:var(--teal-d);flex:1;text-align:center}
+.prog{height:8px;background:#fff;border:1px solid var(--line);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.prog i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+.card{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--teal);border-radius:14px;padding:18px;margin-bottom:16px}
+h1{font-size:30px;line-height:1.15;color:var(--teal-d)}
+h2{font-size:23px;line-height:1.2;color:var(--teal-d);margin-bottom:6px}
+h3{font-size:17px;color:var(--teal-d);margin:14px 0 6px}
+p{margin:8px 0}
+.small{font-size:15px;color:var(--muted)}
+.rule{background:var(--tint);border-left:5px solid var(--teal);border-radius:8px;padding:10px 14px;margin:10px 0;font-weight:500}
+.btn{font-family:inherit;font-weight:600;font-size:17px;border:0;border-radius:10px;padding:11px 20px;cursor:pointer;color:#fff;background:var(--teal)}
+.btn.alt{background:#fff;color:var(--teal);border:1px solid var(--teal)}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+input.num{font:600 22px Jost,sans-serif;padding:9px 12px;border:2px solid var(--line);border-radius:10px;width:190px;background:#fff;color:var(--ink)}
+input.num:focus{outline:none;border-color:var(--teal)}
+/* chart */
+.chart{display:flex;justify-content:center;gap:0;margin:12px 0 6px;overflow-x:auto;padding-bottom:4px}
+.cc{width:68px;flex:none;text-align:center}
+.cc .nm{font-size:12px;color:var(--muted);min-height:30px;line-height:1.1;display:flex;align-items:flex-end;justify-content:center;padding:0 2px}
+.cc .dg{font:700 34px Jost,sans-serif;background:#fff;border:2px solid var(--teal);border-radius:8px;margin:3px 2px;height:52px;display:flex;align-items:center;justify-content:center;color:var(--teal-d)}
+.cc .dg.z{color:#B9C7CC;border-color:#C9D6DA}
+.cc .vl{font-size:13px;font-weight:600;color:var(--ink);min-height:18px}
+.cm{width:14px;flex:none;font:700 34px Jost,sans-serif;align-self:center;margin-top:12px;color:var(--ink);text-align:center}
+.arrows{display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:var(--teal-d);margin:6px 8px 0;gap:10px;flex-wrap:wrap}
+.arrows span{background:var(--tint);border-radius:99px;padding:4px 12px}
+/* questions */
+.q{border-top:1px solid var(--line);padding:12px 0}
+.q:first-of-type{border-top:0}
+.q .t{font-weight:500;margin-bottom:6px}
+.q .res{margin-top:6px;font-size:16px;font-weight:600}
+.q.good .res{color:var(--ok)}.q.bad .res{color:var(--bad)}
+.q.good input{border-color:var(--ok);background:#EEF7F1}
+.opt{display:block;width:100%;text-align:left;font:500 17px Jost,sans-serif;padding:9px 12px;margin:5px 0;background:#fff;border:2px solid var(--line);border-radius:10px;cursor:pointer;color:var(--ink)}
+.opt:hover{border-color:var(--teal)}
+.opt.sym{display:inline-block;width:auto;min-width:76px;text-align:center;font-size:28px;font-weight:700;margin-right:8px}
+.opt.right{border-color:var(--ok);background:#EEF7F1}.opt.wrong{border-color:var(--bad);background:#FAEBEC}
+table.cmp{border-collapse:separate;border-spacing:3px;margin:10px auto}
+table.cmp td{width:42px;height:46px;text-align:center;font:700 26px Jost,sans-serif;background:#fff;border:2px solid var(--line);border-radius:7px}
+table.cmp td.cm{width:12px;border:0;background:none;padding:0}
+table.cmp td.hl{border-color:var(--teal);background:var(--tint);color:var(--teal-d)}
+table.cmp td.pl{height:auto;border:0;background:none;font:600 11px Jost,sans-serif;color:var(--muted);vertical-align:bottom;line-height:1.1}
+table.cmp td.lb{width:auto;border:0;background:none;font:600 14px Jost,sans-serif;color:var(--muted);text-align:right;padding-right:6px}
+.pbtn{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.pbtn button{font:600 15px Jost,sans-serif;padding:7px 11px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}.pbtn button.on{border-color:var(--teal);background:var(--tint)}
+.nl{width:100%;max-width:560px;display:block;margin:6px auto}
+table.tb{border-collapse:collapse;width:100%;margin:8px 0;font-size:16px}
+table.tb td,table.tb th{border:1px solid var(--line);padding:7px 10px;text-align:left;background:#fff}
+table.tb th{background:var(--tint);color:var(--teal-d)}
+.big{font:700 28px Jost,sans-serif;color:var(--teal-d)}
+.score{font:700 44px Jost,sans-serif;color:var(--teal-d)}
+details{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:14px}
+summary{cursor:pointer;font-weight:600;color:var(--teal-d)}
+ul{margin:6px 0 6px 22px}
+.chain{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 6px;margin:10px 0;font-weight:700;color:var(--teal-d)}
+.chain .v{background:#fff;border:2px solid var(--teal);border-radius:8px;padding:6px 9px;font-size:18px}
+.chain .x{font-size:13px;background:var(--tint);border-radius:99px;padding:3px 8px;color:var(--teal-d)}
+.dpick{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.dpick button{width:38px;height:38px;border-radius:8px;border:2px solid var(--line);background:#fff;font:700 18px Jost,sans-serif;cursor:pointer;color:var(--ink)}
+.dpick button.on{border-color:var(--teal);background:var(--tint)}
+.eq{text-align:center;font:700 24px Jost,sans-serif;color:var(--teal-d);margin:6px 0;min-height:34px}
+.nlw{width:100%;overflow-x:auto}
+.tbtn{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.tbtn button{font:600 15px Jost,sans-serif;padding:7px 11px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+.am{border-collapse:collapse;margin:8px auto;font-size:18px}.am td,.am th{border:2px solid var(--line);padding:8px 12px;text-align:center;min-width:64px}.am th{background:#E3EAF0;color:var(--main-d)}.am td.hl{background:#EAF3F7;font-weight:700}
+.steps{margin:8px 0;padding-left:22px}.steps li{margin:4px 0}
+.out2{background:#F3F7FA;border:2px solid var(--line);border-radius:12px;padding:10px 14px;margin:10px 0}
+.sv{display:block;margin:8px auto;max-width:100%}
+
+@media(max-width:560px){body{font-size:17px}.cc{width:46px}.cc .dg{font-size:24px;height:42px}.cc .nm{font-size:10px}.cc .vl{font-size:10px}.cm{width:8px;font-size:24px}input.num{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="back" href="../wade-math-home.html#/kid/ryder">← Math Home</a><div class="title">Multiplying by One Digit</div><a class="back" id="modeLink" href="#">Mom view</a></div>
+  <div class="prog"><i id="bar"></i></div>
+  <div id="stage"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const PLACES=['Millions','Hundred thousands','Ten thousands','Thousands','Hundreds','Tens','Ones'];
+const ONES=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const TENS=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+function fmt(n){return String(n).replace(/\B(?=(\d{3})+$)/g,',');}
+function w999(n){let s=[];if(n>=100){s.push(ONES[Math.floor(n/100)]+' hundred');n%=100;}if(n>=20){s.push(TENS[Math.floor(n/10)]+(n%10?'-'+ONES[n%10]:''));}else if(n>0||!s.length)s.push(ONES[n]);return s.join(' ');}
+function toWords(n){
+  if(n===0)return 'zero';
+  if(n===1000000)return 'one million';
+  const th=Math.floor(n/1000),r=n%1000;let out=[];
+  if(th)out.push(w999(th)+' thousand');
+  if(r)out.push(w999(r));
+  return out.join(', ');
+}
+function expanded(n){
+  const s=String(n),L=s.length,parts=[];
+  for(let i=0;i<L;i++){if(s[i]!=='0')parts.push(fmt(s[i]+'0'.repeat(L-1-i)));}
+  return parts.join(' + ');
+}
+function chartHTML(n){
+  const s=String(n).padStart(7,'0');let h='<div class="chart">';
+  let lead=true;
+  for(let i=0;i<7;i++){
+    if(s[i]!=='0')lead=false;
+    const show=!lead||i===6;
+    const val=s[i]==='0'?'':fmt(s[i]+'0'.repeat(6-i));
+    h+='<div class="cc"><div class="nm">'+PLACES[i]+'</div><div class="dg'+(show?'':' z')+'">'+(show?s[i]:'0')+'</div><div class="vl">'+(show?val:'')+'</div></div>';
+    if(i===0||i===3)h+='<div class="cm">'+((i===3||n>=1000000)?',':'')+'</div>';
+  }
+  return h+'</div>';
+}
+/* ---------- question engine ---------- */
+const MOM=/[?&]mom=1/.test(location.search);
+let QS={};let TOTAL=0;let FIRST=0;let ANSWERED=0;
+function norm(v){return String(v==null?'':v).replace(/[−–]/g,'-').replace(/[,\s$]/g,'');}
+function qHTML(sec,i,q){
+  if(MOM){
+    let h='<div class="q good"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+    if(q.o)q.o.forEach((o,j)=>{h+='<div class="opt'+(q.sym?' sym':'')+(j===q.c?' right':'')+'" style="cursor:default">'+o+(j===q.c?' ✓':'')+'</div>';});
+    return h+'<div class="res">Answer: '+q.show+(q.why?'. '+q.why:'')+'</div></div>';
+  }
+  const id=sec+i;QS[id]={q:q,tries:0,done:false};TOTAL++;
+  let h='<div class="q" id="q-'+id+'"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+  if(q.o){q.o.forEach((o,j)=>{h+='<button class="opt'+(q.sym?' sym':'')+'" onclick="pickQ(\''+id+'\','+j+',this)">'+o+'</button>';});}
+  else h+='<div class="row"><input class="num" id="in-'+id+'" inputmode="numeric" autocomplete="off" placeholder="Your answer" onkeydown="if(event.key===\'Enter\')checkQ(\''+id+'\')"><button class="btn" onclick="checkQ(\''+id+'\')">Check</button></div>';
+  return h+'<div class="res" id="res-'+id+'"></div></div>';
+}
+function finishQ(id,ok){
+  const s=QS[id];if(s.done)return;
+  s.tries++;
+  const el=$('q-'+id),res=$('res-'+id);
+  if(ok){
+    s.done=true;ANSWERED++;if(s.tries===1)FIRST++;
+    el.className='q good';res.textContent='✓ Correct'+(s.q.why?'. '+s.q.why:'');
+  }else{
+    el.className='q bad';
+    if(s.tries>=2){s.done=true;ANSWERED++;res.textContent='The answer is '+s.q.show+'. '+(s.q.why||'')+' Ask Mom if you are not sure why.';
+      const i=$('in-'+id);if(i)i.disabled=true;
+    }else res.textContent='Not quite. '+(s.q.hint||'Look at the rule above and try again.');
+  }
+  upd();
+}
+function checkQ(id){
+  const s=QS[id];if(s.done)return;
+  const v=norm($('in-'+id).value);if(!v)return;
+  finishQ(id,v===norm(s.q.a));
+}
+function pickQ(id,j,btn){
+  const s=QS[id];if(s.done)return;
+  const ok=j===s.q.c;
+  btn.className='opt '+(ok?'right':'wrong');
+  finishQ(id,ok);
+  if(s.done&&!ok){[].slice.call($('q-'+id).querySelectorAll('.opt'))[s.q.c].className='opt right';}
+}
+function upd(){const b=$('nextbtn');if(b)b.disabled=ANSWERED-SECBASE<SECTOTAL;const c=$('cnt');if(c)c.textContent=ANSWERED-SECBASE+' of '+SECTOTAL+' answered';}
+
+/* ---------- sections ---------- */
+const SECA=[{"t": "In 3,124 × 2, what is the partial product for the thousands? (3,000 × 2)", "a": "6000", "show": "6,000", "hint": "3 × 2 = 6, then the thousands.", "why": "3,000 × 2 = 6,000."}, {"t": "In 4,512 × 3, what is the partial product for the hundreds? (500 × 3)", "a": "1500", "show": "1,500", "hint": "5 × 3 = 15, then two zeros.", "why": "500 × 3 = 1,500."}, {"t": "2,805 × 4 = 8,000 + ___ + 0 + 20. What is the missing partial product?", "a": "3200", "show": "3,200", "hint": "The missing part is the hundreds: 800 × 4.", "why": "800 × 4 = 3,200."}, {"t": "To find 6 × 47, split 47 into 40 + 7. What is 6 × 40?", "a": "240", "show": "240", "hint": "6 × 4 = 24, then a zero.", "why": "6 × 40 = 240."}, {"t": "Which shows 5 × 342 broken apart by place value?", "o": ["5 × 3 + 5 × 4 + 5 × 2", "5 × 300 + 5 × 40 + 5 × 2", "5 × 300 + 4 × 40 + 2 × 2"], "c": 1, "show": "5 × 300 + 5 × 40 + 5 × 2", "hint": "Each digit keeps its place value and is multiplied by 5.", "why": "342 = 300 + 40 + 2."}, {"t": "5 × 342 = 1,500 + 200 + 10 = ___", "a": "1710", "show": "1,710", "hint": "Add the three partial products.", "why": "1,500 + 200 + 10 = 1,710."}];const SECB=[{"t": "53 × 6 = ?", "a": "318", "show": "318", "hint": "Break it up: 50 × 6 = 300 + 3 × 6 = 18. Add the partial products.", "why": "53 × 6 = 318."}, {"t": "275 × 4 = ?", "a": "1100", "show": "1,100", "hint": "Break it up: 200 × 4 = 800 + 70 × 4 = 280 + 5 × 4 = 20. Add the partial products.", "why": "275 × 4 = 1,100."}, {"t": "806 × 7 = ?", "a": "5642", "show": "5,642", "hint": "Break it up: 800 × 7 = 5,600 + 6 × 7 = 42. Add the partial products.", "why": "806 × 7 = 5,642."}, {"t": "1,234 × 5 = ?", "a": "6170", "show": "6,170", "hint": "Break it up: 1,000 × 5 = 5,000 + 200 × 5 = 1,000 + 30 × 5 = 150 + 4 × 5 = 20. Add the partial products.", "why": "1,234 × 5 = 6,170."}, {"t": "3,408 × 6 = ?", "a": "20448", "show": "20,448", "hint": "Break it up: 3,000 × 6 = 18,000 + 400 × 6 = 2,400 + 8 × 6 = 48. Add the partial products.", "why": "3,408 × 6 = 20,448."}, {"t": "7,615 × 3 = ?", "a": "22845", "show": "22,845", "hint": "Break it up: 7,000 × 3 = 21,000 + 600 × 3 = 1,800 + 10 × 3 = 30 + 5 × 3 = 15. Add the partial products.", "why": "7,615 × 3 = 22,845."}, {"t": "9,999 × 2 = ?", "a": "19998", "show": "19,998", "hint": "Break it up: 9,000 × 2 = 18,000 + 900 × 2 = 1,800 + 90 × 2 = 180 + 9 × 2 = 18. Add the partial products.", "why": "9,999 × 2 = 19,998."}, {"t": "4,786 × 8 = ?", "a": "38288", "show": "38,288", "hint": "Break it up: 4,000 × 8 = 32,000 + 700 × 8 = 5,600 + 80 × 8 = 640 + 6 × 8 = 48. Add the partial products.", "why": "4,786 × 8 = 38,288."}];const SECC=[{"t": "A box holds 248 pencils. How many pencils are in 6 boxes?", "a": "1488", "show": "1,488", "hint": "Break it up: 200 × 6 = 1,200 + 40 × 6 = 240 + 8 × 6 = 48. Add the partial products.", "why": "248 × 6 = 1,488."}, {"t": "A stadium has 9 sections with 1,375 seats in each. How many seats in all?", "a": "12375", "show": "12,375", "hint": "Break it up: 1,000 × 9 = 9,000 + 300 × 9 = 2,700 + 70 × 9 = 630 + 5 × 9 = 45. Add the partial products.", "why": "1,375 × 9 = 12,375."}, {"t": "A bakery bakes 3,250 rolls each day. How many rolls in 4 days?", "a": "13000", "show": "13,000", "hint": "Break it up: 3,000 × 4 = 12,000 + 200 × 4 = 800 + 50 × 4 = 200. Add the partial products.", "why": "3,250 × 4 = 13,000."}, {"t": "About how much is 4,812 × 5? Round 4,812 first.", "o": ["About 25,000", "About 2,500", "About 250,000"], "c": 0, "show": "About 25,000", "hint": "4,812 is close to 5,000. 5,000 × 5 = ?", "why": "5,000 × 5 = 25,000, so the answer is near 25,000."}, {"t": "Sam says 612 × 4 = 248. Which check shows he is wrong?", "o": ["The ones digit is wrong", "612 is about 600, and 600 × 4 = 2,400, much more than 248", "612 × 4 must be odd"], "c": 1, "show": "612 is about 600, and 600 × 4 = 2,400, much more than 248", "hint": "Round 612 to 600 and multiply by 4.", "why": "The real answer is 2,448. Estimating shows 248 is far too small."}, {"t": "Each of 8 ropes is 1,206 inches long. How many inches of rope in all?", "a": "9648", "show": "9,648", "hint": "Break it up: 1,000 × 8 = 8,000 + 200 × 8 = 1,600 + 6 × 8 = 48. Add the partial products.", "why": "1,206 × 8 = 9,648."}];
+const PN=['ones','tens','hundreds','thousands'];
+function amTool(){
+  const n=gv('ma',10,9999),d=gv('mb',2,9),s=String(n),L=s.length;let h1='',h2='',sum=0,use=[];
+  for(let i=0;i<L;i++){const pv=Number(s[i])*Math.pow(10,L-1-i);const pp=pv*d;sum+=pp;h1+='<td>'+fmt(pv)+'</td>';h2+='<td class="hl">'+fmt(pp)+'</td>';use.push(fmt(pp));}
+  let hd='';for(let i=0;i<L;i++)hd+='<th>'+PN[L-1-i]+'</th>';
+  $('amr').innerHTML='<table class="am"><tr><th></th>'+hd+'</tr><tr><th>'+fmt(n)+' split</th>'+h1+'</tr><tr><th>× '+d+'</th>'+h2+'</tr></table>'
+   +'<div class="out2">'+fmt(n)+' × '+d+' = '+use.join(' + ')+' = <b>'+fmt(sum)+'</b></div>';
+}
+function algTool(){
+  const n=gv('aa',10,9999),d=gv('ab',2,9),s=String(n);let carry=0,st='',out='';
+  for(let i=s.length-1;i>=0;i--){const dg=Number(s[i]),t=dg*d+carry;st+='<li>'+PN[s.length-1-i]+': '+dg+' × '+d+(carry?' + '+carry:'')+' = '+t+(i>0?'. Write '+(t%10)+', carry '+Math.floor(t/10)+'.':'. Write '+t+'.')+'</li>';carry=Math.floor(t/10);out=(i>0?t%10:t)+out;}
+  $('alr').innerHTML='<ol class="steps">'+st+'</ol><div class="out2">'+fmt(n)+' × '+d+' = <b>'+fmt(n*d)+'</b></div>';
+}
+function rA(){secPage('a','<div class="card"><h1>Multiplying by one digit</h1><p class="small">About 15 minutes. This is practice only. Nothing here is saved or graded.</p><h2 style="margin-top:12px">Place value and the area model</h2>'
+ +'<div class="rule">Split the big number by place value. Multiply each part by the one-digit number. These are the <b>partial products</b>. Add them to get the answer.</div>'
+ +'<h3>Try it. Type a number up to 9,999 and a digit.</h3><div class="row"><input class="num" id="ma" value="3,408" oninput="amTool()" inputmode="numeric"><span>×</span><input class="num" id="mb" value="6" oninput="amTool()" inputmode="numeric"></div><div id="amr"></div></div>',SECA);}
+function rB(){secPage('b','<div class="card"><h2>The standard algorithm</h2>'
+ +'<div class="rule">Start at the ones. Multiply the digit, add any carry, write the ones digit, and carry the tens. It does the same work as the area model, in a short form.</div>'
+ +'<h3>Try it. Watch each step.</h3><div class="row"><input class="num" id="aa" value="4,786" oninput="algTool()" inputmode="numeric"><span>×</span><input class="num" id="ab" value="8" oninput="algTool()" inputmode="numeric"></div><div id="alr"></div></div>',SECB);}
+function rC(){secPage('c','<div class="card"><h2>Problems and estimating</h2><div class="rule">Round the big number to estimate first. If your answer is far from the estimate, check it again.</div></div>',SECC,true);}
+
+const SECFNS=[rA,rB,rC];
+function INITS(){if($('ma'))amTool();if($('aa'))algTool();}
+const ORAL=["Show 3,408 × 6 with the area model. What are the partial products?", "Why do we carry in the standard algorithm?", "How do you estimate 4,812 × 5 to check your answer?"];
+const WEEKNO=6;
+
+let SECBASE=0,SECTOTAL=0,ST=0;
+const MOM2=MOM;
+function momGate(cb){cb();} /* PIN turned off for now */
+function begin(){
+  const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(buildMom);return;}
+  ml.href=location.pathname+'?mom=1';ST=0;render();
+}
+
+function begin(){
+  const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(buildMom);return;}
+  ml.href=location.pathname+'?mom=1';ST=0;render();
+}
+function buildMom(){
+  let all='<div class="card" style="border-top-color:#C9972B"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Ryder.</p></div>';
+  SECFNS.forEach(fn=>{fn();all+=$('stage').innerHTML;});
+  all+='<div class="card"><h2>Check him on these, out loud</h2><ul>'+ORAL.map(x=>'<li>'+x+'</li>').join('')+'</ul><p class="small">If he does these well, tick them on his rung in Math Home. If he is solid, let him test out.</p></div>';
+  $('stage').innerHTML=all;$('bar').style.width='100%';INITS();
+}
+function bar(){$('bar').style.width=Math.round(ST/(SECFNS.length)*100)+'%';}
+function nav(last){if(MOM)return '';return '<div class="row" style="margin-top:14px"><button class="btn" id="nextbtn" onclick="nextSec()" disabled>'+(last?'Finish':'Next')+'</button><span class="small" id="cnt"></span></div>';}
+function nextSec(){ST++;render();window.scrollTo(0,0);}
+function listHTML(sec,arr){let h='';arr.forEach((q,i)=>{h+=qHTML(sec,i,q);});return h;}
+function render(){bar();QS={};SECBASE=ANSWERED;if(ST>=SECFNS.length){rDone();return;}SECFNS[ST]();INITS();upd();}
+function secPage(id,intro,items,last){SECTOTAL=items.length;$('stage').innerHTML=intro+'<div class="card"><h2>Check it</h2>'+listHTML(id,items)+nav(last)+'</div>';}
+function rDone(){
+  const pct=Math.round(FIRST/TOTAL*100);
+  $('stage').innerHTML='<div class="card"><h1>Done</h1><p>First-try correct: <span class="score">'+FIRST+' of '+TOTAL+'</span></p>'
+   +'<p>'+(pct>=85?'That is strong. Tell Mom you may be ready to test out of Week '+WEEKNO+'.':pct>=60?'Good start. Look again at anything you missed, then tell Mom.':'Go back through the rules with Mom before you test out.')+'</p>'
+   +'<h3>Now say these to Mom, out loud</h3><ul>'+ORAL.map(x=>'<li>'+x+'</li>').join('')+'</ul>'
+   +'<div class="row" style="margin-top:14px"><a class="btn" style="text-decoration:none" href="../wade-math-home.html#/kid/ryder">Back to Math Home</a><button class="btn alt" onclick="location.reload()">Do it again</button></div></div>';
+}
+function gv(id,lo,hi){let v=parseInt(norm($(id).value),10);return isNaN(v)?lo:Math.max(lo,Math.min(hi,v));}
+function fmt(n){return Number(n).toLocaleString('en-US');}
+begin();
+/* Mom view: back goes to Mom's lesson list */
+(function(){if(/[?&]mom=1/.test(location.search)){var b=document.querySelector('a.back');if(b){b.href=b.getAttribute('href').replace(/#\/kid\/(\w+)/,'#/mom/ladder/$1');b.textContent='\u2190 Lessons';}}})();
+</script>
+</body>
+</html>

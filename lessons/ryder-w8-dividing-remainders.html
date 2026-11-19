@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ryder · Week 8 · Dividing and Remainders</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--parch:#C8D0D8;--card:#F6F8FB;--forest:#204B3A;--ink:#1E2A24;--muted:#55604F;--line:#C3CCD7;--teal:#17607A;--teal-d:#0F4A5F;--ok:#2E7D4F;--bad:#A8323A;--tint:#E3F0F4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jost',system-ui,sans-serif;background:var(--parch);color:var(--ink);font-size:18px;line-height:1.45;min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:14px 14px 70px}
+.top{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:10px}
+.back{color:var(--teal);text-decoration:none;font-weight:600;font-size:15px;border:1px solid var(--teal);border-radius:10px;padding:6px 12px;background:#fff}
+.title{font-weight:700;font-size:20px;color:var(--teal-d);flex:1;text-align:center}
+.prog{height:8px;background:#fff;border:1px solid var(--line);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.prog i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+.card{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--teal);border-radius:14px;padding:18px;margin-bottom:16px}
+h1{font-size:30px;line-height:1.15;color:var(--teal-d)}
+h2{font-size:23px;line-height:1.2;color:var(--teal-d);margin-bottom:6px}
+h3{font-size:17px;color:var(--teal-d);margin:14px 0 6px}
+p{margin:8px 0}
+.small{font-size:15px;color:var(--muted)}
+.rule{background:var(--tint);border-left:5px solid var(--teal);border-radius:8px;padding:10px 14px;margin:10px 0;font-weight:500}
+.btn{font-family:inherit;font-weight:600;font-size:17px;border:0;border-radius:10px;padding:11px 20px;cursor:pointer;color:#fff;background:var(--teal)}
+.btn.alt{background:#fff;color:var(--teal);border:1px solid var(--teal)}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+input.num{font:600 22px Jost,sans-serif;padding:9px 12px;border:2px solid var(--line);border-radius:10px;width:190px;background:#fff;color:var(--ink)}
+input.num:focus{outline:none;border-color:var(--teal)}
+/* chart */
+.chart{display:flex;justify-content:center;gap:0;margin:12px 0 6px;overflow-x:auto;padding-bottom:4px}
+.cc{width:68px;flex:none;text-align:center}
+.cc .nm{font-size:12px;color:var(--muted);min-height:30px;line-height:1.1;display:flex;align-items:flex-end;justify-content:center;padding:0 2px}
+.cc .dg{font:700 34px Jost,sans-serif;background:#fff;border:2px solid var(--teal);border-radius:8px;margin:3px 2px;height:52px;display:flex;align-items:center;justify-content:center;color:var(--teal-d)}
+.cc .dg.z{color:#B9C7CC;border-color:#C9D6DA}
+.cc .vl{font-size:13px;font-weight:600;color:var(--ink);min-height:18px}
+.cm{width:14px;flex:none;font:700 34px Jost,sans-serif;align-self:center;margin-top:12px;color:var(--ink);text-align:center}
+.arrows{display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:var(--teal-d);margin:6px 8px 0;gap:10px;flex-wrap:wrap}
+.arrows span{background:var(--tint);border-radius:99px;padding:4px 12px}
+/* questions */
+.q{border-top:1px solid var(--line);padding:12px 0}
+.q:first-of-type{border-top:0}
+.q .t{font-weight:500;margin-bottom:6px}
+.q .res{margin-top:6px;font-size:16px;font-weight:600}
+.q.good .res{color:var(--ok)}.q.bad .res{color:var(--bad)}
+.q.good input{border-color:var(--ok);background:#EEF7F1}
+.opt{display:block;width:100%;text-align:left;font:500 17px Jost,sans-serif;padding:9px 12px;margin:5px 0;background:#fff;border:2px solid var(--line);border-radius:10px;cursor:pointer;color:var(--ink)}
+.opt:hover{border-color:var(--teal)}
+.opt.sym{display:inline-block;width:auto;min-width:76px;text-align:center;font-size:28px;font-weight:700;margin-right:8px}
+.opt.right{border-color:var(--ok);background:#EEF7F1}.opt.wrong{border-color:var(--bad);background:#FAEBEC}
+table.cmp{border-collapse:separate;border-spacing:3px;margin:10px auto}
+table.cmp td{width:42px;height:46px;text-align:center;font:700 26px Jost,sans-serif;background:#fff;border:2px solid var(--line);border-radius:7px}
+table.cmp td.cm{width:12px;border:0;background:none;padding:0}
+table.cmp td.hl{border-color:var(--teal);background:var(--tint);color:var(--teal-d)}
+table.cmp td.pl{height:auto;border:0;background:none;font:600 11px Jost,sans-serif;color:var(--muted);vertical-align:bottom;line-height:1.1}
+table.cmp td.lb{width:auto;border:0;background:none;font:600 14px Jost,sans-serif;color:var(--muted);text-align:right;padding-right:6px}
+.pbtn{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.pbtn button{font:600 15px Jost,sans-serif;padding:7px 11px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}.pbtn button.on{border-color:var(--teal);background:var(--tint)}
+.nl{width:100%;max-width:560px;display:block;margin:6px auto}
+table.tb{border-collapse:collapse;width:100%;margin:8px 0;font-size:16px}
+table.tb td,table.tb th{border:1px solid var(--line);padding:7px 10px;text-align:left;background:#fff}
+table.tb th{background:var(--tint);color:var(--teal-d)}
+.big{font:700 28px Jost,sans-serif;color:var(--teal-d)}
+.score{font:700 44px Jost,sans-serif;color:var(--teal-d)}
+details{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:14px}
+summary{cursor:pointer;font-weight:600;color:var(--teal-d)}
+ul{margin:6px 0 6px 22px}
+.chain{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 6px;margin:10px 0;font-weight:700;color:var(--teal-d)}
+.chain .v{background:#fff;border:2px solid var(--teal);border-radius:8px;padding:6px 9px;font-size:18px}
+.chain .x{font-size:13px;background:var(--tint);border-radius:99px;padding:3px 8px;color:var(--teal-d)}
+.dpick{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.dpick button{width:38px;height:38px;border-radius:8px;border:2px solid var(--line);background:#fff;font:700 18px Jost,sans-serif;cursor:pointer;color:var(--ink)}
+.dpick button.on{border-color:var(--teal);background:var(--tint)}
+.eq{text-align:center;font:700 24px Jost,sans-serif;color:var(--teal-d);margin:6px 0;min-height:34px}
+.nlw{width:100%;overflow-x:auto}
+.tbtn{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.tbtn button{font:600 15px Jost,sans-serif;padding:7px 11px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+.am{border-collapse:collapse;margin:8px auto;font-size:18px}.am td,.am th{border:2px solid var(--line);padding:8px 12px;text-align:center;min-width:64px}.am th{background:#E3EAF0;color:var(--main-d)}.am td.hl{background:#EAF3F7;font-weight:700}
+.steps{margin:8px 0;padding-left:22px}.steps li{margin:4px 0}
+.out2{background:#F3F7FA;border:2px solid var(--line);border-radius:12px;padding:10px 14px;margin:10px 0}
+.sv{display:block;margin:8px auto;max-width:100%}
+
+@media(max-width:560px){body{font-size:17px}.cc{width:46px}.cc .dg{font-size:24px;height:42px}.cc .nm{font-size:10px}.cc .vl{font-size:10px}.cm{width:8px;font-size:24px}input.num{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="back" href="../wade-math-home.html#/kid/ryder">← Math Home</a><div class="title">Dividing and Remainders</div><a class="back" id="modeLink" href="#">Mom view</a></div>
+  <div class="prog"><i id="bar"></i></div>
+  <div id="stage"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const PLACES=['Millions','Hundred thousands','Ten thousands','Thousands','Hundreds','Tens','Ones'];
+const ONES=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const TENS=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+function fmt(n){return String(n).replace(/\B(?=(\d{3})+$)/g,',');}
+function w999(n){let s=[];if(n>=100){s.push(ONES[Math.floor(n/100)]+' hundred');n%=100;}if(n>=20){s.push(TENS[Math.floor(n/10)]+(n%10?'-'+ONES[n%10]:''));}else if(n>0||!s.length)s.push(ONES[n]);return s.join(' ');}
+function toWords(n){
+  if(n===0)return 'zero';
+  if(n===1000000)return 'one million';
+  const th=Math.floor(n/1000),r=n%1000;let out=[];
+  if(th)out.push(w999(th)+' thousand');
+  if(r)out.push(w999(r));
+  return out.join(', ');
+}
+function expanded(n){
+  const s=String(n),L=s.length,parts=[];
+  for(let i=0;i<L;i++){if(s[i]!=='0')parts.push(fmt(s[i]+'0'.repeat(L-1-i)));}
+  return parts.join(' + ');
+}
+function chartHTML(n){
+  const s=String(n).padStart(7,'0');let h='<div class="chart">';
+  let lead=true;
+  for(let i=0;i<7;i++){
+    if(s[i]!=='0')lead=false;
+    const show=!lead||i===6;
+    const val=s[i]==='0'?'':fmt(s[i]+'0'.repeat(6-i));
+    h+='<div class="cc"><div class="nm">'+PLACES[i]+'</div><div class="dg'+(show?'':' z')+'">'+(show?s[i]:'0')+'</div><div class="vl">'+(show?val:'')+'</div></div>';
+    if(i===0||i===3)h+='<div class="cm">'+((i===3||n>=1000000)?',':'')+'</div>';
+  }
+  return h+'</div>';
+}
+/* ---------- question engine ---------- */
+const MOM=/[?&]mom=1/.test(location.search);
+let QS={};let TOTAL=0;let FIRST=0;let ANSWERED=0;
+function norm(v){return String(v==null?'':v).replace(/[−–]/g,'-').replace(/[,\s$]/g,'');}
+function qHTML(sec,i,q){
+  if(MOM){
+    let h='<div class="q good"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+    if(q.o)q.o.forEach((o,j)=>{h+='<div class="opt'+(q.sym?' sym':'')+(j===q.c?' right':'')+'" style="cursor:default">'+o+(j===q.c?' ✓':'')+'</div>';});
+    return h+'<div class="res">Answer: '+q.show+(q.why?'. '+q.why:'')+'</div></div>';
+  }
+  const id=sec+i;QS[id]={q:q,tries:0,done:false};TOTAL++;
+  let h='<div class="q" id="q-'+id+'"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+  if(q.o){q.o.forEach((o,j)=>{h+='<button class="opt'+(q.sym?' sym':'')+'" onclick="pickQ(\''+id+'\','+j+',this)">'+o+'</button>';});}
+  else h+='<div class="row"><input class="num" id="in-'+id+'" inputmode="numeric" autocomplete="off" placeholder="Your answer" onkeydown="if(event.key===\'Enter\')checkQ(\''+id+'\')"><button class="btn" onclick="checkQ(\''+id+'\')">Check</button></div>';
+  return h+'<div class="res" id="res-'+id+'"></div></div>';
+}
+function finishQ(id,ok){
+  const s=QS[id];if(s.done)return;
+  s.tries++;
+  const el=$('q-'+id),res=$('res-'+id);
+  if(ok){
+    s.done=true;ANSWERED++;if(s.tries===1)FIRST++;
+    el.className='q good';res.textContent='✓ Correct'+(s.q.why?'. '+s.q.why:'');
+  }else{
+    el.className='q bad';
+    if(s.tries>=2){s.done=true;ANSWERED++;res.textContent='The answer is '+s.q.show+'. '+(s.q.why||'')+' Ask Mom if you are not sure why.';
+      const i=$('in-'+id);if(i)i.disabled=true;
+    }else res.textContent='Not quite. '+(s.q.hint||'Look at the rule above and try again.');
+  }
+  upd();
+}
+function checkQ(id){
+  const s=QS[id];if(s.done)return;
+  const v=norm($('in-'+id).value);if(!v)return;
+  finishQ(id,v===norm(s.q.a));
+}
+function pickQ(id,j,btn){
+  const s=QS[id];if(s.done)return;
+  const ok=j===s.q.c;
+  btn.className='opt '+(ok?'right':'wrong');
+  finishQ(id,ok);
+  if(s.done&&!ok){[].slice.call($('q-'+id).querySelectorAll('.opt'))[s.q.c].className='opt right';}
+}
+function upd(){const b=$('nextbtn');if(b)b.disabled=ANSWERED-SECBASE<SECTOTAL;const c=$('cnt');if(c)c.textContent=ANSWERED-SECBASE+' of '+SECTOTAL+' answered';}
+
+/* ---------- sections ---------- */
+const SECA=[{"t": "84 ÷ 4 = ?", "a": "21", "show": "21", "hint": "Divide one digit at a time: 8 ÷ 4 = 2; 4 ÷ 4 = 1.", "why": "84 ÷ 4 = 21."}, {"t": "156 ÷ 3 = ?", "a": "52", "show": "52", "hint": "Divide one digit at a time: 1 ÷ 3 = 0 r 1; 15 ÷ 3 = 5; 6 ÷ 3 = 2.", "why": "156 ÷ 3 = 52."}, {"t": "725 ÷ 5 = ?", "a": "145", "show": "145", "hint": "Divide one digit at a time: 7 ÷ 5 = 1 r 2; 22 ÷ 5 = 4 r 2; 25 ÷ 5 = 5.", "why": "725 ÷ 5 = 145."}, {"t": "1,248 ÷ 6 = ?", "a": "208", "show": "208", "hint": "Divide one digit at a time: 1 ÷ 6 = 0 r 1; 12 ÷ 6 = 2; 4 ÷ 6 = 0 r 4; 48 ÷ 6 = 8.", "why": "1,248 ÷ 6 = 208."}, {"t": "3,654 ÷ 9 = ?", "a": "406", "show": "406", "hint": "Divide one digit at a time: 3 ÷ 9 = 0 r 3; 36 ÷ 9 = 4; 5 ÷ 9 = 0 r 5; 54 ÷ 9 = 6.", "why": "3,654 ÷ 9 = 406."}, {"t": "9,000 ÷ 8 = ?", "a": "1125", "show": "1,125", "hint": "Divide one digit at a time: 9 ÷ 8 = 1 r 1; 10 ÷ 8 = 1 r 2; 20 ÷ 8 = 2 r 4; 40 ÷ 8 = 5.", "why": "9,000 ÷ 8 = 1,125."}, {"t": "2,418 ÷ 3 = ?", "a": "806", "show": "806", "hint": "Divide one digit at a time: 2 ÷ 3 = 0 r 2; 24 ÷ 3 = 8; 1 ÷ 3 = 0 r 1; 18 ÷ 3 = 6.", "why": "2,418 ÷ 3 = 806."}];const SECB=[{"t": "47 ÷ 6 = 7 remainder ___", "a": "5", "show": "5", "hint": "7 × 6 = 42. How much is left from 47?", "why": "47 − 42 = 5."}, {"t": "158 ÷ 7: the quotient is 22. What is the remainder?", "a": "4", "show": "4", "hint": "22 × 7 = 154. 158 − 154 = ?", "why": "158 = 22 × 7 + 4."}, {"t": "1,000 ÷ 9 = 111 remainder ___", "a": "1", "show": "1", "hint": "111 × 9 = 999.", "why": "1,000 − 999 = 1."}, {"t": "2,345 ÷ 4: the quotient is 586. What is the remainder?", "a": "1", "show": "1", "hint": "586 × 4 = 2,344.", "why": "2,345 − 2,344 = 1."}, {"t": "Which check proves that 47 ÷ 6 = 7 remainder 5?", "o": ["7 + 6 + 5 = 18", "7 × 6 + 5 = 47", "7 × 5 + 6 = 41"], "c": 1, "show": "7 × 6 + 5 = 47", "hint": "Multiply the quotient by the divisor, then add the remainder.", "why": "7 × 6 = 42 and 42 + 5 = 47, the starting number."}, {"t": "When you divide by 6, which of these can NOT be a remainder?", "o": ["6", "5", "0"], "c": 0, "show": "6", "hint": "If the remainder is 6 or more, you can make another group of 6.", "why": "A remainder is always less than the divisor."}];const SECC=[{"t": "47 students need rides. Each van seats 6. How many vans are needed?", "a": "8", "show": "8", "hint": "47 ÷ 6 = 7 r 5. The 5 students left over still need a van.", "why": "Round UP: 8 vans."}, {"t": "47 cookies are shared equally among 6 friends. How many cookies does each friend get?", "a": "7", "show": "7", "hint": "47 ÷ 6 = 7 r 5. The 5 cookies left cannot be shared equally.", "why": "Round DOWN: each friend gets 7."}, {"t": "47 pencils are packed in boxes of 6. How many pencils are left over?", "a": "5", "show": "5", "hint": "47 ÷ 6 = 7 r 5.", "why": "The question asks for the remainder: 5."}, {"t": "How many full 8-egg cartons can be filled from 100 eggs?", "a": "12", "show": "12", "hint": "100 ÷ 8 = 12 r 4. Only full cartons count.", "why": "Round DOWN: 12 full cartons."}, {"t": "A rope is 150 feet long. It is cut into 7-foot pieces. How many full pieces are there?", "a": "21", "show": "21", "hint": "150 ÷ 7 = 21 r 3.", "why": "Round DOWN: 21 pieces, with 3 feet left over."}, {"t": "47 people need rides in 6-seat vans. Why do we round UP to 8 vans?", "o": ["Because 47 is odd", "The 5 people left over still need a van", "Because 6 is even"], "c": 1, "show": "The 5 people left over still need a van", "hint": "What happens to the people in the remainder?", "why": "The leftover people need a ride, so we need one more van."}];
+const PN=['ones','tens','hundreds','thousands'];
+function divTool(){
+  const n=gv('da',10,9999),d=gv('db',2,9),s=String(n);let rem=0,qd='',st='';
+  for(let i=0;i<s.length;i++){const cur=rem*10+Number(s[i]),q=Math.floor(cur/d),r=cur%d;qd+=q;st+='<li>'+PN[s.length-1-i]+': '+cur+' ÷ '+d+' = '+q+(r?' r '+r:'')+(i<s.length-1&&r?' (the '+r+' left carries to the next digit)':'')+'</li>';rem=r;}
+  const q=Math.floor(n/d),r=n%d;
+  $('dvr').innerHTML='<ol class="steps">'+st+'</ol><div class="out2">'+fmt(n)+' ÷ '+d+' = <b>'+fmt(q)+(r?' remainder '+r:'')+'</b><br>Check: '+fmt(q)+' × '+d+(r?' + '+r:'')+' = '+fmt(q*d+r)+' ✓</div>';
+}
+function remTool(){
+  const n=gv('ra',10,999),d=gv('rb',2,9),q=Math.floor(n/d),r=n%d;
+  $('rmr').innerHTML='<div class="out2">'+n+' ÷ '+d+' = '+q+' remainder '+r+'</div>'
+   +'<table class="am" style="text-align:left"><tr><th>The question asks…</th><th>Answer</th><th>Why</th></tr>'
+   +'<tr><td>How many are left over?</td><td class="hl">'+r+'</td><td>The remainder is the answer.</td></tr>'
+   +'<tr><td>How many full groups can be made?</td><td class="hl">'+q+'</td><td>Round down. The leftover cannot fill a group.</td></tr>'
+   +'<tr><td>How many groups are needed to hold everyone?</td><td class="hl">'+(r?q+1:q)+'</td><td>'+(r?'Round up. The leftover still needs a group.':'Nothing is left over, so no extra group.')+'</td></tr></table>';
+}
+function rA(){secPage('a','<div class="card"><h1>Dividing and remainders</h1><p class="small">About 15 minutes. This is practice only. Nothing here is saved or graded.</p><h2 style="margin-top:12px">Dividing one digit at a time</h2>'
+ +'<div class="rule">Divide from the left, one place at a time. Whatever is left over moves to the next digit. Check by multiplying: quotient × divisor + remainder = the starting number.</div>'
+ +'<h3>Try it. Type a number up to 9999 and a divisor from 2 to 9.</h3><div class="row"><input class="num" id="da" value="3654" oninput="divTool()" inputmode="numeric"><span>÷</span><input class="num" id="db" value="9" oninput="divTool()" inputmode="numeric"></div><div id="dvr"></div></div>',SECA);}
+function rB(){secPage('b','<div class="card"><h2>What is a remainder?</h2>'
+ +'<div class="rule">The remainder is what is left over after making as many equal groups as you can. It is always smaller than the divisor.</div>'
+ +'<h3>Try it.</h3><div class="row"><input class="num" id="ra" value="47" oninput="remTool()" inputmode="numeric"><span>÷</span><input class="num" id="rb" value="6" oninput="remTool()" inputmode="numeric"></div><div id="rmr"></div></div>',SECB);}
+function rC(){secPage('c','<div class="card"><h2>What do we do with the remainder?</h2><div class="rule">Read the question. <b>Left over?</b> The remainder is the answer. <b>Full groups?</b> Round down. <b>Enough to hold everyone?</b> Round up. Try 47 ÷ 6 in the tool above to see all three.</div></div>',SECC,true);}
+
+const SECFNS=[rA,rB,rC];
+function INITS(){if($('da'))divTool();if($('ra'))remTool();}
+const ORAL=["Divide 3,654 by 9 one digit at a time. What happens to a leftover?", "How do you check a division answer with a remainder?", "47 students and 6-seat vans: why do we round up? When would we round down?"];
+const WEEKNO=8;
+
+let SECBASE=0,SECTOTAL=0,ST=0;
+const MOM2=MOM;
+function momGate(cb){cb();} /* PIN turned off for now */
+function begin(){
+  const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(buildMom);return;}
+  ml.href=location.pathname+'?mom=1';ST=0;render();
+}
+
+function begin(){
+  const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(buildMom);return;}
+  ml.href=location.pathname+'?mom=1';ST=0;render();
+}
+function buildMom(){
+  let all='<div class="card" style="border-top-color:#C9972B"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Ryder.</p></div>';
+  SECFNS.forEach(fn=>{fn();all+=$('stage').innerHTML;});
+  all+='<div class="card"><h2>Check him on these, out loud</h2><ul>'+ORAL.map(x=>'<li>'+x+'</li>').join('')+'</ul><p class="small">If he does these well, tick them on his rung in Math Home. If he is solid, let him test out.</p></div>';
+  $('stage').innerHTML=all;$('bar').style.width='100%';INITS();
+}
+function bar(){$('bar').style.width=Math.round(ST/(SECFNS.length)*100)+'%';}
+function nav(last){if(MOM)return '';return '<div class="row" style="margin-top:14px"><button class="btn" id="nextbtn" onclick="nextSec()" disabled>'+(last?'Finish':'Next')+'</button><span class="small" id="cnt"></span></div>';}
+function nextSec(){ST++;render();window.scrollTo(0,0);}
+function listHTML(sec,arr){let h='';arr.forEach((q,i)=>{h+=qHTML(sec,i,q);});return h;}
+function render(){bar();QS={};SECBASE=ANSWERED;if(ST>=SECFNS.length){rDone();return;}SECFNS[ST]();INITS();upd();}
+function secPage(id,intro,items,last){SECTOTAL=items.length;$('stage').innerHTML=intro+'<div class="card"><h2>Check it</h2>'+listHTML(id,items)+nav(last)+'</div>';}
+function rDone(){
+  const pct=Math.round(FIRST/TOTAL*100);
+  $('stage').innerHTML='<div class="card"><h1>Done</h1><p>First-try correct: <span class="score">'+FIRST+' of '+TOTAL+'</span></p>'
+   +'<p>'+(pct>=85?'That is strong. Tell Mom you may be ready to test out of Week '+WEEKNO+'.':pct>=60?'Good start. Look again at anything you missed, then tell Mom.':'Go back through the rules with Mom before you test out.')+'</p>'
+   +'<h3>Now say these to Mom, out loud</h3><ul>'+ORAL.map(x=>'<li>'+x+'</li>').join('')+'</ul>'
+   +'<div class="row" style="margin-top:14px"><a class="btn" style="text-decoration:none" href="../wade-math-home.html#/kid/ryder">Back to Math Home</a><button class="btn alt" onclick="location.reload()">Do it again</button></div></div>';
+}
+function gv(id,lo,hi){let v=parseInt(norm($(id).value),10);return isNaN(v)?lo:Math.max(lo,Math.min(hi,v));}
+function fmt(n){return Number(n).toLocaleString('en-US');}
+begin();
+/* Mom view: back goes to Mom's lesson list */
+(function(){if(/[?&]mom=1/.test(location.search)){var b=document.querySelector('a.back');if(b){b.href=b.getAttribute('href').replace(/#\/kid\/(\w+)/,'#/mom/ladder/$1');b.textContent='\u2190 Lessons';}}})();
+</script>
+</body>
+</html>

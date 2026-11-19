@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ryder · Week 5 · Multiplication as Comparison</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--parch:#C8D0D8;--card:#F6F8FB;--forest:#204B3A;--ink:#1E2A24;--muted:#55604F;--line:#C3CCD7;--teal:#17607A;--teal-d:#0F4A5F;--ok:#2E7D4F;--bad:#A8323A;--tint:#E3F0F4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jost',system-ui,sans-serif;background:var(--parch);color:var(--ink);font-size:18px;line-height:1.45;min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:14px 14px 70px}
+.top{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:10px}
+.back{color:var(--teal);text-decoration:none;font-weight:600;font-size:15px;border:1px solid var(--teal);border-radius:10px;padding:6px 12px;background:#fff}
+.title{font-weight:700;font-size:20px;color:var(--teal-d);flex:1;text-align:center}
+.prog{height:8px;background:#fff;border:1px solid var(--line);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.prog i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+.card{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--teal);border-radius:14px;padding:18px;margin-bottom:16px}
+h1{font-size:30px;line-height:1.15;color:var(--teal-d)}
+h2{font-size:23px;line-height:1.2;color:var(--teal-d);margin-bottom:6px}
+h3{font-size:17px;color:var(--teal-d);margin:14px 0 6px}
+p{margin:8px 0}
+.small{font-size:15px;color:var(--muted)}
+.rule{background:var(--tint);border-left:5px solid var(--teal);border-radius:8px;padding:10px 14px;margin:10px 0;font-weight:500}
+.btn{font-family:inherit;font-weight:600;font-size:17px;border:0;border-radius:10px;padding:11px 20px;cursor:pointer;color:#fff;background:var(--teal)}
+.btn.alt{background:#fff;color:var(--teal);border:1px solid var(--teal)}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+input.num{font:600 22px Jost,sans-serif;padding:9px 12px;border:2px solid var(--line);border-radius:10px;width:190px;background:#fff;color:var(--ink)}
+input.num:focus{outline:none;border-color:var(--teal)}
+/* chart */
+.chart{display:flex;justify-content:center;gap:0;margin:12px 0 6px;overflow-x:auto;padding-bottom:4px}
+.cc{width:68px;flex:none;text-align:center}
+.cc .nm{font-size:12px;color:var(--muted);min-height:30px;line-height:1.1;display:flex;align-items:flex-end;justify-content:center;padding:0 2px}
+.cc .dg{font:700 34px Jost,sans-serif;background:#fff;border:2px solid var(--teal);border-radius:8px;margin:3px 2px;height:52px;display:flex;align-items:center;justify-content:center;color:var(--teal-d)}
+.cc .dg.z{color:#B9C7CC;border-color:#C9D6DA}
+.cc .vl{font-size:13px;font-weight:600;color:var(--ink);min-height:18px}
+.cm{width:14px;flex:none;font:700 34px Jost,sans-serif;align-self:center;margin-top:12px;color:var(--ink);text-align:center}
+.arrows{display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:var(--teal-d);margin:6px 8px 0;gap:10px;flex-wrap:wrap}
+.arrows span{background:var(--tint);border-radius:99px;padding:4px 12px}
+/* questions */
+.q{border-top:1px solid var(--line);padding:12px 0}
+.q:first-of-type{border-top:0}
+.q .t{font-weight:500;margin-bottom:6px}
+.q .res{margin-top:6px;font-size:16px;font-weight:600}
+.q.good .res{color:var(--ok)}.q.bad .res{color:var(--bad)}
+.q.good input{border-color:var(--ok);background:#EEF7F1}
+.opt{display:block;width:100%;text-align:left;font:500 17px Jost,sans-serif;padding:9px 12px;margin:5px 0;background:#fff;border:2px solid var(--line);border-radius:10px;cursor:pointer;color:var(--ink)}
+.opt:hover{border-color:var(--teal)}
+.opt.sym{display:inline-block;width:auto;min-width:76px;text-align:center;font-size:28px;font-weight:700;margin-right:8px}
+.opt.right{border-color:var(--ok);background:#EEF7F1}.opt.wrong{border-color:var(--bad);background:#FAEBEC}
+table.cmp{border-collapse:separate;border-spacing:3px;margin:10px auto}
+table.cmp td{width:42px;height:46px;text-align:center;font:700 26px Jost,sans-serif;background:#fff;border:2px solid var(--line);border-radius:7px}
+table.cmp td.cm{width:12px;border:0;background:none;padding:0}
+table.cmp td.hl{border-color:var(--teal);background:var(--tint);color:var(--teal-d)}
+table.cmp td.pl{height:auto;border:0;background:none;font:600 11px Jost,sans-serif;color:var(--muted);vertical-align:bottom;line-height:1.1}
+table.cmp td.lb{width:auto;border:0;background:none;font:600 14px Jost,sans-serif;color:var(--muted);text-align:right;padding-right:6px}
+.pbtn{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.pbtn button{font:600 15px Jost,sans-serif;padding:7px 11px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}.pbtn button.on{border-color:var(--teal);background:var(--tint)}
+.nl{width:100%;max-width:560px;display:block;margin:6px auto}
+table.tb{border-collapse:collapse;width:100%;margin:8px 0;font-size:16px}
+table.tb td,table.tb th{border:1px solid var(--line);padding:7px 10px;text-align:left;background:#fff}
+table.tb th{background:var(--tint);color:var(--teal-d)}
+.big{font:700 28px Jost,sans-serif;color:var(--teal-d)}
+.score{font:700 44px Jost,sans-serif;color:var(--teal-d)}
+details{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:14px}
+summary{cursor:pointer;font-weight:600;color:var(--teal-d)}
+ul{margin:6px 0 6px 22px}
+.chain{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 6px;margin:10px 0;font-weight:700;color:var(--teal-d)}
+.chain .v{background:#fff;border:2px solid var(--teal);border-radius:8px;padding:6px 9px;font-size:18px}
+.chain .x{font-size:13px;background:var(--tint);border-radius:99px;padding:3px 8px;color:var(--teal-d)}
+.dpick{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.dpick button{width:38px;height:38px;border-radius:8px;border:2px solid var(--line);background:#fff;font:700 18px Jost,sans-serif;cursor:pointer;color:var(--ink)}
+.dpick button.on{border-color:var(--teal);background:var(--tint)}
+.eq{text-align:center;font:700 24px Jost,sans-serif;color:var(--teal-d);margin:6px 0;min-height:34px}
+.nlw{width:100%;overflow-x:auto}
+.tbtn{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.tbtn button{font:600 15px Jost,sans-serif;padding:7px 11px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+.am{border-collapse:collapse;margin:8px auto;font-size:18px}.am td,.am th{border:2px solid var(--line);padding:8px 12px;text-align:center;min-width:64px}.am th{background:#E3EAF0;color:var(--main-d)}.am td.hl{background:#EAF3F7;font-weight:700}
+.steps{margin:8px 0;padding-left:22px}.steps li{margin:4px 0}
+.out2{background:#F3F7FA;border:2px solid var(--line);border-radius:12px;padding:10px 14px;margin:10px 0}
+.sv{display:block;margin:8px auto;max-width:100%}
+
+@media(max-width:560px){body{font-size:17px}.cc{width:46px}.cc .dg{font-size:24px;height:42px}.cc .nm{font-size:10px}.cc .vl{font-size:10px}.cm{width:8px;font-size:24px}input.num{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="back" href="../wade-math-home.html#/kid/ryder">← Math Home</a><div class="title">Multiplication as Comparison</div><a class="back" id="modeLink" href="#">Mom view</a></div>
+  <div class="prog"><i id="bar"></i></div>
+  <div id="stage"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const PLACES=['Millions','Hundred thousands','Ten thousands','Thousands','Hundreds','Tens','Ones'];
+const ONES=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const TENS=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+function fmt(n){return String(n).replace(/\B(?=(\d{3})+$)/g,',');}
+function w999(n){let s=[];if(n>=100){s.push(ONES[Math.floor(n/100)]+' hundred');n%=100;}if(n>=20){s.push(TENS[Math.floor(n/10)]+(n%10?'-'+ONES[n%10]:''));}else if(n>0||!s.length)s.push(ONES[n]);return s.join(' ');}
+function toWords(n){
+  if(n===0)return 'zero';
+  if(n===1000000)return 'one million';
+  const th=Math.floor(n/1000),r=n%1000;let out=[];
+  if(th)out.push(w999(th)+' thousand');
+  if(r)out.push(w999(r));
+  return out.join(', ');
+}
+function expanded(n){
+  const s=String(n),L=s.length,parts=[];
+  for(let i=0;i<L;i++){if(s[i]!=='0')parts.push(fmt(s[i]+'0'.repeat(L-1-i)));}
+  return parts.join(' + ');
+}
+function chartHTML(n){
+  const s=String(n).padStart(7,'0');let h='<div class="chart">';
+  let lead=true;
+  for(let i=0;i<7;i++){
+    if(s[i]!=='0')lead=false;
+    const show=!lead||i===6;
+    const val=s[i]==='0'?'':fmt(s[i]+'0'.repeat(6-i));
+    h+='<div class="cc"><div class="nm">'+PLACES[i]+'</div><div class="dg'+(show?'':' z')+'">'+(show?s[i]:'0')+'</div><div class="vl">'+(show?val:'')+'</div></div>';
+    if(i===0||i===3)h+='<div class="cm">'+((i===3||n>=1000000)?',':'')+'</div>';
+  }
+  return h+'</div>';
+}
+/* ---------- question engine ---------- */
+const MOM=/[?&]mom=1/.test(location.search);
+let QS={};let TOTAL=0;let FIRST=0;let ANSWERED=0;
+function norm(v){return String(v==null?'':v).replace(/[−–]/g,'-').replace(/[,\s$]/g,'');}
+function qHTML(sec,i,q){
+  if(MOM){
+    let h='<div class="q good"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+    if(q.o)q.o.forEach((o,j)=>{h+='<div class="opt'+(q.sym?' sym':'')+(j===q.c?' right':'')+'" style="cursor:default">'+o+(j===q.c?' ✓':'')+'</div>';});
+    return h+'<div class="res">Answer: '+q.show+(q.why?'. '+q.why:'')+'</div></div>';
+  }
+  const id=sec+i;QS[id]={q:q,tries:0,done:false};TOTAL++;
+  let h='<div class="q" id="q-'+id+'"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+  if(q.o){q.o.forEach((o,j)=>{h+='<button class="opt'+(q.sym?' sym':'')+'" onclick="pickQ(\''+id+'\','+j+',this)">'+o+'</button>';});}
+  else h+='<div class="row"><input class="num" id="in-'+id+'" inputmode="numeric" autocomplete="off" placeholder="Your answer" onkeydown="if(event.key===\'Enter\')checkQ(\''+id+'\')"><button class="btn" onclick="checkQ(\''+id+'\')">Check</button></div>';
+  return h+'<div class="res" id="res-'+id+'"></div></div>';
+}
+function finishQ(id,ok){
+  const s=QS[id];if(s.done)return;
+  s.tries++;
+  const el=$('q-'+id),res=$('res-'+id);
+  if(ok){
+    s.done=true;ANSWERED++;if(s.tries===1)FIRST++;
+    el.className='q good';res.textContent='✓ Correct'+(s.q.why?'. '+s.q.why:'');
+  }else{
+    el.className='q bad';
+    if(s.tries>=2){s.done=true;ANSWERED++;res.textContent='The answer is '+s.q.show+'. '+(s.q.why||'')+' Ask Mom if you are not sure why.';
+      const i=$('in-'+id);if(i)i.disabled=true;
+    }else res.textContent='Not quite. '+(s.q.hint||'Look at the rule above and try again.');
+  }
+  upd();
+}
+function checkQ(id){
+  const s=QS[id];if(s.done)return;
+  const v=norm($('in-'+id).value);if(!v)return;
+  finishQ(id,v===norm(s.q.a));
+}
+function pickQ(id,j,btn){
+  const s=QS[id];if(s.done)return;
+  const ok=j===s.q.c;
+  btn.className='opt '+(ok?'right':'wrong');
+  finishQ(id,ok);
+  if(s.done&&!ok){[].slice.call($('q-'+id).querySelectorAll('.opt'))[s.q.c].className='opt right';}
+}
+function upd(){const b=$('nextbtn');if(b)b.disabled=ANSWERED-SECBASE<SECTOTAL;const c=$('cnt');if(c)c.textContent=ANSWERED-SECBASE+' of '+SECTOTAL+' answered';}
+
+/* ---------- sections ---------- */
+const SECA=[{"t": "35 = 5 × 7. Which sentence is true?", "o": ["35 is 5 more than 7", "35 is 5 times as many as 7", "35 is 7 more than 5"], "c": 1, "show": "35 is 5 times as many as 7", "hint": "\"Times as many\" goes with multiplying.", "why": "5 × 7 = 35, so 35 is 5 times as many as 7."}, {"t": "24 = 4 × 6. So 24 is ___ times as many as 6.", "a": "4", "show": "4", "hint": "Which number multiplies the 6?", "why": "4 groups of 6 make 24."}, {"t": "48 is 8 times as many as ___.", "a": "6", "show": "6", "hint": "8 × ? = 48. Think of the 8s facts.", "why": "8 × 6 = 48."}, {"t": "\"A is 7 times as many as 9.\" Find A. 7 × 9 = ___", "a": "63", "show": "63", "hint": "7 × 9.", "why": "7 × 9 = 63."}, {"t": "Which equation says \"56 is 7 times as many as 8\"?", "o": ["56 = 7 × 8", "56 = 7 + 8", "7 = 56 × 8"], "c": 0, "show": "56 = 7 × 8", "hint": "Times as many means multiply.", "why": "7 × 8 = 56."}, {"t": "42 = 6 × 7. So 42 is ___ times as many as 6.", "a": "7", "show": "7", "hint": "The other factor.", "why": "7 groups of 6 make 42."}, {"t": "72 is 9 times as many as ___.", "a": "8", "show": "8", "hint": "9 × ? = 72.", "why": "9 × 8 = 72."}];const SECB=[{"t": "Mia has 9 stickers. Leo has 4 MORE than Mia. Which operation finds Leo's stickers?", "o": ["9 × 4", "9 + 4", "9 − 4"], "c": 1, "show": "9 + 4", "hint": "\"More than\" is adding.", "why": "Leo has 9 + 4 = 13."}, {"t": "Mia has 9 stickers. Leo has 4 TIMES AS MANY as Mia. Which operation finds Leo's stickers?", "o": ["9 + 4", "9 − 4", "9 × 4"], "c": 2, "show": "9 × 4", "hint": "\"Times as many\" is multiplying.", "why": "Leo has 9 × 4 = 36."}, {"t": "Mia has 9 stickers. Leo has 4 more than Mia. How many does Leo have?", "a": "13", "show": "13", "hint": "Add 4 to 9.", "why": "9 + 4 = 13."}, {"t": "Mia has 9 stickers. Leo has 4 times as many as Mia. How many does Leo have?", "a": "36", "show": "36", "hint": "Multiply 9 by 4.", "why": "9 × 4 = 36."}, {"t": "Which is the bigger number: 5 more than 12, or 5 times as many as 12?", "o": ["5 times as many as 12 (60)", "5 more than 12 (17)", "They are equal"], "c": 0, "show": "5 times as many as 12 (60)", "hint": "Work out both: 12 + 5 and 12 × 5.", "why": "12 × 5 = 60 is bigger than 12 + 5 = 17."}, {"t": "\"Maya is 3 years older than Sam.\" What kind of comparison is that?", "o": ["more than (add)", "times as many (multiply)"], "c": 0, "show": "more than (add)", "hint": "\"Older than by 3\" means 3 more.", "why": "Add 3 to Sam's age."}, {"t": "\"The oak is 3 times as tall as the maple.\" What kind of comparison is that?", "o": ["times as many (multiply)", "more than (add)"], "c": 0, "show": "times as many (multiply)", "hint": "\"Times as tall\" means multiply.", "why": "Multiply the maple's height by 3."}];const SECC=[{"t": "A blue ribbon is 6 feet long. The red ribbon is 7 times as long. How many feet long is the red ribbon?", "a": "42", "show": "42", "hint": "6 × 7.", "why": "7 times as long: 6 × 7 = 42 feet."}, {"t": "A tree is 56 feet tall. It is 8 times as tall as a bush. How many feet tall is the bush?", "a": "7", "show": "7", "hint": "56 ÷ 8, or 8 × ? = 56.", "why": "56 ÷ 8 = 7 feet."}, {"t": "A school has 12 teachers. It has 15 times as many students as teachers. How many students?", "a": "180", "show": "180", "hint": "12 × 15. Try 12 × 10 and 12 × 5.", "why": "12 × 15 = 120 + 60 = 180."}, {"t": "A farmer has 9 cows. He has 6 times as many chickens as cows. How many chickens?", "a": "54", "show": "54", "hint": "9 × 6.", "why": "9 × 6 = 54."}, {"t": "Ben read 8 books. Zoe read 5 times as many as Ben. How many MORE books did Zoe read than Ben?", "a": "32", "show": "32", "hint": "First find Zoe's books (8 × 5). Then subtract Ben's.", "why": "Zoe read 40. 40 − 8 = 32 more."}, {"t": "A truck holds 450 pounds. A van holds 5 times as much. How many pounds does the van hold?", "a": "2250", "show": "2,250", "hint": "450 × 5. Do 400 × 5 and 50 × 5.", "why": "450 × 5 = 2,000 + 250 = 2,250 pounds."}];
+function blocks(n,w,col,lab,y){let s='';for(let i=0;i<n;i++)s+='<rect x="'+(20+i*w)+'" y="'+y+'" width="'+(w-3)+'" height="34" rx="5" fill="'+col+'"/><text x="'+(20+i*w+(w-3)/2)+'" y="'+(y+22)+'" text-anchor="middle" font-size="'+Math.min(16,w*.45)+'" font-weight="700" fill="#fff" font-family="Jost,sans-serif">'+lab+'</text>';return s;}
+function eqTool(){
+  const a=gv('ea',2,12),b=gv('eb',2,12),c=a*b,w=Math.min(60,480/a);
+  $('eqr').innerHTML='<svg class="sv" viewBox="0 0 540 130" width="540"><text x="20" y="18" font-size="14" fill="#55604F" font-family="Jost,sans-serif">1 group: '+b+'</text>'+blocks(1,w,'#C9972B',b,24)+'<text x="20" y="84" font-size="14" fill="#55604F" font-family="Jost,sans-serif">'+a+' groups of '+b+' = '+c+'</text>'+blocks(a,w,'#17607A',b,90)+'</svg>'
+   +'<div class="out2"><b>'+c+' = '+a+' × '+b+'</b><br>'+c+' is <b>'+a+' times as many as '+b+'</b>.<br>It is also '+b+' times as many as '+a+'.</div>';
+}
+function cmpTool2(){
+  const a=gv('ca',2,20),b=gv('cb',2,9),s=Math.min(30,500/(a*b)),W=a*b*s;
+  let r1='<rect x="20" y="30" width="'+a*s+'" height="28" rx="5" fill="#17607A"/><rect x="'+(20+a*s)+'" y="30" width="'+b*s+'" height="28" rx="5" fill="#C9972B"/>';
+  let r2='';for(let i=0;i<b;i++)r2+='<rect x="'+(20+i*a*s)+'" y="100" width="'+(a*s-3)+'" height="28" rx="5" fill="#17607A"/>';
+  $('cmr').innerHTML='<svg class="sv" viewBox="0 0 540 150" width="540"><text x="20" y="22" font-size="14" fill="#55604F" font-family="Jost,sans-serif">'+b+' MORE than '+a+' &nbsp;(add the gold bar)</text>'+r1
+   +'<text x="20" y="92" font-size="14" fill="#55604F" font-family="Jost,sans-serif">'+b+' TIMES AS MANY as '+a+' &nbsp;('+b+' copies of the blue bar)</text>'+r2+'</svg>'
+   +'<div class="out2">'+b+' more than '+a+': <b>'+a+' + '+b+' = '+(a+b)+'</b><br>'+b+' times as many as '+a+': <b>'+a+' × '+b+' = '+(a*b)+'</b></div>';
+}
+function rA(){secPage('a','<div class="card"><h1>Multiplication as comparison</h1><p class="small">About 15 minutes. This is practice only. Nothing here is saved or graded.</p><h2 style="margin-top:12px">Reading a multiplication as a comparison</h2>'
+ +'<div class="rule">35 = 5 × 7 can be read as "35 is 5 times as many as 7." The first factor tells how many times as many. The second factor is the amount being compared to.</div>'
+ +'<h3>Try it. Pick two numbers.</h3><div class="row"><input class="num" id="ea" value="5" oninput="eqTool()" inputmode="numeric"><span>×</span><input class="num" id="eb" value="7" oninput="eqTool()" inputmode="numeric"></div><div id="eqr"></div></div>',SECA);}
+function rB(){secPage('b','<div class="card"><h2>"More than" or "times as many"?</h2>'
+ +'<div class="rule">"More than" is an <b>add</b> comparison: 4 more than 9 is 9 + 4. "Times as many" is a <b>multiply</b> comparison: 4 times as many as 9 is 9 × 4. The bars show how different they are.</div>'
+ +'<h3>Try it. Pick a number and a comparison.</h3><div class="row"><span>start</span><input class="num" id="ca" value="6" oninput="cmpTool2()" inputmode="numeric"><span>compare</span><input class="num" id="cb" value="4" oninput="cmpTool2()" inputmode="numeric"></div><div id="cmr"></div></div>',SECB);}
+function rC(){secPage('c','<div class="card"><h2>Comparison problems</h2><div class="rule">Ask: is it "more than" (add or subtract) or "times as many" (multiply or divide)? Draw a bar if it helps. If the big number is given, divide to find the small one.</div></div>',SECC,true);}
+
+const SECFNS=[rA,rB,rC];
+function INITS(){if($('ea'))eqTool();if($('ca'))cmpTool2();}
+const ORAL=["Read 35 = 5 × 7 as a comparison.", "What is the difference between \"4 more than 9\" and \"4 times as many as 9\"?", "If a tree is 8 times as tall as a bush, and the tree is 56 feet, how do you find the bush?"];
+const WEEKNO=5;
+
+let SECBASE=0,SECTOTAL=0,ST=0;
+const MOM2=MOM;
+function momGate(cb){cb();} /* PIN turned off for now */
+function begin(){
+  const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(buildMom);return;}
+  ml.href=location.pathname+'?mom=1';ST=0;render();
+}
+
+function begin(){
+  const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(buildMom);return;}
+  ml.href=location.pathname+'?mom=1';ST=0;render();
+}
+function buildMom(){
+  let all='<div class="card" style="border-top-color:#C9972B"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Ryder.</p></div>';
+  SECFNS.forEach(fn=>{fn();all+=$('stage').innerHTML;});
+  all+='<div class="card"><h2>Check him on these, out loud</h2><ul>'+ORAL.map(x=>'<li>'+x+'</li>').join('')+'</ul><p class="small">If he does these well, tick them on his rung in Math Home. If he is solid, let him test out.</p></div>';
+  $('stage').innerHTML=all;$('bar').style.width='100%';INITS();
+}
+function bar(){$('bar').style.width=Math.round(ST/(SECFNS.length)*100)+'%';}
+function nav(last){if(MOM)return '';return '<div class="row" style="margin-top:14px"><button class="btn" id="nextbtn" onclick="nextSec()" disabled>'+(last?'Finish':'Next')+'</button><span class="small" id="cnt"></span></div>';}
+function nextSec(){ST++;render();window.scrollTo(0,0);}
+function listHTML(sec,arr){let h='';arr.forEach((q,i)=>{h+=qHTML(sec,i,q);});return h;}
+function render(){bar();QS={};SECBASE=ANSWERED;if(ST>=SECFNS.length){rDone();return;}SECFNS[ST]();INITS();upd();}
+function secPage(id,intro,items,last){SECTOTAL=items.length;$('stage').innerHTML=intro+'<div class="card"><h2>Check it</h2>'+listHTML(id,items)+nav(last)+'</div>';}
+function rDone(){
+  const pct=Math.round(FIRST/TOTAL*100);
+  $('stage').innerHTML='<div class="card"><h1>Done</h1><p>First-try correct: <span class="score">'+FIRST+' of '+TOTAL+'</span></p>'
+   +'<p>'+(pct>=85?'That is strong. Tell Mom you may be ready to test out of Week '+WEEKNO+'.':pct>=60?'Good start. Look again at anything you missed, then tell Mom.':'Go back through the rules with Mom before you test out.')+'</p>'
+   +'<h3>Now say these to Mom, out loud</h3><ul>'+ORAL.map(x=>'<li>'+x+'</li>').join('')+'</ul>'
+   +'<div class="row" style="margin-top:14px"><a class="btn" style="text-decoration:none" href="../wade-math-home.html#/kid/ryder">Back to Math Home</a><button class="btn alt" onclick="location.reload()">Do it again</button></div></div>';
+}
+function gv(id,lo,hi){let v=parseInt(norm($(id).value),10);return isNaN(v)?lo:Math.max(lo,Math.min(hi,v));}
+function fmt(n){return Number(n).toLocaleString('en-US');}
+begin();
+/* Mom view: back goes to Mom's lesson list */
+(function(){if(/[?&]mom=1/.test(location.search)){var b=document.querySelector('a.back');if(b){b.href=b.getAttribute('href').replace(/#\/kid\/(\w+)/,'#/mom/ladder/$1');b.textContent='\u2190 Lessons';}}})();
+</script>
+</body>
+</html>
