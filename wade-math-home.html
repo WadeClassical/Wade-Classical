@@ -830,14 +830,65 @@ function kidReport(kid){
 
 /* ---------- mom views ---------- */
 function momView(tab,arg){
-  let h='<div class="tabs" style="margin-top:0"><a class="tab '+(tab==='home'?'on':'')+'" href="#/mom">Home</a><a class="tab '+(tab==='ladder'?'on':'')+'" href="#/mom/ladder/ryder">Ladder</a><a class="tab '+(tab==='plan'?'on':'')+'" href="#/mom/plan">Assign</a><a class="tab '+(tab==='cal'?'on':'')+'" href="#/mom/cal">Plan ahead</a><a class="tab '+(tab==='check'?'on':'')+'" href="#/mom/check">Check work'+(pendingCount()?' ('+pendingCount()+')':'')+'</a><a class="tab '+(tab==='send'?'on':'')+'" href="#/mom/send">Send</a></div>';
+  let h='<div class="tabs" style="margin-top:0"><a class="tab '+(tab==='home'?'on':'')+'" href="#/mom">Home</a><a class="tab '+(tab==='ladder'?'on':'')+'" href="#/mom/ladder/ryder">Ladder</a><a class="tab '+(tab==='plan'?'on':'')+'" href="#/mom/plan">Assign</a><a class="tab '+(tab==='cal'?'on':'')+'" href="#/mom/cal">Plan ahead</a><a class="tab '+(tab==='facts'?'on':'')+'" href="#/mom/facts">Facts</a><a class="tab '+(tab==='check'?'on':'')+'" href="#/mom/check">Check work'+(pendingCount()?' ('+pendingCount()+')':'')+'</a><a class="tab '+(tab==='send'?'on':'')+'" href="#/mom/send">Send</a></div>';
   if(tab==='ladder')h+=ladderView(KIDS[arg]?arg:'ryder');
   else if(tab==='plan')h+=planView();
   else if(tab==='cal')h+=planAheadView();
+  else if(tab==='facts')h+=factsView();
   else if(tab==='check')h+=checkView();
   else if(tab==='send')h+=sendView();
   else h+=homeView();
   return h;
+}
+
+function factLabel(id){let m;
+  if(m=id.match(/^m(\d+)x(\d+)$/))return m[1]+' × '+m[2];
+  if(m=id.match(/^d(\d+)q(\d+)$/))return (+m[1]).toLocaleString()+' ÷ '+m[2];
+  if(m=id.match(/^a(\d+)p(\d+)$/))return m[1]+' + '+m[2];
+  if(m=id.match(/^s(\d+)m(\d+)$/))return m[1]+' − '+m[2];
+  if(m=id.match(/^b(\d+)_(\d+)$/))return (+m[2]).toLocaleString()+' + ? = '+(+m[1]).toLocaleString();
+  return id;}
+const SKN={add:'Addition',sub:'Subtraction',mult:'Multiplication',div:'Division'};
+function skName(k){let m;if(SKN[k])return SKN[k];if(m=k.match(/^bond(\d+)$/))return 'Bonds to '+(+m[1]).toLocaleString();return k;}
+function factsView(){
+  let h='<div class="small muted" style="margin:4px 2px 10px">What the kids have actually practiced on the Math Drills page. Updates as they finish drills.</div><div class="grid2">';
+  const tk=todayKey();
+  Object.keys(KIDS).forEach(kid=>{
+    const K=KIDS[kid];const D=getIn('drill/'+kid)||{};const F=D.f||{},SK=D.sk||{},DY=D.days||{};
+    const ids=Object.keys(F);
+    const si=factsStage(kid);
+    h+='<div class="card '+K.cls+'" style="border-top:6px solid var(--kc)"><h2 style="font-size:28px;color:var(--kc)">'+K.name+'</h2>';
+    h+='<div class="small muted">Current stage</div><div style="font-weight:600">'+(si>=0?K.spine[si][0]+': '+esc(K.spine[si][1]):'All stages finished')+'</div>';
+    // last 14 days
+    let cells='',days=0,qs=0,cs=0;
+    for(let i=13;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=dkey(d);const r=DY[k];const logged=getIn('facts/'+kid+'/log/'+k);
+      if(r&&r.n){days++;qs+=r.n;cs+=r.c;}
+      cells+='<div title="'+k+(r?': '+r.c+'/'+r.n:'')+'" style="width:18px;height:18px;border-radius:4px;background:'+(r&&r.n?'var(--kc)':logged?'var(--kc)':'var(--line)')+';opacity:'+(r&&r.n?1:logged?.45:1)+'"></div>';}
+    h+='<div style="margin-top:14px" class="small muted">Last 14 days · '+days+' day'+(days===1?'':'s')+' practiced'+(qs?' · '+Math.round(cs/qs*100)+'% right ('+cs+'/'+qs+')':'')+'</div><div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px">'+cells+'</div>';
+    if(!ids.length){h+='<p class="muted" style="margin-top:14px">No drills yet.</p></div>';return;}
+    // mastery boxes
+    const bx=[0,0,0,0,0,0];ids.forEach(i=>bx[Math.max(0,Math.min(5,F[i].b||0))]++);
+    const solid=bx[4]+bx[5];
+    h+='<div style="margin-top:14px" class="small muted">Facts seen · '+ids.length+' · solid (quick and right) · '+solid+'</div><div class="bar"><i style="width:'+(solid/ids.length*100)+'%"></i></div>';
+    h+='<div class="small muted" style="margin-top:4px">Box 0–1 (new or shaky): '+(bx[0]+bx[1])+' · 2–3 (learning): '+(bx[2]+bx[3])+' · 4–5 (solid): '+solid+'</div>';
+    // by skill
+    const sks=Object.keys(SK).filter(k=>SK[k].n);
+    if(sks.length){h+='<div style="margin-top:14px" class="small muted">By skill</div>';
+      sks.sort().forEach(k=>{const p=Math.round(SK[k].c/SK[k].n*100);h+='<div class="small" style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--line)"><span>'+esc(skName(k))+'</span><span><b>'+p+'%</b> <span class="muted">('+SK[k].c+'/'+SK[k].n+')</span></span></div>';});}
+    // needs work
+    const need=ids.filter(i=>F[i].n>=2&&(F[i].c/F[i].n<.8||(F[i].b||0)<=1)).sort((x,y)=>(F[x].c/F[x].n)-(F[y].c/F[y].n)||F[y].n-F[x].n).slice(0,12);
+    h+='<div style="margin-top:14px" class="small muted">Needs more practice</div>';
+    if(need.length)h+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">'+need.map(i=>'<span class="small" style="background:var(--card);border:1px solid var(--line);border-radius:8px;padding:3px 8px">'+esc(factLabel(i))+' <span class="muted">'+F[i].c+'/'+F[i].n+'</span></span>').join('')+'</div>';
+    else h+='<div class="small" style="margin-top:4px">Nothing shaky right now.</div>';
+    // slowest
+    const slow=ids.filter(i=>F[i].n>=2&&F[i].t>0&&F[i].c/F[i].n>=.8).sort((x,y)=>F[y].t-F[x].t).slice(0,6);
+    if(slow.length){h+='<div style="margin-top:14px" class="small muted">Right but slow (average seconds)</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">'+slow.map(i=>'<span class="small" style="background:var(--card);border:1px solid var(--line);border-radius:8px;padding:3px 8px">'+esc(factLabel(i))+' <span class="muted">'+(F[i].t/1000).toFixed(1)+'s</span></span>').join('')+'</div>';}
+    // timed bests
+    const B=D.best||{};const bk=Object.keys(B);
+    if(bk.length)h+='<div style="margin-top:14px" class="small muted">Timed round bests</div><div class="small">'+bk.map(k=>esc(skName(k))+': <b>'+B[k]+'</b>').join(' · ')+'</div>';
+    h+='<div class="small muted" style="margin-top:14px">Stage checkoffs stay on the Ladder tab. This report is for your information and does not move stages.</div></div>';
+  });
+  return h+'</div>';
 }
 function pendingCount(){let c=0;Object.keys(KIDS).forEach(k=>assignList(k).forEach(a=>{if(a.done&&!a.grade)c++;}));return c;}
 function homeView(){
