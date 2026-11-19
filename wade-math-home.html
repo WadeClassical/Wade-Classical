@@ -412,7 +412,7 @@ function setWeek(kid,n,st){
   if(st==='mastered'||st==='skipped')closeFocus(kid,n,todayKey());
   if(st==='current'){put('current/'+kid,n);if(weekStatus(kid,n)==='mastered'||weekStatus(kid,n)==='skipped'){put('progress/'+kid+'/w'+n,null);put('grade/'+kid+'/w'+n,null);}toast('Week '+n+' is '+KIDS[kid].name+'\'s focus');return;}
   put('progress/'+kid+'/w'+n,st||null);
-  if(st===''){put('grade/'+kid+'/w'+n,null);put('stage/'+kid+'/w'+n,null);put('can/'+kid+'/w'+n,null);}
+  if(st===''){put('grade/'+kid+'/w'+n,null);put('stage/'+kid+'/w'+n,null);put('can/'+kid+'/w'+n,null);put('readyBy/'+kid+'/w'+n,null);}
   if(st==='mastered'&&getIn('current/'+kid)===n){put('current/'+kid,null);}
 }
 function grade(kid,id,g){
@@ -479,6 +479,7 @@ const LESSONS={hadley:{1:[{t:"Hadley's Squishy Shop",u:'lessons/hadley-w1-squish
    10:[{t:'Factors and multiples',u:'lessons/ryder-w10-factors-multiples.html',mom:1,d:'Factor pairs, multiples, prime or composite'}]}}; /* built lessons: LESSONS[kid][week]=[{t:'Title',u:'page.html',d:'one line'}] */
 function lessonList(kid,n){return (LESSONS[kid]&&LESSONS[kid][n])||[];}
 function stageOf(kid,n){return getIn('stage/'+kid+'/w'+n)||'';}
+function kidReady(kid,n){setStage(kid,n,'ready');put('readyBy/'+kid+'/w'+n,Date.now());toast('Quiz is open. Good luck!');}
 function setStage(kid,n,st){put('stage/'+kid+'/w'+n,st||null);}
 function gradeOf(kid,n){return getIn('grade/'+kid+'/w'+n)||null;}
 function letterFor(score){return score>=14?'A':'B';}
@@ -900,9 +901,18 @@ function factsView(){
   return h+'</div>';
 }
 function pendingCount(){let c=0;Object.keys(KIDS).forEach(k=>assignList(k).forEach(a=>{if(a.done&&!a.grade)c++;}));return c;}
+function icanAlerts(){
+  let h='';
+  Object.keys(KIDS).forEach(kid=>{KIDS[kid].weeks.forEach(w=>{const n=w[0];const st=stageOf(kid,n);
+    if(weekStatus(kid,n)==='mastered')return;
+    if(st==='check')h+='<div class="msg"><div class="from">Check '+KIDS[kid].name+'\'s I cans</div><div>'+KIDS[kid].name+' passed the Week '+n+' quiz. Watch each skill, then check it off to master the week.</div><a class="btn sm k" style="text-decoration:none;display:inline-block;margin-top:8px" href="#/mom/ladder/'+kid+'">Open ladder</a></div>';
+    else if(st==='ready'&&getIn('readyBy/'+kid+'/w'+n))h+='<div class="msg"><div class="from">'+KIDS[kid].name+' is going for the Week '+n+' quiz</div><div>'+KIDS[kid].name+' said the lesson is finished. Be ready to check the I cans after the quiz.</div><a class="btn sm k" style="text-decoration:none;display:inline-block;margin-top:8px" href="#/mom/ladder/'+kid+'">Open ladder</a></div>';
+  });});
+  return h;
+}
 function homeView(){
   const tk=todayKey();
-  let h='<div class="grid2">';
+  let h=icanAlerts()+'<div class="grid2">';
   Object.keys(KIDS).forEach(kid=>{
     const K=KIDS[kid];const cur=suggested(kid);const w=cur?weekObj(kid,cur):null;
     const items=assignList(kid);const t=items.filter(a=>a.date===tk);const td=t.filter(a=>a.done).length;
@@ -967,13 +977,14 @@ function pathCard(kid,n,mom){
     +(mom&&!a.date?'<div style="margin-top:4px;display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input type="date" id="su'+kid+a.id+'" value="'+todayKey()+'" style="width:auto"><button class="btn sm k" onclick="schedUn(\''+kid+'\',\''+a.id+'\')">Put on this day</button></div>':'')+'</div>').join('')+'</div>';}
   h+='<div class="pbtns">';
   if(!stg)h+='<button class="btn sm '+(mom?'alt':'k')+'" onclick="startLesson('+q()+')">Start lesson</button>';
+  if(!mom&&stg==='lesson'&&hq)h+='<button class="btn sm ok" onclick="if(confirm(\'Did you finish the whole lesson? Ready to take the quiz?\'))kidReady('+q()+')">I finished the lesson. Ready for the quiz?</button>';
   if(mom&&stg==='lesson')h+='<button class="btn sm ok" onclick="setStage('+q("'ready'")+')">Ready for quiz</button>';
   if(mom&&stg==='ready')h+='<button class="btn sm alt" onclick="setStage('+q("'lesson'")+')">Back to lesson</button>';
   h+='</div></div></div>';
   // 3 quiz
   const open=stg==='ready';
   h+='<div class="pstep '+(open||stg==='check'?'':'lock')+'"><div class="pnum">'+(open?'3':stg==='check'?'✓':'🔒')+'</div><div><b>QUIZ</b><div class="small">'
-    +(stg==='check'?'Passed'+(g?' · Grade '+g.letter:'')+'. Check off every I can below to master the week.':!hq?'No quiz written for this week yet. Mom marks the week mastered.':open?'Open. 15 questions, 13 to pass. A pass is graded.':mom?'Locked until you tap Ready for quiz.':'Locked until Mom says you are ready.')+'</div>';
+    +(stg==='check'?'Passed'+(g?' · Grade '+g.letter:'')+'. Check off every I can below to master the week.':!hq?'No quiz written for this week yet. Mom marks the week mastered.':open?'Open. 15 questions, 13 to pass. A pass is graded.':mom?'Locked until you tap Ready for quiz.':'Locked until you finish the lesson and say you are ready.')+'</div>';
   if(quizzes.length)h+='<div class="small">'+quizzes.map((a,i)=>'Try '+(i+1)+' · '+dt(a.ts)+' · <b>'+a.score+'/15</b> '+(a.pass?'passed':'not yet')).join('<br>')+'</div>';
   if(hq&&open)h+='<div class="pbtns">'+(mom?'<button class="btn sm k" onclick="giveQuiz('+q("'quiz'")+')">Give quiz today</button><button class="btn sm alt" onclick="openQuiz('+q("'quiz'")+')">Open here</button>':'<button class="btn sm k" onclick="openQuiz('+q("'quiz'")+')">Take the quiz</button>')+'</div>';
   h+='</div></div>'+canBlock(kid,n,mom)+((!mom&&(stg==='check'))?aheadCard(kid,n):'')+'</div>';
