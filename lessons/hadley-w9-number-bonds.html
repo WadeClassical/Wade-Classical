@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hadley's Squishy Shop · Partner Numbers</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF4FA;--card:#FFFFFF;--ink:#5A3A6E;--soft:#8A6FA0;
+  --pink:#FFA6C9;--pink-d:#E0709F;--lav:#CDB8FF;--lav-d:#9B7FE0;--mint:#A8EBD0;--mint-d:#4DBF92;
+  --butter:#FFE98A;--butter-d:#E8B93A;--peach:#FFC7A0;--peach-d:#E8955A;--sky:#A9DDFF;--sky-d:#5BB3EE;
+  --ok:#3BB98A;--oops:#F07A9A;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Fredoka',ui-rounded,'Trebuchet MS',system-ui,sans-serif;color:var(--ink);min-height:100vh;font-size:19px;line-height:1.35;
+  background:
+    radial-gradient(circle at 8% 12%,#FFD9EA 0 70px,transparent 71px),
+    radial-gradient(circle at 92% 18%,#E4D8FF 0 90px,transparent 91px),
+    radial-gradient(circle at 12% 88%,#D3F6E8 0 80px,transparent 81px),
+    radial-gradient(circle at 90% 85%,#FFF1B8 0 75px,transparent 76px),
+    var(--bg);
+  background-attachment:fixed}
+.wrap{max-width:780px;margin:0 auto;padding:14px 14px 60px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.back{color:var(--lav-d);text-decoration:none;font-weight:600;font-size:16px;background:#fff;border:3px solid var(--lav);border-radius:999px;padding:6px 14px}
+.title{font-weight:700;font-size:22px;color:var(--pink-d);text-align:center;flex:1}
+.prog{height:16px;background:#fff;border:3px solid var(--pink);border-radius:999px;overflow:hidden;margin-bottom:14px}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--lav),var(--mint));border-radius:999px;transition:width .4s}
+.card{background:var(--card);border:4px solid var(--pink);border-radius:30px;padding:20px 18px;box-shadow:0 8px 0 #FFD0E3;margin-bottom:16px}
+.card.lav{border-color:var(--lav);box-shadow:0 8px 0 #E6DBFF}
+.card.mint{border-color:var(--mint);box-shadow:0 8px 0 #D3F6E8}
+.card.butter{border-color:var(--butter);box-shadow:0 8px 0 #FFF4BF}
+h1{font-size:34px;line-height:1.1;color:var(--pink-d)}
+h2{font-size:26px;line-height:1.15;color:var(--lav-d);margin-bottom:6px}
+p{margin:8px 0}
+.small{font-size:15px;color:var(--soft)}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.center{text-align:center;justify-content:center}
+.btn{font-family:inherit;font-weight:700;font-size:21px;border:0;border-radius:999px;padding:13px 26px;cursor:pointer;color:#fff;background:var(--pink-d);box-shadow:0 6px 0 #B94B7B;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #B94B7B}
+.btn.lav{background:var(--lav-d);box-shadow:0 6px 0 #6F54B8}
+.btn.mint{background:var(--mint-d);box-shadow:0 6px 0 #2F8F6A}
+.btn.sky{background:var(--sky-d);box-shadow:0 6px 0 #3586BC}
+.btn.ghost{background:#fff;color:var(--lav-d);border:3px solid var(--lav);box-shadow:0 4px 0 #E6DBFF;font-size:17px;padding:8px 18px}
+.btn[disabled]{opacity:.45;cursor:default}
+.say{width:44px;height:44px;border-radius:50%;border:3px solid var(--sky);background:#fff;font-size:20px;cursor:pointer;flex:none}
+.mochi{display:flex;gap:12px;align-items:flex-start}
+.bubble{background:#FFF0F7;border:3px solid var(--pink);border-radius:22px 22px 22px 6px;padding:12px 16px;flex:1;position:relative}
+.bubble b{color:var(--pink-d)}
+.who{font-size:44px;flex:none;line-height:1}
+/* packs + mat */
+.mat{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.col{border-radius:22px;padding:8px 6px 10px;text-align:center;min-height:170px;border:3px dashed}
+.col.h{background:#F1EAFF;border-color:var(--lav)}.col.t{background:#E6FAF1;border-color:var(--mint)}.col.o{background:#FFEDF5;border-color:var(--pink)}
+.col h3{font-size:15px;font-weight:600}
+.col.h h3{color:var(--lav-d)}.col.t h3{color:var(--mint-d)}.col.o h3{color:var(--pink-d)}
+.col .sub{font-size:13px;color:var(--soft)}
+.packs{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);gap:4px;align-items:center;margin:14px 0}
+.packs .col{min-width:0;overflow:hidden;padding:8px 2px 10px;min-height:150px}
+.packs .stack svg{width:100%;max-width:84px;height:auto}
+.arr svg{width:42px;height:auto}
+@media(max-width:520px){.arr svg{width:28px}.arr .w{display:none}.arr b{font-size:15px}.packs .digit{font-size:24px!important}.packs .col{padding:8px 0 10px}}
+.arr{text-align:center;font-size:12px;font-weight:600;color:var(--pink-d);line-height:1.1;padding:0 2px}
+.arr svg{display:block;margin:2px auto}
+.stack{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;align-items:flex-end;margin-top:6px;min-height:100px}
+.stack svg{flex:none}
+.digit{font-size:46px;font-weight:700;line-height:1;margin-top:4px}
+.col.h .digit{color:var(--lav-d)}.col.t .digit{color:var(--mint-d)}.col.o .digit{color:var(--pink-d)}
+.stepper{display:flex;gap:8px;justify-content:center;margin-top:8px}
+.stepper button{width:46px;height:46px;border-radius:50%;border:0;font-size:26px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit}
+.col.h .stepper button{background:var(--lav-d)}.col.t .stepper button{background:var(--mint-d)}.col.o .stepper button{background:var(--pink-d)}
+.total{font-size:20px;text-align:center}
+.total b{font-size:34px;letter-spacing:3px}
+.dgin{display:flex;gap:8px;justify-content:center;margin:8px 0}
+.dgin input{width:62px;height:72px;text-align:center;font-family:inherit;font-weight:700;font-size:38px;border-radius:18px;border:4px solid var(--sky);background:#F3FAFF;color:var(--ink)}
+.dgin input:focus{outline:0;border-color:var(--sky-d);background:#E3F4FF}
+.dgin.h input{border-color:var(--lav)}.dgin.t input{border-color:var(--mint)}.dgin.o input{border-color:var(--pink)}
+.lbls{display:flex;gap:8px;justify-content:center;font-size:13px;color:var(--soft)}
+.lbls span{width:62px;text-align:center}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-top:10px}
+.opt{font-family:inherit;font-weight:700;font-size:28px;padding:14px 8px;border-radius:20px;border:4px solid var(--sky);background:#F3FAFF;color:var(--ink);cursor:pointer}
+.opt.w{font-size:20px}
+.opt.right{background:#DFF8EC;border-color:var(--ok)}
+.opt.wrong{background:#FFE3EB;border-color:var(--oops)}
+.tag{display:inline-block;background:var(--butter);border:4px solid var(--butter-d);border-radius:18px;padding:6px 26px;font-size:54px;font-weight:700;letter-spacing:6px;transform:rotate(-2deg);color:#8A5B12}
+.fb{min-height:52px;margin-top:10px;font-weight:600;text-align:center}
+.fb.good{color:var(--ok)}.fb.bad{color:var(--oops)}
+.expand{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;font-weight:700;font-size:30px;margin:8px 0}
+.expand input{width:54px;height:64px;text-align:center;font-family:inherit;font-weight:700;font-size:32px;border-radius:16px;border:4px solid var(--sky);background:#F3FAFF;color:var(--ink)}
+.expand input:focus{outline:0;border-color:var(--sky-d);background:#E3F4FF}
+.stars{font-size:40px;letter-spacing:4px}
+.badge{display:inline-block;background:linear-gradient(135deg,var(--pink),var(--lav));color:#fff;border-radius:26px;padding:12px 26px;font-weight:700;font-size:24px;border:4px solid #fff;box-shadow:0 0 0 4px var(--pink)}
+details{background:#fff;border:3px solid var(--sky);border-radius:20px;padding:10px 16px;margin-top:6px}
+summary{font-weight:600;color:var(--sky-d);cursor:pointer}
+details p,details li{font-size:16px;color:var(--ink)}
+details ul{margin:6px 0 6px 20px}
+@keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.12)}100%{transform:scale(1)}}
+.pop{animation:pop .35s}
+@keyframes wob{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+.wob{animation:wob .4s}
+@media(max-width:520px){body{font-size:17px}h1{font-size:28px}.tag{font-size:42px}.dgin input,.lbls span{width:54px}.opt{font-size:24px}}
+.tray{display:inline-flex;gap:1px;padding:3px 5px;border:3px solid var(--sky);border-radius:14px;background:#F3FAFF;align-items:center}
+.packrow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:flex-end;margin:12px 0;min-height:70px}
+.numrow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0}
+.nchip{font-weight:700;font-size:26px;background:#F1EAFF;border:3px solid var(--lav);color:var(--lav-d);border-radius:16px;padding:6px 12px;min-width:56px;text-align:center}
+.nchip.last{background:var(--butter);border-color:var(--butter-d);color:#8A5B12;font-size:32px;transform:rotate(-2deg)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:6px 0}
+.chips button{font-family:inherit;font-weight:700;font-size:18px;padding:8px 16px;border-radius:999px;border:3px solid var(--lav);background:#fff;color:var(--lav-d);cursor:pointer}
+.chips button.on{background:var(--lav-d);color:#fff;border-color:var(--lav-d)}
+.seq{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:14px 0}
+.seq input{width:104px;height:64px;text-align:center;font-family:inherit;font-weight:700;font-size:30px;border-radius:16px;border:4px solid var(--sky);background:#F3FAFF;color:var(--ink)}
+.seq input:focus{outline:0;border-color:var(--sky-d);background:#E3F4FF}
+.seq .gap{font-size:22px;color:var(--soft);font-weight:700}
+.addwrap{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.addbox{background:#F8F3FF;border:3px dashed var(--lav);border-radius:22px;padding:8px 6px;text-align:center;min-width:0}
+.addbox .big{font-weight:700;font-size:34px;color:var(--lav-d)}
+.sbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.ans{display:flex;gap:8px;justify-content:center;align-items:center;margin:12px 0;font-weight:700;font-size:34px;flex-wrap:wrap}
+.ans input{width:130px;height:68px;text-align:center;font-family:inherit;font-weight:700;font-size:34px;border-radius:18px;border:4px solid var(--sky);background:#F3FAFF;color:var(--ink)}
+.ans input:focus{outline:0;border-color:var(--sky-d);background:#E3F4FF}
+.tray{background:#F8F3FF;border:3px dashed var(--lav);border-radius:22px;padding:8px;margin:8px 0;min-height:120px}
+.tray .stack{min-height:90px;margin:0}
+.it{background:none;border:0;padding:2px;cursor:pointer;position:relative;border-radius:12px;line-height:0;-webkit-tap-highlight-color:transparent}
+.it:active{transform:scale(.92)}
+.it.tk{opacity:.28}
+.it.tk::after{content:"\2715";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#E0586E;line-height:1}
+.it.nw{background:#E7FBF2;outline:3px solid var(--mint)}
+.mstat{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:6px 0;font-weight:700}
+.mstat span{background:#fff;border:3px solid var(--lav);border-radius:999px;padding:4px 14px;font-size:17px;color:var(--lav-d)}
+.eq{font-weight:700;font-size:36px;text-align:center;color:var(--lav-d);margin:4px 0}
+.fam{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}
+.fam button{font-family:inherit;font-weight:700;font-size:22px;padding:12px 6px;border-radius:18px;border:4px solid var(--sky);background:#F3FAFF;color:var(--ink);cursor:pointer}
+.fam button.on{background:var(--butter);border-color:var(--butter-d)}
+.bnd{display:block;margin:0 auto;width:210px;max-width:70%;height:auto}
+.bnd text{font-family:inherit;font-weight:700;text-anchor:middle;dominant-baseline:central}
+.bnd .ln{stroke:var(--lav-d);stroke-width:5;stroke-linecap:round}
+.bnd .cw{fill:var(--pink-d);stroke:#B94B7B;stroke-width:4}.bnd .cp{fill:#F8F3FF;stroke:var(--lav-d);stroke-width:4}
+.bnd .hl{fill:var(--butter);stroke:var(--butter-d);stroke-width:5}
+.tri{display:flex;gap:8px;justify-content:center;margin:8px 0}
+.tri button{font-family:inherit;font-weight:700;font-size:20px;padding:10px 14px;border-radius:16px;border:4px solid var(--mint);background:#fff;color:var(--ink);cursor:pointer}
+.rng{width:100%;max-width:380px;display:block;margin:8px auto;accent-color:#9B7FE0;height:34px}
+.strip{display:flex;gap:4px;justify-content:center;margin:10px 0;flex-wrap:nowrap}
+.strip button{flex:1 1 0;min-width:0;max-width:44px;height:54px;border-radius:10px;border:3px solid var(--lav);background:#fff;cursor:pointer;padding:0;font-family:inherit;font-weight:700;color:var(--lav-d);font-size:15px}
+.strip button.f{background:var(--lav);border-color:var(--lav-d);color:#fff}
+.strip button.n{background:var(--mint);border-color:var(--mint-d);color:#fff}
+.strip button.fx{cursor:default}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="back" href="../wade-math-home.html#/kid/hadley">← Math Home</a>
+    <div class="title">Hadley's Squishy Shop</div>
+    <a class="back" id="modeLink" href="#">Mom view</a>
+  </div>
+  <div class="prog"><i id="bar"></i></div>
+  <main id="stage"></main>
+</div>
+
+<script>
+/* ===== helpers ===== */
+const COLORS=['#FFA6C9','#CDB8FF','#A8EBD0','#FFE98A','#FFC7A0','#A9DDFF'];
+const ONES=['','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const TENS=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+function words(n){
+  const h=Math.floor(n/100),r=n%100;let s='';
+  if(h)s+=ONES[h]+' hundred';
+  if(r){if(s)s+=' ';if(r<20)s+=ONES[r];else{s+=TENS[Math.floor(r/10)];if(r%10)s+='-'+ONES[r%10];}}
+  return s||'zero';
+}
+function speak(t){try{window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.88;u.pitch=1.15;window.speechSynthesis.speak(u);}catch(e){}}
+function spk(t){return '<button class="say" aria-label="Read to me" onclick="speak(this.dataset.t)" data-t="'+t.replace(/"/g,'&quot;')+'">🔊</button>';}
+function $(id){return document.getElementById(id);}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+/* ===== art ===== */
+function blob(color,size,seed){
+  const w=size,eye=size*.06;
+  return '<svg width="'+w+'" height="'+w+'" viewBox="0 0 60 60" aria-hidden="true">'
+   +'<path d="M30 6c14 0 25 9 25 24s-10 24-25 24S5 45 5 30 16 6 30 6z" fill="'+color+'" stroke="#fff" stroke-width="3"/>'
+   +'<ellipse cx="22" cy="24" rx="6" ry="3.4" fill="#fff" opacity=".55"/>'
+   +'<circle cx="22" cy="32" r="3" fill="#5A3A6E"/><circle cx="38" cy="32" r="3" fill="#5A3A6E"/>'
+   +'<circle cx="21" cy="31" r="1" fill="#fff"/><circle cx="37" cy="31" r="1" fill="#fff"/>'
+   +'<ellipse cx="15" cy="39" rx="4" ry="2.6" fill="#FF8FB5" opacity=".7"/><ellipse cx="45" cy="39" rx="4" ry="2.6" fill="#FF8FB5" opacity=".7"/>'
+   +'<path d="M26 40q4 4 8 0" fill="none" stroke="#5A3A6E" stroke-width="2.4" stroke-linecap="round"/></svg>';
+}
+function bag(size){
+  let dots='';
+  for(let r=0;r<2;r++)for(let c=0;c<5;c++){const cx=13+c*9.5,cy=34+r*11;dots+='<circle cx="'+cx+'" cy="'+cy+'" r="4.4" fill="'+COLORS[(r*5+c)%6]+'" stroke="#fff" stroke-width="1.2"/>';}
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 60 60" aria-hidden="true">'
+   +'<path d="M10 18h40l4 34q0 5-5 5H11q-5 0-5-5z" fill="#E6FAF1" stroke="#4DBF92" stroke-width="3" stroke-linejoin="round"/>'
+   +dots
+   +'<path d="M14 18q16-8 32 0" fill="#FFA6C9" stroke="#E0709F" stroke-width="2.5"/>'
+   +'<circle cx="30" cy="14" r="4" fill="#FFA6C9" stroke="#E0709F" stroke-width="2.5"/>'
+   +'<rect x="21" y="23" width="18" height="8" rx="4" fill="#fff" opacity=".92"/><text x="30" y="30" text-anchor="middle" font-size="8" font-weight="700" fill="#2F8F6A" font-family="Fredoka,sans-serif">10</text></svg>';
+}
+function box(size){
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 60 60" aria-hidden="true">'
+   +'<path d="M6 20l24-10 24 10v28l-24 10L6 48z" fill="#E6DBFF" stroke="#9B7FE0" stroke-width="3" stroke-linejoin="round"/>'
+   +'<path d="M6 20l24 10 24-10" fill="none" stroke="#9B7FE0" stroke-width="3" stroke-linejoin="round"/>'
+   +'<path d="M30 30v28" stroke="#9B7FE0" stroke-width="3"/>'
+   +'<path d="M18 15l24 10" stroke="#FFA6C9" stroke-width="5" stroke-linecap="round"/>'
+   +'<rect x="33" y="38" width="17" height="10" rx="5" fill="#fff" opacity=".95"/><text x="41.5" y="46" text-anchor="middle" font-size="8.5" font-weight="700" fill="#6F54B8" font-family="Fredoka,sans-serif">100</text></svg>';
+}
+function arrow(label){
+  const parts=label.split(' ');
+  return '<div class="arr" aria-hidden="true"><div class="al"><b>'+parts[0]+'</b><span class="w"> '+parts[1]+'</span></div><svg width="52" height="34" viewBox="0 0 52 34"><path d="M48 17H10" stroke="#E0709F" stroke-width="6" stroke-linecap="round" fill="none"/><path d="M20 5L7 17l13 12" stroke="#E0709F" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><div class="al w">go in</div></div>';
+}
+function stack(kind,n){
+  let s='';
+  for(let i=0;i<n;i++){
+    if(kind==='h')s+=box(64);
+    else if(kind==='t')s+=bag(54);
+    else s+=blob(COLORS[i%6],38);
+  }
+  return s;
+}
+function mat(m,opts){
+  opts=opts||{};
+  const col=(k,name,sub,n)=>'<div class="col '+k+'"><h3>'+name+'</h3><div class="sub">'+sub+'</div><div class="stack" id="stk'+k+'">'+stack(k,n)+'</div>'
+    +(opts.digits?'<div class="digit" id="dg'+k+'">'+n+'</div>':'')
+    +(opts.steppers?'<div class="stepper"><button aria-label="fewer" onclick="step(\''+k+'\',-1)">−</button><button aria-label="more" onclick="step(\''+k+'\',1)">+</button></div>':'')+'</div>';
+  return '<div class="mat">'+col('h','Boxes','hundreds',m.h)+col('t','Bags','tens',m.t)+col('o','Singles','ones',m.o)+'</div>';
+}
+
+/* ===== lesson plan ===== */
+function tens(n){return Math.floor(n/10);}
+function ones(n){return n%10;}
+function stackN(n,sz){let s='';for(let i=0;i<tens(n);i++)s+=bag(sz||40);for(let i=0;i<ones(n);i++)s+=blob(COLORS[i%6],Math.round((sz||40)*.5));return s;}
+let S={i:0,stars:0,tries:0};
+function go(i){S.i=i;S.tries=0;render();window.scrollTo(0,0);}
+function next(){go(Math.min(S.i+1,STEPS.length-1));}
+function award(){if(S.tries===0)S.stars++;}
+function bar(){$('bar').style.width=Math.round(S.i/(STEPS.length-1)*100)+'%';}
+function good(msg){const f=$('fb');f.className='fb good pop';f.innerHTML=msg;}
+function bad(msg){const f=$('fb');f.className='fb bad wob';f.innerHTML=msg;}
+function render(){bar();const st=STEPS[S.i];R[st.k](st);}
+function mochi(text,who){return '<div class="mochi"><div class="who">'+(who||blob('#FFA6C9',56))+'</div><div class="bubble">'+text+'</div>'+spk(text.replace(/<[^>]+>/g,''))+'</div>';}
+function numIn(fn){const el=$('in');el.addEventListener('input',()=>{el.value=el.value.replace(/\D/g,'').slice(0,3);});el.addEventListener('keydown',e=>{if(e.key==='Enter')fn();});el.focus();}
+function mcq(card,title,q,onPick){
+  $('stage').innerHTML='<div class="card '+card+'"><h2>'+title+'</h2>'+mochi(q.t)+'<div class="opts">'+q.o.map((v,j)=>'<button class="opt w" onclick="'+onPick+'(this,'+j+')">'+v+'</button>').join('')+'</div><div class="fb" id="fb"></div><div class="center"><button class="btn lav" id="nx" style="display:none" onclick="next()">Next</button></div></div>';
+}
+function pickGeneric(btn,j,q,wrongMsg){
+  const bs=[].slice.call(document.querySelectorAll('.opt'));
+  if(j===q.c){btn.className='opt w right';award();good('Yes! '+q.why);$('nx').style.display='inline-block';bs.forEach(b=>b.disabled=true);}
+  else{btn.className='opt w wrong';S.tries++;btn.disabled=true;
+    if(S.tries>=2){bs[q.c].className='opt w right';bad('The answer is <b>'+q.o[q.c]+'</b>. '+q.why);$('nx').style.display='inline-block';bs.forEach(b=>b.disabled=true);}
+    else bad('Not quite. '+wrongMsg);}
+}
+function rDoneGeneric(badge,title,msgs,showMom,again){
+  const s=S.stars;const msg=s>=GRADED-1?msgs[0]:s>=Math.ceil(GRADED*.6)?msgs[1]:msgs[2];
+  $('stage').innerHTML='<div class="card center"><div style="margin-bottom:8px"><span class="badge">'+badge+'</span></div><h1>'+title+'</h1><div class="stars">⭐ '+s+' / '+GRADED+'</div><p>'+msg+'</p><p class="small">Stars are for answers right on the first try.</p></div>'
+   +'<div class="card mint"><h2>Show Mom</h2>'+mochi(showMom)
+   +'<div class="center" style="margin-top:12px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn" onclick="S.stars=0;go(0)">Play again</button><a class="btn lav" style="text-decoration:none;display:inline-block" href="../wade-math-home.html#/kid/hadley">Back to Math Home</a></div></div>';
+}
+function bsvg(w,a,b,hi){
+  const c=(x,y,t,cls,fs)=>'<circle class="'+cls+'" cx="'+x+'" cy="'+y+'" r="36"/><text x="'+x+'" y="'+(y+2)+'" font-size="'+fs+'" fill="'+(cls==='cw'?'#fff':'#5A3A6E')+'">'+t+'</text>';
+  return '<svg class="bnd" viewBox="0 0 240 190" aria-hidden="true"><line class="ln" x1="120" y1="48" x2="60" y2="108"/><line class="ln" x1="120" y1="48" x2="180" y2="108"/>'
+   +c(120,38,w,hi==='w'?'hl':'cw',34)+c(58,142,a,hi==='a'?'hl':'cp',34)+c(182,142,b,hi==='b'?'hl':'cp',34)+'</svg>';
+}
+
+const B20=[[13,20],[8,20],[15,20],[6,20],[11,20]];
+const B100=[[70,100],[40,100],[90,100],[20,100]];
+const B1000=[[300,1000],[600,1000],[800,1000]];
+const WORDS=[{t:'Hadley wants a bag of 100 squishies. She has 60. How many more does she need?',a:60,w:100},{t:'A box holds 20 squishies. Hadley put in 13. How many more fit in the box?',a:13,w:20}];
+const EXPL=[
+ {t:'Why do 7 tens and 3 tens make 100?',o:['Because 7 + 3 = 10, and 10 tens is 100','Because 7 and 3 are small','Because 100 has two zeros'],c:0,why:'7 + 3 = 10, so 7 tens + 3 tens = 10 tens. And 10 tens is 100.'},
+ {t:'What is the partner of 400 to make 1,000?',o:['500','600','700'],c:1,why:'4 hundreds + 6 hundreds = 10 hundreds = 1,000. So the partner of 400 is 600.'}
+];
+const BK=[].concat(B20.map(x=>({a:x[0],w:x[1]})),B100.map(x=>({a:x[0],w:x[1]})),B1000.map(x=>({a:x[0],w:x[1]})));
+const STEPS=[{k:'welcome'},{k:'teach'}].concat(BK.map((x,i)=>({k:'bk',i:i})),[{k:'expl',i:0},{k:'expl',i:1},{k:'word',i:0},{k:'word',i:1},{k:'done'}]);
+const GRADED=BK.length+EXPL.length+WORDS.length;
+function bkHint(a,w){
+  if(w===20)return a+' and '+(w-a)+' make 20. Think: how many more to get to 10, then to 20? '+a+' + '+(w-a)+' = 20.';
+  if(w===100)return a/10+' tens and '+(w-a)/10+' tens make 10 tens, which is 100. So the partner of '+a+' is '+(w-a)+'.';
+  return a/100+' hundreds and '+(w-a)/100+' hundreds make 10 hundreds, which is 1,000. So the partner of '+a+' is '+(w-a)+'.';
+}
+let TW=20,TA=13;
+function fmtN(n){return n>=1000?'1,000':String(n);}
+function tDraw(){
+  const w=TW,step=w===20?1:w===100?10:100;
+  $('tv').innerHTML='<div id="tb"></div><input class="rng" id="rg" type="range" min="0" max="'+w+'" step="'+step+'" value="'+TA+'" oninput="tSlide(this.value)" aria-label="slide to choose a part"><div id="te"></div>';
+  tPart();
+  [].slice.call(document.querySelectorAll('[data-w]')).forEach(x=>x.className=(+x.dataset.w===TW?'on':''));
+}
+function tPart(){const w=TW,a=TA,b=w-a;$('tb').innerHTML=bsvg(fmtN(w),a,b,'');$('te').innerHTML='<div class="eq">'+a+' + '+b+' = '+fmtN(w)+'</div>'+mochi('Slide to choose one part. The other part is its <b>partner</b>: they always make <b>'+fmtN(w)+'</b>.');}
+function tSlide(v){TA=+v;tPart();}
+function tWhole(w){TW=w;TA=w===20?13:w===100?70:300;tDraw();}
+let ST={n:7,t:0};
+function sDraw(){
+  const given=ST.g,tot=10;let h='';
+  for(let i=0;i<tot;i++){const cls=i<given?'f fx':(i<given+ST.t?'n':'');h+='<button class="'+cls+'" '+(i<given?'':'onclick="sTap('+i+')"')+'>'+(i<given?'':'')+'</button>';}
+  $('sv').innerHTML='<div class="eq">'+ST.g*ST.u+' + '+(ST.t*ST.u||'?')+' = '+ST.W+'</div><div class="strip">'+h+'</div>'
+   +mochi(ST.t+ST.g===tot?'<b>'+ST.g+' tens + '+ST.t+' tens = 10 tens = '+ST.W+'</b>. The partner of '+ST.g*ST.u+' is <b>'+ST.t*ST.u+'</b>.':'Each block is '+ST.u+'. The purple blocks are '+ST.g*ST.u+'. Tap the empty blocks to fill up to '+ST.W+'.');
+}
+function sTap(i){const target=i-ST.g+1;ST.t=ST.t===target?target-1:target;sDraw();}
+function sSet(g,u){ST={g:g,u:u,W:u===10?100:1000,t:0};sDraw();[].slice.call(document.querySelectorAll('[data-s]')).forEach(x=>x.className=(x.dataset.s===g+'-'+u?'on':''));}
+const R={
+welcome(){
+  $('stage').innerHTML='<div class="card center"><div style="display:flex;justify-content:center;gap:6px;margin-bottom:6px">'+box(70)+bag(70)+blob('#FFA6C9',60)+'</div>'
+   +'<h1>Partner Numbers</h1><p>Every number has a partner that makes a round total. Let us find them for 20, 100 and 1,000!</p>'
+   +'<p class="small">About 15 minutes. Tap 🔊 to hear any words read out loud.</p>'
+   +'<div style="margin-top:12px"><button class="btn" onclick="next()">Find the partners!</button></div></div>'
+   +'<details><summary>For Mom</summary><p><b>Week 9 · Number bonds.</b> Hadley gives the partner to make 20, a multiple of 10 to make 100, and a multiple of 100 to make 1,000.</p>'
+   +'<ul><li>Bubbles show the whole on top and the two parts below, like her daily drill.</li><li>For 100 and 1,000 she uses the same facts to 10, with tens or hundreds: 7 tens + 3 tens = 10 tens = 100.</li><li>Practice only. Nothing is graded or saved.</li></ul></details>';
+},
+teach(){
+  $('stage').innerHTML='<div class="card lav"><h2>Slide to find the partner</h2><div class="chips">'+[20,100,1000].map(w=>'<button data-w="'+w+'" onclick="tWhole('+w+')">to '+fmtN(w)+'</button>').join('')+'</div><div id="tv"></div></div>'
+   +'<div class="card mint"><h2>Fill the strip</h2><div class="chips">'+[[7,10],[4,10],[6,100],[2,100]].map(p=>'<button data-s="'+p[0]+'-'+p[1]+'" onclick="sSet('+p[0]+','+p[1]+')">'+p[0]*p[1]+' to '+(p[1]===10?100:'1,000')+'</button>').join('')+'</div><div id="sv"></div></div>'
+   +'<div class="center" style="margin:10px"><button class="btn lav" onclick="next()">Ready to practice</button></div>';
+  tWhole(20);sSet(7,10);
+},
+bk(st){
+  const it=BK[st.i],b=it.w-it.a;S.b=it;
+  $('stage').innerHTML='<div class="card"><h2>Partner '+(st.i+1)+' of '+BK.length+'</h2>'+mochi('Find the partner. Together they make <b>'+fmtN(it.w)+'</b>.')
+   +bsvg(fmtN(it.w),it.a,'?','')+'<div class="ans">'+it.a+' + <input id="in" inputmode="numeric" maxlength="3" aria-label="answer"> = '+fmtN(it.w)+'</div>'
+   +'<div class="center"><button class="btn sky" onclick="chkB()">Check</button></div><div class="fb" id="fb"></div><div class="center"><button class="btn lav" id="nx" style="display:none" onclick="next()">Next</button></div></div>';
+  numIn(chkB);
+},
+expl(st){S.q=EXPL[st.i];mcq('butter','Explain it '+(st.i+1)+' of '+EXPL.length,S.q,'pickE');},
+word(st){const it=WORDS[st.i];S.b={a:it.a,w:it.w};
+  $('stage').innerHTML='<div class="card mint"><h2>Story '+(st.i+1)+' of '+WORDS.length+'</h2>'+mochi(it.t)+'<div class="ans"><input id="in" inputmode="numeric" maxlength="3" aria-label="answer"></div>'
+   +'<div class="center"><button class="btn sky" onclick="chkB(1)">Check</button></div><div class="fb" id="fb"></div><div class="center"><button class="btn lav" id="nx" style="display:none" onclick="next()">Next</button></div></div>';
+  numIn(()=>chkB(1));},
+done(){rDoneGeneric('Partner Star','You found every partner!',['You are an amazing partner finder!','Great work, shopkeeper!','You kept trying. That is how shopkeepers get great!'],'Ask Mom to pick a number like <b>70</b> or <b>300</b>. Tell her its partner to make 100 or 1,000, and why.');}
+};
+function chkB(story){
+  const it=S.b,ans=story?(S.b.w-S.b.a):(S.b.w-S.b.a),el=$('in');if(el.value===''){bad('Type your answer.');return;}
+  if(story){}
+  const want=it.w-it.a;
+  if(+el.value===want){award();good('Yes! '+it.a+' + '+want+' = '+fmtN(it.w)+'.');$('nx').style.display='inline-block';el.disabled=true;return;}
+  S.tries++;
+  if(S.tries>=2){bad('The answer is <b>'+want+'</b>. '+bkHint(it.a,it.w));$('nx').style.display='inline-block';el.disabled=true;return;}
+  bad('Not quite. '+bkHint(it.a,it.w).split('. ')[0]+'.');
+}
+function pickE(btn,j){pickGeneric(btn,j,S.q,'Think about the bonds to 10.');}
+function momView(){
+  let h='<div class="card butter"><h2>Mom view</h2><p>The whole lesson on one page with every answer shown. Nothing is scored or saved. Click Student view to give it to Hadley.</p>'
+   +'<p class="small"><b>Week 9 · Number bonds.</b> Give the partner to make 20; a multiple of 10 to make 100; a multiple of 100 to make 1,000.</p></div>';
+  h+='<div class="card lav"><h2>Teaching screen</h2><p>Hadley slides to choose a part and the bubbles show the partner. Try it:</p><div class="chips">'+[20,100,1000].map(w=>'<button data-w="'+w+'" onclick="tWhole('+w+')">to '+fmtN(w)+'</button>').join('')+'</div><div id="tv"></div></div>';
+  h+='<div class="card"><h2>Partners (answer key)</h2>';
+  BK.forEach((it,i)=>{h+='<div style="border-top:1px solid #eee;padding:6px 0"><b>'+(i+1)+'.</b> '+it.a+' + <b style="color:#3BB98A">'+(it.w-it.a)+'</b> = '+fmtN(it.w)+' <span class="small">'+bkHint(it.a,it.w)+'</span></div>';});
+  h+='</div><div class="card butter"><h2>Explain it (answer key)</h2>';
+  EXPL.forEach((q,i)=>{h+='<div style="padding:6px 0"><b>'+(i+1)+'.</b> '+q.t+' <b style="color:#3BB98A">Answer: '+q.o[q.c]+'</b> <span class="small">'+q.why+'</span></div>';});
+  h+='</div><div class="card mint"><h2>Stories (answer key)</h2>';
+  WORDS.forEach((q,i)=>{h+='<div style="padding:6px 0"><b>'+(i+1)+'.</b> '+q.t+' <b style="color:#3BB98A">Answer: '+(q.w-q.a)+'</b></div>';});
+  h+='</div><div class="card"><h2>Check her out loud</h2><ul><li>Ask for the partner of 13 to make 20, with no counting on fingers.</li><li>Ask for the partner of 70 to make 100, and of 300 to make 1,000.</li><li>Can she say why they work? 7 tens + 3 tens = 10 tens = 100.</li></ul><p class="small">If she does these well, tick them on her rung in Math Home.</p></div>';
+  $('stage').innerHTML=h;$('bar').style.width='100%';tWhole(20);
+}
+
+const MOM=/[?&]mom=1/.test(location.search);
+function momGate(cb){cb();} /* PIN turned off for now */
+
+(function(){const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(momView);}
+  else{ml.href=location.pathname+'?mom=1';render();}
+})();
+/* Mom view: back goes to Mom's lesson list */
+(function(){if(/[?&]mom=1/.test(location.search)){var b=document.querySelector('a.back');if(b){b.href=b.getAttribute('href').replace(/#\/kid\/(\w+)/,'#/mom/ladder/$1');b.textContent='\u2190 Lessons';}}})();
+</script>
+</body>
+</html>
