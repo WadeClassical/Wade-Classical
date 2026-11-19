@@ -333,6 +333,17 @@ function weekObj(kid,n){return KIDS[kid].weeks.find(w=>w[0]===n);}
 function masteredCount(kid){return KIDS[kid].weeks.filter(w=>weekStatus(kid,w[0])==='mastered').length;}
 function factsStage(kid){const sp=KIDS[kid].spine;for(let i=0;i<sp.length;i++){if(!getIn('facts/'+kid+'/done/'+sp[i][0]))return i;}return -1;}
 function assignList(kid){return entries(getIn('assign/'+kid));}
+function dayTxt(a){return a.date?fmtDay(parseKey(a.date)):'No day yet';}
+function schedUn(kid,id){
+  const el=document.getElementById('su'+kid+id);const v=el&&el.value;if(!v){toast('Pick a day first');return;}
+  const a=getIn('assign/'+kid+'/'+id);if(!a)return;
+  put('assign/'+kid+'/'+id,Object.assign({},a,{date:v}));toast('Scheduled for '+fmtDay(parseKey(v)));
+}
+function unRow(kid,a,mom){
+  return '<div class="row"><div class="rt"><div class="t">'+esc(a.title)+(safeUrl(a.link)?' <a class="small" href="'+esc(safeUrl(a.link))+'" target="_blank" rel="noopener">open link</a>':'')+(a.week?' <span class="small muted">· Week '+a.week+'</span>':'')+'</div>'
+   +(mom?'<div style="margin-top:6px;display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input type="date" id="su'+kid+a.id+'" value="'+todayKey()+'" style="width:auto"><button class="btn sm k" onclick="schedUn(\''+kid+'\',\''+a.id+'\')">Put on this day</button></div>':'')+'</div>'
+   +(mom?'<button class="btn sm '+(armed===kid+a.id?'bad':'alt')+'" onclick="armDel(\''+kid+'\',\''+a.id+'\')">'+(armed===kid+a.id?'Tap again to delete':'Delete')+'</button>':'')+'</div>';
+}
 function badge(a){
   if(a.grade==='got')return '<span class="badge b-got">Got it</span>';
   if(a.grade==='needs')return '<span class="badge b-needs">Needs work</span>';
@@ -347,7 +358,7 @@ function itemHtml(kid,a,showDate){
   }
   return '<div class="row '+(a.done?'done':'')+'"><button class="chk '+(a.done?'on':'')+'" onclick="toggleDone(\''+kid+'\',\''+a.id+'\')" aria-label="done">'+(a.done?'✓':'')+'</button>'
    +'<div class="rt"><div class="t">'+esc(a.title)+badge(a)+'</div>'
-   +(showDate?'<div class="small muted">'+esc(fmtDay(parseKey(a.date)))+'</div>':'')
+   +(showDate?'<div class="small muted">'+esc(dayTxt(a))+'</div>':'')
    +(a.note?'<div class="small muted">Mom: '+esc(a.note)+'</div>':'')
    +(u?'<a class="linkchip" target="_blank" rel="noopener" href="'+esc(u)+'">'+linkLabel(u)+'</a>':'')+'</div></div>';
 }
@@ -754,7 +765,7 @@ function kidToday(kid,w){
   if(w)h+='<div class="card"><h3 style="font-size:22px">How to finish this week</h3>'+pathCard(kid,w[0],false)+'</div>';
   const items=assignList(kid);
   const today=items.filter(a=>a.date===tk).sort((a,b)=>a.ts-b.ts);
-  const open=items.filter(a=>a.date<tk&&(!a.done||a.grade==='redo'||a.grade==='needs')&&a.grade!=='got').sort((a,b)=>a.date<b.date?-1:1);
+  const open=items.filter(a=>a.date&&a.date<tk&&(!a.done||a.grade==='redo'||a.grade==='needs')&&a.grade!=='got').sort((a,b)=>a.date<b.date?-1:1);
   h+='<div class="card"><h3 style="font-size:24px">Today</h3>'+pcFocusTag(kid,tk);
   const si=factsStage(kid);const sp=K.spine;
   const fdone=!!getIn('facts/'+kid+'/log/'+tk);
@@ -870,13 +881,14 @@ function pathCard(kid,n,mom){
   h+='</div></div>';
   // 2 lesson
   const built=lessonList(kid,n);
-  const linedL=assignList(kid).filter(a=>a.week===n).sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:(a.ts||0)-(b.ts||0));const lined=linedL.length;
+  const linedL=assignList(kid).filter(a=>a.week===n).sort((a,b)=>(a.date||'9999')<(b.date||'9999')?-1:(a.date||'9999')>(b.date||'9999')?1:(a.ts||0)-(b.ts||0));const lined=linedL.length;
   h+='<div class="pstep"><div class="pnum">2</div><div><b>LESSON</b><div class="small">'
     +(stg==='check'?'Done.':stg==='ready'?'Practice done. Ready for the quiz.':stg==='lesson'?'In progress. Take a few days of practice.':'Not started.')
-    +(lined?' · '+lined+' day'+(lined>1?'s':'')+' lined up':'')+'</div>';
+    +(lined?' · '+lined+' thing'+(lined>1?'s':'')+' lined up':'')+'</div>';
   if(built.length){h+='<div class="pbtns">'+built.map(l=>'<a class="btn sm k" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="'+esc(l.u)+'">'+esc(l.t)+'</a>'+(mom&&l.mom?'<a class="btn sm alt" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="'+esc(l.u)+'?mom=1">Mom view</a>':'')).join('')+'</div>';}
   else h+='<div class="small muted" style="margin-top:4px">No built lesson for this week yet.</div>';
-  if(lined){h+='<div class="lnl">'+linedL.map(a=>'<div class="lnr'+(a.done?' dn':'')+'"><span class="lnd">'+esc(fmtDay(parseKey(a.date)))+'</span> '+(a.done?'✓ ':'')+esc(a.title)+(safeUrl(a.link)?' <a class="small" href="'+esc(safeUrl(a.link))+'" target="_blank" rel="noopener">open</a>':'')+'</div>').join('')+'</div>';}
+  if(lined){h+='<div class="lnl">'+linedL.map(a=>'<div class="lnr'+(a.done?' dn':'')+'"><span class="lnd">'+esc(dayTxt(a))+'</span> '+(a.done?'✓ ':'')+esc(a.title)+(safeUrl(a.link)?' <a class="small" href="'+esc(safeUrl(a.link))+'" target="_blank" rel="noopener">open</a>':'')
+    +(mom&&!a.date?'<div style="margin-top:4px;display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input type="date" id="su'+kid+a.id+'" value="'+todayKey()+'" style="width:auto"><button class="btn sm k" onclick="schedUn(\''+kid+'\',\''+a.id+'\')">Put on this day</button></div>':'')+'</div>').join('')+'</div>';}
   h+='<div class="pbtns">';
   if(!stg)h+='<button class="btn sm '+(mom?'alt':'k')+'" onclick="startLesson('+q()+')">Start lesson</button>';
   if(mom&&stg==='lesson')h+='<button class="btn sm ok" onclick="setStage('+q("'ready'")+')">Ready for quiz</button>';
@@ -1052,10 +1064,10 @@ function lessonCard(kid,n){
     h+='</div>';
   }
   h+='<div style="margin-top:12px;display:flex;gap:10px;align-items:center"><button class="btn k" onclick="ldAdd(\''+kid+'\','+n+')">Add lesson</button><span class="small muted"><span id="ldcount">'+Object.keys(LD.days).length+'</span> day(s) chosen</span></div>';
-  const lined=assignList(kid).filter(a=>a.week===n).sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:(a.ts||0)-(b.ts||0));
+  const lined=assignList(kid).filter(a=>a.week===n).sort((a,b)=>(a.date||'9999')<(b.date||'9999')?-1:(a.date||'9999')>(b.date||'9999')?1:(a.ts||0)-(b.ts||0));
   if(lined.length){
     h+='<div style="margin-top:14px;border-top:1px solid var(--line);padding-top:8px"><b>Lined up for Week '+n+'</b>';
-    lined.forEach(a=>{h+='<div class="row"><div class="rt"><div class="t">'+esc(a.title)+(a.link?' <a class="small" href="'+esc(a.link)+'" target="_blank" rel="noopener">open link</a>':'')+badge(a)+'</div><div class="small muted">'+esc(fmtDay(parseKey(a.date)))+'</div></div>'
+    lined.forEach(a=>{h+='<div class="row"><div class="rt"><div class="t">'+esc(a.title)+(a.link?' <a class="small" href="'+esc(a.link)+'" target="_blank" rel="noopener">open link</a>':'')+badge(a)+'</div><div class="small muted">'+esc(dayTxt(a))+'</div></div>'
       +'<button class="btn sm '+(armed===kid+a.id?'bad':'alt')+'" onclick="armDel(\''+kid+'\',\''+a.id+'\')">'+(armed===kid+a.id?'Tap to remove':'Remove')+'</button></div>';});
     h+='</div>';
   }
@@ -1126,13 +1138,15 @@ function planView(){
    +'<label>What</label><input id="pt" placeholder="e.g. Masterbooks lesson 12, or Khan Academy: fractions" value="'+esc(pf?pf.title:'')+'">'
    +'<label>Link (optional — website, PDF or video)</label><input id="pl" placeholder="https://…">'
    +'<label>Which day</label><input id="pd" type="date" value="'+tk+'">'
+   +'<label style="display:flex;gap:8px;align-items:center;font-size:14px;color:var(--ink);margin-top:6px"><input type="checkbox" id="pnd" style="width:auto" onchange="document.getElementById(\'pd\').disabled=this.checked"> No day yet. Park it on a ladder week and schedule it later.</label>'
    +'<label>Ladder week (optional)</label><select id="pw"></select><div class="small muted" id="pwn" style="margin-top:4px"></div>'
    +'<div style="margin-top:14px"><button class="btn" onclick="submitAssign()">Add to their list</button></div></div>';
   ['ryder','hadley'].forEach(kid=>{
-    const items=assignList(kid).filter(a=>a.date>=tk).sort((a,b)=>a.date<b.date?-1:a.ts-b.ts);
+    const items=assignList(kid).filter(a=>a.date&&a.date>=tk).sort((a,b)=>a.date<b.date?-1:a.ts-b.ts);const waiting=assignList(kid).filter(a=>!a.date&&!a.done).sort((a,b)=>(a.week||99)-(b.week||99)||(a.ts||0)-(b.ts||0));
     h+='<div class="card '+KIDS[kid].cls+'"><h3 style="font-size:20px;color:var(--kc)">Coming up for '+KIDS[kid].name+'</h3>';
     if(!items.length)h+='<p class="muted small">Nothing assigned yet.</p>';
     items.forEach(a=>{h+='<div class="row"><div class="rt"><div class="t">'+esc(a.title)+'</div><div class="small muted">'+esc(fmtDay(parseKey(a.date)))+(a.week?' · Week '+a.week+' on the ladder':'')+'</div></div><button class="btn sm '+(armed===kid+a.id?'bad':'alt')+'" onclick="armDel(\''+kid+'\',\''+a.id+'\')">'+(armed===kid+a.id?'Tap again to delete':'Delete')+'</button></div>';});
+    if(waiting.length){h+='<div style="margin-top:12px;border-top:1px solid var(--line);padding-top:8px"><b>Waiting for a day</b><div class="small muted">Parked on a ladder week. Pick a day when you are ready and it goes on '+KIDS[kid].name+'\'s list.</div>'+waiting.map(a=>unRow(kid,a,true)).join('')+'</div>';}
     h+='</div>';});
   setTimeout(bindPlan,0);
   if(pf){setTimeout(()=>{const b=document.querySelector('#pk [data-k="'+pf.kid+'"]');if(b)b.click();if(pf.week){const w=document.getElementById('pw');if(w)w.value=String(pf.week);}},0);}
@@ -1152,8 +1166,10 @@ function submitAssign(){
   const on=document.querySelector('#pk .tab.on');const k=on?on.dataset.k:'ryder';
   const kids=k==='both'?['ryder','hadley']:[k];
   const wv=kids.length===1?parseInt((document.getElementById('pw')||{}).value,10):NaN;
-  const ok=addAssign(kids,document.getElementById('pt').value,document.getElementById('pl').value,document.getElementById('pd').value||todayKey(),isNaN(wv)?0:wv);
-  if(ok)toast('Added'+(isNaN(wv)?'':' to Week '+wv));
+  const nd=document.getElementById('pnd')&&document.getElementById('pnd').checked;
+  if(nd&&isNaN(wv)){toast('Pick one child and a ladder week to park it on');return;}
+  const ok=addAssign(kids,document.getElementById('pt').value,document.getElementById('pl').value,nd?'':(document.getElementById('pd').value||todayKey()),isNaN(wv)?0:wv);
+  if(ok)toast('Added'+(isNaN(wv)?'':' to Week '+wv)+(nd?' with no day yet':''));
 }
 function checkView(){
   let h='';
@@ -1164,7 +1180,7 @@ function checkView(){
     h+='<div class="card '+K.cls+'" style="border-top:6px solid var(--kc)"><h3 style="font-size:24px;color:var(--kc)">'+K.name+'</h3>';
     if(!pend.length)h+='<p class="muted small">Nothing waiting to be checked.</p>';
     pend.forEach(a=>{const u=safeUrl(a.link);
-      h+='<div class="row"><div class="rt"><div class="t">'+esc(a.title)+'</div><div class="small muted">'+esc(fmtDay(parseKey(a.date)))+'</div>'+(u?'<a class="linkchip" target="_blank" rel="noopener" href="'+esc(u)+'">'+linkLabel(u)+'</a>':'')
+      h+='<div class="row"><div class="rt"><div class="t">'+esc(a.title)+'</div><div class="small muted">'+esc(dayTxt(a))+'</div>'+(u?'<a class="linkchip" target="_blank" rel="noopener" href="'+esc(u)+'">'+linkLabel(u)+'</a>':'')
        +'<input style="margin-top:8px" placeholder="Note for '+K.name+' (optional)" value="'+esc(a.note||'')+'" onchange="setNote(\''+kid+'\',\''+a.id+'\',this.value)"></div>'
        +'<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm ok" onclick="grade(\''+kid+'\',\''+a.id+'\',\'got\')">Got it</button><button class="btn sm warn" onclick="grade(\''+kid+'\',\''+a.id+'\',\'needs\')">Needs work</button><button class="btn sm bad" onclick="grade(\''+kid+'\',\''+a.id+'\',\'redo\')">Redo</button></div></div>';});
     h+='<div class="small muted" style="margin-top:10px">Report card · '+(tot?Math.round(g/tot*100)+'% got it':'no checked work yet')+' ('+g+' got it, '+n+' needs work, '+r+' redo) · '+masteredCount(kid)+' of 30 weeks mastered</div></div>';
