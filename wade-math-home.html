@@ -1075,7 +1075,7 @@ function ladderView(kid){
     else if(i===cur){cls='current';lab='This week'+(sg==='lesson'?' · lesson':sg==='ready'?' · ready for quiz':sg==='check'?' · check I cans':'');}
     else if(sg){cls='next';lab=sg==='ready'?'Ready for quiz':sg==='check'?'Check I cans':'In lesson';}
     else if(i===nxt){cls='next';lab='Suggested next';}
-    h+='<button class="rung '+cls+' '+(i===n?'sel':'')+'" onclick="selectRung(\''+kid+'\','+i+')"><span class="n">'+i+'</span><span class="f">'+esc(w[1])+(hasQuiz(kid,i)?' <span class="small" style="opacity:.7">· quiz</span>':'')+'</span><span class="s">'+lab+'</span></button>';
+    h+='<button class="rung '+cls+' '+(i===n?'sel':'')+'" onclick="selectRung(\''+kid+'\','+i+')"><span class="n">'+i+'</span><span class="f">'+esc(w[1])+(hasQuiz(kid,i)?' <span class="small" style="opacity:.7">· quiz</span>':'')+(lessonList(kid,i).length?' <span class="small" style="opacity:.7">· lesson</span>':'')+'</span><span class="s">'+lab+'</span></button>';
   }
   h+='</div></div><div>';
   const w=weekObj(kid,n);const st=weekStatus(kid,n);
