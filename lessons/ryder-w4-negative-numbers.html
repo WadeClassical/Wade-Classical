@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ryder · Week 4 · Negative Numbers</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--parch:#F4ECDA;--card:#FBF6EA;--forest:#204B3A;--ink:#1E2A24;--muted:#55604F;--line:#E2D6BC;--teal:#17607A;--teal-d:#0F4A5F;--ok:#2E7D4F;--bad:#A8323A;--tint:#E3F0F4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jost',system-ui,sans-serif;background:var(--parch);color:var(--ink);font-size:18px;line-height:1.45;min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:14px 14px 70px}
+.top{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:10px}
+.back{color:var(--teal);text-decoration:none;font-weight:600;font-size:15px;border:1px solid var(--teal);border-radius:10px;padding:6px 12px;background:#fff}
+.title{font-weight:700;font-size:20px;color:var(--teal-d);flex:1;text-align:center}
+.prog{height:8px;background:#fff;border:1px solid var(--line);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.prog i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+.card{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--teal);border-radius:14px;padding:18px;margin-bottom:16px}
+h1{font-size:30px;line-height:1.15;color:var(--teal-d)}
+h2{font-size:23px;line-height:1.2;color:var(--teal-d);margin-bottom:6px}
+h3{font-size:17px;color:var(--teal-d);margin:14px 0 6px}
+p{margin:8px 0}
+.small{font-size:15px;color:var(--muted)}
+.rule{background:var(--tint);border-left:5px solid var(--teal);border-radius:8px;padding:10px 14px;margin:10px 0;font-weight:500}
+.btn{font-family:inherit;font-weight:600;font-size:17px;border:0;border-radius:10px;padding:11px 20px;cursor:pointer;color:#fff;background:var(--teal)}
+.btn.alt{background:#fff;color:var(--teal);border:1px solid var(--teal)}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+input.num{font:600 22px Jost,sans-serif;padding:9px 12px;border:2px solid var(--line);border-radius:10px;width:190px;background:#fff;color:var(--ink)}
+input.num:focus{outline:none;border-color:var(--teal)}
+/* chart */
+.chart{display:flex;justify-content:center;gap:0;margin:12px 0 6px;overflow-x:auto;padding-bottom:4px}
+.cc{width:68px;flex:none;text-align:center}
+.cc .nm{font-size:12px;color:var(--muted);min-height:30px;line-height:1.1;display:flex;align-items:flex-end;justify-content:center;padding:0 2px}
+.cc .dg{font:700 34px Jost,sans-serif;background:#fff;border:2px solid var(--teal);border-radius:8px;margin:3px 2px;height:52px;display:flex;align-items:center;justify-content:center;color:var(--teal-d)}
+.cc .dg.z{color:#B9C7CC;border-color:#C9D6DA}
+.cc .vl{font-size:13px;font-weight:600;color:var(--ink);min-height:18px}
+.cm{width:14px;flex:none;font:700 34px Jost,sans-serif;align-self:center;margin-top:12px;color:var(--ink);text-align:center}
+.arrows{display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:var(--teal-d);margin:6px 8px 0;gap:10px;flex-wrap:wrap}
+.arrows span{background:var(--tint);border-radius:99px;padding:4px 12px}
+/* questions */
+.q{border-top:1px solid var(--line);padding:12px 0}
+.q:first-of-type{border-top:0}
+.q .t{font-weight:500;margin-bottom:6px}
+.q .res{margin-top:6px;font-size:16px;font-weight:600}
+.q.good .res{color:var(--ok)}.q.bad .res{color:var(--bad)}
+.q.good input{border-color:var(--ok);background:#EEF7F1}
+.opt{display:block;width:100%;text-align:left;font:500 17px Jost,sans-serif;padding:9px 12px;margin:5px 0;background:#fff;border:2px solid var(--line);border-radius:10px;cursor:pointer;color:var(--ink)}
+.opt:hover{border-color:var(--teal)}
+.opt.sym{display:inline-block;width:auto;min-width:76px;text-align:center;font-size:28px;font-weight:700;margin-right:8px}
+.opt.right{border-color:var(--ok);background:#EEF7F1}.opt.wrong{border-color:var(--bad);background:#FAEBEC}
+table.cmp{border-collapse:separate;border-spacing:3px;margin:10px auto}
+table.cmp td{width:42px;height:46px;text-align:center;font:700 26px Jost,sans-serif;background:#fff;border:2px solid var(--line);border-radius:7px}
+table.cmp td.cm{width:12px;border:0;background:none;padding:0}
+table.cmp td.hl{border-color:var(--teal);background:var(--tint);color:var(--teal-d)}
+table.cmp td.pl{height:auto;border:0;background:none;font:600 11px Jost,sans-serif;color:var(--muted);vertical-align:bottom;line-height:1.1}
+table.cmp td.lb{width:auto;border:0;background:none;font:600 14px Jost,sans-serif;color:var(--muted);text-align:right;padding-right:6px}
+.pbtn{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.pbtn button{font:600 15px Jost,sans-serif;padding:7px 11px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}.pbtn button.on{border-color:var(--teal);background:var(--tint)}
+.nl{width:100%;max-width:560px;display:block;margin:6px auto}
+table.tb{border-collapse:collapse;width:100%;margin:8px 0;font-size:16px}
+table.tb td,table.tb th{border:1px solid var(--line);padding:7px 10px;text-align:left;background:#fff}
+table.tb th{background:var(--tint);color:var(--teal-d)}
+.big{font:700 28px Jost,sans-serif;color:var(--teal-d)}
+.score{font:700 44px Jost,sans-serif;color:var(--teal-d)}
+details{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:14px}
+summary{cursor:pointer;font-weight:600;color:var(--teal-d)}
+ul{margin:6px 0 6px 22px}
+.chain{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 6px;margin:10px 0;font-weight:700;color:var(--teal-d)}
+.chain .v{background:#fff;border:2px solid var(--teal);border-radius:8px;padding:6px 9px;font-size:18px}
+.chain .x{font-size:13px;background:var(--tint);border-radius:99px;padding:3px 8px;color:var(--teal-d)}
+.dpick{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.dpick button{width:38px;height:38px;border-radius:8px;border:2px solid var(--line);background:#fff;font:700 18px Jost,sans-serif;cursor:pointer;color:var(--ink)}
+.dpick button.on{border-color:var(--teal);background:var(--tint)}
+.eq{text-align:center;font:700 24px Jost,sans-serif;color:var(--teal-d);margin:6px 0;min-height:34px}
+.nlw{width:100%;overflow-x:auto}
+svg.nl2{width:100%;min-width:520px;display:block;margin:8px auto}
+.rng{width:100%;max-width:560px;display:block;margin:4px auto}
+.tbtn{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.tbtn button{font:600 15px Jost,sans-serif;padding:7px 11px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+@media(max-width:560px){body{font-size:17px}.cc{width:46px}.cc .dg{font-size:24px;height:42px}.cc .nm{font-size:10px}.cc .vl{font-size:10px}.cm{width:8px;font-size:24px}input.num{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="back" href="../wade-math-home.html#/kid/ryder">← Math Home</a><div class="title">Negative Numbers</div><a class="back" id="modeLink" href="#">Mom view</a></div>
+  <div class="prog"><i id="bar"></i></div>
+  <div id="stage"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const PLACES=['Millions','Hundred thousands','Ten thousands','Thousands','Hundreds','Tens','Ones'];
+const ONES=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const TENS=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+function fmt(n){return String(n).replace(/\B(?=(\d{3})+$)/g,',');}
+function w999(n){let s=[];if(n>=100){s.push(ONES[Math.floor(n/100)]+' hundred');n%=100;}if(n>=20){s.push(TENS[Math.floor(n/10)]+(n%10?'-'+ONES[n%10]:''));}else if(n>0||!s.length)s.push(ONES[n]);return s.join(' ');}
+function toWords(n){
+  if(n===0)return 'zero';
+  if(n===1000000)return 'one million';
+  const th=Math.floor(n/1000),r=n%1000;let out=[];
+  if(th)out.push(w999(th)+' thousand');
+  if(r)out.push(w999(r));
+  return out.join(', ');
+}
+function expanded(n){
+  const s=String(n),L=s.length,parts=[];
+  for(let i=0;i<L;i++){if(s[i]!=='0')parts.push(fmt(s[i]+'0'.repeat(L-1-i)));}
+  return parts.join(' + ');
+}
+function chartHTML(n){
+  const s=String(n).padStart(7,'0');let h='<div class="chart">';
+  let lead=true;
+  for(let i=0;i<7;i++){
+    if(s[i]!=='0')lead=false;
+    const show=!lead||i===6;
+    const val=s[i]==='0'?'':fmt(s[i]+'0'.repeat(6-i));
+    h+='<div class="cc"><div class="nm">'+PLACES[i]+'</div><div class="dg'+(show?'':' z')+'">'+(show?s[i]:'0')+'</div><div class="vl">'+(show?val:'')+'</div></div>';
+    if(i===0||i===3)h+='<div class="cm">'+((i===3||n>=1000000)?',':'')+'</div>';
+  }
+  return h+'</div>';
+}
+/* ---------- question engine ---------- */
+const MOM=/[?&]mom=1/.test(location.search);
+let QS={};let TOTAL=0;let FIRST=0;let ANSWERED=0;
+function norm(v){return String(v==null?'':v).replace(/[−–]/g,'-').replace(/[,\s$]/g,'');}
+function qHTML(sec,i,q){
+  if(MOM){
+    let h='<div class="q good"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+    if(q.o)q.o.forEach((o,j)=>{h+='<div class="opt'+(q.sym?' sym':'')+(j===q.c?' right':'')+'" style="cursor:default">'+o+(j===q.c?' ✓':'')+'</div>';});
+    return h+'<div class="res">Answer: '+q.show+(q.why?'. '+q.why:'')+'</div></div>';
+  }
+  const id=sec+i;QS[id]={q:q,tries:0,done:false};TOTAL++;
+  let h='<div class="q" id="q-'+id+'"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+  if(q.o){q.o.forEach((o,j)=>{h+='<button class="opt'+(q.sym?' sym':'')+'" onclick="pickQ(\''+id+'\','+j+',this)">'+o+'</button>';});}
+  else h+='<div class="row"><input class="num" id="in-'+id+'" inputmode="numeric" autocomplete="off" placeholder="Your answer" onkeydown="if(event.key===\'Enter\')checkQ(\''+id+'\')"><button class="btn" onclick="checkQ(\''+id+'\')">Check</button></div>';
+  return h+'<div class="res" id="res-'+id+'"></div></div>';
+}
+function finishQ(id,ok){
+  const s=QS[id];if(s.done)return;
+  s.tries++;
+  const el=$('q-'+id),res=$('res-'+id);
+  if(ok){
+    s.done=true;ANSWERED++;if(s.tries===1)FIRST++;
+    el.className='q good';res.textContent='✓ Correct'+(s.q.why?'. '+s.q.why:'');
+  }else{
+    el.className='q bad';
+    if(s.tries>=2){s.done=true;ANSWERED++;res.textContent='The answer is '+s.q.show+'. '+(s.q.why||'')+' Ask Mom if you are not sure why.';
+      const i=$('in-'+id);if(i)i.disabled=true;
+    }else res.textContent='Not quite. '+(s.q.hint||'Look at the rule above and try again.');
+  }
+  upd();
+}
+function checkQ(id){
+  const s=QS[id];if(s.done)return;
+  const v=norm($('in-'+id).value);if(!v)return;
+  finishQ(id,v===norm(s.q.a));
+}
+function pickQ(id,j,btn){
+  const s=QS[id];if(s.done)return;
+  const ok=j===s.q.c;
+  btn.className='opt '+(ok?'right':'wrong');
+  finishQ(id,ok);
+  if(s.done&&!ok){[].slice.call($('q-'+id).querySelectorAll('.opt'))[s.q.c].className='opt right';}
+}
+function upd(){const b=$('nextbtn');if(b)b.disabled=ANSWERED-SECBASE<SECTOTAL;const c=$('cnt');if(c)c.textContent=ANSWERED-SECBASE+' of '+SECTOTAL+' answered';}
+
+/* ---------- sections ---------- */
+function f(n){return n<0?'−'+Math.abs(n):String(n);}
+function sy(a,b,hint){const c=a<b?0:a===b?1:2;return {sym:1,t:f(a)+' &nbsp;___&nbsp; '+f(b),o:['&lt;','=','&gt;'],c:c,show:['<','=','>'][c],hint:hint||'Which one is farther to the right on the number line? That one is greater.',why:f(a)+' '+['<','=','>'][c]+' '+f(b)+'.'};}
+function nq(t,n,hint,why){return {t:t,a:String(n),show:f(n),hint:hint,why:why};}
+const SEC1=[
+  {t:'Which number is 4 steps to the LEFT of 0?',o:['4','−4','0'],c:1,show:'−4',hint:'Left of zero means less than zero.'},
+  {t:'Which of these is a negative number?',o:['7','0','−7'],c:2,show:'−7',hint:'Negative numbers are less than zero.'},
+  nq('What is the opposite of 9?',-9,'The opposite is the same distance from 0, on the other side.','−9 and 9 are both 9 steps from zero.'),
+  nq('What is the opposite of −12?',12,'Same distance from zero, other side.','−12 and 12 are both 12 steps from zero.'),
+  nq('Start at 2 and move 5 steps to the left. Where do you land?',-3,'2 → 1 → 0 → −1 → −2 → −3. Count the steps that cross zero.','Moving left makes the number smaller.'),
+  nq('Start at −4 and move 6 steps to the right. Where do you land?',2,'−4 → −3 → −2 → −1 → 0 → 1 → 2.','Moving right makes the number bigger.'),
+  nq('Count down by 3s: 9, 6, 3, 0, −3, ___',-6,'Take 3 away from −3.','Counting down keeps going past zero.')
+];
+const SEC2=[
+  sy(-3,-8,'−3 is closer to zero. Which is farther right?'),
+  sy(-5,2),sy(0,-1),sy(-12,-12,'Same number.'),sy(-20,-2,'−20 is far to the left. The bigger the digits after the minus, the smaller the number.'),
+  {t:'Put in order from LEAST to GREATEST: 3, −7, 0, −2',o:['−7, −2, 0, 3','−2, −7, 0, 3','0, −2, −7, 3'],c:0,show:'−7, −2, 0, 3',hint:'Least is the farthest left on the number line.'},
+  {t:'Which is the GREATEST: −15, −4, −9?',o:['−15','−4','−9'],c:1,show:'−4',hint:'Greatest means farthest right, which is closest to zero.'}
+];
+const SEC3=[
+  nq('It is 5°F. The temperature falls 9 degrees. What is it now?',-4,'Start at 5. Move 9 steps down. You cross zero after 5 steps.','5 − 9 = −4. The temperature is 4 degrees below zero.'),
+  nq('It is −6°F. The temperature rises 10 degrees. What is it now?',4,'Start at −6. Move 10 steps up. You pass zero after 6 steps.','−6 + 10 = 4.'),
+  nq('Your account is at −$12, which means you owe $12. You put in $5. What is the account now? (Type the number only.)',-7,'You still owe something. Move 5 steps to the right.','You now owe $7, which is −7.'),
+  nq('A diver is at −30 feet. She swims up 12 feet. Where is she now?',-18,'Swimming up moves right on the number line.','−30 + 12 = −18. She is still under the water.'),
+  {t:'Which one means 8 degrees below zero?',o:['8°F','−8°F','0.8°F'],c:1,show:'−8°F',hint:'"Below zero" means negative.'},
+  {t:'Which is colder: −2°F or −9°F?',o:['−2°F','−9°F'],c:1,show:'−9°F',hint:'Colder means farther down, farther left.'},
+  nq('A rocket count: 5, 4, 3, 2, 1, 0, then it keeps counting down. What is the number 3 steps after 0?',-3,'Keep counting down past zero.','0 → −1 → −2 → −3.')
+];
+let ST=0,SECTOTAL=0,SECBASE=0;
+const STEPS=['line','cmp','ctx','done'];
+function momGate(cb){
+  $('stage').innerHTML='<div class="card" style="text-align:center"><h2>Mom view is locked</h2><p>Enter the Mom PIN to see the answers. It opens by itself when it is right.</p>'
+   +'<p><input id="pinin" type="password" inputmode="numeric" autocomplete="off" maxlength="4" style="font:600 24px sans-serif;padding:8px 12px;width:160px;text-align:center;border:2px solid #ccc;border-radius:10px"></p>'
+   +'<p id="pinerr" style="color:#c0392b;font-weight:600;min-height:22px"></p>'
+   +'<p><a href="'+location.pathname+'">Back to the lesson</a></p></div>';
+  const go=()=>{if($('pinin').value==='3024'){cb();}else{$('pinerr').textContent='That is not the PIN.';$('pinin').value='';}};
+  $('pinin').addEventListener('input',()=>{if($('pinin').value.length>=4)go();});$('pinin').addEventListener('keydown',e=>{if(e.key==='Enter')go();});$('pinin').focus();
+}
+
+function begin(){
+  const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(buildMom);return;}
+  ml.href=location.pathname+'?mom=1';ST=0;render();
+}
+function buildMom(){
+  let all='<div class="card" style="border-top-color:#C9972B"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Ryder.</p></div>';
+  [rLine,rCmp,rCtx].forEach(fn=>{fn();all+=$('stage').innerHTML;});
+  all+='<div class="card"><h2>Check him on these, out loud</h2><ul>'
+   +'<li>What does a negative number mean? Where is it on the number line?</li>'
+   +'<li>Which is greater, −3 or −8? How do you know?</li>'
+   +'<li>Give one real place you see a negative number, and tell me what it means there.</li></ul>'
+   +'<p class="small">If he does these well, tick them on his rung in Math Home. If he is solid, let him test out.</p></div>';
+  $('stage').innerHTML=all;$('bar').style.width='100%';lineTool();cmpTool();
+}
+function bar(){$('bar').style.width=Math.round(ST/(STEPS.length-1)*100)+'%';}
+function nav(){if(MOM)return '';return '<div class="row" style="margin-top:14px"><button class="btn" id="nextbtn" onclick="nextSec()" disabled>Next</button><span class="small" id="cnt"></span></div>';}
+function nextSec(){ST++;render();window.scrollTo(0,0);}
+function listHTML(sec,arr){let h='';arr.forEach((q,i)=>{h+=qHTML(sec,i,q);});return h;}
+function render(){bar();QS={};SECBASE=ANSWERED;({line:rLine,cmp:rCmp,ctx:rCtx,done:rDone})[STEPS[ST]]();upd();}
+function iv(el){let v=parseInt(norm($(el).value),10);return isNaN(v)?0:Math.max(-20,Math.min(20,v));}
+/* number line svg, -20..20 */
+function nlSvg(marks){
+  const x=v=>30+(v+20)*12.5;
+  let s='<div class="nlw"><svg class="nl2" viewBox="0 0 560 100"><line x1="30" y1="45" x2="530" y2="45" stroke="#17607A" stroke-width="3"/>';
+  for(let v=-20;v<=20;v++){const big=v%5===0;s+='<line x1="'+x(v)+'" y1="'+(big?35:40)+'" x2="'+x(v)+'" y2="'+(big?55:50)+'" stroke="'+(v===0?'#A8323A':'#17607A')+'" stroke-width="'+(v===0?3:2)+'"/>';
+    if(big)s+='<text x="'+x(v)+'" y="75" text-anchor="middle" font-size="13" font-weight="700" fill="#0F4A5F" font-family="Jost,sans-serif">'+f(v)+'</text>';}
+  s+='<text x="'+x(-10)+'" y="16" text-anchor="middle" font-size="12" fill="#55604F" font-family="Jost,sans-serif">negative: left of zero</text><text x="'+x(10)+'" y="16" text-anchor="middle" font-size="12" fill="#55604F" font-family="Jost,sans-serif">positive: right of zero</text>';
+  (marks||[]).forEach(m=>{s+='<circle cx="'+x(m.v)+'" cy="45" r="9" fill="'+m.col+'" stroke="#fff" stroke-width="2"/><text x="'+x(m.v)+'" y="95" text-anchor="middle" font-size="14" font-weight="700" fill="'+m.col+'" font-family="Jost,sans-serif">'+m.lb+'</text>';});
+  return s+'</svg></div>';
+}
+function lineTool(){
+  const n=iv('ln'),o=-n;
+  $('lnr').value=n;
+  let msg;
+  if(n===0)msg='0 is not negative and not positive. It is the dividing point.';
+  else msg='<b>'+f(n)+'</b> is '+Math.abs(n)+' step'+(Math.abs(n)>1?'s':'')+' '+(n<0?'to the <b>left</b> of zero, so it is negative':'to the <b>right</b> of zero, so it is positive')+'. Its opposite is <b>'+f(o)+'</b>, which is also '+Math.abs(n)+' step'+(Math.abs(n)>1?'s':'')+' from zero.';
+  const temp=n<0?f(n)+'°F is '+Math.abs(n)+' degrees <b>below</b> zero.':n>0?n+'°F is '+n+' degrees <b>above</b> zero.':'0°F is the freezing point of the scale.';
+  $('lnout').innerHTML=nlSvg(n===0?[{v:0,col:'#C9972B',lb:'0'}]:[{v:n,col:'#17607A',lb:f(n)},{v:o,col:'#C9972B',lb:f(o)}])+'<p>'+msg+'</p><p class="small">Temperature: '+temp+'</p>';
+}
+function lineSet(v){$('ln').value=f(+v);lineTool();}
+function rLine(){
+  SECTOTAL=SEC1.length;
+  $('stage').innerHTML=
+   '<div class="card"><h1>Negative numbers</h1><p class="small">About 10 minutes. This is practice only. Nothing here is saved or graded.</p>'
+   +'<h2 style="margin-top:12px">The number line</h2>'
+   +'<div class="rule">Numbers to the right of zero are positive. Numbers to the left of zero are negative. Each negative number has an opposite: the same distance from zero on the other side.</div>'
+   +'<p>Going right, numbers get bigger. Going left, numbers get smaller, and they keep going past zero.</p>'
+   +'<h3>Try it. Type a number from −20 to 20, or slide.</h3>'
+   +'<div class="row"><input class="num" id="ln" inputmode="text" value="−7" oninput="lineTool()" autocomplete="off"></div>'
+   +'<input type="range" class="rng" id="lnr" min="-20" max="20" value="-7" oninput="lineSet(this.value)">'
+   +'<div id="lnout"></div></div>'
+   +'<div class="card"><h2>Check it</h2>'+listHTML('a',SEC1)+nav()+'</div>';
+  lineTool();
+}
+function cmpTool(){
+  const a=iv('ca'),b=iv('cb');
+  const w=a>b?a:b,l=a>b?b:a;
+  let msg;
+  if(a===b)msg='They are the same number, so '+f(a)+' = '+f(b)+'.';
+  else msg=f(w)+' is farther to the <b>right</b>, so '+f(w)+' is <b>greater</b>. '+f(l)+' is farther left, so it is <b>less</b>. '+f(a)+(a>b?' &gt; ':' &lt; ')+f(b)+'.';
+  $('cmpout').innerHTML=nlSvg(a===b?[{v:a,col:'#17607A',lb:f(a)}]:[{v:a,col:'#17607A',lb:f(a)},{v:b,col:'#C9972B',lb:f(b)}])+'<p>'+msg+'</p>';
+}
+function rCmp(){
+  SECTOTAL=SEC2.length;
+  $('stage').innerHTML=
+   '<div class="card"><h2>Comparing and ordering</h2>'
+   +'<div class="rule">The number farther to the right on the number line is greater. With negatives, a bigger digit after the minus sign means a smaller number: −9 is less than −2.</div>'
+   +'<p>Every negative number is less than 0, and less than every positive number.</p>'
+   +'<h3>Try it. Type two numbers.</h3>'
+   +'<div class="row"><input class="num" id="ca" inputmode="text" value="−3" oninput="cmpTool()" autocomplete="off"><input class="num" id="cb" inputmode="text" value="−8" oninput="cmpTool()" autocomplete="off"></div>'
+   +'<div id="cmpout"></div></div>'
+   +'<div class="card"><h2>Check it</h2>'+listHTML('b',SEC2)+nav()+'</div>';
+  cmpTool();
+}
+function rCtx(){
+  SECTOTAL=SEC3.length;
+  $('stage').innerHTML=
+   '<div class="card"><h2>Negative numbers in real life</h2>'
+   +'<table class="tb"><tr><th>Where</th><th>What negative means</th></tr>'
+   +'<tr><td>Temperature</td><td>Below zero. −5°F is 5 degrees below zero.</td></tr>'
+   +'<tr><td>Money</td><td>You owe it. −$20 means you owe $20.</td></tr>'
+   +'<tr><td>Height</td><td>Below sea level or below the water. −30 feet is 30 feet down.</td></tr>'
+   +'<tr><td>Counting down</td><td>Past zero. 2, 1, 0, −1, −2.</td></tr></table>'
+   +'<div class="rule">Going up or paying back moves right. Falling or owing more moves left. Picture the number line and count the steps.</div>'
+   +'<p class="small">Be ready to give Mom one example of your own.</p></div>'
+   +'<div class="card"><h2>Check it</h2>'+listHTML('c',SEC3)+nav().replace('Next','Finish')+'</div>';
+}
+function rDone(){
+  const pct=Math.round(FIRST/TOTAL*100);
+  $('stage').innerHTML=
+   '<div class="card"><h1>Done</h1><p>First-try correct: <span class="score">'+FIRST+' of '+TOTAL+'</span></p>'
+   +'<p>'+(pct>=85?'That is strong. Tell Mom you may be ready to test out of Week 4.':pct>=60?'Good start. Look again at anything you missed, then tell Mom.':'Go back through the rules with Mom before you test out.')+'</p>'
+   +'<h3>Now say these to Mom, out loud</h3><ul>'
+   +'<li>What does a negative number mean? Where is it on the number line?</li>'
+   +'<li>Which is greater, −3 or −8? How do you know?</li>'
+   +'<li>Give one real place you see a negative number, and tell me what it means there.</li></ul>'
+   +'<div class="row" style="margin-top:14px"><a class="btn" style="text-decoration:none" href="../wade-math-home.html#/kid/ryder">Back to Math Home</a><button class="btn alt" onclick="location.reload()">Do it again</button></div></div>';
+}
+begin();
+</script>
+</body>
+</html>

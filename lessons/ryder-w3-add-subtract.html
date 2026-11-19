@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ryder · Week 3 · Adding and Subtracting</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--parch:#F4ECDA;--card:#FBF6EA;--forest:#204B3A;--ink:#1E2A24;--muted:#55604F;--line:#E2D6BC;--teal:#17607A;--teal-d:#0F4A5F;--ok:#2E7D4F;--bad:#A8323A;--tint:#E3F0F4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jost',system-ui,sans-serif;background:var(--parch);color:var(--ink);font-size:18px;line-height:1.45;min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:14px 14px 70px}
+.top{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:10px}
+.back{color:var(--teal);text-decoration:none;font-weight:600;font-size:15px;border:1px solid var(--teal);border-radius:10px;padding:6px 12px;background:#fff}
+.title{font-weight:700;font-size:20px;color:var(--teal-d);flex:1;text-align:center}
+.prog{height:8px;background:#fff;border:1px solid var(--line);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.prog i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+.card{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--teal);border-radius:14px;padding:18px;margin-bottom:16px}
+h1{font-size:30px;line-height:1.15;color:var(--teal-d)}
+h2{font-size:23px;line-height:1.2;color:var(--teal-d);margin-bottom:6px}
+h3{font-size:17px;color:var(--teal-d);margin:14px 0 6px}
+p{margin:8px 0}
+.small{font-size:15px;color:var(--muted)}
+.rule{background:var(--tint);border-left:5px solid var(--teal);border-radius:8px;padding:10px 14px;margin:10px 0;font-weight:500}
+.btn{font-family:inherit;font-weight:600;font-size:17px;border:0;border-radius:10px;padding:11px 20px;cursor:pointer;color:#fff;background:var(--teal)}
+.btn.alt{background:#fff;color:var(--teal);border:1px solid var(--teal)}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+input.num{font:600 22px Jost,sans-serif;padding:9px 12px;border:2px solid var(--line);border-radius:10px;width:190px;background:#fff;color:var(--ink)}
+input.num:focus{outline:none;border-color:var(--teal)}
+/* chart */
+.chart{display:flex;justify-content:center;gap:0;margin:12px 0 6px;overflow-x:auto;padding-bottom:4px}
+.cc{width:68px;flex:none;text-align:center}
+.cc .nm{font-size:12px;color:var(--muted);min-height:30px;line-height:1.1;display:flex;align-items:flex-end;justify-content:center;padding:0 2px}
+.cc .dg{font:700 34px Jost,sans-serif;background:#fff;border:2px solid var(--teal);border-radius:8px;margin:3px 2px;height:52px;display:flex;align-items:center;justify-content:center;color:var(--teal-d)}
+.cc .dg.z{color:#B9C7CC;border-color:#C9D6DA}
+.cc .vl{font-size:13px;font-weight:600;color:var(--ink);min-height:18px}
+.cm{width:14px;flex:none;font:700 34px Jost,sans-serif;align-self:center;margin-top:12px;color:var(--ink);text-align:center}
+.arrows{display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:var(--teal-d);margin:6px 8px 0;gap:10px;flex-wrap:wrap}
+.arrows span{background:var(--tint);border-radius:99px;padding:4px 12px}
+/* questions */
+.q{border-top:1px solid var(--line);padding:12px 0}
+.q:first-of-type{border-top:0}
+.q .t{font-weight:500;margin-bottom:6px}
+.q .res{margin-top:6px;font-size:16px;font-weight:600}
+.q.good .res{color:var(--ok)}.q.bad .res{color:var(--bad)}
+.q.good input{border-color:var(--ok);background:#EEF7F1}
+.opt{display:block;width:100%;text-align:left;font:500 17px Jost,sans-serif;padding:9px 12px;margin:5px 0;background:#fff;border:2px solid var(--line);border-radius:10px;cursor:pointer;color:var(--ink)}
+.opt:hover{border-color:var(--teal)}
+.opt.sym{display:inline-block;width:auto;min-width:76px;text-align:center;font-size:28px;font-weight:700;margin-right:8px}
+.opt.right{border-color:var(--ok);background:#EEF7F1}.opt.wrong{border-color:var(--bad);background:#FAEBEC}
+table.cmp{border-collapse:separate;border-spacing:3px;margin:10px auto}
+table.cmp td{width:42px;height:46px;text-align:center;font:700 26px Jost,sans-serif;background:#fff;border:2px solid var(--line);border-radius:7px}
+table.cmp td.cm{width:12px;border:0;background:none;padding:0}
+table.cmp td.hl{border-color:var(--teal);background:var(--tint);color:var(--teal-d)}
+table.cmp td.pl{height:auto;border:0;background:none;font:600 11px Jost,sans-serif;color:var(--muted);vertical-align:bottom;line-height:1.1}
+table.cmp td.lb{width:auto;border:0;background:none;font:600 14px Jost,sans-serif;color:var(--muted);text-align:right;padding-right:6px}
+.pbtn{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.pbtn button{font:600 15px Jost,sans-serif;padding:7px 11px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}.pbtn button.on{border-color:var(--teal);background:var(--tint)}
+.nl{width:100%;max-width:560px;display:block;margin:6px auto}
+table.tb{border-collapse:collapse;width:100%;margin:8px 0;font-size:16px}
+table.tb td,table.tb th{border:1px solid var(--line);padding:7px 10px;text-align:left;background:#fff}
+table.tb th{background:var(--tint);color:var(--teal-d)}
+.big{font:700 28px Jost,sans-serif;color:var(--teal-d)}
+.score{font:700 44px Jost,sans-serif;color:var(--teal-d)}
+details{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:14px}
+summary{cursor:pointer;font-weight:600;color:var(--teal-d)}
+ul{margin:6px 0 6px 22px}
+.chain{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 6px;margin:10px 0;font-weight:700;color:var(--teal-d)}
+.chain .v{background:#fff;border:2px solid var(--teal);border-radius:8px;padding:6px 9px;font-size:18px}
+.chain .x{font-size:13px;background:var(--tint);border-radius:99px;padding:3px 8px;color:var(--teal-d)}
+.dpick{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.dpick button{width:38px;height:38px;border-radius:8px;border:2px solid var(--line);background:#fff;font:700 18px Jost,sans-serif;cursor:pointer;color:var(--ink)}
+.dpick button.on{border-color:var(--teal);background:var(--tint)}
+.eq{text-align:center;font:700 24px Jost,sans-serif;color:var(--teal-d);margin:6px 0;min-height:34px}
+table.col{border-collapse:separate;border-spacing:3px;margin:10px auto}
+table.col td{min-width:36px;height:44px;text-align:center;font:700 24px Jost,sans-serif;background:#fff;border:2px solid var(--line);border-radius:7px;padding:0 3px}
+table.col td.e{background:none;border:0}
+table.col td.c{background:none;border:0;font:700 12px Jost,sans-serif;color:var(--bad);height:20px}
+table.col td.c2{background:var(--tint);border-color:var(--teal);color:var(--teal-d)}
+table.col td.rg{height:32px;font-size:17px;color:var(--bad);background:#FFF7E6;border-color:#E5C07B}
+table.col td.lb{background:none;border:0;font:600 14px Jost,sans-serif;color:var(--muted);text-align:right;min-width:60px}
+table.col td.cm{min-width:10px;background:none;border:0;padding:0;font-size:24px}
+table.col td.res{background:var(--tint);border-color:var(--teal);color:var(--teal-d)}
+.steps{margin:8px 0 0 0;padding:0;list-style:none}.steps li{background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin:4px 0;font-size:16px}
+@media(max-width:560px){body{font-size:17px}.cc{width:46px}.cc .dg{font-size:24px;height:42px}.cc .nm{font-size:10px}.cc .vl{font-size:10px}.cm{width:8px;font-size:24px}input.num{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="back" href="../wade-math-home.html#/kid/ryder">← Math Home</a><div class="title">Add and Subtract Big Numbers</div><a class="back" id="modeLink" href="#">Mom view</a></div>
+  <div class="prog"><i id="bar"></i></div>
+  <div id="stage"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const PLACES=['Millions','Hundred thousands','Ten thousands','Thousands','Hundreds','Tens','Ones'];
+const ONES=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const TENS=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+function fmt(n){return String(n).replace(/\B(?=(\d{3})+$)/g,',');}
+function w999(n){let s=[];if(n>=100){s.push(ONES[Math.floor(n/100)]+' hundred');n%=100;}if(n>=20){s.push(TENS[Math.floor(n/10)]+(n%10?'-'+ONES[n%10]:''));}else if(n>0||!s.length)s.push(ONES[n]);return s.join(' ');}
+function toWords(n){
+  if(n===0)return 'zero';
+  if(n===1000000)return 'one million';
+  const th=Math.floor(n/1000),r=n%1000;let out=[];
+  if(th)out.push(w999(th)+' thousand');
+  if(r)out.push(w999(r));
+  return out.join(', ');
+}
+function expanded(n){
+  const s=String(n),L=s.length,parts=[];
+  for(let i=0;i<L;i++){if(s[i]!=='0')parts.push(fmt(s[i]+'0'.repeat(L-1-i)));}
+  return parts.join(' + ');
+}
+function chartHTML(n){
+  const s=String(n).padStart(7,'0');let h='<div class="chart">';
+  let lead=true;
+  for(let i=0;i<7;i++){
+    if(s[i]!=='0')lead=false;
+    const show=!lead||i===6;
+    const val=s[i]==='0'?'':fmt(s[i]+'0'.repeat(6-i));
+    h+='<div class="cc"><div class="nm">'+PLACES[i]+'</div><div class="dg'+(show?'':' z')+'">'+(show?s[i]:'0')+'</div><div class="vl">'+(show?val:'')+'</div></div>';
+    if(i===0||i===3)h+='<div class="cm">'+((i===3||n>=1000000)?',':'')+'</div>';
+  }
+  return h+'</div>';
+}
+/* ---------- question engine ---------- */
+const MOM=/[?&]mom=1/.test(location.search);
+let QS={};let TOTAL=0;let FIRST=0;let ANSWERED=0;
+function norm(v){return String(v==null?'':v).replace(/[−–]/g,'-').replace(/[,\s$]/g,'');}
+function qHTML(sec,i,q){
+  if(MOM){
+    let h='<div class="q good"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+    if(q.o)q.o.forEach((o,j)=>{h+='<div class="opt'+(q.sym?' sym':'')+(j===q.c?' right':'')+'" style="cursor:default">'+o+(j===q.c?' ✓':'')+'</div>';});
+    return h+'<div class="res">Answer: '+q.show+(q.why?'. '+q.why:'')+'</div></div>';
+  }
+  const id=sec+i;QS[id]={q:q,tries:0,done:false};TOTAL++;
+  let h='<div class="q" id="q-'+id+'"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+  if(q.o){q.o.forEach((o,j)=>{h+='<button class="opt'+(q.sym?' sym':'')+'" onclick="pickQ(\''+id+'\','+j+',this)">'+o+'</button>';});}
+  else h+='<div class="row"><input class="num" id="in-'+id+'" inputmode="numeric" autocomplete="off" placeholder="Your answer" onkeydown="if(event.key===\'Enter\')checkQ(\''+id+'\')"><button class="btn" onclick="checkQ(\''+id+'\')">Check</button></div>';
+  return h+'<div class="res" id="res-'+id+'"></div></div>';
+}
+function finishQ(id,ok){
+  const s=QS[id];if(s.done)return;
+  s.tries++;
+  const el=$('q-'+id),res=$('res-'+id);
+  if(ok){
+    s.done=true;ANSWERED++;if(s.tries===1)FIRST++;
+    el.className='q good';res.textContent='✓ Correct'+(s.q.why?'. '+s.q.why:'');
+  }else{
+    el.className='q bad';
+    if(s.tries>=2){s.done=true;ANSWERED++;res.textContent='The answer is '+s.q.show+'. '+(s.q.why||'')+' Ask Mom if you are not sure why.';
+      const i=$('in-'+id);if(i)i.disabled=true;
+    }else res.textContent='Not quite. '+(s.q.hint||'Look at the rule above and try again.');
+  }
+  upd();
+}
+function checkQ(id){
+  const s=QS[id];if(s.done)return;
+  const v=norm($('in-'+id).value);if(!v)return;
+  finishQ(id,v===norm(s.q.a));
+}
+function pickQ(id,j,btn){
+  const s=QS[id];if(s.done)return;
+  const ok=j===s.q.c;
+  btn.className='opt '+(ok?'right':'wrong');
+  finishQ(id,ok);
+  if(s.done&&!ok){[].slice.call($('q-'+id).querySelectorAll('.opt'))[s.q.c].className='opt right';}
+}
+function upd(){const b=$('nextbtn');if(b)b.disabled=ANSWERED-SECBASE<SECTOTAL;const c=$('cnt');if(c)c.textContent=ANSWERED-SECBASE+' of '+SECTOTAL+' answered';}
+
+/* ---------- sections ---------- */
+const PL8=['ones','tens','hundreds','thousands','ten thousands','hundred thousands','millions','ten millions'];
+function add(a,b,hint,why){return {t:fmt(a)+' + '+fmt(b)+' = ?',a:String(a+b),show:fmt(a+b),hint:hint||'Line up the places. Start at the ones. Carry when a place adds to 10 or more.',why:why||(fmt(a)+' + '+fmt(b)+' = '+fmt(a+b)+'.')};}
+function sub(a,b,hint,why){return {t:fmt(a)+' − '+fmt(b)+' = ?',a:String(a-b),show:fmt(a-b),hint:hint||'Start at the ones. If the top digit is too small, regroup from the next place that has something to give.',why:why||(fmt(a)+' − '+fmt(b)+' = '+fmt(a-b)+'.')};}
+const SEC1=[
+  add(4528,3764),add(38645,27789),add(256308,174925),
+  add(99999,1,'The carry keeps going. 9 + 1 = 10, so carry again and again.','Every place carries, so the answer gains a digit.'),
+  add(65432,9876,'Line up the ones under the ones. 9,876 is shorter, so it has no ten thousands digit.'),
+  add(349806,450194,'Check each place for a carry. Look at the ones first.'),
+  add(487650,512350,'Both numbers end in 50. Carry across the places.','The two numbers add up to exactly one million.')
+];
+const SEC2=[
+  sub(8342,2917),sub(52000,18764,'The ones, tens and hundreds are all 0. Regroup from the thousands and the zeros turn into 9s.'),
+  sub(400005,1238,'Regroup from the 4 hundred thousands. The zeros in between turn into 9s.'),
+  sub(61040,35672),sub(700000,256431,'Every place after the 7 is 0. Regroup from the 7.'),
+  sub(9000,8999,'Regroup from the 9 thousands. The zeros become 9s.','9 − 8 and the tens and hundreds are all the same, so the difference is just 1.'),
+  sub(825316,94827,'Line up the ones. 94,827 has no hundred thousands digit.')
+];
+const SEC3=[
+  {t:'You worked out 5,000 − 2,368 = 2,632. Which addition checks it?',o:['2,632 + 2,368 should make 5,000','2,632 − 2,368 should make 5,000','5,000 + 2,368 should make 2,632'],c:0,show:'2,632 + 2,368 should make 5,000',hint:'Addition undoes subtraction. Put the pieces back together.'},
+  {t:'Estimate 48,712 + 31,290 by rounding each number to the nearest thousand first. What is your estimate?',a:'80000',show:'80,000',hint:'48,712 rounds to 49,000. 31,290 rounds to 31,000.',why:'49,000 + 31,000 = 80,000. The real answer, 80,002, is very close.'},
+  {t:'A recycling drive collected 125,480 pounds one year and 98,765 pounds the next year. How many pounds in all?',a:'224245',show:'224,245',hint:'"In all" means add.'},
+  {t:'A town had 340,000 people. Then 87,250 people moved away. How many are left?',a:'252750',show:'252,750',hint:'"Moved away" means take away. Regroup from the 4 in the hundred thousands.'},
+  {t:'Trip A is 12,450 miles and trip B is 9,875 miles. Which question needs SUBTRACTION?',o:['How many more miles is trip A than trip B?','How many miles are both trips together?','How many miles is trip A twice?'],c:0,show:'How many more miles is trip A than trip B?',hint:'"How many more" compares two amounts.'},
+  {t:'Sam wrote 3,402 − 1,879 = 2,623. Is he right? Check with addition.',o:['No. 2,623 + 1,879 = 4,502, not 3,402','Yes. 2,623 + 1,879 = 3,402','Yes. Subtraction cannot be checked'],c:0,show:'No. 2,623 + 1,879 = 4,502, not 3,402',hint:'Add the answer to the number you took away. You should get back the start.',why:'The right answer is 1,523.'}
+];
+let ST=0,SECTOTAL=0,SECBASE=0;
+const STEPS=['add','sub','think','done'];
+function momGate(cb){
+  $('stage').innerHTML='<div class="card" style="text-align:center"><h2>Mom view is locked</h2><p>Enter the Mom PIN to see the answers. It opens by itself when it is right.</p>'
+   +'<p><input id="pinin" type="password" inputmode="numeric" autocomplete="off" maxlength="4" style="font:600 24px sans-serif;padding:8px 12px;width:160px;text-align:center;border:2px solid #ccc;border-radius:10px"></p>'
+   +'<p id="pinerr" style="color:#c0392b;font-weight:600;min-height:22px"></p>'
+   +'<p><a href="'+location.pathname+'">Back to the lesson</a></p></div>';
+  const go=()=>{if($('pinin').value==='3024'){cb();}else{$('pinerr').textContent='That is not the PIN.';$('pinin').value='';}};
+  $('pinin').addEventListener('input',()=>{if($('pinin').value.length>=4)go();});$('pinin').addEventListener('keydown',e=>{if(e.key==='Enter')go();});$('pinin').focus();
+}
+
+function begin(){
+  const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(buildMom);return;}
+  ml.href=location.pathname+'?mom=1';ST=0;render();
+}
+function buildMom(){
+  let all='<div class="card" style="border-top-color:#C9972B"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Ryder.</p></div>';
+  [rAdd,rSub,rThink].forEach(f=>{f();all+=$('stage').innerHTML;});
+  all+='<div class="card"><h2>Check him on these, out loud</h2><ul>'
+   +'<li>Show me how you carry. Why does a 15 in the ones place become a 5 and a carried 1?</li>'
+   +'<li>Show me 40,005 − 1,238. What happens to the zeros when you regroup?</li>'
+   +'<li>How can you check a subtraction answer? How do you make a quick estimate?</li></ul>'
+   +'<p class="small">If he does these well, tick them on his rung in Math Home. If he is solid, let him test out.</p></div>';
+  $('stage').innerHTML=all;$('bar').style.width='100%';aTool();sTool();
+}
+function bar(){$('bar').style.width=Math.round(ST/(STEPS.length-1)*100)+'%';}
+function nav(){if(MOM)return '';return '<div class="row" style="margin-top:14px"><button class="btn" id="nextbtn" onclick="nextSec()" disabled>Next</button><span class="small" id="cnt"></span></div>';}
+function nextSec(){ST++;render();window.scrollTo(0,0);}
+function listHTML(sec,arr){let h='';arr.forEach((q,i)=>{h+=qHTML(sec,i,q);});return h;}
+function render(){bar();QS={};SECBASE=ANSWERED;({add:rAdd,sub:rSub,think:rThink,done:rDone})[STEPS[ST]]();upd();}
+function num(v){let n=parseInt(norm(v)||'0',10);return isNaN(n)||n<0?0:Math.min(n,9999999);}
+/* column grid */
+function grid(rows,L){
+  let h='<table class="col">';
+  rows.forEach(r=>{
+    h+='<tr><td class="lb">'+(r.lb||'')+'</td>';
+    for(let i=0;i<L;i++){
+      const v=r.c[i]==null?'':r.c[i];
+      h+='<td class="'+(r.k||'')+(r.hl&&r.hl[i]?' c2':'')+(v===''&&!r.k?' e':'')+'">'+v+'</td>';
+      const rem=L-1-i;if(rem>0&&rem%3===0)h+='<td class="cm">'+(r.k==='c'||r.k==='rg'?'':(r.nocm?'':','))+'</td>';
+    }
+    h+='</tr>';
+  });
+  return h+'</table>';
+}
+function digs(n,L){const s=String(n);const a=[];for(let i=0;i<L;i++){const j=i-(L-s.length);a.push(j<0?'':s[j]);}return a;}
+/* add tool */
+function aTool(){
+  const A=num($('aa').value),B=num($('ab').value),S=A+B;
+  const L=String(S).length,da=digs(A,L),db=digs(B,L),ds=digs(S,L);
+  const car=new Array(L).fill(''),steps=[];let c=0;
+  for(let i=L-1;i>=0;i--){
+    const x=+da[i]||0,y=+db[i]||0,t=x+y+c;
+    if(da[i]!==''||db[i]!==''||c>0){
+      steps.push('<li><b>'+PL8[L-1-i][0].toUpperCase()+PL8[L-1-i].slice(1)+':</b> '+x+' + '+y+(c?' + '+c+' (carried)':'')+' = '+t+(t>=10&&i>0?'. Write '+(t%10)+', carry 1.':t>=10?'. Write '+t+'.':'. Write '+t+'.')+'</li>');
+    }
+    c=Math.floor(t/10);if(i>0&&c)car[i-1]=c;
+  }
+  const hl=new Array(L).fill(0);
+  $('aout').innerHTML=grid([{lb:'carry',k:'c',c:car},{lb:'',c:da},{lb:'+',c:db},{lb:'',k:'res',c:ds}],L)+'<ul class="steps">'+steps.join('')+'</ul>';
+}
+function rAdd(){
+  SECTOTAL=SEC1.length;
+  $('stage').innerHTML=
+   '<div class="card"><h1>Adding and subtracting big numbers</h1><p class="small">About 15 minutes. This is practice only. Nothing here is saved or graded.</p>'
+   +'<h2 style="margin-top:12px">Adding</h2>'
+   +'<div class="rule">Line up the places, ones under ones. Start at the ones. If a place adds to 10 or more, write the ones digit and carry the 1 to the next place.</div>'
+   +'<p>Each place is worth ten of the place to its right, so 10 ones become 1 ten, 10 tens become 1 hundred, and so on. That is all carrying is.</p>'
+   +'<h3>Try it. Type two numbers.</h3>'
+   +'<div class="row"><input class="num" id="aa" inputmode="numeric" value="38,645" oninput="aTool()" autocomplete="off"><span class="big">+</span><input class="num" id="ab" inputmode="numeric" value="27,789" oninput="aTool()" autocomplete="off"></div>'
+   +'<div id="aout"></div></div>'
+   +'<div class="card"><h2>Check it</h2>'+listHTML('a',SEC1)+nav()+'</div>';
+  aTool();
+}
+/* subtract tool */
+function sTool(){
+  let A=num($('sa').value),B=num($('sb').value),note='';
+  if(A<B){const t=A;A=B;B=t;note='<p class="small">The bigger number goes on top, so the two numbers were swapped.</p>';}
+  const L=String(A).length,da=digs(A,L).map(x=>+x),db=digs(B,L),d=da.slice(),res=[],steps=[],ch=new Array(L).fill(0);
+  for(let i=L-1;i>=0;i--){
+    const y=+db[i]||0;let line='';const nm=PL8[L-1-i];
+    if(d[i]<y){
+      let j=i-1;while(j>=0&&d[j]===0)j--;
+      const nj=PL8[L-1-j];
+      d[j]--;ch[j]=1;
+      for(let k=j+1;k<i;k++){d[k]=9;ch[k]=1;}
+      d[i]+=10;ch[i]=1;
+      line='<b>'+nm[0].toUpperCase()+nm.slice(1)+':</b> '+da[i]+' is less than '+y+'. Regroup: take 1 from the '+nj+(j<i-1?'. The zeros in between turn into 9s':'')+'. Now '+d[i]+' − '+y+' = '+(d[i]-y)+'.';
+    }else line='<b>'+nm[0].toUpperCase()+nm.slice(1)+':</b> '+d[i]+' − '+y+' = '+(d[i]-y)+'.';
+    res[i]=d[i]-y;
+    if(da[i]!==0||y||i===L-1||(res[i]!==0))steps.push('<li>'+line+'</li>');
+  }
+  const hl=ch;
+  $('sout').innerHTML=note+grid([{lb:'regroup',k:'rg',c:d.map((v,i)=>ch[i]?v:''),hl:null},{lb:'',c:da},{lb:'−',c:db},{lb:'',k:'res',c:res}],L)+'<ul class="steps">'+steps.reverse().reverse().join('')+'</ul>';
+}
+function rSub(){
+  SECTOTAL=SEC2.length;
+  $('stage').innerHTML=
+   '<div class="card"><h2>Subtracting</h2>'
+   +'<div class="rule">Line up the places. Start at the ones. If the top digit is too small, regroup: take 1 from the next place to the left that has something, and it becomes 10 of the place you are working in.</div>'
+   +'<p>When there are zeros in the way, regroup from the first digit that is not zero. The zeros you pass turn into 9s.</p>'
+   +'<h3>Try it. Type two numbers.</h3>'
+   +'<div class="row"><input class="num" id="sa" inputmode="numeric" value="40,005" oninput="sTool()" autocomplete="off"><span class="big">−</span><input class="num" id="sb" inputmode="numeric" value="1,238" oninput="sTool()" autocomplete="off"></div>'
+   +'<div id="sout"></div></div>'
+   +'<div class="card"><h2>Check it</h2>'+listHTML('b',SEC2)+nav()+'</div>';
+  sTool();
+}
+function rThink(){
+  SECTOTAL=SEC3.length;
+  $('stage').innerHTML=
+   '<div class="card"><h2>Checking and using your answers</h2>'
+   +'<table class="tb"><tr><th>Idea</th><th>How</th></tr>'
+   +'<tr><td>Check a subtraction</td><td>Add your answer to the number you took away. You should get the number you started with.</td></tr>'
+   +'<tr><td>Check an addition</td><td>Subtract one of the parts from the total. You should get the other part.</td></tr>'
+   +'<tr><td>Quick estimate</td><td>Round each number first, then add or subtract. If your exact answer is far from the estimate, look for a mistake.</td></tr></table>'
+   +'<div class="rule">Words like "in all" and "together" mean add. Words like "left", "how many more" and "difference" mean subtract.</div></div>'
+   +'<div class="card"><h2>Check it</h2>'+listHTML('c',SEC3)+nav().replace('Next','Finish')+'</div>';
+}
+function rDone(){
+  const pct=Math.round(FIRST/TOTAL*100);
+  $('stage').innerHTML=
+   '<div class="card"><h1>Done</h1><p>First-try correct: <span class="score">'+FIRST+' of '+TOTAL+'</span></p>'
+   +'<p>'+(pct>=85?'That is strong. Tell Mom you may be ready to test out of Week 3.':pct>=60?'Good start. Look again at anything you missed, then tell Mom.':'Go back through the rules with Mom before you test out.')+'</p>'
+   +'<h3>Now say these to Mom, out loud</h3><ul>'
+   +'<li>Show me how you carry. Why does a 15 in the ones place become a 5 and a carried 1?</li>'
+   +'<li>Show me 40,005 − 1,238. What happens to the zeros when you regroup?</li>'
+   +'<li>How can you check a subtraction answer? How do you make a quick estimate?</li></ul>'
+   +'<div class="row" style="margin-top:14px"><a class="btn" style="text-decoration:none" href="../wade-math-home.html#/kid/ryder">Back to Math Home</a><button class="btn alt" onclick="location.reload()">Do it again</button></div></div>';
+}
+begin();
+</script>
+</body>
+</html>
