@@ -368,6 +368,7 @@ function toggleDone(kid,id){
   const a=getIn('assign/'+kid+'/'+id);if(!a)return;
   const nd=!a.done;
   const upd=Object.assign({},a,{done:nd});
+  if(nd&&!a.date)upd.date=todayKey(); /* worked ahead on a parked item: it lands on today */
   if(nd&&a.grade==='redo')upd.grade='';
   if(!nd)upd.grade='';
   put('assign/'+kid+'/'+id,upd);
@@ -773,6 +774,8 @@ function kidToday(kid,w){
   if(!today.length)h+='<p class="muted" style="padding:10px 0">Nothing else assigned for today.</p>';
   today.forEach(a=>h+=itemHtml(kid,a));
   h+='</div>';
+  const ahead=w?items.filter(a=>!a.date&&!a.done&&a.week===w[0]).sort((a,b)=>(a.ts||0)-(b.ts||0)):[];
+  if(ahead.length){h+='<div class="card"><h3 style="font-size:22px">Up next</h3><div class="small muted" style="margin-bottom:4px">Mom has these ready for Week '+w[0]+'. Work ahead if you like. Tap the circle when one is done.</div>';ahead.forEach(a=>h+=itemHtml(kid,a));h+='</div>';}
   if(open.length){h+='<div class="card"><h3 style="font-size:22px">Still open</h3>';open.forEach(a=>h+=itemHtml(kid,a,true));h+='</div>';}
   return h;
 }
