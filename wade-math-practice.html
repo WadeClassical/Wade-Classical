@@ -182,11 +182,14 @@ function genQ(name,opt){
 }
 /* ============ session ============ */
 let Q={list:[],i:0,res:[],mode:'',title:'',total:0,t0:0,locked:false,input:'',timer:null,left:0,topic:'',requeued:{}};
+function bond10Done(){const f=getIn('drill/'+kid+'/f')||{};for(let x=0;x<=10;x++){const r=f['b10_'+x];if(!r||(r.b||0)<3)return false;}return true;}
+/* bonds go 10 first; bonds to 20 only open once every bond to 10 is quick and right. After that, 10 drops to review. */
+function liveNames(names){const d=bond10Done();return names.filter(n=>d?n!=='bond10':n!=='bond20');}
 function buildDaily(){
   const si=stageIdx(),sp=STAGES[kid]||STAGES.ryder,cur=si<0?sp.length-1:si;
   const gens=STAGE_GENS[kid]||STAGE_GENS.ryder;
   const out=[];recent=[];
-  const stageNames=gens[sp[cur][0]];
+  const stageNames=liveNames(gens[sp[cur][0]]);
   for(let i=0;i<12;i++)out.push(genQ(stageNames[i%stageNames.length]));
   // weak facts from anything already tried
   const f=getIn('drill/'+kid+'/f')||{};
@@ -195,7 +198,7 @@ function buildDaily(){
   // fill the rest with review of earlier stages
   let guard=0;
   while(out.length<20&&guard++<40){
-    const idx=cur>0?rnd(0,cur-1):cur;const names=gens[sp[idx][0]];out.push(genQ(pick(names)));
+    const idx=cur>0?rnd(0,cur-1):cur;const names=liveNames(gens[sp[idx][0]]);out.push(genQ(pick(names)));
   }
   return out.slice(0,20);
 }
@@ -335,7 +338,7 @@ function daily(){
 let TOP={t:'',sel:null,dir:'mixed'};
 function topic(t){
   TOP={t:t,sel:null,dir:'mixed'};
-  if(t==='add'||t==='sub')TOP.sel='f20';else if(t==='mult'||t==='div')TOP.sel='all';else if(t==='skip')TOP.sel=0;else TOP.sel=20;
+  if(t==='add'||t==='sub')TOP.sel='f20';else if(t==='mult'||t==='div')TOP.sel='all';else if(t==='skip')TOP.sel=0;else TOP.sel=10;
   renderTopic();
 }
 const NAMES={add:'Add',sub:'Subtract',mult:'Multiply',div:'Divide',skip:'Skip counting',bond:'Number bonds'};
@@ -371,7 +374,7 @@ function clockGo(){
 function clockFor(topicStr){
   if(topicStr&&topicStr!=='daily'&&TOP.t){clockGo();return;}
   // after a daily drill: a mixed clock round from today's stage
-  const si=stageIdx(),sp=STAGES[kid]||STAGES.ryder,cur=si<0?sp.length-1:si,names=(STAGE_GENS[kid]||STAGE_GENS.ryder)[sp[cur][0]];
+  const si=stageIdx(),sp=STAGES[kid]||STAGES.ryder,cur=si<0?sp.length-1:si,names=liveNames((STAGE_GENS[kid]||STAGE_GENS.ryder)[sp[cur][0]]);
   const gen=()=>genQ(pick(names));recent=[];LASTSTART=()=>clockFor('daily');
   start('clock','Beat the clock',[gen(),gen(),gen()],'daily',60);Q.secs=60;Q.refill=gen;
 }
