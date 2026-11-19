@@ -1822,7 +1822,7 @@ function saveEvidence() {
 // ─── Auto-Pull Engine ────────────────────────────────────────────────────────
 //
 // Firebase paths (from documentation):
-//   math/[student]          → { mult: { "2x3": true, ... }, skip: {...} }
+//   home/drill/[kid]        → { f: {factId:{b,n,c,t}}, sk: {skill:{n,c}}, days: {...} }  (Math Drills app)
 //   spelling/[student]      → { correct: [...], wrong: [...], untried: [...] }
 //   mcguffey/[student]      → { lesson: N, ... } or { completed: [...] }
 //   states-mastery/[student]→ { level1: {...}, level2: {...}, level3: {...}, level4: {...} }
@@ -1833,105 +1833,45 @@ function saveEvidence() {
 const AUTO_PULL_MAP = {
   ryder: [
     {
-      source: 'Math App',
-      fbPath: 'math/Ryder',
+      source: 'Math Drills',
+      fbPath: 'home/drill/ryder',
       icon: '🔢',
       evaluate: (data) => {
-        if (!data) return null;
-        const mult = data.mult || {};
-        const facts = Object.values(mult).filter(Boolean).length;
-        // 144 total multiplication facts (1-12 x 1-12)
-        const pct = Math.round(facts / 144 * 100);
-        if (facts === 0) return null;
+        // Math Drills app: home/drill/ryder/f/{factId} = {b: box 0-5, n, c, t}. Box 4-5 = quick and right.
+        if (!data || !data.f) return null;
+        let mult = 0, div = 0;
+        Object.keys(data.f).forEach(id => {
+          const solid = (data.f[id].b || 0) >= 4;
+          if (!solid) return;
+          if (/^m\d+x\d+$/.test(id)) mult++;
+          else if (/^d\d+q\d+$/.test(id)) div++;
+        });
+        const total = mult + div;
+        if (total === 0) return null;
+        // Drill covers tables 2-12: 66 multiplication facts plus 121 division facts
+        const pct = Math.round(total / 187 * 100);
         return {
           benchmarkKey: 'math:1', // "Master all multiplication and division facts (1–12)"
-          note: `${facts} multiplication facts mastered (${pct}% of 1–12 table) — from Math App`,
+          note: `${mult} multiplication and ${div} division facts quick and accurate (${pct}% of the 2–12 tables) — from Math Drills`,
           autoCheck: pct >= 80
-        };
-      }
-    },
-    {
-      source: 'Spelling App',
-      fbPath: 'spelling/Ryder',
-      icon: '📚',
-      evaluate: (data) => {
-        if (!data) return null;
-        const correct = Array.isArray(data.correct) ? data.correct : Object.values(data.correct || {});
-        const count = correct.length;
-        if (count === 0) return null;
-        return {
-          benchmarkKey: 'reading:10', // "Vocabulary expansion: define unfamiliar words in context"
-          note: `${count} spelling words mastered — from Spelling App`,
-          autoCheck: count >= 50
-        };
-      }
-    },
-    {
-      source: 'States App',
-      fbPath: 'states-mastery/Ryder',
-      icon: '🗺️',
-      evaluate: (data) => {
-        if (!data) return null;
-        const l3 = data.level3 || {};
-        const l4 = data.level4 || {};
-        const abbrevDone = Object.values(l3).filter(Boolean).length;
-        const capsDone = Object.values(l4).filter(Boolean).length;
-        if (abbrevDone + capsDone === 0) return null;
-        return {
-          benchmarkKey: 'history:16', // "Master all 50 state capitals"
-          note: `${abbrevDone}/50 abbreviations + ${capsDone}/50 capitals mastered — from States App`,
-          autoCheck: capsDone >= 40
-        };
-      }
-    },
-    {
-      source: 'States App (World)',
-      fbPath: 'world-mastery/Ryder',
-      icon: '🌍',
-      evaluate: (data) => {
-        if (!data) return null;
-        const continents = data.continents || data;
-        const done = Object.values(continents).filter(v => v === true || (v && v.completed)).length;
-        if (done === 0) return null;
-        return {
-          benchmarkKey: 'history:18', // "Name and locate all 7 continents and 5 oceans"
-          note: `${done} continents studied in World Map — from States App`,
-          autoCheck: done >= 5
-        };
-      }
-    },
-    {
-      source: 'Library App',
-      fbPath: 'library/Ava', // Ryder uses the main library; check both
-      icon: '📖',
-      evaluate: (data) => {
-        if (!data) return null;
-        const books = data.books ? (Array.isArray(data.books) ? data.books : Object.values(data.books)) : [];
-        // Also check for ryder-specific path
-        const count = books.length;
-        if (count === 0) return null;
-        return {
-          benchmarkKey: 'reading:1', // "Read 15–20 books at or above grade level"
-          note: `${count} book${count !== 1 ? 's' : ''} logged in Library — from Library App`,
-          autoCheck: count >= 15
         };
       }
     }
   ],
   hadley: [
     {
-      source: 'Math App',
-      fbPath: 'math/Hadley',
+      source: 'Math Drills',
+      fbPath: 'home/drill/hadley',
       icon: '🔢',
       evaluate: (data) => {
-        if (!data) return null;
-        const skip = data.skip || {};
-        const skipDone = Object.values(skip).filter(Boolean).length;
-        if (skipDone === 0) return null;
+        // Math Drills app: home/drill/hadley/sk/skip = {n: asked, c: correct}
+        const sk = data && data.sk && data.sk.skip;
+        if (!sk || !sk.n) return null;
+        const acc = Math.round(sk.c / sk.n * 100);
         return {
           benchmarkKey: 'math:5', // "Skip count by 2s, 5s, and 10s to 100"
-          note: `Skip counting practiced in Math App`,
-          autoCheck: skipDone >= 3
+          note: `Skip counting: ${sk.c} of ${sk.n} right (${acc}%) in Math Drills`,
+          autoCheck: sk.n >= 20 && acc >= 85
         };
       }
     },
