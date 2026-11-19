@@ -695,7 +695,7 @@ function quizView(kid,n,kind){
       QZ.qs.forEach((q,i)=>{
         const ok=r.marks[i];const mine=q.t==='mc'?(QZ.ans[i]!=null?q.o[QZ.ans[i]]:''):(QZ.ans[i]||'');
         h+='<div class="qcard '+(ok?'good':'bad')+'"><div class="qnum">'+(i+1)+(ok?' ✓':' ✗')+'</div><div class="qtext">'+esc(q.q)+'</div>'
-          +'<div class="small">Your answer: <b>'+esc(fmtNum(mine)||'(blank)')+'</b>'+(ok?'':' · Correct answer: <b>'+esc(ansText(q))+'</b>')+'</div></div>';
+          +'<div class="small fx">Your answer: <b>'+esc(fmtNum(mine)||'(blank)')+'</b>'+(ok?'':' · Correct answer: <b>'+esc(ansText(q))+'</b>')+'</div></div>';
       });
     }
     return h;
@@ -1188,8 +1188,8 @@ function ladderView(kid){
   const w=weekObj(kid,n);const st=weekStatus(kid,n);
   const covTxt={w:'Covered well in the book',p:'Partly covered in the book',n:'Not in the book — add supplemental practice'}[w[4]];
   h+='<div class="card" style="border-top:6px solid var(--kc)"><div class="small muted">WEEK '+n+'</div><h2 style="font-size:28px">'+esc(w[1])+'</h2>'
-    +'<div class="small muted" style="margin-top:6px">Topics</div><div>'+esc(w[2])+'</div>'
-    +'<div class="small muted" style="margin-top:10px">'+(kid==='ryder'?'He':'She')+' can</div><div>'+esc(w[3])+'</div>'
+    +'<div class="small muted" style="margin-top:6px">Topics</div><div class="fx">'+esc(w[2])+'</div>'
+    +'<div class="small muted" style="margin-top:10px">'+(kid==='ryder'?'He':'She')+' can</div><div class="fx">'+esc(w[3])+'</div>'
     +'<div class="small" style="margin-top:10px"><b>Suggested pace:</b> '+paceTxt(paceDays(kid,n))+'. A best guess: lesson, practice days, then the quiz. Go faster if '+(kid==='ryder'?'he':'she')+' tests out or is breezing through.</div>'
     +'<div class="small cov-'+w[4]+'" style="margin-top:10px;font-weight:600">'+K.book+': '+covTxt+'</div>'
     +pathCard(kid,n,true)
@@ -1310,5 +1310,7 @@ function submitSend(){
 window.addEventListener('hashchange',function(){render(true);});
 document.addEventListener('DOMContentLoaded',function(){loadLocal();render();initFirebase();});
 </script>
+<script>window.FRACTION_SCOPE=['.qtext','.qopt','.gcap','.canrow','.gapwk .t','.fx'];</script>
+<script src="lessons/fractions.js?v=2"></script>
 </body>
 </html>

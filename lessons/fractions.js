@@ -28,6 +28,8 @@
     return out.join(' ');
   }
   function walk(root){
+    var sc=window.FRACTION_SCOPE;
+    if(sc&&root===document.body){document.querySelectorAll(sc.join(',')).forEach(function(el){walk(el);});return;}
     var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:function(n){
       if(!/\d\/\d/.test(n.nodeValue))return NodeFilter.FILTER_REJECT;
       for(var e=n.parentNode;e&&e!==document.body;e=e.parentNode){
