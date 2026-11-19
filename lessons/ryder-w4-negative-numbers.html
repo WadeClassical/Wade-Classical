@@ -192,14 +192,7 @@ const SEC3=[
 ];
 let ST=0,SECTOTAL=0,SECBASE=0;
 const STEPS=['line','cmp','ctx','done'];
-function momGate(cb){
-  $('stage').innerHTML='<div class="card" style="text-align:center"><h2>Mom view is locked</h2><p>Enter the Mom PIN to see the answers. It opens by itself when it is right.</p>'
-   +'<p><input id="pinin" type="password" inputmode="numeric" autocomplete="off" maxlength="4" style="font:600 24px sans-serif;padding:8px 12px;width:160px;text-align:center;border:2px solid #ccc;border-radius:10px"></p>'
-   +'<p id="pinerr" style="color:#c0392b;font-weight:600;min-height:22px"></p>'
-   +'<p><a href="'+location.pathname+'">Back to the lesson</a></p></div>';
-  const go=()=>{if($('pinin').value==='3024'){cb();}else{$('pinerr').textContent='That is not the PIN.';$('pinin').value='';}};
-  $('pinin').addEventListener('input',()=>{if($('pinin').value.length>=4)go();});$('pinin').addEventListener('keydown',e=>{if(e.key==='Enter')go();});$('pinin').focus();
-}
+function momGate(cb){cb();} /* PIN turned off for now */
 
 function begin(){
   const ml=$('modeLink');
