@@ -712,7 +712,8 @@ function quizView(kid,n,kind){
       q.o.forEach((o,j)=>{h+='<label class="qopt"><input type="radio" name="q'+i+'" '+(QZ.ans[i]===j?'checked':'')+' onchange="setAns('+i+','+j+')"> '+esc(fmtNum(o))+'</label>';});
     }else{
       const ph={num:'Type a number',val:'Fraction or mixed number, like 3/4 or 1 1/2',simp:'Fraction in simplest form',imp:'Like 7/4',mix:'Like 1 3/4',rem:'Like 123 r 4'}[q.t];
-      h+='<input class="qans" type="text" autocomplete="off" '+(q.t==='num'?'inputmode="decimal" ':'')+'placeholder="'+ph+'" value="'+esc(QZ.ans[i]||'')+'" oninput="setAns('+i+',this.value)">';
+      const fk=(q.t==='imp'||q.t==='simp'||q.t==='val'||q.t==='mix')&&/\//.test(String(q.a))?(q.t==='imp'?'frac':q.t==='mix'?'mixed':'either'):'';
+      h+='<input class="qans" type="text" autocomplete="off" '+(fk?'data-fk="'+fk+'" ':'')+(q.t==='num'?'inputmode="decimal" ':'')+'placeholder="'+ph+'" value="'+esc(QZ.ans[i]||'')+'" oninput="setAns('+i+',this.value)">';
     }
     h+='</div>';
   });
@@ -1311,6 +1312,6 @@ window.addEventListener('hashchange',function(){render(true);});
 document.addEventListener('DOMContentLoaded',function(){loadLocal();render();initFirebase();});
 </script>
 <script>window.FRACTION_SCOPE=['.qtext','.qopt','.gcap','.canrow','.gapwk .t','.fx'];</script>
-<script src="lessons/fractions.js?v=2"></script>
+<script src="lessons/fractions.js?v=3"></script>
 </body>
 </html>

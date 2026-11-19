@@ -56,11 +56,59 @@
   var busy=false,obs;
   function run(){
     if(busy)return;busy=true;if(obs)obs.disconnect();
-    try{walk(document.body);helps();}catch(e){}
-    busy=false;if(obs)obs.observe(document.body,{childList:true,subtree:true,characterData:true});
+    try{if(window.__fracEnhance)window.__fracEnhance();walk(document.body);helps();}catch(e){}
+    busy=false;if(obs)obs.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['disabled']});
   }
   var q=0;function later(){if(q)return;q=requestAnimationFrame(function(){q=0;run();});}
   function start(){obs=new MutationObserver(later);run();}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();
 (function(){var c=document.createElement('style');c.textContent='.fin{display:inline-flex;flex-direction:column;align-items:center;gap:5px;margin:0 4px}.fin i{display:block;width:100%;height:3px;background:#2B3A44;border-radius:2px}.fin input.num{width:66px;text-align:center}.fin input.num[disabled]{background:#EEF3F6;color:#2B3A44;opacity:1}.row input.num.whole{width:66px;text-align:center}';document.head.appendChild(c);})();
+
+/* ---- stacked answer boxes: a top box over a bottom box (and a whole-number box for mixed numbers) ---- */
+(function(){
+  var c=document.createElement('style');
+  c.textContent='.fwid{display:inline-flex;align-items:center;gap:8px;margin:2px 0}.fwid .fin{margin:0}'
+   +'.fbx{font:600 22px Jost,system-ui,sans-serif;width:66px;padding:8px 4px;border:2px solid #C9D3DC;border-radius:10px;background:#fff;color:#2B3A44;text-align:center;box-sizing:border-box}'
+   +'.fbx:focus{outline:none;border-color:#17607A}.fbx:disabled{background:#EEF3F6}';
+  document.head.appendChild(c);
+  function kindOf(el){
+    if(el.dataset.fk)return el.dataset.fk;
+    var m=/^in-(.+)$/.exec(el.id||'');if(!m||typeof QS==='undefined'||!QS[m[1]])return '';
+    var a=String(QS[m[1]].q.a);
+    if(/^\d+ \d+\/\d+$/.test(a))return 'mixed';
+    if(/^\d+\/\d+$/.test(a))return 'frac';
+    return '';
+  }
+  function mk(cls,ph){var i=document.createElement('input');i.type='text';i.className='fbx '+cls;i.inputMode='numeric';i.autocomplete='off';i.maxLength=4;if(ph)i.setAttribute('aria-label',ph);return i;}
+  function build(el,kind){
+    var w=null,n=mk('fn','top number'),d=mk('fd','bottom number');
+    var wrap=document.createElement('span');wrap.className='fwid nf';
+    if(kind!=='frac'){w=mk('fw','whole number');wrap.appendChild(w);}
+    var fin=document.createElement('span');fin.className='fin';fin.appendChild(n);fin.appendChild(document.createElement('i'));fin.appendChild(d);wrap.appendChild(fin);
+    var m=/^\s*(?:(\d+)\s+)?(\d+)\/(\d+)\s*$/.exec(el.value||'');if(m){if(w&&m[1])w.value=m[1];n.value=m[2];d.value=m[3];}
+    else if(w&&/^\s*\d+\s*$/.test(el.value||''))w.value=el.value.trim();
+    function compose(){
+      var W=w?w.value:'',N=n.value,D=d.value,v='';
+      if(N&&D)v=(W?W+' ':'')+N+'/'+D;else if(W&&!N&&!D)v=W;
+      el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}));
+    }
+    [w,n,d].forEach(function(b){if(!b)return;
+      b.addEventListener('input',function(){var x=b.value.replace(/[^0-9]/g,'');if(x!==b.value)b.value=x;compose();});
+      b.addEventListener('keydown',function(e){if(e.key==='Enter'){var row=el.parentNode,btn=row&&row.querySelector('.btn');if(btn)btn.click();}});
+    });
+    el.style.display='none';el.setAttribute('data-fdone','1');
+    el.parentNode.insertBefore(wrap,el);
+    var old=el.parentNode.querySelector('.fhelp');if(old)old.remove();
+    var h=document.createElement('div');h.className='fhelp nf';h.textContent=kind==='frac'?'Type the top number in the top box and the bottom number in the bottom box.':'Whole number in the left box. Top and bottom numbers in the two stacked boxes.';
+    wrap.parentNode.insertBefore(h,wrap.nextSibling);
+    el._fboxes=[w,n,d];
+  }
+  window.__fracEnhance=function(){
+    var list=document.querySelectorAll('input[id^="in-"],input.qans[data-fk]');
+    for(var i=0;i<list.length;i++){var el=list[i];if(el.getAttribute('data-fdone'))continue;var k=kindOf(el);if(k)build(el,k==='either'?'mixed':k);}
+    /* lock boxes when the app locks the real input */
+    var done=document.querySelectorAll('input[data-fdone]');
+    for(i=0;i<done.length;i++){var e=done[i];if(e._fboxes)e._fboxes.forEach(function(b){if(b)b.disabled=e.disabled;});}
+  };
+})();
