@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ryder · Week 13 · Comparing Fractions and the Number Line</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--parch:#C8D0D8;--card:#F6F8FB;--forest:#204B3A;--ink:#1E2A24;--muted:#55604F;--line:#C3CCD7;--teal:#17607A;--teal-d:#0F4A5F;--ok:#2E7D4F;--bad:#A8323A;--tint:#E3F0F4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jost',system-ui,sans-serif;background:var(--parch);color:var(--ink);font-size:18px;line-height:1.45;min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:14px 14px 70px}
+.top{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:10px}
+.back{color:var(--teal);text-decoration:none;font-weight:600;font-size:15px;border:1px solid var(--teal);border-radius:10px;padding:6px 12px;background:#fff}
+.title{font-weight:700;font-size:20px;color:var(--teal-d);flex:1;text-align:center}
+.prog{height:8px;background:#fff;border:1px solid var(--line);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.prog i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+.card{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--teal);border-radius:14px;padding:18px;margin-bottom:16px}
+h1{font-size:30px;line-height:1.15;color:var(--teal-d)}
+h2{font-size:23px;line-height:1.2;color:var(--teal-d);margin-bottom:6px}
+h3{font-size:17px;color:var(--teal-d);margin:14px 0 6px}
+p{margin:8px 0}
+.small{font-size:15px;color:var(--muted)}
+.rule{background:var(--tint);border-left:5px solid var(--teal);border-radius:8px;padding:10px 14px;margin:10px 0;font-weight:500}
+.btn{font-family:inherit;font-weight:600;font-size:17px;border:0;border-radius:10px;padding:11px 20px;cursor:pointer;color:#fff;background:var(--teal)}
+.btn.alt{background:#fff;color:var(--teal);border:1px solid var(--teal)}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+input.num{font:600 22px Jost,sans-serif;padding:9px 12px;border:2px solid var(--line);border-radius:10px;width:190px;background:#fff;color:var(--ink)}
+input.num:focus{outline:none;border-color:var(--teal)}
+/* chart */
+.chart{display:flex;justify-content:center;gap:0;margin:12px 0 6px;overflow-x:auto;padding-bottom:4px}
+.cc{width:68px;flex:none;text-align:center}
+.cc .nm{font-size:12px;color:var(--muted);min-height:30px;line-height:1.1;display:flex;align-items:flex-end;justify-content:center;padding:0 2px}
+.cc .dg{font:700 34px Jost,sans-serif;background:#fff;border:2px solid var(--teal);border-radius:8px;margin:3px 2px;height:52px;display:flex;align-items:center;justify-content:center;color:var(--teal-d)}
+.cc .dg.z{color:#B9C7CC;border-color:#C9D6DA}
+.cc .vl{font-size:13px;font-weight:600;color:var(--ink);min-height:18px}
+.cm{width:14px;flex:none;font:700 34px Jost,sans-serif;align-self:center;margin-top:12px;color:var(--ink);text-align:center}
+.arrows{display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:var(--teal-d);margin:6px 8px 0;gap:10px;flex-wrap:wrap}
+.arrows span{background:var(--tint);border-radius:99px;padding:4px 12px}
+/* questions */
+.q{border-top:1px solid var(--line);padding:12px 0}
+.q:first-of-type{border-top:0}
+.q .t{font-weight:500;margin-bottom:6px}
+.q .res{margin-top:6px;font-size:16px;font-weight:600}
+.q.good .res{color:var(--ok)}.q.bad .res{color:var(--bad)}
+.q.good input{border-color:var(--ok);background:#EEF7F1}
+.opt{display:block;width:100%;text-align:left;font:500 17px Jost,sans-serif;padding:9px 12px;margin:5px 0;background:#fff;border:2px solid var(--line);border-radius:10px;cursor:pointer;color:var(--ink)}
+.opt:hover{border-color:var(--teal)}
+.opt.sym{display:inline-block;width:auto;min-width:76px;text-align:center;font-size:28px;font-weight:700;margin-right:8px}
+.opt.right{border-color:var(--ok);background:#EEF7F1}.opt.wrong{border-color:var(--bad);background:#FAEBEC}
+table.cmp{border-collapse:separate;border-spacing:3px;margin:10px auto}
+table.cmp td{width:42px;height:46px;text-align:center;font:700 26px Jost,sans-serif;background:#fff;border:2px solid var(--line);border-radius:7px}
+table.cmp td.cm{width:12px;border:0;background:none;padding:0}
+table.cmp td.hl{border-color:var(--teal);background:var(--tint);color:var(--teal-d)}
+table.cmp td.pl{height:auto;border:0;background:none;font:600 11px Jost,sans-serif;color:var(--muted);vertical-align:bottom;line-height:1.1}
+table.cmp td.lb{width:auto;border:0;background:none;font:600 14px Jost,sans-serif;color:var(--muted);text-align:right;padding-right:6px}
+.pbtn{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.pbtn button{font:600 15px Jost,sans-serif;padding:7px 11px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}.pbtn button.on{border-color:var(--teal);background:var(--tint)}
+.nl{width:100%;max-width:560px;display:block;margin:6px auto}
+table.tb{border-collapse:collapse;width:100%;margin:8px 0;font-size:16px}
+table.tb td,table.tb th{border:1px solid var(--line);padding:7px 10px;text-align:left;background:#fff}
+table.tb th{background:var(--tint);color:var(--teal-d)}
+.big{font:700 28px Jost,sans-serif;color:var(--teal-d)}
+.score{font:700 44px Jost,sans-serif;color:var(--teal-d)}
+details{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:14px}
+summary{cursor:pointer;font-weight:600;color:var(--teal-d)}
+ul{margin:6px 0 6px 22px}
+.chain{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 6px;margin:10px 0;font-weight:700;color:var(--teal-d)}
+.chain .v{background:#fff;border:2px solid var(--teal);border-radius:8px;padding:6px 9px;font-size:18px}
+.chain .x{font-size:13px;background:var(--tint);border-radius:99px;padding:3px 8px;color:var(--teal-d)}
+.dpick{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.dpick button{width:38px;height:38px;border-radius:8px;border:2px solid var(--line);background:#fff;font:700 18px Jost,sans-serif;cursor:pointer;color:var(--ink)}
+.dpick button.on{border-color:var(--teal);background:var(--tint)}
+.eq{text-align:center;font:700 24px Jost,sans-serif;color:var(--teal-d);margin:6px 0;min-height:34px}
+.nlw{width:100%;overflow-x:auto}
+.tbtn{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.tbtn button{font:600 15px Jost,sans-serif;padding:7px 11px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+.am{border-collapse:collapse;margin:8px auto;font-size:18px}.am td,.am th{border:2px solid var(--line);padding:8px 12px;text-align:center;min-width:64px}.am th{background:#E3EAF0;color:var(--main-d)}.am td.hl{background:#EAF3F7;font-weight:700}
+.steps{margin:8px 0;padding-left:22px}.steps li{margin:4px 0}
+.out2{background:#F3F7FA;border:2px solid var(--line);border-radius:12px;padding:10px 14px;margin:10px 0}
+.sv{display:block;margin:8px auto;max-width:100%}
+
+@media(max-width:560px){body{font-size:17px}.cc{width:46px}.cc .dg{font-size:24px;height:42px}.cc .nm{font-size:10px}.cc .vl{font-size:10px}.cm{width:8px;font-size:24px}input.num{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="back" href="../wade-math-home.html#/kid/ryder">← Math Home</a><div class="title">Comparing Fractions and the Number Line</div><a class="back" id="modeLink" href="#">Mom view</a></div>
+  <div class="prog"><i id="bar"></i></div>
+  <div id="stage"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const PLACES=['Millions','Hundred thousands','Ten thousands','Thousands','Hundreds','Tens','Ones'];
+const ONES=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const TENS=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+function fmt(n){return String(n).replace(/\B(?=(\d{3})+$)/g,',');}
+function w999(n){let s=[];if(n>=100){s.push(ONES[Math.floor(n/100)]+' hundred');n%=100;}if(n>=20){s.push(TENS[Math.floor(n/10)]+(n%10?'-'+ONES[n%10]:''));}else if(n>0||!s.length)s.push(ONES[n]);return s.join(' ');}
+function toWords(n){
+  if(n===0)return 'zero';
+  if(n===1000000)return 'one million';
+  const th=Math.floor(n/1000),r=n%1000;let out=[];
+  if(th)out.push(w999(th)+' thousand');
+  if(r)out.push(w999(r));
+  return out.join(', ');
+}
+function expanded(n){
+  const s=String(n),L=s.length,parts=[];
+  for(let i=0;i<L;i++){if(s[i]!=='0')parts.push(fmt(s[i]+'0'.repeat(L-1-i)));}
+  return parts.join(' + ');
+}
+function chartHTML(n){
+  const s=String(n).padStart(7,'0');let h='<div class="chart">';
+  let lead=true;
+  for(let i=0;i<7;i++){
+    if(s[i]!=='0')lead=false;
+    const show=!lead||i===6;
+    const val=s[i]==='0'?'':fmt(s[i]+'0'.repeat(6-i));
+    h+='<div class="cc"><div class="nm">'+PLACES[i]+'</div><div class="dg'+(show?'':' z')+'">'+(show?s[i]:'0')+'</div><div class="vl">'+(show?val:'')+'</div></div>';
+    if(i===0||i===3)h+='<div class="cm">'+((i===3||n>=1000000)?',':'')+'</div>';
+  }
+  return h+'</div>';
+}
+/* ---------- question engine ---------- */
+const MOM=/[?&]mom=1/.test(location.search);
+let QS={};let TOTAL=0;let FIRST=0;let ANSWERED=0;
+function norm(v){return String(v==null?'':v).replace(/[−–]/g,'-').replace(/[,\s$]/g,'');}
+function qHTML(sec,i,q){
+  if(MOM){
+    let h='<div class="q good"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+    if(q.o)q.o.forEach((o,j)=>{h+='<div class="opt'+(q.sym?' sym':'')+(j===q.c?' right':'')+'" style="cursor:default">'+o+(j===q.c?' ✓':'')+'</div>';});
+    return h+'<div class="res">Answer: '+q.show+(q.why?'. '+q.why:'')+'</div></div>';
+  }
+  const id=sec+i;QS[id]={q:q,tries:0,done:false};TOTAL++;
+  let h='<div class="q" id="q-'+id+'"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+  if(q.o){q.o.forEach((o,j)=>{h+='<button class="opt'+(q.sym?' sym':'')+'" onclick="pickQ(\''+id+'\','+j+',this)">'+o+'</button>';});}
+  else h+='<div class="row"><input class="num" id="in-'+id+'" inputmode="'+kpFor(q.a)+'" autocomplete="off" placeholder="Your answer" onkeydown="if(event.key===\'Enter\')checkQ(\''+id+'\')"><button class="btn" onclick="checkQ(\''+id+'\')">Check</button></div>';
+  return h+'<div class="res" id="res-'+id+'"></div></div>';
+}
+function finishQ(id,ok){
+  const s=QS[id];if(s.done)return;
+  s.tries++;
+  const el=$('q-'+id),res=$('res-'+id);
+  if(ok){
+    s.done=true;ANSWERED++;if(s.tries===1)FIRST++;
+    el.className='q good';res.textContent='✓ Correct'+(s.q.why?'. '+s.q.why:'');
+  }else{
+    el.className='q bad';
+    if(s.tries>=2){s.done=true;ANSWERED++;res.textContent='The answer is '+s.q.show+'. '+(s.q.why||'')+' Ask Mom if you are not sure why.';
+      const i=$('in-'+id);if(i)i.disabled=true;
+    }else res.textContent='Not quite. '+(s.q.hint||'Look at the rule above and try again.');
+  }
+  upd();
+}
+
+function parseV(s){
+  s=String(s==null?'':s).trim().replace(/[−–]/g,'-').replace(/,/g,'');let m;
+  if(m=s.match(/^(-?)(\d+)\s+(\d+)\/(\d+)$/)){const sg=m[1]?-1:1,w=+m[2],n=+m[3],d=+m[4];if(!d)return null;return {form:'mixed',n:sg*(w*d+n),d:d,fn:n,fd:d};}
+  if(m=s.match(/^(-?\d+)\/(\d+)$/)){const d=+m[2];if(!d)return null;return {form:'frac',n:+m[1],d:d};}
+  if(m=s.match(/^(-?)(\d*)\.(\d+)$/)){const sg=m[1]?-1:1;const fd=Math.pow(10,m[3].length);return {form:'dec',n:sg*(+(m[2]||0)*fd+ +m[3]),d:fd};}
+  if(m=s.match(/^(-?\d+)$/))return {form:'int',n:+m[1],d:1};
+  if(m=s.match(/^(\d+)\s*[rR]\s*(\d+)$/))return {form:'rem',q:+m[1],r:+m[2]};
+  return null;
+}
+function gcdv(a,b){a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a;}
+function eqv(raw,ans){
+  const x=parseV(raw),y=parseV(ans);if(!x||!y)return false;
+  if(y.form==='rem')return x.form==='rem'&&x.q===y.q&&x.r===y.r;
+  if(x.form==='rem')return false;
+  if(x.n*y.d!==y.n*x.d)return false;
+  if(y.form==='int'||y.form==='dec')return x.form==='int'||x.form==='dec';
+  if(y.form==='frac')return x.form==='frac'&&gcdv(x.n,x.d)===1;
+  if(y.form==='mixed')return x.form==='mixed'&&x.fn<x.fd&&gcdv(x.fn,x.fd)===1;
+  return false;
+}
+function kpFor(a){a=String(a);return /[\/ ]/.test(a)||/r/i.test(a)?'text':/\./.test(a)?'decimal':'numeric';}
+function checkQ(id){
+  const s=QS[id];if(s.done)return;
+  const v=norm($('in-'+id).value);if(!v)return;
+  finishQ(id,eqv($('in-'+id).value,s.q.a));
+}
+function pickQ(id,j,btn){
+  const s=QS[id];if(s.done)return;
+  const ok=j===s.q.c;
+  btn.className='opt '+(ok?'right':'wrong');
+  finishQ(id,ok);
+  if(s.done&&!ok){[].slice.call($('q-'+id).querySelectorAll('.opt'))[s.q.c].className='opt right';}
+}
+function upd(){const b=$('nextbtn');if(b)b.disabled=ANSWERED-SECBASE<SECTOTAL;const c=$('cnt');if(c)c.textContent=ANSWERED-SECBASE+' of '+SECTOTAL+' answered';}
+
+/* ---------- sections ---------- */
+const SECA=[{"t": "Which symbol goes in the blank?  2/3  ___  3/4", "o": [">", "<", "="], "c": 1, "show": "<", "hint": "Rename both with the denominator 12.", "why": "2/3 = 8/12 and 3/4 = 9/12. 8 is less than 9, so 2/3 < 3/4."}, {"t": "Which symbol goes in the blank?  3/5  ___  1/2", "o": [">", "<", "="], "c": 0, "show": ">", "hint": "Rename both with the denominator 10.", "why": "3/5 = 6/10 and 1/2 = 5/10. 6 is greater than 5, so 3/5 > 1/2."}, {"t": "Which symbol goes in the blank?  5/6  ___  7/8", "o": [">", "<", "="], "c": 1, "show": "<", "hint": "Rename both with the denominator 24.", "why": "5/6 = 20/24 and 7/8 = 21/24. 20 is less than 21, so 5/6 < 7/8."}, {"t": "Which symbol goes in the blank?  4/9  ___  1/3", "o": ["<", "=", ">"], "c": 2, "show": ">", "hint": "Rename both with the denominator 9.", "why": "4/9 = 4/9 and 1/3 = 3/9. 4 is greater than 3, so 4/9 > 1/3."}, {"t": "Which symbol goes in the blank?  5/8  ___  3/4", "o": ["<", ">", "="], "c": 0, "show": "<", "hint": "Rename both with the denominator 8.", "why": "5/8 = 5/8 and 3/4 = 6/8. 5 is less than 6, so 5/8 < 3/4."}, {"t": "Which symbol goes in the blank?  7/10  ___  2/3", "o": [">", "<", "="], "c": 0, "show": ">", "hint": "Rename both with the denominator 30.", "why": "7/10 = 21/30 and 2/3 = 20/30. 21 is greater than 20, so 7/10 > 2/3."}, {"t": "Which fraction is greater than 1/2?", "o": ["2/6", "3/8", "3/5"], "c": 2, "show": "3/5", "hint": "Half of 5 is 2.5, so 3 out of 5 is more than half.", "why": "1/2 = 2.5/5, and 3 is more than 2.5, so 3/5 > 1/2. 2/6 and 3/8 are less than half."}, {"t": "Which fraction is less than 1/2?", "o": ["3/8", "5/9", "4/7"], "c": 0, "show": "3/8", "hint": "Compare the top to half of the bottom.", "why": "Half of 8 is 4 and 3 < 4, so 3/8 < 1/2. 5/9 and 4/7 are more than half."}, {"t": "Which fraction is closest to 1 whole?", "o": ["1/2", "9/10", "3/8"], "c": 1, "show": "9/10", "hint": "The numerator is almost as big as the denominator.", "why": "9/10 is only 1/10 away from 1."}, {"t": "Order from least to greatest: 1/2, 3/4, 1/3", "o": ["1/2, 1/3, 3/4", "3/4, 1/2, 1/3", "1/3, 1/2, 3/4"], "c": 2, "show": "1/3, 1/2, 3/4", "hint": "Use the denominator 12: 6/12, 9/12, 4/12.", "why": "1/3 = 4/12, 1/2 = 6/12, 3/4 = 9/12. Least to greatest: 1/3, 1/2, 3/4."}];const SECB=[{"t": "Write 7/4 as a mixed number.", "a": "1 3/4", "show": "1 3/4", "hint": "7 ÷ 4 = 1 remainder 3.", "why": "7/4 = 4/4 + 3/4 = 1 3/4."}, {"t": "Write 11/3 as a mixed number.", "a": "3 2/3", "show": "3 2/3", "hint": "11 ÷ 3 = 3 remainder 2.", "why": "11/3 = 3 2/3."}, {"t": "Write 2 1/2 as a fraction greater than 1.", "a": "5/2", "show": "5/2", "hint": "2 × 2 + 1 = ?", "why": "2 1/2 = 4/2 + 1/2 = 5/2."}, {"t": "Write 3 1/4 as a fraction greater than 1.", "a": "13/4", "show": "13/4", "hint": "3 × 4 + 1 = ?", "why": "3 1/4 = 12/4 + 1/4 = 13/4."}, {"t": "Between which two whole numbers is 7/3 on the number line?", "o": ["2 and 3", "1 and 2", "3 and 4"], "c": 0, "show": "2 and 3", "hint": "7 ÷ 3 = 2 remainder 1.", "why": "7/3 = 2 1/3, which is between 2 and 3."}, {"t": "Which point is halfway between 0 and 1 on a number line?", "o": ["1/4", "2/3", "1/2"], "c": 2, "show": "1/2", "hint": "Halfway means equal distance from both ends.", "why": "1/2 is exactly halfway."}, {"t": "A number line from 0 to 1 is cut into 8 equal parts. What fraction is at the 5th mark?", "a": "5/8", "show": "5/8", "hint": "Each mark is 1/8 apart.", "why": "The 5th mark is 5 × 1/8 = 5/8."}, {"t": "What decimal is the same as 3/10?", "a": "0.3", "show": "0.3", "hint": "3/10 is three tenths.", "why": "3/10 = 0.3."}, {"t": "What decimal is the same as 47/100?", "a": "0.47", "show": "0.47", "hint": "Two decimal places for hundredths.", "why": "47/100 = 0.47."}, {"t": "Which is greater, 0.6 or 0.58?", "o": ["0.6", "0.58", "They are equal"], "c": 0, "show": "0.6", "hint": "Write 0.6 as 0.60.", "why": "0.6 = 0.60 and 60 hundredths is more than 58 hundredths."}];const SECC=[{"t": "Sam walked 3/4 of a mile and Ana walked 2/3 of a mile. Who walked farther?", "o": ["Sam", "Ana", "The same"], "c": 0, "show": "Sam", "hint": "3/4 = 9/12 and 2/3 = 8/12.", "why": "9/12 > 8/12, so Sam walked farther."}, {"t": "Which is closer to 0: 1/8 or 3/5?", "o": ["1/8", "3/5"], "c": 0, "show": "1/8", "hint": "1/8 is a small slice. 3/5 is more than half.", "why": "1/8 is much less than 1/2, so it is closer to 0."}, {"t": "A rope is 1 3/8 yards long. Write its length as a fraction greater than 1.", "a": "11/8", "show": "11/8", "hint": "1 × 8 + 3 = ?", "why": "1 3/8 = 8/8 + 3/8 = 11/8."}, {"t": "Order from greatest to least: 5/6, 2/3, 1/2", "o": ["1/2, 2/3, 5/6", "5/6, 2/3, 1/2", "2/3, 5/6, 1/2"], "c": 1, "show": "5/6, 2/3, 1/2", "hint": "Use the denominator 6: 5/6, 4/6, 3/6.", "why": "5/6 > 4/6 > 3/6, so 5/6, 2/3, 1/2."}, {"t": "A student says 2/5 > 1/2 because 5 is bigger than 2. Is that right?", "o": ["Yes", "No. 2/5 is less than 1/2", "No. They are equal"], "c": 1, "show": "No. 2/5 is less than 1/2", "hint": "Half of 5 is 2.5.", "why": "2/5 = 4/10 and 1/2 = 5/10, so 2/5 < 1/2. A larger denominator means smaller pieces."}, {"t": "How many eighths are in 1 whole?", "a": "8", "show": "8", "hint": "1 = ?/8.", "why": "1 = 8/8."}];
+function gcdf(a,b){return b?gcdf(b,a%b):a;}
+function fbar(n,d,col){let h='<div style="display:flex;max-width:420px;border:2px solid #17607A;border-radius:6px;overflow:hidden;margin:3px 0">';for(let i=0;i<d;i++)h+='<div style="flex:1;height:22px;background:'+(i<n?col:'#fff')+';'+(i?'border-left:1px solid #17607A':'')+'"></div>';return h+'</div>';}
+function cmpTool(){
+  let a=gv('ca',1,20),b=gv('cb',2,20),c=gv('cc',1,20),d=gv('cd',2,20);a=Math.min(a,b);c=Math.min(c,d);
+  const L=b*d/gcdf(b,d),x=a*L/b,y=c*L/d;const s=x>y?'>':x<y?'<':'=';
+  $('cr').innerHTML=fbar(a,b,'#8FC4D6')+'<div class="small">'+a+'/'+b+'</div>'+fbar(c,d,'#A9B7C0')+'<div class="small">'+c+'/'+d+'</div>'
+   +'<div class="out2">Common denominator: <b>'+L+'</b><br>'+a+'/'+b+' = '+x+'/'+L+' and '+c+'/'+d+' = '+y+'/'+L+'<br><b>'+a+'/'+b+' '+s+' '+c+'/'+d+'</b></div>';
+}
+function nlTool(){
+  const d=gv('nd',2,12),n=gv('nn',0,3*d);const w=Math.floor(n/d),r=n%d;const top=Math.max(2,w+1);
+  const W=420,x0=20,x1=W-20,sc=(x1-x0)/top;let s='<svg viewBox="0 0 '+W+' 80" class="sv" style="max-width:440px"><line x1="'+x0+'" y1="40" x2="'+x1+'" y2="40" stroke="#17607A" stroke-width="3"/>';
+  for(let i=0;i<=top*d;i++){const x=x0+i*sc/d,big=i%d===0;s+='<line x1="'+x+'" y1="'+(big?28:34)+'" x2="'+x+'" y2="'+(big?52:46)+'" stroke="#17607A" stroke-width="'+(big?3:1.5)+'"/>';if(big)s+='<text x="'+x+'" y="70" text-anchor="middle" font-size="15" fill="#2B3A44">'+i/d+'</text>';}
+  const px=x0+n*sc/d;s+='<circle cx="'+px+'" cy="40" r="7" fill="#C9972B" stroke="#2B3A44" stroke-width="2"/></svg>';
+  const g=gcdf(n,d);
+  $('nr').innerHTML=s+'<div class="out2"><b>'+n+'/'+d+'</b> is '+(n===0?'at 0.':(r===0?'the whole number <b>'+w+'</b>.':(w===0?'between 0 and 1.':'the mixed number <b>'+w+' '+r+'/'+d+'</b>, between '+w+' and '+(w+1)+'.')))+'<br>Each whole is cut into '+d+' equal parts, and the point is '+n+' parts from 0.'+(g>1&&n>0?'<br>It equals '+n/g+'/'+d/g+' in simplest form.':'')+'</div>';
+}
+function rA(){secPage('a','<div class="card"><h1>Comparing fractions</h1><p class="small">About 15 minutes. Practice only. Nothing here is saved or graded.</p><div class="rule">To compare fractions with different denominators, rename them with a <b>common denominator</b>. Then the one with the bigger numerator is greater. You can also compare each one to <b>1/2</b>.</div>'
+ +'<h3>Try it</h3><div class="row"><input class="num" id="ca" value="2" oninput="cmpTool()" inputmode="numeric"><span>/</span><input class="num" id="cb" value="3" oninput="cmpTool()" inputmode="numeric"></div><div class="row"><input class="num" id="cc" value="3" oninput="cmpTool()" inputmode="numeric"><span>/</span><input class="num" id="cd" value="4" oninput="cmpTool()" inputmode="numeric"></div><div id="cr"></div></div>',SECA);}
+function rB(){secPage('b','<div class="card"><h2>Fractions on a number line</h2><div class="rule">A <b>mixed number</b> like 1 3/4 is a whole number plus a fraction. An improper fraction like 7/4 names the same point. Enter mixed numbers like 1 3/4 with a space.</div>'
+ +'<h3>Place a point</h3><div class="row"><input class="num" id="nn" value="7" oninput="nlTool()" inputmode="numeric"><span>/</span><input class="num" id="nd" value="4" oninput="nlTool()" inputmode="numeric"></div><div id="nr"></div></div>',SECB);}
+function rC(){secPage('c','<div class="card"><h2>Putting it together</h2><div class="rule">Compare with a common denominator or with 1/2. A larger denominator means smaller pieces.</div></div>',SECC,true);}
+
+const SECFNS=[rA,rB,rC];
+function INITS(){if($('ca'))cmpTool();if($('nn'))nlTool();}
+const ORAL=["How do you decide which is greater, 3/4 or 5/8? Say it step by step.", "Show 1 3/4 on a number line and also write it as a fraction.", "Why is 2/5 less than 1/2 even though 5 is greater than 2?"];
+const WEEKNO=13;
+
+let SECBASE=0,SECTOTAL=0,ST=0;
+const MOM2=MOM;
+function momGate(cb){cb();} /* PIN turned off for now */
+function begin(){
+  const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(buildMom);return;}
+  ml.href=location.pathname+'?mom=1';ST=0;render();
+}
+
+function begin(){
+  const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(buildMom);return;}
+  ml.href=location.pathname+'?mom=1';ST=0;render();
+}
+function buildMom(){
+  let all='<div class="card" style="border-top-color:#C9972B"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Ryder.</p></div>';
+  SECFNS.forEach(fn=>{fn();all+=$('stage').innerHTML;});
+  all+='<div class="card"><h2>Check him on these, out loud</h2><ul>'+ORAL.map(x=>'<li>'+x+'</li>').join('')+'</ul><p class="small">If he does these well, tick them on his rung in Math Home. If he is solid, let him test out.</p></div>';
+  $('stage').innerHTML=all;$('bar').style.width='100%';INITS();
+}
+function bar(){$('bar').style.width=Math.round(ST/(SECFNS.length)*100)+'%';}
+function nav(last){if(MOM)return '';return '<div class="row" style="margin-top:14px"><button class="btn" id="nextbtn" onclick="nextSec()" disabled>'+(last?'Finish':'Next')+'</button><span class="small" id="cnt"></span></div>';}
+function nextSec(){ST++;render();window.scrollTo(0,0);}
+function listHTML(sec,arr){let h='';arr.forEach((q,i)=>{h+=qHTML(sec,i,q);});return h;}
+function render(){bar();QS={};SECBASE=ANSWERED;if(ST>=SECFNS.length){rDone();return;}SECFNS[ST]();INITS();upd();}
+function secPage(id,intro,items,last){SECTOTAL=items.length;$('stage').innerHTML=intro+'<div class="card"><h2>Check it</h2>'+listHTML(id,items)+nav(last)+'</div>';}
+function rDone(){
+  const pct=Math.round(FIRST/TOTAL*100);
+  $('stage').innerHTML='<div class="card"><h1>Done</h1><p>First-try correct: <span class="score">'+FIRST+' of '+TOTAL+'</span></p>'
+   +'<p>'+(pct>=85?'That is strong. Tell Mom you may be ready to test out of Week '+WEEKNO+'.':pct>=60?'Good start. Look again at anything you missed, then tell Mom.':'Go back through the rules with Mom before you test out.')+'</p>'
+   +'<h3>Now say these to Mom, out loud</h3><ul>'+ORAL.map(x=>'<li>'+x+'</li>').join('')+'</ul>'
+   +'<div class="row" style="margin-top:14px"><a class="btn" style="text-decoration:none" href="../wade-math-home.html#/kid/ryder">Back to Math Home</a><button class="btn alt" onclick="location.reload()">Do it again</button></div></div>';
+}
+function gv(id,lo,hi){let v=parseInt(norm($(id).value),10);return isNaN(v)?lo:Math.max(lo,Math.min(hi,v));}
+function fmt(n){return Number(n).toLocaleString('en-US');}
+begin();
+/* Mom view: back goes to Mom's lesson list */
+(function(){if(/[?&]mom=1/.test(location.search)){var b=document.querySelector('a.back');if(b){b.href=b.getAttribute('href').replace(/#\/kid\/(\w+)/,'#/mom/ladder/$1');b.textContent='\u2190 Lessons';}}})();
+</script>
+<script src="momnav.js"></script>
+</body>
+</html>

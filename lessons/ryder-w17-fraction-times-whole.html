@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ryder · Week 17 · A Fraction Times a Whole Number</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--parch:#C8D0D8;--card:#F6F8FB;--forest:#204B3A;--ink:#1E2A24;--muted:#55604F;--line:#C3CCD7;--teal:#17607A;--teal-d:#0F4A5F;--ok:#2E7D4F;--bad:#A8323A;--tint:#E3F0F4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jost',system-ui,sans-serif;background:var(--parch);color:var(--ink);font-size:18px;line-height:1.45;min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:14px 14px 70px}
+.top{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:10px}
+.back{color:var(--teal);text-decoration:none;font-weight:600;font-size:15px;border:1px solid var(--teal);border-radius:10px;padding:6px 12px;background:#fff}
+.title{font-weight:700;font-size:20px;color:var(--teal-d);flex:1;text-align:center}
+.prog{height:8px;background:#fff;border:1px solid var(--line);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.prog i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+.card{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--teal);border-radius:14px;padding:18px;margin-bottom:16px}
+h1{font-size:30px;line-height:1.15;color:var(--teal-d)}
+h2{font-size:23px;line-height:1.2;color:var(--teal-d);margin-bottom:6px}
+h3{font-size:17px;color:var(--teal-d);margin:14px 0 6px}
+p{margin:8px 0}
+.small{font-size:15px;color:var(--muted)}
+.rule{background:var(--tint);border-left:5px solid var(--teal);border-radius:8px;padding:10px 14px;margin:10px 0;font-weight:500}
+.btn{font-family:inherit;font-weight:600;font-size:17px;border:0;border-radius:10px;padding:11px 20px;cursor:pointer;color:#fff;background:var(--teal)}
+.btn.alt{background:#fff;color:var(--teal);border:1px solid var(--teal)}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+input.num{font:600 22px Jost,sans-serif;padding:9px 12px;border:2px solid var(--line);border-radius:10px;width:190px;background:#fff;color:var(--ink)}
+input.num:focus{outline:none;border-color:var(--teal)}
+/* chart */
+.chart{display:flex;justify-content:center;gap:0;margin:12px 0 6px;overflow-x:auto;padding-bottom:4px}
+.cc{width:68px;flex:none;text-align:center}
+.cc .nm{font-size:12px;color:var(--muted);min-height:30px;line-height:1.1;display:flex;align-items:flex-end;justify-content:center;padding:0 2px}
+.cc .dg{font:700 34px Jost,sans-serif;background:#fff;border:2px solid var(--teal);border-radius:8px;margin:3px 2px;height:52px;display:flex;align-items:center;justify-content:center;color:var(--teal-d)}
+.cc .dg.z{color:#B9C7CC;border-color:#C9D6DA}
+.cc .vl{font-size:13px;font-weight:600;color:var(--ink);min-height:18px}
+.cm{width:14px;flex:none;font:700 34px Jost,sans-serif;align-self:center;margin-top:12px;color:var(--ink);text-align:center}
+.arrows{display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:var(--teal-d);margin:6px 8px 0;gap:10px;flex-wrap:wrap}
+.arrows span{background:var(--tint);border-radius:99px;padding:4px 12px}
+/* questions */
+.q{border-top:1px solid var(--line);padding:12px 0}
+.q:first-of-type{border-top:0}
+.q .t{font-weight:500;margin-bottom:6px}
+.q .res{margin-top:6px;font-size:16px;font-weight:600}
+.q.good .res{color:var(--ok)}.q.bad .res{color:var(--bad)}
+.q.good input{border-color:var(--ok);background:#EEF7F1}
+.opt{display:block;width:100%;text-align:left;font:500 17px Jost,sans-serif;padding:9px 12px;margin:5px 0;background:#fff;border:2px solid var(--line);border-radius:10px;cursor:pointer;color:var(--ink)}
+.opt:hover{border-color:var(--teal)}
+.opt.sym{display:inline-block;width:auto;min-width:76px;text-align:center;font-size:28px;font-weight:700;margin-right:8px}
+.opt.right{border-color:var(--ok);background:#EEF7F1}.opt.wrong{border-color:var(--bad);background:#FAEBEC}
+table.cmp{border-collapse:separate;border-spacing:3px;margin:10px auto}
+table.cmp td{width:42px;height:46px;text-align:center;font:700 26px Jost,sans-serif;background:#fff;border:2px solid var(--line);border-radius:7px}
+table.cmp td.cm{width:12px;border:0;background:none;padding:0}
+table.cmp td.hl{border-color:var(--teal);background:var(--tint);color:var(--teal-d)}
+table.cmp td.pl{height:auto;border:0;background:none;font:600 11px Jost,sans-serif;color:var(--muted);vertical-align:bottom;line-height:1.1}
+table.cmp td.lb{width:auto;border:0;background:none;font:600 14px Jost,sans-serif;color:var(--muted);text-align:right;padding-right:6px}
+.pbtn{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.pbtn button{font:600 15px Jost,sans-serif;padding:7px 11px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}.pbtn button.on{border-color:var(--teal);background:var(--tint)}
+.nl{width:100%;max-width:560px;display:block;margin:6px auto}
+table.tb{border-collapse:collapse;width:100%;margin:8px 0;font-size:16px}
+table.tb td,table.tb th{border:1px solid var(--line);padding:7px 10px;text-align:left;background:#fff}
+table.tb th{background:var(--tint);color:var(--teal-d)}
+.big{font:700 28px Jost,sans-serif;color:var(--teal-d)}
+.score{font:700 44px Jost,sans-serif;color:var(--teal-d)}
+details{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:14px}
+summary{cursor:pointer;font-weight:600;color:var(--teal-d)}
+ul{margin:6px 0 6px 22px}
+.chain{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 6px;margin:10px 0;font-weight:700;color:var(--teal-d)}
+.chain .v{background:#fff;border:2px solid var(--teal);border-radius:8px;padding:6px 9px;font-size:18px}
+.chain .x{font-size:13px;background:var(--tint);border-radius:99px;padding:3px 8px;color:var(--teal-d)}
+.dpick{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.dpick button{width:38px;height:38px;border-radius:8px;border:2px solid var(--line);background:#fff;font:700 18px Jost,sans-serif;cursor:pointer;color:var(--ink)}
+.dpick button.on{border-color:var(--teal);background:var(--tint)}
+.eq{text-align:center;font:700 24px Jost,sans-serif;color:var(--teal-d);margin:6px 0;min-height:34px}
+.nlw{width:100%;overflow-x:auto}
+.tbtn{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.tbtn button{font:600 15px Jost,sans-serif;padding:7px 11px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+.am{border-collapse:collapse;margin:8px auto;font-size:18px}.am td,.am th{border:2px solid var(--line);padding:8px 12px;text-align:center;min-width:64px}.am th{background:#E3EAF0;color:var(--main-d)}.am td.hl{background:#EAF3F7;font-weight:700}
+.steps{margin:8px 0;padding-left:22px}.steps li{margin:4px 0}
+.out2{background:#F3F7FA;border:2px solid var(--line);border-radius:12px;padding:10px 14px;margin:10px 0}
+.sv{display:block;margin:8px auto;max-width:100%}
+
+@media(max-width:560px){body{font-size:17px}.cc{width:46px}.cc .dg{font-size:24px;height:42px}.cc .nm{font-size:10px}.cc .vl{font-size:10px}.cm{width:8px;font-size:24px}input.num{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="back" href="../wade-math-home.html#/kid/ryder">← Math Home</a><div class="title">A Fraction Times a Whole Number</div><a class="back" id="modeLink" href="#">Mom view</a></div>
+  <div class="prog"><i id="bar"></i></div>
+  <div id="stage"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const PLACES=['Millions','Hundred thousands','Ten thousands','Thousands','Hundreds','Tens','Ones'];
+const ONES=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const TENS=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+function fmt(n){return String(n).replace(/\B(?=(\d{3})+$)/g,',');}
+function w999(n){let s=[];if(n>=100){s.push(ONES[Math.floor(n/100)]+' hundred');n%=100;}if(n>=20){s.push(TENS[Math.floor(n/10)]+(n%10?'-'+ONES[n%10]:''));}else if(n>0||!s.length)s.push(ONES[n]);return s.join(' ');}
+function toWords(n){
+  if(n===0)return 'zero';
+  if(n===1000000)return 'one million';
+  const th=Math.floor(n/1000),r=n%1000;let out=[];
+  if(th)out.push(w999(th)+' thousand');
+  if(r)out.push(w999(r));
+  return out.join(', ');
+}
+function expanded(n){
+  const s=String(n),L=s.length,parts=[];
+  for(let i=0;i<L;i++){if(s[i]!=='0')parts.push(fmt(s[i]+'0'.repeat(L-1-i)));}
+  return parts.join(' + ');
+}
+function chartHTML(n){
+  const s=String(n).padStart(7,'0');let h='<div class="chart">';
+  let lead=true;
+  for(let i=0;i<7;i++){
+    if(s[i]!=='0')lead=false;
+    const show=!lead||i===6;
+    const val=s[i]==='0'?'':fmt(s[i]+'0'.repeat(6-i));
+    h+='<div class="cc"><div class="nm">'+PLACES[i]+'</div><div class="dg'+(show?'':' z')+'">'+(show?s[i]:'0')+'</div><div class="vl">'+(show?val:'')+'</div></div>';
+    if(i===0||i===3)h+='<div class="cm">'+((i===3||n>=1000000)?',':'')+'</div>';
+  }
+  return h+'</div>';
+}
+/* ---------- question engine ---------- */
+const MOM=/[?&]mom=1/.test(location.search);
+let QS={};let TOTAL=0;let FIRST=0;let ANSWERED=0;
+function norm(v){return String(v==null?'':v).replace(/[−–]/g,'-').replace(/[,\s$]/g,'');}
+function qHTML(sec,i,q){
+  if(MOM){
+    let h='<div class="q good"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+    if(q.o)q.o.forEach((o,j)=>{h+='<div class="opt'+(q.sym?' sym':'')+(j===q.c?' right':'')+'" style="cursor:default">'+o+(j===q.c?' ✓':'')+'</div>';});
+    return h+'<div class="res">Answer: '+q.show+(q.why?'. '+q.why:'')+'</div></div>';
+  }
+  const id=sec+i;QS[id]={q:q,tries:0,done:false};TOTAL++;
+  let h='<div class="q" id="q-'+id+'"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+  if(q.o){q.o.forEach((o,j)=>{h+='<button class="opt'+(q.sym?' sym':'')+'" onclick="pickQ(\''+id+'\','+j+',this)">'+o+'</button>';});}
+  else h+='<div class="row"><input class="num" id="in-'+id+'" inputmode="'+kpFor(q.a)+'" autocomplete="off" placeholder="Your answer" onkeydown="if(event.key===\'Enter\')checkQ(\''+id+'\')"><button class="btn" onclick="checkQ(\''+id+'\')">Check</button></div>';
+  return h+'<div class="res" id="res-'+id+'"></div></div>';
+}
+function finishQ(id,ok){
+  const s=QS[id];if(s.done)return;
+  s.tries++;
+  const el=$('q-'+id),res=$('res-'+id);
+  if(ok){
+    s.done=true;ANSWERED++;if(s.tries===1)FIRST++;
+    el.className='q good';res.textContent='✓ Correct'+(s.q.why?'. '+s.q.why:'');
+  }else{
+    el.className='q bad';
+    if(s.tries>=2){s.done=true;ANSWERED++;res.textContent='The answer is '+s.q.show+'. '+(s.q.why||'')+' Ask Mom if you are not sure why.';
+      const i=$('in-'+id);if(i)i.disabled=true;
+    }else res.textContent='Not quite. '+(s.q.hint||'Look at the rule above and try again.');
+  }
+  upd();
+}
+
+function parseV(s){
+  s=String(s==null?'':s).trim().replace(/[−–]/g,'-').replace(/,/g,'');let m;
+  if(m=s.match(/^(-?)(\d+)\s+(\d+)\/(\d+)$/)){const sg=m[1]?-1:1,w=+m[2],n=+m[3],d=+m[4];if(!d)return null;return {form:'mixed',n:sg*(w*d+n),d:d,fn:n,fd:d};}
+  if(m=s.match(/^(-?\d+)\/(\d+)$/)){const d=+m[2];if(!d)return null;return {form:'frac',n:+m[1],d:d};}
+  if(m=s.match(/^(-?)(\d*)\.(\d+)$/)){const sg=m[1]?-1:1;const fd=Math.pow(10,m[3].length);return {form:'dec',n:sg*(+(m[2]||0)*fd+ +m[3]),d:fd};}
+  if(m=s.match(/^(-?\d+)$/))return {form:'int',n:+m[1],d:1};
+  if(m=s.match(/^(\d+)\s*[rR]\s*(\d+)$/))return {form:'rem',q:+m[1],r:+m[2]};
+  return null;
+}
+function gcdv(a,b){a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a;}
+function eqv(raw,ans){
+  const x=parseV(raw),y=parseV(ans);if(!x||!y)return false;
+  if(y.form==='rem')return x.form==='rem'&&x.q===y.q&&x.r===y.r;
+  if(x.form==='rem')return false;
+  if(x.n*y.d!==y.n*x.d)return false;
+  if(y.form==='int'||y.form==='dec')return x.form==='int'||x.form==='dec';
+  if(y.form==='frac')return x.form==='frac'&&gcdv(x.n,x.d)===1;
+  if(y.form==='mixed')return x.form==='mixed'&&x.fn<x.fd&&gcdv(x.fn,x.fd)===1;
+  return false;
+}
+function kpFor(a){a=String(a);return /[\/ ]/.test(a)||/r/i.test(a)?'text':/\./.test(a)?'decimal':'numeric';}
+function checkQ(id){
+  const s=QS[id];if(s.done)return;
+  const v=norm($('in-'+id).value);if(!v)return;
+  finishQ(id,eqv($('in-'+id).value,s.q.a));
+}
+function pickQ(id,j,btn){
+  const s=QS[id];if(s.done)return;
+  const ok=j===s.q.c;
+  btn.className='opt '+(ok?'right':'wrong');
+  finishQ(id,ok);
+  if(s.done&&!ok){[].slice.call($('q-'+id).querySelectorAll('.opt'))[s.q.c].className='opt right';}
+}
+function upd(){const b=$('nextbtn');if(b)b.disabled=ANSWERED-SECBASE<SECTOTAL;const c=$('cnt');if(c)c.textContent=ANSWERED-SECBASE+' of '+SECTOTAL+' answered';}
+
+/* ---------- sections ---------- */
+const SECA=[{"t": "5/4 = 5 × ?  What is the unit fraction?", "a": "1/4", "show": "1/4", "hint": "5/4 is five pieces that are each the same size.", "why": "5/4 = 5 × 1/4."}, {"t": "7/3 = 7 × ?  What is the unit fraction?", "a": "1/3", "show": "1/3", "hint": "7/3 is seven pieces that are each the same size.", "why": "7/3 = 7 × 1/3."}, {"t": "3 × 1/6 = ?  (simplest form)", "a": "1/2", "show": "1/2", "hint": "3 × 1/6 = 3/6.", "why": "3 × 1/6 = 3/6 = 1/2."}, {"t": "4 × 2/5 = ?  (write as a fraction in simplest form)", "a": "8/5", "show": "8/5", "hint": "4 × 2/5 means 4 groups of 2/5. Multiply the numerator: 4 × 2.", "why": "4 × 2/5 = (4 × 2)/5 = 8/5."}, {"t": "3 × 3/4 = ?  (write as a fraction in simplest form)", "a": "9/4", "show": "9/4", "hint": "3 × 3/4 means 3 groups of 3/4. Multiply the numerator: 3 × 3.", "why": "3 × 3/4 = (3 × 3)/4 = 9/4."}, {"t": "5 × 2/3 = ?  (write as a fraction in simplest form)", "a": "10/3", "show": "10/3", "hint": "5 × 2/3 means 5 groups of 2/3. Multiply the numerator: 5 × 2.", "why": "5 × 2/3 = (5 × 2)/3 = 10/3."}, {"t": "2 × 3/8 = ?  (write as a fraction in simplest form)", "a": "3/4", "show": "3/4", "hint": "2 × 3/8 means 2 groups of 3/8. Multiply the numerator: 2 × 3.", "why": "2 × 3/8 = (2 × 3)/8 = 6/8 = 3/4."}, {"t": "3 × 2/7 = ?  (write as a fraction in simplest form)", "a": "6/7", "show": "6/7", "hint": "3 × 2/7 means 3 groups of 2/7. Multiply the numerator: 3 × 2.", "why": "3 × 2/7 = (3 × 2)/7 = 6/7."}, {"t": "Which is the same as 3 × 2/5?", "o": ["3/5 + 3/5", "2/5 + 2/5 + 2/5", "2/15"], "c": 1, "show": "2/5 + 2/5 + 2/5", "hint": "3 groups of 2/5.", "why": "3 × 2/5 means 2/5 + 2/5 + 2/5 = 6/5."}, {"t": "Which is the same as 4 × 3/10?", "o": ["3/10 + 3/10 + 3/10 + 3/10", "4/10 + 3/10", "12/40"], "c": 0, "show": "3/10 + 3/10 + 3/10 + 3/10", "hint": "4 groups of 3/10.", "why": "4 × 3/10 = 3/10 added four times = 12/10."}];const SECB=[{"t": "4 × 3/8 = ?  (write as a mixed number or whole number)", "a": "1 1/2", "show": "1 1/2", "hint": "First find 12/8, then change it to a mixed number.", "why": "4 × 3/8 = 12/8 = 1 1/2."}, {"t": "3 × 2/5 = ?  (write as a mixed number or whole number)", "a": "1 1/5", "show": "1 1/5", "hint": "First find 6/5, then change it to a mixed number.", "why": "3 × 2/5 = 6/5 = 1 1/5."}, {"t": "5 × 3/4 = ?  (write as a mixed number or whole number)", "a": "3 3/4", "show": "3 3/4", "hint": "First find 15/4, then change it to a mixed number.", "why": "5 × 3/4 = 15/4 = 3 3/4."}, {"t": "6 × 2/3 = ?  (write as a mixed number or whole number)", "a": "4", "show": "4", "hint": "First find 12/3, then change it to a mixed number.", "why": "6 × 2/3 = 12/3 = 4."}, {"t": "7 × 1/2 = ?  (write as a mixed number or whole number)", "a": "3 1/2", "show": "3 1/2", "hint": "First find 7/2, then change it to a mixed number.", "why": "7 × 1/2 = 7/2 = 3 1/2."}, {"t": "3 × 5/6 = ?  (write as a mixed number or whole number)", "a": "2 1/2", "show": "2 1/2", "hint": "First find 15/6, then change it to a mixed number.", "why": "3 × 5/6 = 15/6 = 2 1/2."}, {"t": "4 × 5/6 = ?  (write as a mixed number or whole number)", "a": "3 1/3", "show": "3 1/3", "hint": "First find 20/6, then change it to a mixed number.", "why": "4 × 5/6 = 20/6 = 3 1/3."}, {"t": "5 × 2/5 = ?  (write as a mixed number or whole number)", "a": "2", "show": "2", "hint": "First find 10/5, then change it to a mixed number.", "why": "5 × 2/5 = 10/5 = 2."}, {"t": "Each glass holds 3/4 cup of juice. How many cups of juice are in 3 glasses? (mixed number)", "a": "2 1/4", "show": "2 1/4", "hint": "3 groups of 3/4.", "why": "3 × 3/4 = 9/4 = 2 1/4 cups."}, {"t": "A recipe needs 2/3 cup of sugar. How much sugar is needed for 4 batches? (mixed number)", "a": "2 2/3", "show": "2 2/3", "hint": "4 groups of 2/3.", "why": "4 × 2/3 = 8/3 = 2 2/3 cups."}];const SECC=[{"t": "Ana runs 3/8 mile each day for 5 days. How many miles in all? (mixed number)", "a": "1 7/8", "show": "1 7/8", "hint": "5 × 3/8.", "why": "5 × 3/8 = 15/8 = 1 7/8 miles."}, {"t": "A board is 5/6 yard long. How long are 3 boards laid end to end? (mixed number)", "a": "2 1/2", "show": "2 1/2", "hint": "3 × 5/6 = 15/6.", "why": "3 × 5/6 = 15/6 = 5/2 = 2 1/2 yards."}, {"t": "Each bag holds 2/5 pound of rice. How many pounds are in 10 bags?", "a": "4", "show": "4", "hint": "10 × 2/5 = 20/5.", "why": "10 × 2/5 = 20/5 = 4 pounds."}, {"t": "A student says 4 × 2/5 = 8/20. What went wrong?", "o": ["Nothing, it is right", "The denominator should stay 5: 8/5", "It should be 6/5"], "c": 1, "show": "The denominator should stay 5: 8/5", "hint": "You are counting groups of fifths, not making smaller pieces.", "why": "Multiplying by a whole number changes how many pieces, not their size. 4 × 2/5 = 8/5."}, {"t": "How many 1/4 pieces are in 3 wholes?", "a": "12", "show": "12", "hint": "Each whole has 4 fourths.", "why": "3 × 4 = 12 fourths."}, {"t": "Which is greater, 4 × 1/3 or 3 × 1/2?", "o": ["4 × 1/3", "They are equal", "3 × 1/2"], "c": 2, "show": "3 × 1/2", "hint": "4 × 1/3 = 4/3 and 3 × 1/2 = 3/2.", "why": "4/3 = 8/6 and 3/2 = 9/6, so 3 × 1/2 is greater."}];
+function gcdf(a,b){return b?gcdf(b,a%b):a;}
+function fbar(n,d,col){let h='<div style="display:flex;max-width:420px;border:2px solid #17607A;border-radius:6px;overflow:hidden;margin:3px 0">';for(let i=0;i<d;i++)h+='<div style="flex:1;height:22px;background:'+(i<n?col:'#fff')+';'+(i?'border-left:1px solid #17607A':'')+'"></div>';return h+'</div>';}
+function fstr(n,d){const g=gcdf(n,d);n/=g;d/=g;if(d===1)return ''+n;return n+'/'+d;}
+function mstr(n,d){const g=gcdf(n,d);n/=g;d/=g;const w=Math.floor(n/d),r=n%d;if(!r)return ''+w;return (w?w+' ':'')+r+'/'+d;}
+
+function mulTool(){
+  const n=gv('un',1,12),a=gv('ua',1,12),b=gv('ub',2,12);const tn=n*a;
+  let bars='';for(let i=0;i<n;i++)bars+=fbar(Math.min(a,b),b,'#8FC4D6');
+  $('ur').innerHTML=bars+'<div class="out2"><b>'+n+' × '+a+'/'+b+'</b> means '+n+' groups of '+a+'/'+b+'.<br>'+Array(n).fill(a+'/'+b).join(' + ')+' = '+tn+'/'+b+'<br>Simplest form: <b>'+fstr(tn,b)+'</b>'+(tn>b?'<br>As a mixed number: <b>'+mstr(tn,b)+'</b>':'')+'</div>';
+}
+function rA(){secPage('a','<div class="card"><h1>A fraction times a whole number</h1><p class="small">About 15 minutes. Practice only. Nothing here is saved or graded.</p><div class="rule">A fraction like 5/4 is <b>5 × 1/4</b>. So a whole number times a fraction, like 3 × 2/5, is 3 groups of 2/5. <b>Multiply the whole number by the numerator and keep the denominator:</b> 3 × 2/5 = 6/5.</div>'
+ +'<h3>Try it</h3><div class="row"><input class="num" id="un" value="3" oninput="mulTool()" inputmode="numeric"><span>×</span><input class="num" id="ua" value="2" oninput="mulTool()" inputmode="numeric"><span>/</span><input class="num" id="ub" value="5" oninput="mulTool()" inputmode="numeric"></div><div id="ur"></div></div>',SECA);}
+function rB(){secPage('b','<div class="card"><h2>Mixed-number answers</h2><div class="rule">When the product is greater than 1, change it to a mixed number: 3 × 2/5 = 6/5 = 1 1/5. Enter answers like 2 1/4 with a space. A whole-number answer is just the number.</div></div>',SECB);}
+function rC(){secPage('c','<div class="card"><h2>Putting it together</h2><div class="rule">Word problems with equal groups: how many groups, and how much is in each group? Multiply, and keep the denominator.</div></div>',SECC,true);}
+
+const SECFNS=[rA,rB,rC];
+function INITS(){if($('un'))mulTool();}
+const ORAL=["Show that 5/4 equals 5 × 1/4 with a picture.", "Find 3 × 2/5 two ways: adding and multiplying.", "Why does the denominator stay the same when you multiply a fraction by a whole number?"];
+const WEEKNO=17;
+
+let SECBASE=0,SECTOTAL=0,ST=0;
+const MOM2=MOM;
+function momGate(cb){cb();} /* PIN turned off for now */
+function begin(){
+  const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(buildMom);return;}
+  ml.href=location.pathname+'?mom=1';ST=0;render();
+}
+
+function begin(){
+  const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(buildMom);return;}
+  ml.href=location.pathname+'?mom=1';ST=0;render();
+}
+function buildMom(){
+  let all='<div class="card" style="border-top-color:#C9972B"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Ryder.</p></div>';
+  SECFNS.forEach(fn=>{fn();all+=$('stage').innerHTML;});
+  all+='<div class="card"><h2>Check him on these, out loud</h2><ul>'+ORAL.map(x=>'<li>'+x+'</li>').join('')+'</ul><p class="small">If he does these well, tick them on his rung in Math Home. If he is solid, let him test out.</p></div>';
+  $('stage').innerHTML=all;$('bar').style.width='100%';INITS();
+}
+function bar(){$('bar').style.width=Math.round(ST/(SECFNS.length)*100)+'%';}
+function nav(last){if(MOM)return '';return '<div class="row" style="margin-top:14px"><button class="btn" id="nextbtn" onclick="nextSec()" disabled>'+(last?'Finish':'Next')+'</button><span class="small" id="cnt"></span></div>';}
+function nextSec(){ST++;render();window.scrollTo(0,0);}
+function listHTML(sec,arr){let h='';arr.forEach((q,i)=>{h+=qHTML(sec,i,q);});return h;}
+function render(){bar();QS={};SECBASE=ANSWERED;if(ST>=SECFNS.length){rDone();return;}SECFNS[ST]();INITS();upd();}
+function secPage(id,intro,items,last){SECTOTAL=items.length;$('stage').innerHTML=intro+'<div class="card"><h2>Check it</h2>'+listHTML(id,items)+nav(last)+'</div>';}
+function rDone(){
+  const pct=Math.round(FIRST/TOTAL*100);
+  $('stage').innerHTML='<div class="card"><h1>Done</h1><p>First-try correct: <span class="score">'+FIRST+' of '+TOTAL+'</span></p>'
+   +'<p>'+(pct>=85?'That is strong. Tell Mom you may be ready to test out of Week '+WEEKNO+'.':pct>=60?'Good start. Look again at anything you missed, then tell Mom.':'Go back through the rules with Mom before you test out.')+'</p>'
+   +'<h3>Now say these to Mom, out loud</h3><ul>'+ORAL.map(x=>'<li>'+x+'</li>').join('')+'</ul>'
+   +'<div class="row" style="margin-top:14px"><a class="btn" style="text-decoration:none" href="../wade-math-home.html#/kid/ryder">Back to Math Home</a><button class="btn alt" onclick="location.reload()">Do it again</button></div></div>';
+}
+function gv(id,lo,hi){let v=parseInt(norm($(id).value),10);return isNaN(v)?lo:Math.max(lo,Math.min(hi,v));}
+function fmt(n){return Number(n).toLocaleString('en-US');}
+begin();
+/* Mom view: back goes to Mom's lesson list */
+(function(){if(/[?&]mom=1/.test(location.search)){var b=document.querySelector('a.back');if(b){b.href=b.getAttribute('href').replace(/#\/kid\/(\w+)/,'#/mom/ladder/$1');b.textContent='\u2190 Lessons';}}})();
+</script>
+<script src="momnav.js"></script>
+</body>
+</html>
