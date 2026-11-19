@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ryder · Week 23 · Data and Line Plots</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--parch:#C8D0D8;--card:#F6F8FB;--forest:#204B3A;--ink:#1E2A24;--muted:#55604F;--line:#C3CCD7;--teal:#17607A;--teal-d:#0F4A5F;--ok:#2E7D4F;--bad:#A8323A;--tint:#E3F0F4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jost',system-ui,sans-serif;background:var(--parch);color:var(--ink);font-size:18px;line-height:1.45;min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:14px 14px 70px}
+.top{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:10px}
+.back{color:var(--teal);text-decoration:none;font-weight:600;font-size:15px;border:1px solid var(--teal);border-radius:10px;padding:6px 12px;background:#fff}
+.title{font-weight:700;font-size:20px;color:var(--teal-d);flex:1;text-align:center}
+.prog{height:8px;background:#fff;border:1px solid var(--line);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.prog i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+.card{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--teal);border-radius:14px;padding:18px;margin-bottom:16px}
+h1{font-size:30px;line-height:1.15;color:var(--teal-d)}
+h2{font-size:23px;line-height:1.2;color:var(--teal-d);margin-bottom:6px}
+h3{font-size:17px;color:var(--teal-d);margin:14px 0 6px}
+p{margin:8px 0}
+.small{font-size:15px;color:var(--muted)}
+.rule{background:var(--tint);border-left:5px solid var(--teal);border-radius:8px;padding:10px 14px;margin:10px 0;font-weight:500}
+.btn{font-family:inherit;font-weight:600;font-size:17px;border:0;border-radius:10px;padding:11px 20px;cursor:pointer;color:#fff;background:var(--teal)}
+.btn.alt{background:#fff;color:var(--teal);border:1px solid var(--teal)}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+input.num{font:600 22px Jost,sans-serif;padding:9px 12px;border:2px solid var(--line);border-radius:10px;width:190px;background:#fff;color:var(--ink)}
+input.num:focus{outline:none;border-color:var(--teal)}
+/* chart */
+.chart{display:flex;justify-content:center;gap:0;margin:12px 0 6px;overflow-x:auto;padding-bottom:4px}
+.cc{width:68px;flex:none;text-align:center}
+.cc .nm{font-size:12px;color:var(--muted);min-height:30px;line-height:1.1;display:flex;align-items:flex-end;justify-content:center;padding:0 2px}
+.cc .dg{font:700 34px Jost,sans-serif;background:#fff;border:2px solid var(--teal);border-radius:8px;margin:3px 2px;height:52px;display:flex;align-items:center;justify-content:center;color:var(--teal-d)}
+.cc .dg.z{color:#B9C7CC;border-color:#C9D6DA}
+.cc .vl{font-size:13px;font-weight:600;color:var(--ink);min-height:18px}
+.cm{width:14px;flex:none;font:700 34px Jost,sans-serif;align-self:center;margin-top:12px;color:var(--ink);text-align:center}
+.arrows{display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:var(--teal-d);margin:6px 8px 0;gap:10px;flex-wrap:wrap}
+.arrows span{background:var(--tint);border-radius:99px;padding:4px 12px}
+/* questions */
+.q{border-top:1px solid var(--line);padding:12px 0}
+.q:first-of-type{border-top:0}
+.q .t{font-weight:500;margin-bottom:6px}
+.q .res{margin-top:6px;font-size:16px;font-weight:600}
+.q.good .res{color:var(--ok)}.q.bad .res{color:var(--bad)}
+.q.good input{border-color:var(--ok);background:#EEF7F1}
+.opt{display:block;width:100%;text-align:left;font:500 17px Jost,sans-serif;padding:9px 12px;margin:5px 0;background:#fff;border:2px solid var(--line);border-radius:10px;cursor:pointer;color:var(--ink)}
+.opt:hover{border-color:var(--teal)}
+.opt.sym{display:inline-block;width:auto;min-width:76px;text-align:center;font-size:28px;font-weight:700;margin-right:8px}
+.opt.right{border-color:var(--ok);background:#EEF7F1}.opt.wrong{border-color:var(--bad);background:#FAEBEC}
+table.cmp{border-collapse:separate;border-spacing:3px;margin:10px auto}
+table.cmp td{width:42px;height:46px;text-align:center;font:700 26px Jost,sans-serif;background:#fff;border:2px solid var(--line);border-radius:7px}
+table.cmp td.cm{width:12px;border:0;background:none;padding:0}
+table.cmp td.hl{border-color:var(--teal);background:var(--tint);color:var(--teal-d)}
+table.cmp td.pl{height:auto;border:0;background:none;font:600 11px Jost,sans-serif;color:var(--muted);vertical-align:bottom;line-height:1.1}
+table.cmp td.lb{width:auto;border:0;background:none;font:600 14px Jost,sans-serif;color:var(--muted);text-align:right;padding-right:6px}
+.pbtn{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.pbtn button{font:600 15px Jost,sans-serif;padding:7px 11px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}.pbtn button.on{border-color:var(--teal);background:var(--tint)}
+.nl{width:100%;max-width:560px;display:block;margin:6px auto}
+table.tb{border-collapse:collapse;width:100%;margin:8px 0;font-size:16px}
+table.tb td,table.tb th{border:1px solid var(--line);padding:7px 10px;text-align:left;background:#fff}
+table.tb th{background:var(--tint);color:var(--teal-d)}
+.big{font:700 28px Jost,sans-serif;color:var(--teal-d)}
+.score{font:700 44px Jost,sans-serif;color:var(--teal-d)}
+details{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:14px}
+summary{cursor:pointer;font-weight:600;color:var(--teal-d)}
+ul{margin:6px 0 6px 22px}
+.chain{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 6px;margin:10px 0;font-weight:700;color:var(--teal-d)}
+.chain .v{background:#fff;border:2px solid var(--teal);border-radius:8px;padding:6px 9px;font-size:18px}
+.chain .x{font-size:13px;background:var(--tint);border-radius:99px;padding:3px 8px;color:var(--teal-d)}
+.dpick{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.dpick button{width:38px;height:38px;border-radius:8px;border:2px solid var(--line);background:#fff;font:700 18px Jost,sans-serif;cursor:pointer;color:var(--ink)}
+.dpick button.on{border-color:var(--teal);background:var(--tint)}
+.eq{text-align:center;font:700 24px Jost,sans-serif;color:var(--teal-d);margin:6px 0;min-height:34px}
+.nlw{width:100%;overflow-x:auto}
+.tbtn{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.tbtn button{font:600 15px Jost,sans-serif;padding:7px 11px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+.am{border-collapse:collapse;margin:8px auto;font-size:18px}.am td,.am th{border:2px solid var(--line);padding:8px 12px;text-align:center;min-width:64px}.am th{background:#E3EAF0;color:var(--main-d)}.am td.hl{background:#EAF3F7;font-weight:700}
+.steps{margin:8px 0;padding-left:22px}.steps li{margin:4px 0}
+.out2{background:#F3F7FA;border:2px solid var(--line);border-radius:12px;padding:10px 14px;margin:10px 0}
+.sv{display:block;margin:8px auto;max-width:100%}
+
+@media(max-width:560px){body{font-size:17px}.cc{width:46px}.cc .dg{font-size:24px;height:42px}.cc .nm{font-size:10px}.cc .vl{font-size:10px}.cm{width:8px;font-size:24px}input.num{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="back" href="../wade-math-home.html#/kid/ryder">← Math Home</a><div class="title">Data and Line Plots</div><a class="back" id="modeLink" href="#">Mom view</a></div>
+  <div class="prog"><i id="bar"></i></div>
+  <div id="stage"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const PLACES=['Millions','Hundred thousands','Ten thousands','Thousands','Hundreds','Tens','Ones'];
+const ONES=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const TENS=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+function fmt(n){return String(n).replace(/\B(?=(\d{3})+$)/g,',');}
+function w999(n){let s=[];if(n>=100){s.push(ONES[Math.floor(n/100)]+' hundred');n%=100;}if(n>=20){s.push(TENS[Math.floor(n/10)]+(n%10?'-'+ONES[n%10]:''));}else if(n>0||!s.length)s.push(ONES[n]);return s.join(' ');}
+function toWords(n){
+  if(n===0)return 'zero';
+  if(n===1000000)return 'one million';
+  const th=Math.floor(n/1000),r=n%1000;let out=[];
+  if(th)out.push(w999(th)+' thousand');
+  if(r)out.push(w999(r));
+  return out.join(', ');
+}
+function expanded(n){
+  const s=String(n),L=s.length,parts=[];
+  for(let i=0;i<L;i++){if(s[i]!=='0')parts.push(fmt(s[i]+'0'.repeat(L-1-i)));}
+  return parts.join(' + ');
+}
+function chartHTML(n){
+  const s=String(n).padStart(7,'0');let h='<div class="chart">';
+  let lead=true;
+  for(let i=0;i<7;i++){
+    if(s[i]!=='0')lead=false;
+    const show=!lead||i===6;
+    const val=s[i]==='0'?'':fmt(s[i]+'0'.repeat(6-i));
+    h+='<div class="cc"><div class="nm">'+PLACES[i]+'</div><div class="dg'+(show?'':' z')+'">'+(show?s[i]:'0')+'</div><div class="vl">'+(show?val:'')+'</div></div>';
+    if(i===0||i===3)h+='<div class="cm">'+((i===3||n>=1000000)?',':'')+'</div>';
+  }
+  return h+'</div>';
+}
+/* ---------- question engine ---------- */
+const MOM=/[?&]mom=1/.test(location.search);
+let QS={};let TOTAL=0;let FIRST=0;let ANSWERED=0;
+function norm(v){return String(v==null?'':v).replace(/[−–]/g,'-').replace(/[,\s$]/g,'');}
+function qHTML(sec,i,q){
+  if(MOM){
+    let h='<div class="q good"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+    if(q.o)q.o.forEach((o,j)=>{h+='<div class="opt'+(q.sym?' sym':'')+(j===q.c?' right':'')+'" style="cursor:default">'+o+(j===q.c?' ✓':'')+'</div>';});
+    return h+'<div class="res">Answer: '+q.show+(q.why?'. '+q.why:'')+'</div></div>';
+  }
+  const id=sec+i;QS[id]={q:q,tries:0,done:false};TOTAL++;
+  let h='<div class="q" id="q-'+id+'"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+  if(q.o){q.o.forEach((o,j)=>{h+='<button class="opt'+(q.sym?' sym':'')+'" onclick="pickQ(\''+id+'\','+j+',this)">'+o+'</button>';});}
+  else h+='<div class="row"><input class="num" id="in-'+id+'" inputmode="'+kpFor(q.a)+'" autocomplete="off" placeholder="Your answer" onkeydown="if(event.key===\'Enter\')checkQ(\''+id+'\')"><button class="btn" onclick="checkQ(\''+id+'\')">Check</button></div>';
+  return h+'<div class="res" id="res-'+id+'"></div></div>';
+}
+function finishQ(id,ok){
+  const s=QS[id];if(s.done)return;
+  s.tries++;
+  const el=$('q-'+id),res=$('res-'+id);
+  if(ok){
+    s.done=true;ANSWERED++;if(s.tries===1)FIRST++;
+    el.className='q good';res.textContent='✓ Correct'+(s.q.why?'. '+s.q.why:'');
+  }else{
+    el.className='q bad';
+    if(s.tries>=2){s.done=true;ANSWERED++;res.textContent='The answer is '+s.q.show+'. '+(s.q.why||'')+' Ask Mom if you are not sure why.';
+      const i=$('in-'+id);if(i)i.disabled=true;
+    }else res.textContent='Not quite. '+(s.q.hint||'Look at the rule above and try again.');
+  }
+  upd();
+}
+
+function parseV(s){
+  s=String(s==null?'':s).trim().replace(/[−–]/g,'-').replace(/,/g,'');let m;
+  if(m=s.match(/^(-?)(\d+)\s+(\d+)\/(\d+)$/)){const sg=m[1]?-1:1,w=+m[2],n=+m[3],d=+m[4];if(!d)return null;return {form:'mixed',n:sg*(w*d+n),d:d,fn:n,fd:d};}
+  if(m=s.match(/^(-?\d+)\/(\d+)$/)){const d=+m[2];if(!d)return null;return {form:'frac',n:+m[1],d:d};}
+  if(m=s.match(/^(-?)(\d*)\.(\d+)$/)){const sg=m[1]?-1:1;const fd=Math.pow(10,m[3].length);return {form:'dec',n:sg*(+(m[2]||0)*fd+ +m[3]),d:fd};}
+  if(m=s.match(/^(-?\d+)$/))return {form:'int',n:+m[1],d:1};
+  if(m=s.match(/^(\d+)\s*[rR]\s*(\d+)$/))return {form:'rem',q:+m[1],r:+m[2]};
+  return null;
+}
+function gcdv(a,b){a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a;}
+function eqv(raw,ans){
+  const x=parseV(raw),y=parseV(ans);if(!x||!y)return false;
+  if(y.form==='rem')return x.form==='rem'&&x.q===y.q&&x.r===y.r;
+  if(x.form==='rem')return false;
+  if(x.n*y.d!==y.n*x.d)return false;
+  if(y.form==='int'||y.form==='dec')return x.form==='int'||x.form==='dec';
+  if(y.form==='frac')return x.form==='frac'&&gcdv(x.n,x.d)===1;
+  if(y.form==='mixed')return x.form==='mixed'&&x.fn<x.fd&&gcdv(x.fn,x.fd)===1;
+  return false;
+}
+function kpFor(a){a=String(a);return /[\/ ]/.test(a)||/r/i.test(a)?'text':/\./.test(a)?'decimal':'numeric';}
+function checkQ(id){
+  const s=QS[id];if(s.done)return;
+  const v=norm($('in-'+id).value);if(!v)return;
+  finishQ(id,eqv($('in-'+id).value,s.q.a));
+}
+function pickQ(id,j,btn){
+  const s=QS[id];if(s.done)return;
+  const ok=j===s.q.c;
+  btn.className='opt '+(ok?'right':'wrong');
+  finishQ(id,ok);
+  if(s.done&&!ok){[].slice.call($('q-'+id).querySelectorAll('.opt'))[s.q.c].className='opt right';}
+}
+function upd(){const b=$('nextbtn');if(b)b.disabled=ANSWERED-SECBASE<SECTOTAL;const c=$('cnt');if(c)c.textContent=ANSWERED-SECBASE+' of '+SECTOTAL+' answered';}
+
+/* ---------- sections ---------- */
+const SECA=[{"t": "Ten leaves were measured in inches: 1/2, 1/4, 3/4, 1/2, 3/4, 1/2, 1, 1/4, 3/4, 1/2. How many leaves measured 1/2 inch?", "a": "4", "show": "4", "hint": "Count the 1/2s.", "why": "There are 4 measurements of 1/2."}, {"t": "Using the same leaf data, how many leaves measured 3/4 inch?", "a": "3", "show": "3", "hint": "Count the 3/4s.", "why": "There are 3 measurements of 3/4."}, {"t": "How many leaves were longer than 1/2 inch?", "a": "4", "show": "4", "hint": "Count the 3/4s and the 1s.", "why": "3 + 1 = 4 leaves."}, {"t": "What is the difference between the longest and the shortest leaf? (simplest form)", "a": "3/4", "show": "3/4", "hint": "Longest is 1. Shortest is 1/4.", "why": "1 − 1/4 = 3/4 inch."}, {"t": "If you put all the 1/2-inch leaves end to end, how many inches long is the line? (mixed number or whole number)", "a": "2", "show": "2", "hint": "4 × 1/2.", "why": "4 × 1/2 = 2 inches."}, {"t": "What is the total length of all ten leaves in inches? (mixed number)", "a": "5 3/4", "show": "5 3/4", "hint": "Add 2 × 1/4, 4 × 1/2, 3 × 3/4 and 1.", "why": "1/2 + 2 + 9/4 + 1 = 23/4 = 5 3/4 inches."}, {"t": "What is the mode (the most common length) of the leaf data?", "o": ["3/4 inch", "1/2 inch", "1 inch"], "c": 1, "show": "1/2 inch", "hint": "Which length has the most Xs?", "why": "1/2 inch has 4 Xs, more than any other."}, {"t": "On a line plot with marks at 1/4, 1/2, 3/4 and 1, how many Xs go above the mark 1/4?", "o": ["2", "4", "1"], "c": 0, "show": "2", "hint": "Count the 1/4 measurements in the data.", "why": "There are 2 leaves of 1/4 inch."}];const SECB=[{"t": "Nine ribbons were measured in feet: 2 1/2, 2, 2 1/4, 2 1/2, 2 3/4, 2, 2 1/2, 2 1/4, 3. How many ribbons are longer than 2 1/4 feet?", "a": "5", "show": "5", "hint": "Count the 2 1/2s, the 2 3/4 and the 3.", "why": "There are 3 of 2 1/2, 1 of 2 3/4 and 1 of 3, so 5."}, {"t": "How many ribbons are exactly 2 feet long?", "a": "2", "show": "2", "hint": "Count the 2s.", "why": "There are 2."}, {"t": "What is the difference between the longest and shortest ribbon? (mixed number or whole number)", "a": "1", "show": "1", "hint": "Longest is 3 and shortest is 2.", "why": "3 − 2 = 1 foot."}, {"t": "If all the 2 1/2-foot ribbons are cut into pieces and laid end to end, how many feet is that? (mixed number)", "a": "7 1/2", "show": "7 1/2", "hint": "3 × 2 1/2.", "why": "3 × 5/2 = 15/2 = 7 1/2 feet."}, {"t": "What is the total length of all nine ribbons in feet? (mixed number)", "a": "21 3/4", "show": "21 3/4", "hint": "Add all nine lengths.", "why": "The total is 21 3/4 feet."}, {"t": "On a line plot, what does each X stand for?", "o": ["One whole inch", "One measurement", "One category"], "c": 1, "show": "One measurement", "hint": "Each X is one piece of data.", "why": "Each X is one data value."}, {"t": "A line plot has marks 2, 2 1/4, 2 1/2, 2 3/4, 3. How far apart are neighboring marks?", "o": ["1/2", "1/8", "1/4"], "c": 2, "show": "1/4", "hint": "2 to 2 1/4 is how far?", "why": "Each step is 1/4."}, {"t": "Which fraction is halfway between 2 and 3 on the plot?", "o": ["2 1/2", "2 1/4", "2 3/4"], "c": 0, "show": "2 1/2", "hint": "Halfway is half of the distance of 1.", "why": "Halfway between 2 and 3 is 2 1/2."}];const SECC=[{"t": "Which is a good survey question?", "o": ["What is your favorite fruit: apple, banana, grape or orange?", "Do you like stuff?", "Which fruit is best, and why, and what color?"], "c": 0, "show": "What is your favorite fruit: apple, banana, grape or orange?", "hint": "A good survey question is clear and has choices that are easy to count.", "why": "It is clear and has a short list of choices, so answers are easy to count."}, {"t": "Which is a statistical question (one that expects different answers)?", "o": ["How many pets does Ben have?", "How many days are in a week?", "How many pets does each student in our class have?"], "c": 2, "show": "How many pets does each student in our class have?", "hint": "A statistical question has many answers.", "why": "Students have different numbers of pets, so the answers vary."}, {"t": "A tally table shows red 6, blue 9, green 4 and yellow 5. How many people answered in all?", "a": "24", "show": "24", "hint": "Add all four.", "why": "6 + 9 + 4 + 5 = 24."}, {"t": "Using that table, how many more people chose blue than green?", "a": "5", "show": "5", "hint": "9 − 4.", "why": "9 − 4 = 5."}, {"t": "Which graph is best for comparing the number of people who chose each color?", "o": ["A bar graph", "A line plot of lengths", "A clock"], "c": 0, "show": "A bar graph", "hint": "Categories are compared with bars.", "why": "A bar graph compares amounts for different categories."}, {"t": "A line plot is best for showing:", "o": ["Favorite colors", "Measurements, like lengths, along a number line", "Names of students"], "c": 1, "show": "Measurements, like lengths, along a number line", "hint": "Line plots use a number line.", "why": "A line plot places each measurement on a number line."}];
+function gcdf(a,b){return b?gcdf(b,a%b):a;}
+function fbar(n,d,col){let h='<div style="display:flex;max-width:420px;border:2px solid #17607A;border-radius:6px;overflow:hidden;margin:3px 0">';for(let i=0;i<d;i++)h+='<div style="flex:1;height:22px;background:'+(i<n?col:'#fff')+';'+(i?'border-left:1px solid #17607A':'')+'"></div>';return h+'</div>';}
+function fstr(n,d){const g=gcdf(n,d);n/=g;d/=g;if(d===1)return ''+n;return n+'/'+d;}
+function mstr(n,d){const g=gcdf(n,d);n/=g;d/=g;const w=Math.floor(n/d),r=n%d;if(!r)return ''+w;return (w?w+' ':'')+r+'/'+d;}
+
+function parseF(s){s=s.trim();let m;if(m=s.match(/^(\d+)\s+(\d+)\/(\d+)$/))return +m[1]+ +m[2]/+m[3];if(m=s.match(/^(\d+)\/(\d+)$/))return +m[1]/+m[2];if(/^\d+(\.\d+)?$/.test(s))return +s;return NaN;}
+function lpTool(){
+  const raw=$('ld').value.split(',').map(x=>x.trim()).filter(x=>x),vals=raw.map(parseF);
+  if(!raw.length||vals.some(isNaN)){$('lr').innerHTML='<div class="out2">Type measurements separated by commas, like 1/2, 3/4, 1/2, 1</div>';return;}
+  const key=v=>Math.round(v*8);const mn=Math.floor(Math.min(...vals)),mx=Math.ceil(Math.max(...vals));
+  const cnt={};vals.forEach(v=>cnt[key(v)]=(cnt[key(v)]||0)+1);const maxc=Math.max(...Object.values(cnt));
+  const W=420,x0=24,x1=W-24,n=(mx-mn)*8,H=40+maxc*18;let s='<svg viewBox="0 0 '+W+' '+(H+34)+'" class="sv" style="max-width:440px"><line x1="'+x0+'" y1="'+H+'" x2="'+x1+'" y2="'+H+'" stroke="#17607A" stroke-width="3"/>';
+  for(let i=0;i<=n;i++){const x=x0+i*(x1-x0)/n,k=(mn*8+i);const big=i%2===0;s+='<line x1="'+x+'" y1="'+H+'" x2="'+x+'" y2="'+(H+(big?10:6))+'" stroke="#17607A" stroke-width="2"/>';if(i%2===0){const w=Math.floor(k/8),r=k%8;const g=gcdf(r,8);const lab=r===0?''+w:(w?w+' ':'')+(r/g)+'/'+(8/g);s+='<text x="'+x+'" y="'+(H+26)+'" text-anchor="middle" font-size="11" fill="#2B3A44">'+lab+'</text>';}}
+  Object.keys(cnt).forEach(k=>{const i=k-mn*8,x=x0+i*(x1-x0)/n;for(let j=0;j<cnt[k];j++)s+='<text x="'+x+'" y="'+(H-8-j*18)+'" text-anchor="middle" font-size="18" font-weight="700" fill="#17607A">×</text>';});
+  s+='</svg>';
+  const sorted=vals.slice().sort((a,b)=>a-b);const modeK=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])[0];
+  const fr=v=>{const k=Math.round(v*8),w=Math.floor(k/8),r=k%8,g=gcdf(r,8);return r===0?''+w:(w?w+' ':'')+(r/g)+'/'+(8/g);};
+  $('lr').innerHTML=s+'<div class="out2">'+vals.length+' measurements. Longest: <b>'+fr(sorted[sorted.length-1])+'</b>. Shortest: <b>'+fr(sorted[0])+'</b>. Difference: <b>'+fr(sorted[sorted.length-1]-sorted[0])+'</b>. Most common: <b>'+fr(modeK/8)+'</b> ('+cnt[modeK]+' Xs).</div>';
+}
+function rA(){secPage('a','<div class="card"><h1>Line plots with fractions</h1><p class="small">About 15 minutes. Practice only. Nothing here is saved or graded.</p><div class="rule">A <b>line plot</b> puts an <b>X</b> above a number line for each measurement. Measurements here are in halves, fourths and eighths. To use one, count the Xs, then add or subtract the fractions. Enter mixed numbers like 2 1/4 with a space, in simplest form.</div>'
+ +'<h3>Make a line plot</h3><p class="small">Type measurements with commas. Use fractions like 3/4 or mixed numbers like 2 1/4.</p><input id="ld" value="1/2, 1/4, 3/4, 1/2, 3/4, 1/2, 1, 1/4, 3/4, 1/2" oninput="lpTool()" style="width:100%;font:600 17px Jost,sans-serif;padding:8px;border:2px solid var(--line);border-radius:9px"><div id="lr"></div></div>',SECA);}
+function rB(){secPage('b','<div class="card"><h2>More line plot problems</h2><div class="rule">Spot the question: how many? (count Xs). Longer than? (count Xs to the right). How much longer? (subtract). All together? (add every X, or multiply when several Xs share a mark).</div></div>',SECB);}
+function rC(){secPage('c','<div class="card"><h2>Surveys and graphs</h2><div class="rule">A good survey question is clear and has choices that are easy to count. Show the answers in a table or a bar graph. Use a line plot when the data are measurements on a number line.</div></div>',SECC,true);}
+
+const SECFNS=[rA,rB,rC];
+function INITS(){if($('ld'))lpTool();}
+const ORAL=["Make a line plot of 1/2, 3/4, 1/2, 1 and tell what it shows.", "How do you find the difference between the longest and shortest measurement?", "Write a good survey question and say how you would show the answers."];
+const WEEKNO=23;
+
+let SECBASE=0,SECTOTAL=0,ST=0;
+const MOM2=MOM;
+function momGate(cb){cb();} /* PIN turned off for now */
+function begin(){
+  const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(buildMom);return;}
+  ml.href=location.pathname+'?mom=1';ST=0;render();
+}
+
+function begin(){
+  const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(buildMom);return;}
+  ml.href=location.pathname+'?mom=1';ST=0;render();
+}
+function buildMom(){
+  let all='<div class="card" style="border-top-color:#C9972B"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Ryder.</p></div>';
+  SECFNS.forEach(fn=>{fn();all+=$('stage').innerHTML;});
+  all+='<div class="card"><h2>Check him on these, out loud</h2><ul>'+ORAL.map(x=>'<li>'+x+'</li>').join('')+'</ul><p class="small">If he does these well, tick them on his rung in Math Home. If he is solid, let him test out.</p></div>';
+  $('stage').innerHTML=all;$('bar').style.width='100%';INITS();
+}
+function bar(){$('bar').style.width=Math.round(ST/(SECFNS.length)*100)+'%';}
+function nav(last){if(MOM)return '';return '<div class="row" style="margin-top:14px"><button class="btn" id="nextbtn" onclick="nextSec()" disabled>'+(last?'Finish':'Next')+'</button><span class="small" id="cnt"></span></div>';}
+function nextSec(){ST++;render();window.scrollTo(0,0);}
+function listHTML(sec,arr){let h='';arr.forEach((q,i)=>{h+=qHTML(sec,i,q);});return h;}
+function render(){bar();QS={};SECBASE=ANSWERED;if(ST>=SECFNS.length){rDone();return;}SECFNS[ST]();INITS();upd();}
+function secPage(id,intro,items,last){SECTOTAL=items.length;$('stage').innerHTML=intro+'<div class="card"><h2>Check it</h2>'+listHTML(id,items)+nav(last)+'</div>';}
+function rDone(){
+  const pct=Math.round(FIRST/TOTAL*100);
+  $('stage').innerHTML='<div class="card"><h1>Done</h1><p>First-try correct: <span class="score">'+FIRST+' of '+TOTAL+'</span></p>'
+   +'<p>'+(pct>=85?'That is strong. Tell Mom you may be ready to test out of Week '+WEEKNO+'.':pct>=60?'Good start. Look again at anything you missed, then tell Mom.':'Go back through the rules with Mom before you test out.')+'</p>'
+   +'<h3>Now say these to Mom, out loud</h3><ul>'+ORAL.map(x=>'<li>'+x+'</li>').join('')+'</ul>'
+   +'<div class="row" style="margin-top:14px"><a class="btn" style="text-decoration:none" href="../wade-math-home.html#/kid/ryder">Back to Math Home</a><button class="btn alt" onclick="location.reload()">Do it again</button></div></div>';
+}
+function gv(id,lo,hi){let v=parseInt(norm($(id).value),10);return isNaN(v)?lo:Math.max(lo,Math.min(hi,v));}
+function fmt(n){return Number(n).toLocaleString('en-US');}
+begin();
+/* Mom view: back goes to Mom's lesson list */
+(function(){if(/[?&]mom=1/.test(location.search)){var b=document.querySelector('a.back');if(b){b.href=b.getAttribute('href').replace(/#\/kid\/(\w+)/,'#/mom/ladder/$1');b.textContent='\u2190 Lessons';}}})();
+</script>
+<script src="momnav.js"></script>
+</body>
+</html>

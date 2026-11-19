@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ryder · Week 20 · Decimal Arithmetic</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--parch:#C8D0D8;--card:#F6F8FB;--forest:#204B3A;--ink:#1E2A24;--muted:#55604F;--line:#C3CCD7;--teal:#17607A;--teal-d:#0F4A5F;--ok:#2E7D4F;--bad:#A8323A;--tint:#E3F0F4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jost',system-ui,sans-serif;background:var(--parch);color:var(--ink);font-size:18px;line-height:1.45;min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:14px 14px 70px}
+.top{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:10px}
+.back{color:var(--teal);text-decoration:none;font-weight:600;font-size:15px;border:1px solid var(--teal);border-radius:10px;padding:6px 12px;background:#fff}
+.title{font-weight:700;font-size:20px;color:var(--teal-d);flex:1;text-align:center}
+.prog{height:8px;background:#fff;border:1px solid var(--line);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.prog i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+.card{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--teal);border-radius:14px;padding:18px;margin-bottom:16px}
+h1{font-size:30px;line-height:1.15;color:var(--teal-d)}
+h2{font-size:23px;line-height:1.2;color:var(--teal-d);margin-bottom:6px}
+h3{font-size:17px;color:var(--teal-d);margin:14px 0 6px}
+p{margin:8px 0}
+.small{font-size:15px;color:var(--muted)}
+.rule{background:var(--tint);border-left:5px solid var(--teal);border-radius:8px;padding:10px 14px;margin:10px 0;font-weight:500}
+.btn{font-family:inherit;font-weight:600;font-size:17px;border:0;border-radius:10px;padding:11px 20px;cursor:pointer;color:#fff;background:var(--teal)}
+.btn.alt{background:#fff;color:var(--teal);border:1px solid var(--teal)}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+input.num{font:600 22px Jost,sans-serif;padding:9px 12px;border:2px solid var(--line);border-radius:10px;width:190px;background:#fff;color:var(--ink)}
+input.num:focus{outline:none;border-color:var(--teal)}
+/* chart */
+.chart{display:flex;justify-content:center;gap:0;margin:12px 0 6px;overflow-x:auto;padding-bottom:4px}
+.cc{width:68px;flex:none;text-align:center}
+.cc .nm{font-size:12px;color:var(--muted);min-height:30px;line-height:1.1;display:flex;align-items:flex-end;justify-content:center;padding:0 2px}
+.cc .dg{font:700 34px Jost,sans-serif;background:#fff;border:2px solid var(--teal);border-radius:8px;margin:3px 2px;height:52px;display:flex;align-items:center;justify-content:center;color:var(--teal-d)}
+.cc .dg.z{color:#B9C7CC;border-color:#C9D6DA}
+.cc .vl{font-size:13px;font-weight:600;color:var(--ink);min-height:18px}
+.cm{width:14px;flex:none;font:700 34px Jost,sans-serif;align-self:center;margin-top:12px;color:var(--ink);text-align:center}
+.arrows{display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:var(--teal-d);margin:6px 8px 0;gap:10px;flex-wrap:wrap}
+.arrows span{background:var(--tint);border-radius:99px;padding:4px 12px}
+/* questions */
+.q{border-top:1px solid var(--line);padding:12px 0}
+.q:first-of-type{border-top:0}
+.q .t{font-weight:500;margin-bottom:6px}
+.q .res{margin-top:6px;font-size:16px;font-weight:600}
+.q.good .res{color:var(--ok)}.q.bad .res{color:var(--bad)}
+.q.good input{border-color:var(--ok);background:#EEF7F1}
+.opt{display:block;width:100%;text-align:left;font:500 17px Jost,sans-serif;padding:9px 12px;margin:5px 0;background:#fff;border:2px solid var(--line);border-radius:10px;cursor:pointer;color:var(--ink)}
+.opt:hover{border-color:var(--teal)}
+.opt.sym{display:inline-block;width:auto;min-width:76px;text-align:center;font-size:28px;font-weight:700;margin-right:8px}
+.opt.right{border-color:var(--ok);background:#EEF7F1}.opt.wrong{border-color:var(--bad);background:#FAEBEC}
+table.cmp{border-collapse:separate;border-spacing:3px;margin:10px auto}
+table.cmp td{width:42px;height:46px;text-align:center;font:700 26px Jost,sans-serif;background:#fff;border:2px solid var(--line);border-radius:7px}
+table.cmp td.cm{width:12px;border:0;background:none;padding:0}
+table.cmp td.hl{border-color:var(--teal);background:var(--tint);color:var(--teal-d)}
+table.cmp td.pl{height:auto;border:0;background:none;font:600 11px Jost,sans-serif;color:var(--muted);vertical-align:bottom;line-height:1.1}
+table.cmp td.lb{width:auto;border:0;background:none;font:600 14px Jost,sans-serif;color:var(--muted);text-align:right;padding-right:6px}
+.pbtn{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.pbtn button{font:600 15px Jost,sans-serif;padding:7px 11px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}.pbtn button.on{border-color:var(--teal);background:var(--tint)}
+.nl{width:100%;max-width:560px;display:block;margin:6px auto}
+table.tb{border-collapse:collapse;width:100%;margin:8px 0;font-size:16px}
+table.tb td,table.tb th{border:1px solid var(--line);padding:7px 10px;text-align:left;background:#fff}
+table.tb th{background:var(--tint);color:var(--teal-d)}
+.big{font:700 28px Jost,sans-serif;color:var(--teal-d)}
+.score{font:700 44px Jost,sans-serif;color:var(--teal-d)}
+details{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:14px}
+summary{cursor:pointer;font-weight:600;color:var(--teal-d)}
+ul{margin:6px 0 6px 22px}
+.chain{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 6px;margin:10px 0;font-weight:700;color:var(--teal-d)}
+.chain .v{background:#fff;border:2px solid var(--teal);border-radius:8px;padding:6px 9px;font-size:18px}
+.chain .x{font-size:13px;background:var(--tint);border-radius:99px;padding:3px 8px;color:var(--teal-d)}
+.dpick{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.dpick button{width:38px;height:38px;border-radius:8px;border:2px solid var(--line);background:#fff;font:700 18px Jost,sans-serif;cursor:pointer;color:var(--ink)}
+.dpick button.on{border-color:var(--teal);background:var(--tint)}
+.eq{text-align:center;font:700 24px Jost,sans-serif;color:var(--teal-d);margin:6px 0;min-height:34px}
+.nlw{width:100%;overflow-x:auto}
+.tbtn{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.tbtn button{font:600 15px Jost,sans-serif;padding:7px 11px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+.am{border-collapse:collapse;margin:8px auto;font-size:18px}.am td,.am th{border:2px solid var(--line);padding:8px 12px;text-align:center;min-width:64px}.am th{background:#E3EAF0;color:var(--main-d)}.am td.hl{background:#EAF3F7;font-weight:700}
+.steps{margin:8px 0;padding-left:22px}.steps li{margin:4px 0}
+.out2{background:#F3F7FA;border:2px solid var(--line);border-radius:12px;padding:10px 14px;margin:10px 0}
+.sv{display:block;margin:8px auto;max-width:100%}
+
+@media(max-width:560px){body{font-size:17px}.cc{width:46px}.cc .dg{font-size:24px;height:42px}.cc .nm{font-size:10px}.cc .vl{font-size:10px}.cm{width:8px;font-size:24px}input.num{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="back" href="../wade-math-home.html#/kid/ryder">← Math Home</a><div class="title">Decimal Arithmetic</div><a class="back" id="modeLink" href="#">Mom view</a></div>
+  <div class="prog"><i id="bar"></i></div>
+  <div id="stage"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const PLACES=['Millions','Hundred thousands','Ten thousands','Thousands','Hundreds','Tens','Ones'];
+const ONES=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const TENS=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+function fmt(n){return String(n).replace(/\B(?=(\d{3})+$)/g,',');}
+function w999(n){let s=[];if(n>=100){s.push(ONES[Math.floor(n/100)]+' hundred');n%=100;}if(n>=20){s.push(TENS[Math.floor(n/10)]+(n%10?'-'+ONES[n%10]:''));}else if(n>0||!s.length)s.push(ONES[n]);return s.join(' ');}
+function toWords(n){
+  if(n===0)return 'zero';
+  if(n===1000000)return 'one million';
+  const th=Math.floor(n/1000),r=n%1000;let out=[];
+  if(th)out.push(w999(th)+' thousand');
+  if(r)out.push(w999(r));
+  return out.join(', ');
+}
+function expanded(n){
+  const s=String(n),L=s.length,parts=[];
+  for(let i=0;i<L;i++){if(s[i]!=='0')parts.push(fmt(s[i]+'0'.repeat(L-1-i)));}
+  return parts.join(' + ');
+}
+function chartHTML(n){
+  const s=String(n).padStart(7,'0');let h='<div class="chart">';
+  let lead=true;
+  for(let i=0;i<7;i++){
+    if(s[i]!=='0')lead=false;
+    const show=!lead||i===6;
+    const val=s[i]==='0'?'':fmt(s[i]+'0'.repeat(6-i));
+    h+='<div class="cc"><div class="nm">'+PLACES[i]+'</div><div class="dg'+(show?'':' z')+'">'+(show?s[i]:'0')+'</div><div class="vl">'+(show?val:'')+'</div></div>';
+    if(i===0||i===3)h+='<div class="cm">'+((i===3||n>=1000000)?',':'')+'</div>';
+  }
+  return h+'</div>';
+}
+/* ---------- question engine ---------- */
+const MOM=/[?&]mom=1/.test(location.search);
+let QS={};let TOTAL=0;let FIRST=0;let ANSWERED=0;
+function norm(v){return String(v==null?'':v).replace(/[−–]/g,'-').replace(/[,\s$]/g,'');}
+function qHTML(sec,i,q){
+  if(MOM){
+    let h='<div class="q good"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+    if(q.o)q.o.forEach((o,j)=>{h+='<div class="opt'+(q.sym?' sym':'')+(j===q.c?' right':'')+'" style="cursor:default">'+o+(j===q.c?' ✓':'')+'</div>';});
+    return h+'<div class="res">Answer: '+q.show+(q.why?'. '+q.why:'')+'</div></div>';
+  }
+  const id=sec+i;QS[id]={q:q,tries:0,done:false};TOTAL++;
+  let h='<div class="q" id="q-'+id+'"><div class="t">'+(i+1)+'. '+q.t+'</div>';
+  if(q.o){q.o.forEach((o,j)=>{h+='<button class="opt'+(q.sym?' sym':'')+'" onclick="pickQ(\''+id+'\','+j+',this)">'+o+'</button>';});}
+  else h+='<div class="row"><input class="num" id="in-'+id+'" inputmode="'+kpFor(q.a)+'" autocomplete="off" placeholder="Your answer" onkeydown="if(event.key===\'Enter\')checkQ(\''+id+'\')"><button class="btn" onclick="checkQ(\''+id+'\')">Check</button></div>';
+  return h+'<div class="res" id="res-'+id+'"></div></div>';
+}
+function finishQ(id,ok){
+  const s=QS[id];if(s.done)return;
+  s.tries++;
+  const el=$('q-'+id),res=$('res-'+id);
+  if(ok){
+    s.done=true;ANSWERED++;if(s.tries===1)FIRST++;
+    el.className='q good';res.textContent='✓ Correct'+(s.q.why?'. '+s.q.why:'');
+  }else{
+    el.className='q bad';
+    if(s.tries>=2){s.done=true;ANSWERED++;res.textContent='The answer is '+s.q.show+'. '+(s.q.why||'')+' Ask Mom if you are not sure why.';
+      const i=$('in-'+id);if(i)i.disabled=true;
+    }else res.textContent='Not quite. '+(s.q.hint||'Look at the rule above and try again.');
+  }
+  upd();
+}
+
+function parseV(s){
+  s=String(s==null?'':s).trim().replace(/[−–]/g,'-').replace(/,/g,'');let m;
+  if(m=s.match(/^(-?)(\d+)\s+(\d+)\/(\d+)$/)){const sg=m[1]?-1:1,w=+m[2],n=+m[3],d=+m[4];if(!d)return null;return {form:'mixed',n:sg*(w*d+n),d:d,fn:n,fd:d};}
+  if(m=s.match(/^(-?\d+)\/(\d+)$/)){const d=+m[2];if(!d)return null;return {form:'frac',n:+m[1],d:d};}
+  if(m=s.match(/^(-?)(\d*)\.(\d+)$/)){const sg=m[1]?-1:1;const fd=Math.pow(10,m[3].length);return {form:'dec',n:sg*(+(m[2]||0)*fd+ +m[3]),d:fd};}
+  if(m=s.match(/^(-?\d+)$/))return {form:'int',n:+m[1],d:1};
+  if(m=s.match(/^(\d+)\s*[rR]\s*(\d+)$/))return {form:'rem',q:+m[1],r:+m[2]};
+  return null;
+}
+function gcdv(a,b){a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a;}
+function eqv(raw,ans){
+  const x=parseV(raw),y=parseV(ans);if(!x||!y)return false;
+  if(y.form==='rem')return x.form==='rem'&&x.q===y.q&&x.r===y.r;
+  if(x.form==='rem')return false;
+  if(x.n*y.d!==y.n*x.d)return false;
+  if(y.form==='int'||y.form==='dec')return x.form==='int'||x.form==='dec';
+  if(y.form==='frac')return x.form==='frac'&&gcdv(x.n,x.d)===1;
+  if(y.form==='mixed')return x.form==='mixed'&&x.fn<x.fd&&gcdv(x.fn,x.fd)===1;
+  return false;
+}
+function kpFor(a){a=String(a);return /[\/ ]/.test(a)||/r/i.test(a)?'text':/\./.test(a)?'decimal':'numeric';}
+function checkQ(id){
+  const s=QS[id];if(s.done)return;
+  const v=norm($('in-'+id).value);if(!v)return;
+  finishQ(id,eqv($('in-'+id).value,s.q.a));
+}
+function pickQ(id,j,btn){
+  const s=QS[id];if(s.done)return;
+  const ok=j===s.q.c;
+  btn.className='opt '+(ok?'right':'wrong');
+  finishQ(id,ok);
+  if(s.done&&!ok){[].slice.call($('q-'+id).querySelectorAll('.opt'))[s.q.c].className='opt right';}
+}
+function upd(){const b=$('nextbtn');if(b)b.disabled=ANSWERED-SECBASE<SECTOTAL;const c=$('cnt');if(c)c.textContent=ANSWERED-SECBASE+' of '+SECTOTAL+' answered';}
+
+/* ---------- sections ---------- */
+const SECA=[{"t": "3.45 + 2.3 = ?", "a": "5.75", "show": "5.75", "hint": "Line up the decimal points and add zeros so both have the same places.", "why": "Line up the decimal points: 3.45 + 2.3 = 5.75."}, {"t": "0.78 + 0.45 = ?", "a": "1.23", "show": "1.23", "hint": "Line up the decimal points and add zeros so both have the same places.", "why": "Line up the decimal points: 0.78 + 0.45 = 1.23."}, {"t": "5.6 + 3.27 = ?", "a": "8.87", "show": "8.87", "hint": "Line up the decimal points and add zeros so both have the same places.", "why": "Line up the decimal points: 5.6 + 3.27 = 8.87."}, {"t": "12.5 + 4.75 = ?", "a": "17.25", "show": "17.25", "hint": "Line up the decimal points and add zeros so both have the same places.", "why": "Line up the decimal points: 12.5 + 4.75 = 17.25."}, {"t": "0.9 + 0.65 = ?", "a": "1.55", "show": "1.55", "hint": "Line up the decimal points and add zeros so both have the same places.", "why": "Line up the decimal points: 0.9 + 0.65 = 1.55."}, {"t": "6.25 + 1.5 = ?", "a": "7.75", "show": "7.75", "hint": "Line up the decimal points and add zeros so both have the same places.", "why": "Line up the decimal points: 6.25 + 1.5 = 7.75."}, {"t": "8.4 − 3.15 = ?", "a": "5.25", "show": "5.25", "hint": "Line up the decimal points and add zeros so both have the same places.", "why": "Line up the decimal points: 8.4 − 3.15 = 5.25."}, {"t": "5.02 − 2.7 = ?", "a": "2.32", "show": "2.32", "hint": "Line up the decimal points and add zeros so both have the same places.", "why": "Line up the decimal points: 5.02 − 2.7 = 2.32."}, {"t": "10 − 4.35 = ?", "a": "5.65", "show": "5.65", "hint": "Line up the decimal points and add zeros so both have the same places.", "why": "Line up the decimal points: 10 − 4.35 = 5.65."}, {"t": "7.5 − 2.25 = ?", "a": "5.25", "show": "5.25", "hint": "Line up the decimal points and add zeros so both have the same places.", "why": "Line up the decimal points: 7.5 − 2.25 = 5.25."}];const SECB=[{"t": "Round 4.36 to the nearest tenth.", "a": "4.4", "show": "4.4", "hint": "Look at the digit to the right of the place you are rounding to. 5 or more rounds up.", "why": "4.36 rounds to 4.4."}, {"t": "Round 7.82 to the nearest tenth.", "a": "7.8", "show": "7.8", "hint": "Look at the digit to the right of the place you are rounding to. 5 or more rounds up.", "why": "7.82 rounds to 7.8."}, {"t": "Round 2.95 to the nearest tenth.", "a": "3", "show": "3", "hint": "Look at the digit to the right of the place you are rounding to. 5 or more rounds up.", "why": "2.95 rounds to 3."}, {"t": "Round 12.04 to the nearest tenth.", "a": "12", "show": "12", "hint": "Look at the digit to the right of the place you are rounding to. 5 or more rounds up.", "why": "12.04 rounds to 12."}, {"t": "Round 3.5 to the nearest whole number.", "a": "4", "show": "4", "hint": "Look at the digit to the right of the place you are rounding to. 5 or more rounds up.", "why": "3.5 rounds to 4."}, {"t": "Round 8.49 to the nearest whole number.", "a": "8", "show": "8", "hint": "Look at the digit to the right of the place you are rounding to. 5 or more rounds up.", "why": "8.49 rounds to 8."}, {"t": "Round 0.62 to the nearest whole number.", "a": "1", "show": "1", "hint": "Look at the digit to the right of the place you are rounding to. 5 or more rounds up.", "why": "0.62 rounds to 1."}, {"t": "Round 19.51 to the nearest whole number.", "a": "20", "show": "20", "hint": "Look at the digit to the right of the place you are rounding to. 5 or more rounds up.", "why": "19.51 rounds to 20."}, {"t": "Estimate 4.8 + 3.1 by rounding each number to the nearest whole number.", "a": "8", "show": "8", "hint": "4.8 rounds to 5 and 3.1 rounds to 3.", "why": "5 + 3 = 8."}, {"t": "Estimate 9.7 − 2.2 by rounding each number to the nearest whole number.", "a": "8", "show": "8", "hint": "9.7 rounds to 10 and 2.2 rounds to 2.", "why": "10 − 2 = 8."}];const SECC=[{"t": "Ben ran 2.4 km on Monday and 3.75 km on Tuesday. How many km did he run in all?", "a": "6.15", "show": "6.15", "hint": "Line up the decimal points.", "why": "2.40 + 3.75 = 6.15 km."}, {"t": "A rope is 8.5 m long. Ana cuts off 2.35 m. How many meters are left?", "a": "6.15", "show": "6.15", "hint": "8.50 − 2.35.", "why": "8.50 − 2.35 = 6.15 m."}, {"t": "A notebook costs $3.49 and a pen costs $1.25. What is the total cost? (Give the number only.)", "a": "4.74", "show": "4.74", "hint": "Line up the decimal points.", "why": "3.49 + 1.25 = 4.74, or $4.74."}, {"t": "Sam pays with a $10 bill for a $6.35 toy. How much change should he get? (Give the number only.)", "a": "3.65", "show": "3.65", "hint": "10.00 − 6.35.", "why": "10.00 − 6.35 = 3.65, or $3.65."}, {"t": "Mia adds 0.6 + 0.25 and gets 0.31. Is the answer reasonable?", "o": ["Yes", "No. 0.6 is already more than 0.31", "No. It should be 0.085"], "c": 1, "show": "No. 0.6 is already more than 0.31", "hint": "The sum must be at least as big as 0.6.", "why": "0.6 + 0.25 = 0.85. A sum cannot be less than one of its addends."}, {"t": "Which is the best estimate for 6.9 + 4.1?", "o": ["11", "10", "12"], "c": 0, "show": "11", "hint": "Round 6.9 to 7 and 4.1 to 4.", "why": "7 + 4 = 11."}];
+function gcdf(a,b){return b?gcdf(b,a%b):a;}
+function fbar(n,d,col){let h='<div style="display:flex;max-width:420px;border:2px solid #17607A;border-radius:6px;overflow:hidden;margin:3px 0">';for(let i=0;i<d;i++)h+='<div style="flex:1;height:22px;background:'+(i<n?col:'#fff')+';'+(i?'border-left:1px solid #17607A':'')+'"></div>';return h+'</div>';}
+function fstr(n,d){const g=gcdf(n,d);n/=g;d/=g;if(d===1)return ''+n;return n+'/'+d;}
+function mstr(n,d){const g=gcdf(n,d);n/=g;d/=g;const w=Math.floor(n/d),r=n%d;if(!r)return ''+w;return (w?w+' ':'')+r+'/'+d;}
+
+function dpl(s){const p=(''+s).split('.')[1];return p?p.length:0;}
+function pnum(id){const v=parseFloat(($(id).value||'').replace(',','.'));return isNaN(v)?0:v;}
+function decOp(){
+  const sa=$('oa').value,sb=$('ob').value,a=pnum('oa'),b=pnum('ob'),sg=$('op').value;
+  const p=Math.max(dpl(sa),dpl(sb),1),A=Math.round(a*Math.pow(10,p)),B=Math.round(b*Math.pow(10,p));
+  const r=sg==='+'?A+B:A-B;if(r<0){$('or').innerHTML='<div class="out2">The answer would be less than 0. Try a larger first number.</div>';return;}
+  const res=(r/Math.pow(10,p)).toFixed(p),w=Math.max(a.toFixed(p).length,b.toFixed(p).length,res.length)+2;
+  const pad=x=>x.padStart(w,' ');
+  $('or').innerHTML='<pre style="font:600 20px/1.3 monospace;margin:8px 0">'+pad(a.toFixed(p))+'\n'+sg+pad(b.toFixed(p)).slice(1)+'\n'+'-'.repeat(w)+'\n'+pad(res)+'</pre><div class="out2">Line up the decimal points. Add zeros so both numbers have '+p+' decimal place'+(p===1?'':'s')+'.<br><b>'+a+' '+sg+' '+b+' = '+parseFloat(res)+'</b></div>';
+}
+function rndTool(){
+  const x=pnum('rx'),t=Math.round(x*10+1e-9)/10,w=Math.round(x+1e-9);
+  const fl=Math.floor(x*10+1e-9)/10;
+  $('rr').innerHTML='<div class="out2"><b>'+x+'</b><br>To the nearest tenth: look at the hundredths digit. It rounds to <b>'+t.toFixed(1)+'</b>.<br>To the nearest whole number: look at the tenths digit. It rounds to <b>'+w+'</b>.<br>(5 or more rounds up. 4 or less stays.)</div>';
+}
+function rA(){secPage('a','<div class="card"><h1>Adding and subtracting decimals</h1><p class="small">About 15 minutes. Practice only. Nothing here is saved or graded.</p><div class="rule"><b>Line up the decimal points</b>, add zeros so each number has the same places, then add or subtract like whole numbers. Put the decimal point straight down in the answer.</div>'
+ +'<h3>Try it</h3><div class="row"><input class="num" id="oa" value="3.45" oninput="decOp()" inputmode="decimal"><select id="op" onchange="decOp()" style="font:600 18px Jost,sans-serif;padding:6px"><option>+</option><option>−</option></select><input class="num" id="ob" value="2.3" oninput="decOp()" inputmode="decimal"></div><div id="or"></div></div>',SECA);}
+function rB(){secPage('b','<div class="card"><h2>Rounding and estimating</h2><div class="rule">To round, look at the digit just to the right. <b>5 or more rounds up, 4 or less stays.</b> 4.36 to the nearest tenth is 4.4. 7.5 to the nearest whole number is 8. Estimating first tells you if your answer is reasonable.</div>'
+ +'<h3>Try it</h3><div class="row"><input class="num" id="rx" value="4.36" oninput="rndTool()" inputmode="decimal"></div><div id="rr"></div></div>',SECB);}
+function rC(){secPage('c','<div class="card"><h2>Putting it together</h2><div class="rule">Estimate first, then calculate, then check that the answer makes sense. Money is decimals too: $3.49 means 3 dollars and 49 hundredths.</div></div>',SECC,true);}
+
+const SECFNS=[rA,rB,rC];
+function INITS(){if($('oa'))decOp();if($('rx'))rndTool();}
+const ORAL=["Add 3.45 + 2.3. Why do you line up the decimal points?", "Round 4.36 to the nearest tenth and say which digit decides.", "Estimate 6.9 + 4.1 and tell how you know your exact answer is reasonable."];
+const WEEKNO=20;
+
+let SECBASE=0,SECTOTAL=0,ST=0;
+const MOM2=MOM;
+function momGate(cb){cb();} /* PIN turned off for now */
+function begin(){
+  const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(buildMom);return;}
+  ml.href=location.pathname+'?mom=1';ST=0;render();
+}
+
+function begin(){
+  const ml=$('modeLink');
+  if(MOM){ml.textContent='Student view';ml.href=location.pathname;momGate(buildMom);return;}
+  ml.href=location.pathname+'?mom=1';ST=0;render();
+}
+function buildMom(){
+  let all='<div class="card" style="border-top-color:#C9972B"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Ryder.</p></div>';
+  SECFNS.forEach(fn=>{fn();all+=$('stage').innerHTML;});
+  all+='<div class="card"><h2>Check him on these, out loud</h2><ul>'+ORAL.map(x=>'<li>'+x+'</li>').join('')+'</ul><p class="small">If he does these well, tick them on his rung in Math Home. If he is solid, let him test out.</p></div>';
+  $('stage').innerHTML=all;$('bar').style.width='100%';INITS();
+}
+function bar(){$('bar').style.width=Math.round(ST/(SECFNS.length)*100)+'%';}
+function nav(last){if(MOM)return '';return '<div class="row" style="margin-top:14px"><button class="btn" id="nextbtn" onclick="nextSec()" disabled>'+(last?'Finish':'Next')+'</button><span class="small" id="cnt"></span></div>';}
+function nextSec(){ST++;render();window.scrollTo(0,0);}
+function listHTML(sec,arr){let h='';arr.forEach((q,i)=>{h+=qHTML(sec,i,q);});return h;}
+function render(){bar();QS={};SECBASE=ANSWERED;if(ST>=SECFNS.length){rDone();return;}SECFNS[ST]();INITS();upd();}
+function secPage(id,intro,items,last){SECTOTAL=items.length;$('stage').innerHTML=intro+'<div class="card"><h2>Check it</h2>'+listHTML(id,items)+nav(last)+'</div>';}
+function rDone(){
+  const pct=Math.round(FIRST/TOTAL*100);
+  $('stage').innerHTML='<div class="card"><h1>Done</h1><p>First-try correct: <span class="score">'+FIRST+' of '+TOTAL+'</span></p>'
+   +'<p>'+(pct>=85?'That is strong. Tell Mom you may be ready to test out of Week '+WEEKNO+'.':pct>=60?'Good start. Look again at anything you missed, then tell Mom.':'Go back through the rules with Mom before you test out.')+'</p>'
+   +'<h3>Now say these to Mom, out loud</h3><ul>'+ORAL.map(x=>'<li>'+x+'</li>').join('')+'</ul>'
+   +'<div class="row" style="margin-top:14px"><a class="btn" style="text-decoration:none" href="../wade-math-home.html#/kid/ryder">Back to Math Home</a><button class="btn alt" onclick="location.reload()">Do it again</button></div></div>';
+}
+function gv(id,lo,hi){let v=parseInt(norm($(id).value),10);return isNaN(v)?lo:Math.max(lo,Math.min(hi,v));}
+function fmt(n){return Number(n).toLocaleString('en-US');}
+begin();
+/* Mom view: back goes to Mom's lesson list */
+(function(){if(/[?&]mom=1/.test(location.search)){var b=document.querySelector('a.back');if(b){b.href=b.getAttribute('href').replace(/#\/kid\/(\w+)/,'#/mom/ladder/$1');b.textContent='\u2190 Lessons';}}})();
+</script>
+<script src="momnav.js"></script>
+</body>
+</html>
