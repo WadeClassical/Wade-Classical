@@ -53,6 +53,7 @@ label{font-size:13px;color:var(--muted);display:block;margin:10px 0 4px;font-wei
 .linkchip{display:inline-block;margin-top:5px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px;text-decoration:none;color:var(--kc,var(--forest))}
 .msg{background:#E8F0F8;border:1px solid var(--brass);border-radius:14px;padding:14px 16px;margin-bottom:14px}
 .msg .from{font:700 13px Jost;color:#3F5F7F;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.btn.tst{background:#8B1E2D;color:#fff}.btn.tst:hover{background:#731825}
 .lnl{margin:6px 0 2px}.lnr{font-size:14px;padding:3px 0;border-top:1px dashed var(--line)}.lnr.dn{color:var(--muted)}.lnd{font-weight:700;color:var(--kc,var(--ink));margin-right:4px}
 .week{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
 @media(max-width:860px){.week{grid-template-columns:1fr}}
@@ -879,7 +880,7 @@ function pathCard(kid,n,mom){
   h+='<div class="pstep"><div class="pnum">1</div><div><b>TEST OUT</b><div class="small">'
     +(!hq?'No test-out written for this week yet.':!tests.length?'Already know this? Prove it and skip the lesson. A pass counts as an A.':'Tried '+dt(tests[tests.length-1].ts)+' · '+tests[tests.length-1].score+'/15 · not yet. On to the lesson.')+'</div>';
   if(hq&&!tests.length){
-    h+='<div class="pbtns">'+(mom?'<button class="btn sm k" onclick="giveQuiz('+q("'test'")+')">Give test-out today</button><button class="btn sm alt" onclick="openQuiz('+q("'test'")+')">Open here</button>':'<button class="btn sm k" onclick="openQuiz('+q("'test'")+')">Test out</button>')+'</div>';
+    h+='<div class="pbtns">'+(mom?'<button class="btn sm tst" onclick="giveQuiz('+q("'test'")+')">Give test-out today</button><button class="btn sm alt" onclick="openQuiz('+q("'test'")+')">Open here</button>':'<button class="btn sm tst" onclick="openQuiz('+q("'test'")+')">Test out</button>')+'</div>';
   }
   h+='</div></div>';
   // 2 lesson
