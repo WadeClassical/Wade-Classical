@@ -6,7 +6,7 @@
 <title>Ryder · Week 4 · Negative Numbers</title>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--parch:#F4ECDA;--card:#FBF6EA;--forest:#204B3A;--ink:#1E2A24;--muted:#55604F;--line:#E2D6BC;--teal:#17607A;--teal-d:#0F4A5F;--ok:#2E7D4F;--bad:#A8323A;--tint:#E3F0F4}
+:root{--parch:#C8D0D8;--card:#F6F8FB;--forest:#204B3A;--ink:#1E2A24;--muted:#55604F;--line:#C3CCD7;--teal:#17607A;--teal-d:#0F4A5F;--ok:#2E7D4F;--bad:#A8323A;--tint:#E3F0F4}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Jost',system-ui,sans-serif;background:var(--parch);color:var(--ink);font-size:18px;line-height:1.45;min-height:100vh}
 .wrap{max-width:760px;margin:0 auto;padding:14px 14px 70px}
@@ -200,7 +200,7 @@ function begin(){
   ml.href=location.pathname+'?mom=1';ST=0;render();
 }
 function buildMom(){
-  let all='<div class="card" style="border-top-color:#C9972B"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Ryder.</p></div>';
+  let all='<div class="card" style="border-top-color:#5A7FA0"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Ryder.</p></div>';
   [rLine,rCmp,rCtx].forEach(fn=>{fn();all+=$('stage').innerHTML;});
   all+='<div class="card"><h2>Check him on these, out loud</h2><ul>'
    +'<li>What does a negative number mean? Where is it on the number line?</li>'
@@ -232,7 +232,7 @@ function lineTool(){
   if(n===0)msg='0 is not negative and not positive. It is the dividing point.';
   else msg='<b>'+f(n)+'</b> is '+Math.abs(n)+' step'+(Math.abs(n)>1?'s':'')+' '+(n<0?'to the <b>left</b> of zero, so it is negative':'to the <b>right</b> of zero, so it is positive')+'. Its opposite is <b>'+f(o)+'</b>, which is also '+Math.abs(n)+' step'+(Math.abs(n)>1?'s':'')+' from zero.';
   const temp=n<0?f(n)+'°F is '+Math.abs(n)+' degrees <b>below</b> zero.':n>0?n+'°F is '+n+' degrees <b>above</b> zero.':'0°F is the freezing point of the scale.';
-  $('lnout').innerHTML=nlSvg(n===0?[{v:0,col:'#C9972B',lb:'0'}]:[{v:n,col:'#17607A',lb:f(n)},{v:o,col:'#C9972B',lb:f(o)}])+'<p>'+msg+'</p><p class="small">Temperature: '+temp+'</p>';
+  $('lnout').innerHTML=nlSvg(n===0?[{v:0,col:'#A8325E',lb:'0'}]:[{v:n,col:'#17607A',lb:f(n)},{v:o,col:'#A8325E',lb:f(o)}])+'<p>'+msg+'</p><p class="small">Temperature: '+temp+'</p>';
 }
 function lineSet(v){$('ln').value=f(+v);lineTool();}
 function rLine(){
@@ -255,7 +255,7 @@ function cmpTool(){
   let msg;
   if(a===b)msg='They are the same number, so '+f(a)+' = '+f(b)+'.';
   else msg=f(w)+' is farther to the <b>right</b>, so '+f(w)+' is <b>greater</b>. '+f(l)+' is farther left, so it is <b>less</b>. '+f(a)+(a>b?' &gt; ':' &lt; ')+f(b)+'.';
-  $('cmpout').innerHTML=nlSvg(a===b?[{v:a,col:'#17607A',lb:f(a)}]:[{v:a,col:'#17607A',lb:f(a)},{v:b,col:'#C9972B',lb:f(b)}])+'<p>'+msg+'</p>';
+  $('cmpout').innerHTML=nlSvg(a===b?[{v:a,col:'#17607A',lb:f(a)}]:[{v:a,col:'#17607A',lb:f(a)},{v:b,col:'#A8325E',lb:f(b)}])+'<p>'+msg+'</p>';
 }
 function rCmp(){
   SECTOTAL=SEC2.length;

@@ -6,7 +6,7 @@
 <title>Ryder · Week 1 · Place Value</title>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--parch:#F4ECDA;--card:#FBF6EA;--forest:#204B3A;--ink:#1E2A24;--muted:#55604F;--line:#E2D6BC;--teal:#17607A;--teal-d:#0F4A5F;--ok:#2E7D4F;--bad:#A8323A;--tint:#E3F0F4}
+:root{--parch:#C8D0D8;--card:#F6F8FB;--forest:#204B3A;--ink:#1E2A24;--muted:#55604F;--line:#C3CCD7;--teal:#17607A;--teal-d:#0F4A5F;--ok:#2E7D4F;--bad:#A8323A;--tint:#E3F0F4}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Jost',system-ui,sans-serif;background:var(--parch);color:var(--ink);font-size:18px;line-height:1.45;min-height:100vh}
 .wrap{max-width:760px;margin:0 auto;padding:14px 14px 70px}
@@ -191,7 +191,7 @@ function begin(){
 }
 function buildMom(){
   {
-    let all='<div class="card" style="border-top-color:#C9972B"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Ryder.</p></div>';
+    let all='<div class="card" style="border-top-color:#5A7FA0"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Ryder.</p></div>';
     [rRule,rDiv,rRW].forEach(f=>{f();all+=$('stage').innerHTML;});
     all+='<div class="card"><h2>Check him on these, out loud</h2><ul>'
       +'<li>A digit is worth 10 times the digit to its right. Can he show it with 555,555?</li>'

@@ -6,7 +6,7 @@
 <title>Ryder · Week 3 · Adding and Subtracting</title>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--parch:#F4ECDA;--card:#FBF6EA;--forest:#204B3A;--ink:#1E2A24;--muted:#55604F;--line:#E2D6BC;--teal:#17607A;--teal-d:#0F4A5F;--ok:#2E7D4F;--bad:#A8323A;--tint:#E3F0F4}
+:root{--parch:#C8D0D8;--card:#F6F8FB;--forest:#204B3A;--ink:#1E2A24;--muted:#55604F;--line:#C3CCD7;--teal:#17607A;--teal-d:#0F4A5F;--ok:#2E7D4F;--bad:#A8323A;--tint:#E3F0F4}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Jost',system-ui,sans-serif;background:var(--parch);color:var(--ink);font-size:18px;line-height:1.45;min-height:100vh}
 .wrap{max-width:760px;margin:0 auto;padding:14px 14px 70px}
@@ -77,7 +77,7 @@ table.col td{min-width:36px;height:44px;text-align:center;font:700 24px Jost,san
 table.col td.e{background:none;border:0}
 table.col td.c{background:none;border:0;font:700 12px Jost,sans-serif;color:var(--bad);height:20px}
 table.col td.c2{background:var(--tint);border-color:var(--teal);color:var(--teal-d)}
-table.col td.rg{height:32px;font-size:17px;color:var(--bad);background:#FFF7E6;border-color:#E5C07B}
+table.col td.rg{height:32px;font-size:17px;color:var(--bad);background:#EAF1F8;border-color:#9CB3CC}
 table.col td.lb{background:none;border:0;font:600 14px Jost,sans-serif;color:var(--muted);text-align:right;min-width:60px}
 table.col td.cm{min-width:10px;background:none;border:0;padding:0;font-size:24px}
 table.col td.res{background:var(--tint);border-color:var(--teal);color:var(--teal-d)}
@@ -204,7 +204,7 @@ function begin(){
   ml.href=location.pathname+'?mom=1';ST=0;render();
 }
 function buildMom(){
-  let all='<div class="card" style="border-top-color:#C9972B"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Ryder.</p></div>';
+  let all='<div class="card" style="border-top-color:#5A7FA0"><h2>Mom view</h2><p>The whole lesson on one page, with every answer shown. Nothing is scored or saved. Click Student view to give it to Ryder.</p></div>';
   [rAdd,rSub,rThink].forEach(f=>{f();all+=$('stage').innerHTML;});
   all+='<div class="card"><h2>Check him on these, out loud</h2><ul>'
    +'<li>Show me how you carry. Why does a 15 in the ones place become a 5 and a carried 1?</li>'
