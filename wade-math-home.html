@@ -700,8 +700,8 @@ function quizView(kid,n,kind){
 
 /* ---------- routing ---------- */
 function go(h){location.hash=h;}
-let momOK=false; /* PIN is asked every time Mom's area is opened; leaving it locks again */
-function pinOk(){return momOK;}
+let momOK=false; /* Mom's area is open; only a lesson's Mom view (answer keys) asks for the PIN */
+function pinOk(){return true;}
 function tryPin(){
   const v=document.getElementById('pin').value;
   if(v===MOM_PIN){momOK=true;render();}
