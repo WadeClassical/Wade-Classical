@@ -53,6 +53,7 @@ label{font-size:13px;color:var(--muted);display:block;margin:10px 0 4px;font-wei
 .linkchip{display:inline-block;margin-top:5px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px;text-decoration:none;color:var(--kc,var(--forest))}
 .msg{background:#FFF6D8;border:1px solid var(--brass);border-radius:14px;padding:14px 16px;margin-bottom:14px}
 .msg .from{font:700 13px Jost;color:#8a6414;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.lnl{margin:6px 0 2px}.lnr{font-size:14px;padding:3px 0;border-top:1px dashed var(--line)}.lnr.dn{color:var(--muted)}.lnd{font-weight:700;color:var(--kc,var(--ink));margin-right:4px}
 .week{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
 @media(max-width:860px){.week{grid-template-columns:1fr}}
 .day{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;min-height:120px}
@@ -409,10 +410,10 @@ function grade(kid,id,g){
 }
 function setNote(kid,id,v){const a=getIn('assign/'+kid+'/'+id);if(!a)return;put('assign/'+kid+'/'+id,Object.assign({},a,{note:v}));}
 function toggleStage(kid,code){const k='facts/'+kid+'/done/'+code;put(k,getIn(k)?null:true);}
-function addAssign(kids,title,link,date){
+function addAssign(kids,title,link,date,week){
   title=(title||'').trim();if(!title){toast('Add a title first');return false;}
   kids.forEach(kid=>{const id='a'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
-    put('assign/'+kid+'/'+id,{title:title,link:safeUrl(link),date:date,done:false,grade:'',note:'',ts:Date.now()});});
+    const rec={title:title,link:safeUrl(link),date:date,done:false,grade:'',note:'',ts:Date.now()};if(week)rec.week=week;put('assign/'+kid+'/'+id,rec);});
   return true;
 }
 function delAssign(kid,id){put('assign/'+kid+'/'+id,null);}
@@ -869,12 +870,13 @@ function pathCard(kid,n,mom){
   h+='</div></div>';
   // 2 lesson
   const built=lessonList(kid,n);
-  const lined=assignList(kid).filter(a=>a.week===n).length;
+  const linedL=assignList(kid).filter(a=>a.week===n).sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:(a.ts||0)-(b.ts||0));const lined=linedL.length;
   h+='<div class="pstep"><div class="pnum">2</div><div><b>LESSON</b><div class="small">'
     +(stg==='check'?'Done.':stg==='ready'?'Practice done. Ready for the quiz.':stg==='lesson'?'In progress. Take a few days of practice.':'Not started.')
     +(lined?' · '+lined+' day'+(lined>1?'s':'')+' lined up':'')+'</div>';
   if(built.length){h+='<div class="pbtns">'+built.map(l=>'<a class="btn sm k" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="'+esc(l.u)+'">'+esc(l.t)+'</a>'+(mom&&l.mom?'<a class="btn sm alt" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="'+esc(l.u)+'?mom=1">Mom view</a>':'')).join('')+'</div>';}
   else h+='<div class="small muted" style="margin-top:4px">No built lesson for this week yet.</div>';
+  if(lined){h+='<div class="lnl">'+linedL.map(a=>'<div class="lnr'+(a.done?' dn':'')+'"><span class="lnd">'+esc(fmtDay(parseKey(a.date)))+'</span> '+(a.done?'✓ ':'')+esc(a.title)+(safeUrl(a.link)?' <a class="small" href="'+esc(safeUrl(a.link))+'" target="_blank" rel="noopener">open</a>':'')+'</div>').join('')+'</div>';}
   h+='<div class="pbtns">';
   if(!stg)h+='<button class="btn sm '+(mom?'alt':'k')+'" onclick="startLesson('+q()+')">Start lesson</button>';
   if(mom&&stg==='lesson')h+='<button class="btn sm ok" onclick="setStage('+q("'ready'")+')">Ready for quiz</button>';
@@ -1115,7 +1117,7 @@ function quizBlock(kid,n){
 }
 function selectRung(kid,n){sel[kid]=n;render();}
 let planPrefill=null;
-function planFromWeek(kid,n){const w=weekObj(kid,n);planPrefill={kid:kid,title:'Week '+n+': '+w[1]};go('#/mom/plan');}
+function planFromWeek(kid,n){const w=weekObj(kid,n);planPrefill={kid:kid,title:'Week '+n+': '+w[1],week:n};go('#/mom/plan');}
 function planView(){
   const pf=planPrefill;planPrefill=null;
   const tk=todayKey();
@@ -1124,23 +1126,34 @@ function planView(){
    +'<label>What</label><input id="pt" placeholder="e.g. Masterbooks lesson 12, or Khan Academy: fractions" value="'+esc(pf?pf.title:'')+'">'
    +'<label>Link (optional — website, PDF or video)</label><input id="pl" placeholder="https://…">'
    +'<label>Which day</label><input id="pd" type="date" value="'+tk+'">'
+   +'<label>Ladder week (optional)</label><select id="pw"></select><div class="small muted" id="pwn" style="margin-top:4px"></div>'
    +'<div style="margin-top:14px"><button class="btn" onclick="submitAssign()">Add to their list</button></div></div>';
   ['ryder','hadley'].forEach(kid=>{
     const items=assignList(kid).filter(a=>a.date>=tk).sort((a,b)=>a.date<b.date?-1:a.ts-b.ts);
     h+='<div class="card '+KIDS[kid].cls+'"><h3 style="font-size:20px;color:var(--kc)">Coming up for '+KIDS[kid].name+'</h3>';
     if(!items.length)h+='<p class="muted small">Nothing assigned yet.</p>';
-    items.forEach(a=>{h+='<div class="row"><div class="rt"><div class="t">'+esc(a.title)+'</div><div class="small muted">'+esc(fmtDay(parseKey(a.date)))+'</div></div><button class="btn sm '+(armed===kid+a.id?'bad':'alt')+'" onclick="armDel(\''+kid+'\',\''+a.id+'\')">'+(armed===kid+a.id?'Tap again to delete':'Delete')+'</button></div>';});
+    items.forEach(a=>{h+='<div class="row"><div class="rt"><div class="t">'+esc(a.title)+'</div><div class="small muted">'+esc(fmtDay(parseKey(a.date)))+(a.week?' · Week '+a.week+' on the ladder':'')+'</div></div><button class="btn sm '+(armed===kid+a.id?'bad':'alt')+'" onclick="armDel(\''+kid+'\',\''+a.id+'\')">'+(armed===kid+a.id?'Tap again to delete':'Delete')+'</button></div>';});
     h+='</div>';});
   setTimeout(bindPlan,0);
-  if(pf){setTimeout(()=>{const b=document.querySelector('#pk [data-k="'+pf.kid+'"]');if(b)b.click();},0);}
+  if(pf){setTimeout(()=>{const b=document.querySelector('#pk [data-k="'+pf.kid+'"]');if(b)b.click();if(pf.week){const w=document.getElementById('pw');if(w)w.value=String(pf.week);}},0);}
   return h;
 }
-function bindPlan(){document.querySelectorAll('#pk .tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('#pk .tab').forEach(x=>x.classList.remove('on'));b.classList.add('on');});}
+function fillWeeks(kid){
+  const sl=document.getElementById('pw'),nt=document.getElementById('pwn');if(!sl)return;
+  if(kid==='both'){sl.innerHTML='<option value="">Pick one child to choose a ladder week</option>';sl.disabled=true;if(nt)nt.textContent='Ryder and Hadley are on different weeks, so choose one child first.';return;}
+  sl.disabled=false;const K=KIDS[kid],cur=getIn('current/'+kid);
+  let o='<option value="">None (just a day on their list)</option>';
+  K.weeks.forEach(w=>{const n=w[0],st=weekStatus(kid,n);if(st==='mastered'||st==='skipped')return;
+    o+='<option value="'+n+'">Week '+n+' · '+esc(w[1])+(n===cur?' (this week)':'')+(lessonList(kid,n).length?' · lesson built':'')+'</option>';});
+  sl.innerHTML=o;if(nt)nt.textContent='It lands on the day above and also shows under Lesson on that ladder week.';
+}
+function bindPlan(){const on=document.querySelector('#pk .tab.on');fillWeeks(on?on.dataset.k:'ryder');document.querySelectorAll('#pk .tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('#pk .tab').forEach(x=>x.classList.remove('on'));b.classList.add('on');fillWeeks(b.dataset.k);});}
 function submitAssign(){
   const on=document.querySelector('#pk .tab.on');const k=on?on.dataset.k:'ryder';
   const kids=k==='both'?['ryder','hadley']:[k];
-  const ok=addAssign(kids,document.getElementById('pt').value,document.getElementById('pl').value,document.getElementById('pd').value||todayKey());
-  if(ok)toast('Added');
+  const wv=kids.length===1?parseInt((document.getElementById('pw')||{}).value,10):NaN;
+  const ok=addAssign(kids,document.getElementById('pt').value,document.getElementById('pl').value,document.getElementById('pd').value||todayKey(),isNaN(wv)?0:wv);
+  if(ok)toast('Added'+(isNaN(wv)?'':' to Week '+wv));
 }
 function checkView(){
   let h='';
