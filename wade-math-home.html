@@ -927,6 +927,17 @@ function homeView(){
 
 
 /* ---------- test out / lesson / quiz path ---------- */
+function aheadCard(kid,n){
+  const ws=KIDS[kid].weeks;const i=ws.findIndex(w=>w[0]===n);
+  let nx=null;for(let j=i+1;j<ws.length;j++){const st=weekStatus(kid,ws[j][0]);if(st!=='mastered'&&st!=='skipped'){nx=ws[j];break;}}
+  if(!nx)return '';
+  const m=nx[0],stg=stageOf(kid,m),built=lessonList(kid,m);
+  let h='<div class="pstep"><div class="pnum">➜</div><div><b>WORK AHEAD</b><div class="small">Want to keep going? Week '+m+': '+esc(nx[1])+'. Its quiz opens when Mom says you are ready.</div><div class="pbtns">';
+  if(built.length)h+=built.map(l=>'<a class="btn sm k" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="'+esc(l.u)+'" onclick="startLesson(\''+kid+'\','+m+')">'+esc(l.t)+'</a>').join('');
+  else h+='<span class="small muted">No built lesson for Week '+m+' yet.</span>';
+  if(!stg&&!built.length)h+='';
+  return h+'</div></div></div>';
+}
 function pathCard(kid,n,mom){
   const K=KIDS[kid];const st=weekStatus(kid,n),g=gradeOf(kid,n),stg=stageOf(kid,n),hq=hasQuiz(kid,n);
   const dt=ts=>new Date(ts).toLocaleDateString(undefined,{month:'short',day:'numeric'});
@@ -934,7 +945,7 @@ function pathCard(kid,n,mom){
   const q=(x)=>'\''+kid+'\','+n+(x?','+x:'');
   let h='<div class="'+K.cls+'" style="margin-top:12px">';
   if(st==='mastered'){
-    h+='<div class="pstep dn"><div class="pnum">✓</div><div><b>Week '+n+' is mastered</b>'+(g?'<div>Grade <b>'+g.letter+'</b> · '+(g.how==='test'?'tested out':'quiz '+g.score+'/15')+'</div>':'<div class="small muted">Marked mastered by Mom.</div>')+'</div></div>'+canBlock(kid,n,mom)+'</div>';
+    h+='<div class="pstep dn"><div class="pnum">✓</div><div><b>Week '+n+' is mastered</b>'+(g?'<div>Grade <b>'+g.letter+'</b> · '+(g.how==='test'?'tested out':'quiz '+g.score+'/15')+'</div>':'<div class="small muted">Marked mastered by Mom.</div>')+'</div></div>'+canBlock(kid,n,mom)+(mom?'':aheadCard(kid,n))+'</div>';
     return h;
   }
   // 1 test out
@@ -965,7 +976,7 @@ function pathCard(kid,n,mom){
     +(stg==='check'?'Passed'+(g?' · Grade '+g.letter:'')+'. Check off every I can below to master the week.':!hq?'No quiz written for this week yet. Mom marks the week mastered.':open?'Open. 15 questions, 13 to pass. A pass is graded.':mom?'Locked until you tap Ready for quiz.':'Locked until Mom says you are ready.')+'</div>';
   if(quizzes.length)h+='<div class="small">'+quizzes.map((a,i)=>'Try '+(i+1)+' · '+dt(a.ts)+' · <b>'+a.score+'/15</b> '+(a.pass?'passed':'not yet')).join('<br>')+'</div>';
   if(hq&&open)h+='<div class="pbtns">'+(mom?'<button class="btn sm k" onclick="giveQuiz('+q("'quiz'")+')">Give quiz today</button><button class="btn sm alt" onclick="openQuiz('+q("'quiz'")+')">Open here</button>':'<button class="btn sm k" onclick="openQuiz('+q("'quiz'")+')">Take the quiz</button>')+'</div>';
-  h+='</div></div>'+canBlock(kid,n,mom)+'</div>';
+  h+='</div></div>'+canBlock(kid,n,mom)+((!mom&&(stg==='check'))?aheadCard(kid,n):'')+'</div>';
   return h;
 }
 
