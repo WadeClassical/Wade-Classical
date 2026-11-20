@@ -1231,6 +1231,11 @@ function ladderView(kid){
   return h;
 }
 
+function fixScore(kid,n,id,right){
+  const a=quizAttempts(kid,n).find(x=>x.id===id);if(!a)return;
+  put('quiz/'+kid+'/w'+n+'/'+id,{ts:a.ts,score:right,form:a.form||0,pass:right>=13,kind:a.kind||'test',ans:a.ans});
+  toast&&toast('Score updated to '+right+'/15');render();
+}
 let openAtt={};
 function toggleAtt(id){openAtt[id]=!openAtt[id];render();}
 function attLink(a){return ' · <a href="javascript:void(0)" onclick="toggleAtt(\''+a.id+'\')">'+(openAtt[a.id]?'Hide answers':'See answers')+'</a>';}
@@ -1251,7 +1256,7 @@ function attemptReview(kid,n,a){
     return '<div style="padding:8px 10px;margin:6px 0;border-radius:10px;border:1px solid '+(ok?'#cfe3d3':'#e8b9b0')+';background:'+(ok?'#f4faf5':'#fdf1ee')+'"><div class="small"><b>'+(i+1)+'. '+(ok?'<span style="color:var(--ok)">✓</span>':'<span style="color:var(--warn)">✗</span>')+'</b> '+esc(q.q||q.p||'')+'</div>'
       +'<div class="small" style="margin-top:3px">'+esc(pro)+' answer: <b>'+esc(mine)+'</b>'+(ok?'':' · Correct answer: <b>'+esc(ansText(q))+'</b>')+'</div></div>';
   }).join('');
-  return '<div class="fx" style="margin:6px 0 12px"><div class="small"><b>'+right+' of '+qs.length+' marked right</b>'+(a.score!==right?' (the score saved at the time was '+a.score+')':'')+(miss?' · Missed: '+miss:' · None missed')+'</div>'+rows+'</div>';
+  return '<div class="fx" style="margin:6px 0 12px"><div class="small"><b>'+right+' of '+qs.length+' marked right</b>'+(a.score!==right?' (the score saved at the time was '+a.score+') <button class="btn sm k" onclick="fixScore(\''+kid+'\','+n+',\''+a.id+'\','+right+')">Update saved score to '+right+'/15</button>':'')+(miss?' · Missed: '+miss:' · None missed')+'</div>'+rows+'</div>';
 }
 function quizBlock(kid,n){
   let h='<div class="small muted" style="margin-top:12px">Test-out quiz · 15 questions · 13 to pass · one retake, then the week stays open</div>';
