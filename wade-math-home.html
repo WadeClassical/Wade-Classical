@@ -503,8 +503,11 @@ function parseVal(s){
   return null;
 }
 function sameVal(x,y){return x&&y&&x.n*y.d===y.n*x.d;}
+const junkCh=/[`´'"~^!@#$%&*_=+\\|<>?;:()\[\]{}]/g;
+function cleanAns(v){return String(v==null?'':v).replace(junkCh,'');}
 function gradeQ(q,resp){
   if(q.t==='mc')return resp===q.a;
+  if(resp!=null)resp=cleanAns(resp);
   if(resp==null||String(resp).trim()==='')return false;
   if(q.t==='rem'){const m=String(resp).trim().replace(/,/g,'').match(/^(\d+)\s*r\s*(\d+)$/i);return !!m&&+m[1]===q.a[0]&&+m[2]===q.a[1];}
   const x=parseVal(resp),y=parseVal(String(q.a));
@@ -547,6 +550,7 @@ function initQuiz(kid,n,kind){
   const at=quizAttempts(kid,n,kind);const form=kind==='test'?0:nextForm(kid,n);
   QZ={kid:kid,n:n,kind:kind,form:form,qs:QUIZ[kid][n][form],ans:[],result:null,warned:false,tries:at.length};
 }
+function qIn(i,el){const c=cleanAns(el.value);if(c!==el.value)el.value=c;setAns(i,c);}
 function setAns(i,v){if(QZ)QZ.ans[i]=v;}
 function finishQuiz(){
   if(!QZ||QZ.result)return;
@@ -722,7 +726,7 @@ function quizView(kid,n,kind){
     }else{
       const ph={num:'Type a number',val:'Fraction or mixed number, like 3/4 or 1 1/2',simp:'Fraction in simplest form',imp:'Like 7/4',mix:'Like 1 3/4',rem:'Like 123 r 4'}[q.t];
       const fk=(q.t==='imp'||q.t==='simp'||q.t==='val'||q.t==='mix')&&/\//.test(String(q.a))?(q.t==='imp'?'frac':q.t==='mix'?'mixed':'either'):'';
-      h+='<input class="qans" type="text" autocomplete="off" '+(fk?'data-fk="'+fk+'" ':'')+(q.t==='num'?'inputmode="decimal" ':'')+'placeholder="'+ph+'" value="'+esc(QZ.ans[i]||'')+'" oninput="setAns('+i+',this.value)">';
+      h+='<input class="qans" type="text" autocomplete="off" '+(fk?'data-fk="'+fk+'" ':'')+(q.t==='num'?'inputmode="decimal" ':'')+'placeholder="'+ph+'" value="'+esc(QZ.ans[i]||'')+'" oninput="qIn('+i+',this)">';
     }
     h+='</div>';
   });
